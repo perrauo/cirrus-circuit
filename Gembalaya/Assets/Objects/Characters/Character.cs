@@ -95,14 +95,14 @@ namespace Cirrus.Gembalaya.Objects.Characters
                 {
                     if (TryMove(stepHorizontal, stat))
                     {
-                        _guide.Show(stepHorizontal, stat.GuideTileCount);
+                        _guide.Show(stepHorizontal);
                     }
                 }
                 else
                 {
                     if (TryMove(stepVertical, stat))
                     {
-                        _guide.Show(stepVertical, stat.GuideTileCount);
+                        _guide.Show(stepVertical);
                     }
                 }
             }
@@ -110,7 +110,7 @@ namespace Cirrus.Gembalaya.Objects.Characters
             {
                 if (TryMove(stepHorizontal, stat))
                 {
-                    _guide.Show(stepHorizontal, stat.GuideTileCount);
+                    _guide.Show(stepHorizontal);
                     _wasMovingVertical = false;
                 }
             }
@@ -120,7 +120,8 @@ namespace Cirrus.Gembalaya.Objects.Characters
 
                 if (TryMove(stepVertical, stat))
                 {
-                    _guide.Show(stepVertical, stat.GuideTileCount);
+                    
+                    _guide.Show(stepVertical);
                     _wasMovingVertical = true;
                 }
             }

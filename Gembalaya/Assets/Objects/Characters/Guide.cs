@@ -13,13 +13,30 @@ namespace Cirrus.Gembalaya.Objects.Characters
         // square pool
         private List<GameObject> _squares;
 
+        private float _raycastDistance = 100f;
 
-        public void Show(Vector3 step, int count)
+        // Show count from here
+        // raycast ignore moveable 
+        // goodnight
+        public void Show(Vector3 step, int count=0)
         {
-            for (int i = 0; i < count; i++)
+            if (
+            Physics.Raycast(
+                transform.position + Vector3.up,
+                step,
+                out RaycastHit hit,
+                _raycastDistance,
+                Game.Instance.Layers.Moveable
+                ))
             {
-                Instantiate(_squareTemplate, transform.position + step * i, Quaternion.identity, transform);
+                Debug.Log(hit.distance);
             }
+
+            //for (int i = 0; i < count; i++)
+            //{
+            //    Instantiate(_squareTemplate, transform.position + step * i, Quaternion.identity, transform);
+            //}
+
         }
 
     }

@@ -10,10 +10,9 @@ namespace Cirrus.Gembalaya
     public class Layers
     {
         //public int 
-        public int ObjectsFlags = 1 << LayerMask.NameToLayer("Objects");
-        public int LayoutFlags = 1 << LayerMask.NameToLayer("Layout");
-        public int Objects = LayerMask.NameToLayer("Objects");
-        public int Layout = LayerMask.NameToLayer("Layout");
+
+        public int Moveable = LayerMask.NameToLayer("Moveable");
+        public int Solid = LayerMask.NameToLayer("Solid");
     }
 
     public class Game : MonoBehaviour

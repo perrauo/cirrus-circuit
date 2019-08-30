@@ -14,8 +14,8 @@ namespace Cirrus.Gembalaya.Objects
     public class Status
     {
         public int GuideTileCount = 0;
-
     }
+
     public abstract class BaseObject : MonoBehaviour
     {
         [SerializeField]
@@ -81,6 +81,10 @@ namespace Cirrus.Gembalaya.Objects
                     _targetPosition = _targetPosition + step;
                     return true;
                 }
+            }
+            else
+            {
+                // TODO handle guide count
             }
 
             return false;
