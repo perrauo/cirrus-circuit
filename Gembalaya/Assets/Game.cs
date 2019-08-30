@@ -1,3 +1,4 @@
+using Cirrus.Gembalaya.Objects.Characters.Controls;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -32,7 +33,7 @@ namespace Cirrus.Gembalaya
 
 
         [SerializeField]
-        public Controls.Player[] Players;
+        public PlayerController[] Players;
 
 
 

@@ -41,10 +41,34 @@
             ],
             "bindings": [
                 {
+                    "name": "KeyBoard.WASD",
+                    "id": "2d7ae6a8-9bed-41c3-865d-685413787d31",
+                    "path": "2DVector",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Axes.Left",
+                    "isComposite": true,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "Up",
+                    "id": "8cf182db-55dc-4945-afc6-5369f4dde369",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Axes.Left",
+                    "isComposite": false,
+                    "isPartOfComposite": true,
+                    "modifiers": ""
+                },
+                {
                     "name": "GamePad.DPad",
                     "id": "35b4b9fd-490b-46b2-a0b8-2a1e08a73ac4",
-                    "path": "2DVector(normalize=false)",
-                    "interactions": "",
+                    "path": "2DVector",
+                    "interactions": "Hold",
                     "processors": "",
                     "groups": "",
                     "action": "Axes.Left",
@@ -101,30 +125,6 @@
                     "modifiers": ""
                 },
                 {
-                    "name": "KeyBoard.WASD",
-                    "id": "2d7ae6a8-9bed-41c3-865d-685413787d31",
-                    "path": "2DVector(normalize=false)",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Axes.Left",
-                    "isComposite": true,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
-                },
-                {
-                    "name": "Up",
-                    "id": "8cf182db-55dc-4945-afc6-5369f4dde369",
-                    "path": "<Keyboard>/w",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Axes.Left",
-                    "isComposite": false,
-                    "isPartOfComposite": true,
-                    "modifiers": ""
-                },
-                {
                     "name": "Down",
                     "id": "e78a1cdf-3f0f-430f-8f9c-7ef9fb065121",
                     "path": "<Keyboard>/s",
@@ -163,8 +163,8 @@
                 {
                     "name": "KeyBoard.Arrows",
                     "id": "64483cd5-1de2-4585-b8c9-37c2b722c732",
-                    "path": "2DVector(normalize=false)",
-                    "interactions": "",
+                    "path": "2DVector",
+                    "interactions": "Hold",
                     "processors": "",
                     "groups": "",
                     "action": "Axes.Left",

@@ -13,6 +13,107 @@ namespace Cirrus.Gembalaya.Objects
 
     public abstract class BaseObject : MonoBehaviour
     {
+        [SerializeField]
+        protected GameObject _visual;
+
+        [SerializeField]
+        protected Collider _collider;
+
+        [SerializeField]
+        protected float _stepDistance = 2f;
+
+        [SerializeField]
+        protected float _stepSpeed = 0.6f;
+
+        protected Vector3 _targetPosition;
+
+        protected float _targetScale = 1;
+
+        protected float _scaleSpeeed = 0.6f;
+
+        public bool _busy = false;
+
+        protected virtual void Awake()
+        {
+            _targetPosition = transform.position;
+        }
+
+        public virtual bool TryEnter()
+        {
+            _busy = true;
+            _collider.enabled = false;
+            _targetScale = 0;
+            return true;
+        }
+
+        public virtual bool TryShowGuide(Vector3 step, BaseObject incoming = null)
+        {
+            if
+                (!_busy &&
+                Utils.Vectors.CloseEnough(transform.position, _targetPosition))
+            {
+                if (
+                    Physics.Raycast(
+                        _targetPosition + Vector3.up,
+                        step,
+                        out RaycastHit hit,
+                        Levels.Level.CubeSize / 2))
+                {
+                    BaseObject obj = hit.collider.GetComponent<BaseObject>();
+
+                    if (obj != null)
+                    {
+                        if (obj.TryShowGuide(step, this))
+                        {
+                            //_targetPosition = _targetPosition + step;
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    //_targetPosition = _targetPosition + step;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public virtual bool TryMove(Vector3 step, BaseObject incoming = null)
+        {
+            if
+                (!_busy &&
+                Utils.Vectors.CloseEnough(transform.position, _targetPosition))
+            {
+                if (
+                    Physics.Raycast(
+                        _targetPosition + Vector3.up,
+                        step,
+                        out RaycastHit hit,
+                        Levels.Level.CubeSize / 2))
+                {
+                    BaseObject obj = hit.collider.GetComponent<BaseObject>();
+
+                    if (obj != null)
+                    {
+                        if (obj.TryMove(step, this))
+                        {
+                            _targetPosition = _targetPosition + step;
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    _targetPosition = _targetPosition + step;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public string Name
         {
             get
@@ -23,69 +124,12 @@ namespace Cirrus.Gembalaya.Objects
             }
         }
 
-        [SerializeField]
-        private List<Tag> _tags;
-
-        public IEnumerable<Tag> Tags
+        public virtual void FixedUpdate()
         {
-            get
-            {
-                return _tags;
-            }
-        }
+            transform.position = Vector3.Lerp(transform.position, _targetPosition, _stepSpeed);
 
-
-        [SerializeField]
-        private List<Object> _lists;
-
-
-        [SerializeField]
-        public ObjectPhysic Physic;
-
-
-
-
-        [HideInInspector]
-        public Vector3 StartPosition;
-
-
-        public OnObjectCollided OnObjectCollidedHandler;
-
-        [SerializeField]
-        private UnityEngine.AI.NavMeshModifierVolume _navMeshModifierVolume;
-        public UnityEngine.AI.NavMeshModifierVolume NavMeshModifierVolume { get { return _navMeshModifierVolume; } }
-
-        protected virtual void Awake()
-        {
-            StartPosition = transform.position;
-            foreach (IList<BaseObject> list in _lists)
-            {
-                if (list != null)
-                    list.Add(this);
-            }
-        }
-
-
-        // TODO: remove cap by player speed for push (suppor
-        public virtual void OnObjectCollision(BaseObject other)
-        {
-            // calculate force vector
-            var force = transform.position - other.transform.position;
-            // normalize force vector to get direction only and trim magnitude
-            force.Normalize();
-
-            Physic.MoveVelocity += force * other.Physic.PushCoefficient * other.Physic.Mass;
-
-            OnObjectCollidedHandler?.Invoke(other);
-        }
-
-
-        public virtual void OnValidate()
-        {
-            if (Physic == null)
-            {
-                Physic = GetComponent<ObjectPhysic>();
-            }
+            float scale = Mathf.Lerp(transform.localScale.x, _targetScale, _scaleSpeeed);
+            transform.localScale = new Vector3(scale, scale, scale);
         }
     }
 }

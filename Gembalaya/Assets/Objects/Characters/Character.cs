@@ -4,6 +4,7 @@ using Cirrus.Gembalaya.Objects.Characters.Controls;
 //using Cirrus.Gembalaya.UI.HUD;
 //using Cirrus.Gembalaya.Objects.Characters.Strategies;
 using KinematicCharacterController;
+using System.Collections;
 using UnityEngine;
 //using Cirrus.Gembalaya.Actions;
 //using Cirrus.Gembalaya.Conditions;
@@ -23,106 +24,115 @@ namespace Cirrus.Gembalaya.Objects.Characters
     public class Character : BaseObject
     {
         [SerializeField]
-        public Axes Axes;
-
+        private Color _color = Color.red;
 
         [SerializeField]
-        public Controls.Controller Controller;
+        private Guide _guide;
+
+        [SerializeField]
+        public float _rotationSpeed = 0.6f;
+
+        [SerializeField]
+        public Axes Axes;
 
         [SerializeField]
         public Animator Animator;
 
+        private Vector3 _targetDirection = Vector3.zero;
 
-        [SerializeField]
-        private Movements.MovementUser _movement;
-        public Movements.MovementUser Movement { get { return _movement; } }
+        private Vector3 _direction = Vector3.zero;
+
+        private bool _wasMovingVertical = false;
 
 
-        [SerializeField]
-        private Cirrus.FSM.Machine _fsm;
-        public Cirrus.FSM.Machine FSM { get { return _fsm; } }
-        public FSM.State State { get { return ((FSM.State)FSM.Top); } }
-
+        
 
         protected override void Awake()
         {
             base.Awake();
-            FSM.SetContext(this, 0);
-            FSM.SetContext(_movement, 1);
-            FSM.SetContext(Controller, 2);
+            
+            
         }       
-
-
+        
         protected void Start()
         {
-            //base.Start();
-            FSM.Start();
+
         }
 
         public void Update()
         {
-            FSM.DoUpdate();
-        }
 
-        protected void OnDrawGizmos()
-        {
-            //This is why we need FSM to be a MonoBehaviour of its own (Sorry mom) TODO: change back from class to monobehaviour
-            FSM.OnDrawGizmos();
         }
-
-  
+         
         public void Jump()
         {
-            State.Jump();
+            
         }
 
 
-
-        #region Kinematic Character Controller
-
-        public void AfterCharacterUpdate(float deltaTime)
+        public override bool TryEnter()
         {
-            State.AfterCharacterUpdate(deltaTime);
+            return false;
         }
 
 
-        public void OnGroundHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport)
+        // Use the same raycast to show guide.
+        public void Move(Vector2 axis)
         {
-            State.OnGroundHit(hitCollider, hitNormal, hitPoint, ref hitStabilityReport);
+            bool isMovingHorizontal = Mathf.Abs(axis.x) > 0.5f;
+            bool isMovingVertical = Mathf.Abs(axis.y) > 0.5f;
+
+            if (isMovingVertical && isMovingHorizontal)
+            {
+                //moving in both directions, prioritize later
+                if (_wasMovingVertical)
+                {
+                    Vector3 step = new Vector3(_stepDistance * Mathf.Sign(axis.x), 0, 0);
+
+                    if (TryMove(step))
+                    {
+                        _guide.Show(step);
+                    }
+                }
+                else
+                {
+                    Vector3 step = new Vector3(0, 0, _stepDistance * Mathf.Sign(axis.y));
+
+                    if (TryMove(step))
+                    {
+                        _guide.Show(step);
+                    }
+                }
+            }
+            else if (isMovingHorizontal)
+            {
+                Vector3 step = new Vector3(_stepDistance * Mathf.Sign(axis.x), 0, 0);
+
+                if (TryMove(step))
+                {
+                    _guide.Show(step);
+                    _wasMovingVertical = false;
+                }
+            }
+            else if (isMovingVertical)
+            {
+                Vector3 step = new Vector3(0, 0, _stepDistance * Mathf.Sign(axis.y));
+
+                if (TryMove(step))
+                {
+                    _guide.Show(step);
+                    _wasMovingVertical = true;
+                }
+            }
+                        
+            // Smoothly interpolate from current to target look direction  
+            _targetDirection = new Vector3(axis.x, 0.0f, axis.y);
+            _direction = Vector3.Lerp(_direction, _targetDirection, _rotationSpeed).normalized;
+
+
+            if (_direction != Vector3.zero)
+                transform.rotation = Quaternion.LookRotation(_direction, transform.up);
         }
-
-        public void BeforeCharacterUpdate(float deltaTime)
-        {
-            State.BeforeCharacterUpdate(deltaTime);
-        }
-
-        public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport)
-        {
-            State.OnMovementHit(hitCollider, hitNormal, hitPoint, ref hitStabilityReport);
-        }
-
-        public void PostGroundingUpdate(float deltaTime)
-        {
-            State.PostGroundingUpdate(deltaTime);
-        }
-
-        public void ProcessHitStabilityReport(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, Vector3 atCharacterPosition, Quaternion atCharacterRotation, ref HitStabilityReport hitStabilityReport)
-        {
-            State.ProcessHitStabilityReport(hitCollider, hitNormal, hitPoint, atCharacterPosition, atCharacterRotation, ref hitStabilityReport);
-        }
-
-        public void UpdateRotation(ref Quaternion currentRotation, float deltaTime)
-        {
-            State.UpdateRotation(ref currentRotation, deltaTime);
-        }
-
-        public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
-        {
-            State.UpdateVelocity(ref currentVelocity, deltaTime);
-        }
-
-
-#endregion
 
     }
 
