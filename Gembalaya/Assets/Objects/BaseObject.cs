@@ -11,6 +11,11 @@ namespace Cirrus.Gembalaya.Objects
 {
     public delegate void OnObjectCollided(BaseObject other);
 
+    public class Status
+    {
+        public int GuideTileCount = 0;
+
+    }
     public abstract class BaseObject : MonoBehaviour
     {
         [SerializeField]
@@ -46,7 +51,7 @@ namespace Cirrus.Gembalaya.Objects
             return true;
         }
 
-        public virtual bool TryShowGuide(Vector3 step, BaseObject incoming = null)
+        public virtual bool TryMove(Vector3 step, Status stat=null, BaseObject incoming = null)
         {
             if
                 (!_busy &&
@@ -63,42 +68,9 @@ namespace Cirrus.Gembalaya.Objects
 
                     if (obj != null)
                     {
-                        if (obj.TryShowGuide(step, this))
+                        if (obj.TryMove(step, stat, this))
                         {
-                            //_targetPosition = _targetPosition + step;
-                            return true;
-                        }
-                    }
-                }
-                else
-                {
-                    //_targetPosition = _targetPosition + step;
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public virtual bool TryMove(Vector3 step, BaseObject incoming = null)
-        {
-            if
-                (!_busy &&
-                Utils.Vectors.CloseEnough(transform.position, _targetPosition))
-            {
-                if (
-                    Physics.Raycast(
-                        _targetPosition + Vector3.up,
-                        step,
-                        out RaycastHit hit,
-                        Levels.Level.CubeSize / 2))
-                {
-                    BaseObject obj = hit.collider.GetComponent<BaseObject>();
-
-                    if (obj != null)
-                    {
-                        if (obj.TryMove(step, this))
-                        {
+                            stat.GuideTileCount++;
                             _targetPosition = _targetPosition + step;
                             return true;
                         }

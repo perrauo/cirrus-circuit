@@ -14,9 +14,12 @@ namespace Cirrus.Gembalaya.Objects.Characters
         private List<GameObject> _squares;
 
 
-        public void Show(Vector3 step)
+        public void Show(Vector3 step, int count)
         {
-
+            for (int i = 0; i < count; i++)
+            {
+                Instantiate(_squareTemplate, transform.position + step * i, Quaternion.identity, transform);
+            }
         }
 
     }

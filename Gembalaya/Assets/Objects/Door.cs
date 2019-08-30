@@ -24,7 +24,7 @@ namespace Cirrus.Gembalaya.Objects
                 _punchScaleTime);
         }
 
-        public override bool TryMove(Vector3 step, BaseObject incoming = null)
+        public override bool TryMove(Vector3 step, Status stat = null, BaseObject incoming = null)
         {
             if (incoming != null && incoming.TryEnter())
             {

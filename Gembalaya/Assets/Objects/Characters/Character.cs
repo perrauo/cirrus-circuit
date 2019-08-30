@@ -76,51 +76,51 @@ namespace Cirrus.Gembalaya.Objects.Characters
         }
 
 
-        // Use the same raycast to show guide.
+        // Use the same raycast to show guide
         public void Move(Vector2 axis)
         {
             bool isMovingHorizontal = Mathf.Abs(axis.x) > 0.5f;
             bool isMovingVertical = Mathf.Abs(axis.y) > 0.5f;
+
+            Vector3 stepHorizontal = new Vector3(_stepDistance * Mathf.Sign(axis.x), 0, 0);
+            Vector3 stepVertical = new Vector3(0, 0, _stepDistance * Mathf.Sign(axis.y));
+
+            Status stat = new Status();
+
 
             if (isMovingVertical && isMovingHorizontal)
             {
                 //moving in both directions, prioritize later
                 if (_wasMovingVertical)
                 {
-                    Vector3 step = new Vector3(_stepDistance * Mathf.Sign(axis.x), 0, 0);
-
-                    if (TryMove(step))
+                    if (TryMove(stepHorizontal, stat))
                     {
-                        _guide.Show(step);
+                        _guide.Show(stepHorizontal, stat.GuideTileCount);
                     }
                 }
                 else
                 {
-                    Vector3 step = new Vector3(0, 0, _stepDistance * Mathf.Sign(axis.y));
-
-                    if (TryMove(step))
+                    if (TryMove(stepVertical, stat))
                     {
-                        _guide.Show(step);
+                        _guide.Show(stepVertical, stat.GuideTileCount);
                     }
                 }
             }
             else if (isMovingHorizontal)
             {
-                Vector3 step = new Vector3(_stepDistance * Mathf.Sign(axis.x), 0, 0);
-
-                if (TryMove(step))
+                if (TryMove(stepHorizontal, stat))
                 {
-                    _guide.Show(step);
+                    _guide.Show(stepHorizontal, stat.GuideTileCount);
                     _wasMovingVertical = false;
                 }
             }
             else if (isMovingVertical)
             {
-                Vector3 step = new Vector3(0, 0, _stepDistance * Mathf.Sign(axis.y));
+                
 
-                if (TryMove(step))
+                if (TryMove(stepVertical, stat))
                 {
-                    _guide.Show(step);
+                    _guide.Show(stepVertical, stat.GuideTileCount);
                     _wasMovingVertical = true;
                 }
             }
@@ -131,7 +131,7 @@ namespace Cirrus.Gembalaya.Objects.Characters
 
 
             if (_direction != Vector3.zero)
-                transform.rotation = Quaternion.LookRotation(_direction, transform.up);
+                _visual.transform.rotation = Quaternion.LookRotation(_direction, transform.up);
         }
 
     }

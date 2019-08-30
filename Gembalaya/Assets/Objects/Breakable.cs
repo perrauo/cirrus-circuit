@@ -8,7 +8,7 @@ namespace Cirrus.Gembalaya.Objects
     public class Breakable : BaseObject
     {
 
-        public override bool TryMove(Vector3 step, BaseObject neighbour = null)
+        public override bool TryMove(Vector3 step, Status stat = null, BaseObject incoming = null)
         {
             return false;
         }
