@@ -8,9 +8,14 @@ namespace Cirrus.Gembalaya.Objects
     public class Solid : BaseObject
     {
 
-        public override bool TryMove(Vector3 step, Status stat = null, BaseObject incoming = null)
+        public override bool TryMove(Vector3 step, BaseObject incoming = null)
         {
-            return false;
+            switch (incoming.Id)
+            {
+                default:
+                    return false;
+
+            }
         }
 
         // Start is called before the first frame update

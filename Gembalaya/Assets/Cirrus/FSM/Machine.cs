@@ -119,11 +119,26 @@ namespace Cirrus.FSM
             if (Top != null)
             {
                 _mutex.WaitOne();
-                Top.BeginTick();
-                Top.EndTick();
+                Top.BeginUpdate();
+                Top.EndUpdate();
                 _mutex.ReleaseMutex();
             }
         }
+
+        public void DoFixedUpdate()
+        {
+            if (!_enabled)
+                return;
+
+            if (Top != null)
+            {
+                _mutex.WaitOne();
+                Top.BeginUpdate();
+                Top.EndUpdate();
+                _mutex.ReleaseMutex();
+            }
+        }
+
 
         public void OnDrawGizmos()
         {

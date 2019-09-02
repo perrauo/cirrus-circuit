@@ -10,7 +10,8 @@ namespace Cirrus.Gembalaya
     public class Layers
     {
         //public int 
-
+        public int MoveableFlags = 1 << LayerMask.NameToLayer("Moveable");
+        public int SolidFlags = 1 << LayerMask.NameToLayer("Solid");
         public int Moveable = LayerMask.NameToLayer("Moveable");
         public int Solid = LayerMask.NameToLayer("Solid");
     }

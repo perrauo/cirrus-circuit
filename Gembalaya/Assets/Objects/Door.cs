@@ -24,20 +24,33 @@ namespace Cirrus.Gembalaya.Objects
                 _punchScaleTime);
         }
 
-        public override bool TryMove(Vector3 step, Status stat = null, BaseObject incoming = null)
+        public override bool TryMove(Vector3 step, BaseObject incoming = null)
         {
-            if (incoming != null && incoming.TryEnter())
+
+            switch (incoming.Id)
             {
-                iTween.Init(gameObject);
-                iTween.Stop(gameObject);
-                transform.localScale = new Vector3(1, 1, 1);
+                case ObjectId.Gem:
+                    iTween.Init(gameObject);
+                    iTween.Stop(gameObject);
+                    transform.localScale = new Vector3(1, 1, 1);
+                    StartCoroutine(PunchScale());
+                    return true;
 
-                StartCoroutine(PunchScale());
+                case ObjectId.Character:
+                    return false;
+                default:
+                    return false;
 
-                return true;
             }
 
-            return false;
         }
+
+        public override bool Accept(BaseObject incoming)
+        {
+            incoming._targetScale = 0;
+            incoming.Enter();
+            return true;
+        }
+
     }
 }

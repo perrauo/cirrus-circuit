@@ -14,8 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _visual: {fileID: 5394711617532725167}
   _collider: {fileID: 5771065253961074755}
+  _stateMachine: {fileID: 9150208550418520703}
+  _step: {x: 0, y: 0, z: 0}
+  _targetPosition: {x: 0, y: 0, z: 0}
+  _targetScale: 1
   _stepDistance: 2
   _stepSpeed: 0.6
+  _fallDistance: 2
+  _scaleSpeed: 0.6
   _rotateSpeed: 20
 --- !u!1 &5394711617532725167
 GameObject:
@@ -28,7 +34,7 @@ GameObject:
   - component: {fileID: 2110278893278158216}
   - component: {fileID: 2796067675846627509}
   - component: {fileID: 9145764566440963874}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -102,15 +108,20 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 9210876273549565428, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+    - target: {fileID: 5852841529885708232, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
+      propertyPath: _object
+      value: 
+      objectReference: {fileID: 3414028743261332940}
     - target: {fileID: 8829410553811671551, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
       propertyPath: m_Name
       value: Gem
+      objectReference: {fileID: 0}
+    - target: {fileID: 8829410553811671551, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 1819615786462522110, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
@@ -167,10 +178,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8902037803306242776, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1990478567839656891, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: _object
+      value: 
+      objectReference: {fileID: 3414028743261332940}
     - target: {fileID: 5639237576735248665, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5639237576735248665, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 9210876273549565428, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 06d9e1aa028280e4c97369fef81e3fdc, type: 3}
@@ -192,3 +223,15 @@ BoxCollider:
     type: 3}
   m_PrefabInstance: {fileID: 3442274514213131703}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &9150208550418520703 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5852841529885708232, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+    type: 3}
+  m_PrefabInstance: {fileID: 3442274514213131703}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6075090199172810607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfd4e8324eadedf48b972ff97f261cea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

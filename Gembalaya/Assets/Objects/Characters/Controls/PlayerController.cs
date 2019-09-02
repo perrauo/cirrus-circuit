@@ -57,7 +57,7 @@ namespace Cirrus.Gembalaya.Objects.Characters.Controls
 
             var axis = Vector2.ClampMagnitude(val, 1);
 
-            _character.Move(axis);
+            _character.TryMove(axis);
         }
 
 

@@ -6,6 +6,8 @@ namespace Cirrus.Gembalaya.Objects
 {
     public class Gem : BaseObject
     {
+        public override ObjectId Id { get { return ObjectId.Gem; } }
+
         [SerializeField]
         private float _rotateSpeed = 0.6f;
 
@@ -17,5 +19,6 @@ namespace Cirrus.Gembalaya.Objects
 
             _visual.transform.Rotate(Vector3.right * Time.deltaTime * _rotateSpeed);
         }
+
     }
 }

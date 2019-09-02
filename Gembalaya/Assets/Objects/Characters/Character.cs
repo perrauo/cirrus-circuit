@@ -23,6 +23,8 @@ namespace Cirrus.Gembalaya.Objects.Characters
 
     public class Character : BaseObject
     {
+        public override ObjectId Id { get { return ObjectId.Character; } }
+
         [SerializeField]
         private Color _color = Color.red;
 
@@ -44,40 +46,13 @@ namespace Cirrus.Gembalaya.Objects.Characters
 
         private bool _wasMovingVertical = false;
 
-
-        
-
         protected override void Awake()
         {
             base.Awake();
-            
-            
         }       
         
-        protected void Start()
-        {
-
-        }
-
-        public void Update()
-        {
-
-        }
-         
-        public void Jump()
-        {
-            
-        }
-
-
-        public override bool TryEnter()
-        {
-            return false;
-        }
-
-
         // Use the same raycast to show guide
-        public void Move(Vector2 axis)
+        public void TryMove(Vector2 axis)
         {
             bool isMovingHorizontal = Mathf.Abs(axis.x) > 0.5f;
             bool isMovingVertical = Mathf.Abs(axis.y) > 0.5f;
@@ -85,22 +60,19 @@ namespace Cirrus.Gembalaya.Objects.Characters
             Vector3 stepHorizontal = new Vector3(_stepDistance * Mathf.Sign(axis.x), 0, 0);
             Vector3 stepVertical = new Vector3(0, 0, _stepDistance * Mathf.Sign(axis.y));
 
-            Status stat = new Status();
-
-
             if (isMovingVertical && isMovingHorizontal)
             {
                 //moving in both directions, prioritize later
                 if (_wasMovingVertical)
                 {
-                    if (TryMove(stepHorizontal, stat))
+                    if (base.TryMove(stepHorizontal))
                     {
                         _guide.Show(stepHorizontal);
                     }
                 }
                 else
                 {
-                    if (TryMove(stepVertical, stat))
+                    if (base.TryMove(stepVertical))
                     {
                         _guide.Show(stepVertical);
                     }
@@ -108,7 +80,7 @@ namespace Cirrus.Gembalaya.Objects.Characters
             }
             else if (isMovingHorizontal)
             {
-                if (TryMove(stepHorizontal, stat))
+                if (base.TryMove(stepHorizontal))
                 {
                     _guide.Show(stepHorizontal);
                     _wasMovingVertical = false;
@@ -116,11 +88,8 @@ namespace Cirrus.Gembalaya.Objects.Characters
             }
             else if (isMovingVertical)
             {
-                
-
-                if (TryMove(stepVertical, stat))
+                if (base.TryMove(stepVertical))
                 {
-                    
                     _guide.Show(stepVertical);
                     _wasMovingVertical = true;
                 }
@@ -133,6 +102,11 @@ namespace Cirrus.Gembalaya.Objects.Characters
 
             if (_direction != Vector3.zero)
                 _visual.transform.rotation = Quaternion.LookRotation(_direction, transform.up);
+        }
+
+        public override void Fall()
+        {
+            
         }
 
     }

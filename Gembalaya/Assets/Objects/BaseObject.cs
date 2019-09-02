@@ -9,86 +9,55 @@ using Cirrus.Tags;
 
 namespace Cirrus.Gembalaya.Objects
 {
-    public delegate void OnObjectCollided(BaseObject other);
+    //public delegate void OnMoved();
 
-    public class Status
+    public abstract partial class BaseObject : MonoBehaviour
     {
-        public int GuideTileCount = 0;
-    }
+        public enum ObjectId
+        {
+            Default,
+            Character,
+            Gem,
+            Door,
+        }
 
-    public abstract class BaseObject : MonoBehaviour
-    {
+        public virtual ObjectId Id { get { return ObjectId.Default; } }
+
+
         [SerializeField]
         protected GameObject _visual;
 
         [SerializeField]
-        protected Collider _collider;
+        public Collider _collider;
 
         [SerializeField]
-        protected float _stepDistance = 2f;
+        protected StateMachine _stateMachine;
 
         [SerializeField]
-        protected float _stepSpeed = 0.6f;
+        public float _stepDistance = 2f;
 
-        protected Vector3 _targetPosition;
+        [SerializeField]
+        public float _stepSpeed = 0.6f;
 
-        protected float _targetScale = 1;
+        [SerializeField]
+        public float _fallSpeed = 0.6f;
 
-        protected float _scaleSpeeed = 0.6f;
+        [SerializeField]
+        public float _fallDistance = 100f;
 
-        public bool _busy = false;
+        [SerializeField]
+        public float _scaleSpeed = 0.6f;
 
-        protected virtual void Awake()
-        {
-            _targetPosition = transform.position;
-        }
+        public BaseObject _destination = null;
 
-        public virtual bool TryEnter()
-        {
-            _busy = true;
-            _collider.enabled = false;
-            _targetScale = 0;
-            return true;
-        }
+        public Vector3 _step;
 
-        public virtual bool TryMove(Vector3 step, Status stat=null, BaseObject incoming = null)
-        {
-            if
-                (!_busy &&
-                Utils.Vectors.CloseEnough(transform.position, _targetPosition))
-            {
-                if (
-                    Physics.Raycast(
-                        _targetPosition + Vector3.up,
-                        step,
-                        out RaycastHit hit,
-                        Levels.Level.CubeSize / 2))
-                {
-                    BaseObject obj = hit.collider.GetComponent<BaseObject>();
+        public Vector3 _targetPosition;
 
-                    if (obj != null)
-                    {
-                        if (obj.TryMove(step, stat, this))
-                        {
-                            stat.GuideTileCount++;
-                            _targetPosition = _targetPosition + step;
-                            return true;
-                        }
-                    }
-                }
-                else
-                {
-                    _targetPosition = _targetPosition + step;
-                    return true;
-                }
-            }
-            else
-            {
-                // TODO handle guide count
-            }
+        public float _targetScale = 1;
 
-            return false;
-        }
+        //public OnMoved OnMovedHandler;
+
 
         public string Name
         {
@@ -100,12 +69,43 @@ namespace Cirrus.Gembalaya.Objects
             }
         }
 
+        protected virtual void Awake()
+        {
+            _targetPosition = transform.position;
+            _targetScale = 1f;
+        }
+
+        public virtual void Start()
+        {
+            
+        }
+
         public virtual void FixedUpdate()
         {
-            transform.position = Vector3.Lerp(transform.position, _targetPosition, _stepSpeed);
 
-            float scale = Mathf.Lerp(transform.localScale.x, _targetScale, _scaleSpeeed);
-            transform.localScale = new Vector3(scale, scale, scale);
         }
+
+
+        public virtual bool TryMove(Vector3 step, BaseObject incoming = null)
+        {
+            return _stateMachine.TryChangeState(StateMachine.State.Moving, step, incoming);
+        }
+
+        // If two items can cooexist
+        public virtual bool Accept(BaseObject incoming)
+        {
+            return false;
+        }
+
+        public virtual void Fall()
+        {
+            _stateMachine.TryChangeState(StateMachine.State.Falling);
+        }
+
+        public virtual bool Enter()//Vector3 step, BaseObject incoming = null)
+        {
+            return _stateMachine.TryChangeState(StateMachine.State.Entering);
+        }
+
     }
 }

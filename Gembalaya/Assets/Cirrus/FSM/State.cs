@@ -21,8 +21,12 @@ namespace Cirrus.FSM
         public virtual void Exit() { }
         public virtual void Reenter(params object[] args) { }
 
-        public virtual void BeginTick() { }
-        public virtual void EndTick() { }
+        public virtual void BeginUpdate() { }
+        public virtual void EndUpdate() { }
+
+        public virtual void BeginFixedUpdate() { }
+        public virtual void EndFixedUpdate() { }
+
         virtual public void OnDrawGizmos() { }
 
         //[SerializeField]

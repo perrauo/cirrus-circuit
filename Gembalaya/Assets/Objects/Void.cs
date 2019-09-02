@@ -6,9 +6,18 @@ namespace Cirrus.Gembalaya.Objects
 {
     public class Void : BaseObject
     {
-        public override bool TryMove(Vector3 step, Status stat = null, BaseObject incoming = null)
+        public override bool TryMove(Vector3 step, BaseObject incoming = null)
         {
-            return false;
+            switch (incoming.Id)
+            {
+                case ObjectId.Gem:
+                    return true;
+                case ObjectId.Character:
+                    return false;
+                default:
+                    return false;
+
+            }
         }
 
 
@@ -17,6 +26,12 @@ namespace Cirrus.Gembalaya.Objects
             base.Awake();
 
             _visual.gameObject.SetActive(false);
+        }
+
+        public override bool Accept(BaseObject incoming)
+        {
+            incoming.Fall();
+            return true;
         }
     }
 }
