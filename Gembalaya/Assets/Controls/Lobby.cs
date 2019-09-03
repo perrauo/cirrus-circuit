@@ -12,19 +12,22 @@ namespace Cirrus.Gembalaya.Controls
         [SerializeField]
         public Controller[] Players;
 
-        public const int MaxPlayers = 4;
+        public const int PlayerCount = 4;
 
         public void Awake()
         {
-            Players = new Controller[MaxPlayers];
+            Players = new Controller[PlayerCount];
         }
 
 
         // Update is called once per frame
         public void Start()
         {
-                       
-            
+            for (var i = 0; i < PlayerCount; i++)
+            {
+                Players[i] = new Controller();
+            }
+
             Inputs.Users.InputUser.onUnpairedDeviceUsed += OnUnpairedInputDeviceUsed;
             //Inputs.Users.InputUser.
         }
@@ -43,6 +46,10 @@ namespace Cirrus.Gembalaya.Controls
                 //        return;
                 //    }
                 //}
+            }
+            else if(control.device is Keyboard)
+            {
+
             }
         }
 

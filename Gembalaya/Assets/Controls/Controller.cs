@@ -18,10 +18,10 @@ using UnityInput = UnityEngine.InputSystem;
 
 namespace Cirrus.Gembalaya.Controls
 {
-    public class Controller : MonoBehaviour, Schema.IPlayerActions
+    public class Controller : Schema.IPlayerActions
     {
         [SerializeField]
-        UnityInput.InputActionAsset _inputActions;
+        public UnityInput.Users.InputUser _user;
 
         [SerializeField]
         public Schema _schema;
@@ -33,11 +33,13 @@ namespace Cirrus.Gembalaya.Controls
         [SerializeField]
         private Objects.Characters.Character _character;
 
-        public void Awake()
+        public Controller()
         {
+            _user = UnityInput.Users.InputUser.CreateUserWithoutPairedDevices();
             _schema = new Schema();
+            _user.AssociateActionsWithUser(_schema);
             Enable();
-        }
+        }         
 
         public void Enable(bool enabled = true)
         {
