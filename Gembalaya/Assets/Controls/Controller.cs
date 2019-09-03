@@ -16,10 +16,13 @@ using UnityInput = UnityEngine.InputSystem;
 
 
 
-namespace Cirrus.Gembalaya.Objects.Characters.Controls
+namespace Cirrus.Gembalaya.Controls
 {
-    public class PlayerController : MonoBehaviour, Schema.IPlayerActions
+    public class Controller : MonoBehaviour, Schema.IPlayerActions
     {
+        [SerializeField]
+        UnityInput.InputActionAsset _inputActions;
+
         [SerializeField]
         public Schema _schema;
 
@@ -28,7 +31,7 @@ namespace Cirrus.Gembalaya.Objects.Characters.Controls
         public Schema.PlayerActions Actions { get { return _schema.Player; } }
 
         [SerializeField]
-        private Character _character;
+        private Objects.Characters.Character _character;
 
         public void Awake()
         {

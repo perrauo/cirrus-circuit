@@ -32,11 +32,6 @@ namespace Cirrus.Gembalaya
         }
 
 
-        [SerializeField]
-        public PlayerController[] Players;
-
-
-
         public Layers Layers;
 
 

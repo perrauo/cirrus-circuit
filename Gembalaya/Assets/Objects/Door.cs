@@ -47,7 +47,6 @@ namespace Cirrus.Gembalaya.Objects
 
         public override bool Accept(BaseObject incoming)
         {
-            incoming._targetScale = 0;
             incoming.Enter();
             return true;
         }

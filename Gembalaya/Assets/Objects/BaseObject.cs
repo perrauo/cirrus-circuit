@@ -23,7 +23,6 @@ namespace Cirrus.Gembalaya.Objects
 
         public virtual ObjectId Id { get { return ObjectId.Default; } }
 
-
         [SerializeField]
         protected GameObject _visual;
 
@@ -56,9 +55,6 @@ namespace Cirrus.Gembalaya.Objects
 
         public float _targetScale = 1;
 
-        //public OnMoved OnMovedHandler;
-
-
         public string Name
         {
             get
@@ -84,7 +80,6 @@ namespace Cirrus.Gembalaya.Objects
         {
 
         }
-
 
         public virtual bool TryMove(Vector3 step, BaseObject incoming = null)
         {

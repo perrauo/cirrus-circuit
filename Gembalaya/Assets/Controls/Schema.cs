@@ -74,7 +74,43 @@ namespace Cirrus.Gembalaya.Controls
                     ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Keyboard"",
+                    ""action"": ""Axes.Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true,
+                    ""modifiers"": """"
+                },
+                {
+                    ""name"": ""Right"",
+                    ""id"": ""b7f5620c-4284-402e-8aa3-a784d23bd569"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Axes.Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true,
+                    ""modifiers"": """"
+                },
+                {
+                    ""name"": ""Left"",
+                    ""id"": ""56da0287-c546-4d00-a1df-c4d2cb520c8e"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Axes.Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true,
+                    ""modifiers"": """"
+                },
+                {
+                    ""name"": ""Down"",
+                    ""id"": ""e78a1cdf-3f0f-430f-8f9c-7ef9fb065121"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true,
@@ -98,7 +134,7 @@ namespace Cirrus.Gembalaya.Controls
                     ""path"": ""<Gamepad>/dpad/up"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true,
@@ -110,7 +146,7 @@ namespace Cirrus.Gembalaya.Controls
                     ""path"": ""<Gamepad>/dpad/down"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true,
@@ -122,7 +158,7 @@ namespace Cirrus.Gembalaya.Controls
                     ""path"": ""<Gamepad>/dpad/left"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true,
@@ -134,43 +170,7 @@ namespace Cirrus.Gembalaya.Controls
                     ""path"": ""<Gamepad>/dpad/right"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Axes.Left"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
-                },
-                {
-                    ""name"": ""Down"",
-                    ""id"": ""e78a1cdf-3f0f-430f-8f9c-7ef9fb065121"",
-                    ""path"": ""<Keyboard>/s"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Axes.Left"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
-                },
-                {
-                    ""name"": ""Left"",
-                    ""id"": ""56da0287-c546-4d00-a1df-c4d2cb520c8e"",
-                    ""path"": ""<Keyboard>/a"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Axes.Left"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
-                },
-                {
-                    ""name"": ""Right"",
-                    ""id"": ""b7f5620c-4284-402e-8aa3-a784d23bd569"",
-                    ""path"": ""<Keyboard>/d"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true,
@@ -194,7 +194,7 @@ namespace Cirrus.Gembalaya.Controls
                     ""path"": ""<Keyboard>/upArrow"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Keyboard"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true,
@@ -206,7 +206,7 @@ namespace Cirrus.Gembalaya.Controls
                     ""path"": ""<Keyboard>/downArrow"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Keyboard"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true,
@@ -218,7 +218,7 @@ namespace Cirrus.Gembalaya.Controls
                     ""path"": ""<Keyboard>/leftArrow"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Keyboard"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true,
@@ -230,7 +230,7 @@ namespace Cirrus.Gembalaya.Controls
                     ""path"": ""<Keyboard>/rightArrow"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Keyboard"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true,
@@ -242,7 +242,7 @@ namespace Cirrus.Gembalaya.Controls
                     ""path"": ""<Gamepad>/leftStick"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false,
@@ -254,7 +254,7 @@ namespace Cirrus.Gembalaya.Controls
                     ""path"": ""<Keyboard>/space"",
                     ""interactions"": ""Press"",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Keyboard"",
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false,
@@ -266,7 +266,7 @@ namespace Cirrus.Gembalaya.Controls
                     ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": ""Press"",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false,
@@ -278,7 +278,7 @@ namespace Cirrus.Gembalaya.Controls
                     ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""Axes.Right"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false,
@@ -287,7 +287,37 @@ namespace Cirrus.Gembalaya.Controls
             ]
         }
     ],
-    ""controlSchemes"": []
+    ""controlSchemes"": [
+        {
+            ""name"": ""Keyboard"",
+            ""basedOn"": """",
+            ""bindingGroup"": ""Keyboard"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<Keyboard>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                },
+                {
+                    ""devicePath"": ""<Mouse>"",
+                    ""isOptional"": true,
+                    ""isOR"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Gamepad"",
+            ""basedOn"": """",
+            ""bindingGroup"": ""Gamepad"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<Gamepad>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
+        }
+    ]
 }");
             // Player
             m_Player = asset.GetActionMap("Player");
@@ -396,6 +426,24 @@ namespace Cirrus.Gembalaya.Controls
             get
             {
                 return new PlayerActions(this);
+            }
+        }
+        private int m_KeyboardSchemeIndex = -1;
+        public InputControlScheme KeyboardScheme
+        {
+            get
+            {
+                if (m_KeyboardSchemeIndex == -1) m_KeyboardSchemeIndex = asset.GetControlSchemeIndex("Keyboard");
+                return asset.controlSchemes[m_KeyboardSchemeIndex];
+            }
+        }
+        private int m_GamepadSchemeIndex = -1;
+        public InputControlScheme GamepadScheme
+        {
+            get
+            {
+                if (m_GamepadSchemeIndex == -1) m_GamepadSchemeIndex = asset.GetControlSchemeIndex("Gamepad");
+                return asset.controlSchemes[m_GamepadSchemeIndex];
             }
         }
         public interface IPlayerActions

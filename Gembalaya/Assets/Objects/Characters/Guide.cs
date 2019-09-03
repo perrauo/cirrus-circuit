@@ -10,6 +10,9 @@ namespace Cirrus.Gembalaya.Objects.Characters
         [SerializeField]
         private GameObject _squareTemplate;
 
+        [SerializeField]
+        private SpriteRenderer _templateSpriteRenderer;
+
         // square pool
         private List<GameObject> _squares;
 
@@ -17,7 +20,11 @@ namespace Cirrus.Gembalaya.Objects.Characters
         private Collections.GameObjectPool _pool;
 
         [SerializeField]
-        private int _poolSize = 10;//.GameObjectPool _pool;
+        private int _poolSize = 10;
+
+
+        [SerializeField]
+        private float _alpha = 0.6f;
 
         private float _raycastDistance = 100f;
 
@@ -27,6 +34,24 @@ namespace Cirrus.Gembalaya.Objects.Characters
             _squares = new List<GameObject>();
             _pool = new Collections.GameObjectPool(_squareTemplate, _poolSize);
         }
+
+        private Color _color;
+
+        public Color Color
+        {
+            get
+            {
+                return _color;
+            }
+
+            set
+            {
+                _color = value;
+                _color.a = _alpha;
+                _templateSpriteRenderer.color = _color;
+            }
+        }
+
 
         // Show count from here
         // raycast ignore moveable 

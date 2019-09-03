@@ -46,9 +46,16 @@ namespace Cirrus.Gembalaya.Objects.Characters
 
         private bool _wasMovingVertical = false;
 
+        public void OnValidate()
+        {
+
+            if(_guide != null)
+            _guide.Color = _color;
+        }
+
         protected override void Awake()
         {
-            base.Awake();
+            base.Awake(); 
         }       
         
         // Use the same raycast to show guide
