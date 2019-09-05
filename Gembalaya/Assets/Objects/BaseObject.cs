@@ -55,6 +55,27 @@ namespace Cirrus.GemCircuit.Objects
 
         public float _targetScale = 1;
 
+        [SerializeField]
+        protected Controls.PlayerNumber _playerNumber;
+
+        protected Color _color;
+
+        public virtual Color Color
+        {
+            get
+            {
+                return _color;
+            }
+
+            set
+            {
+                _color = value;
+
+                if(_visual != null)
+                    _visual.Color = _color;
+            }
+        }
+
         public string Name
         {
             get

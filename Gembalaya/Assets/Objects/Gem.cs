@@ -13,22 +13,6 @@ namespace Cirrus.GemCircuit.Objects
 
         public Controls.PlayerNumber PlayerNumber;
 
-        private Color _color;
-
-        public Color Color
-        {
-            get
-            {
-                return _color;
-            }
-
-            set
-            {
-                _color = value;
-                _visual.Color = _color;
-            }
-        }
-
         // Update is called once per frame
         public override void FixedUpdate()
         {

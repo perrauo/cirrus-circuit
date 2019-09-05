@@ -11,9 +11,6 @@ namespace Cirrus.GemCircuit.Objects
 
         private float _punchScaleTime = 0.5f;
 
-        [SerializeField]
-        private GemCircuit.Controls.PlayerNumber _playerNumber;
-
         IEnumerator PunchScale()
         {
             iTween.Stop(gameObject);

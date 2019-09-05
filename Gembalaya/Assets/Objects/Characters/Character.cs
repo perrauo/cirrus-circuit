@@ -23,11 +23,6 @@ namespace Cirrus.GemCircuit.Objects.Characters
         public override ObjectId Id { get { return ObjectId.Character; } }
 
         [SerializeField]
-        private GemCircuit.Controls.PlayerNumber _playerNumber;
-
-        private Color _color;// = Color.red;
-
-        [SerializeField]
         private Guide _guide;
 
         [SerializeField]
@@ -46,7 +41,7 @@ namespace Cirrus.GemCircuit.Objects.Characters
         private bool _wasMovingVertical = false;
 
 
-        public Color Color {
+        public override Color Color {
 
             get
             {
