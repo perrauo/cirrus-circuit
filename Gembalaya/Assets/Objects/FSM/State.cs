@@ -8,7 +8,7 @@
 
 //// Character state
 
-//namespace Cirrus.Gembalaya.Objects.FSM
+//namespace Cirrus.GemCircuit.Objects.FSM
 //{
 //    [System.Serializable]
 //    public enum Id

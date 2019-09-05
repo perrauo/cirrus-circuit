@@ -1,13 +1,13 @@
-﻿using Cirrus.Gembalaya.Controls;
+﻿using Cirrus.GemCircuit.Controls;
 using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
 using UnityEngine.AI;
-//using Cirrus.Gembalaya.Objects.Characters.Actions;
-//using Cirrus.Gembalaya.Controls;
+//using Cirrus.GemCircuit.Objects.Characters.Actions;
+//using Cirrus.GemCircuit.Controls;
 using UnityInput = UnityEngine.InputSystem;
-//using Cirrus.Gembalaya.Playable;
+//using Cirrus.GemCircuit.Playable;
 
 using Inputs = UnityEngine.InputSystem;
 
@@ -17,7 +17,7 @@ using Inputs = UnityEngine.InputSystem;
 
 
 
-namespace Cirrus.Gembalaya.Controls
+namespace Cirrus.GemCircuit.Controls
 {
     public class Controller : Schema.IPlayerActions
     {

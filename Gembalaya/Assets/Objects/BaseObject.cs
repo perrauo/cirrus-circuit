@@ -7,7 +7,7 @@ using Cirrus.Tags;
 //using Cirrus.DH.Conditions;
 //using Cirrus.DH.Objects.Actions;
 
-namespace Cirrus.Gembalaya.Objects
+namespace Cirrus.GemCircuit.Objects
 {
     //public delegate void OnMoved();
 

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Cirrus.Gembalaya.Objects
+namespace Cirrus.GemCircuit.Objects
 {
     [System.Serializable]
     public class StateMachine : FSM.Lightweight.Machine

@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Cirrus.Gembalaya.Cameras
+namespace Cirrus.GemCircuit.Cameras
 {
     public enum State
     {

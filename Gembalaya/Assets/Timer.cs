@@ -4,7 +4,7 @@ using System.Collections;
 // TODO: use in cooldown
 
 
-namespace Cirrus.Gembalaya
+namespace Cirrus.GemCircuit
 {
     public delegate void OnTimeLimit();
 

@@ -1,18 +1,15 @@
-﻿//using Cirrus.Gembalaya.Objects.Actions;
-//using Cirrus.Gembalaya.Objects.Attributes;
-using Cirrus.Gembalaya.Objects.Characters.Controls;
-//using Cirrus.Gembalaya.UI.HUD;
-//using Cirrus.Gembalaya.Objects.Characters.Strategies;
+﻿//using Cirrus.GemCircuit.Objects.Actions;
+//using Cirrus.GemCircuit.Objects.Attributes;
+using Cirrus.GemCircuit.Objects.Characters.Controls;
+//using Cirrus.GemCircuit.UI.HUD;
+//using Cirrus.GemCircuit.Objects.Characters.Strategies;
 using KinematicCharacterController;
 using System.Collections;
 using UnityEngine;
-//using Cirrus.Gembalaya.Actions;
-//using Cirrus.Gembalaya.Conditions;
+//using Cirrus.GemCircuit.Actions;
+//using Cirrus.GemCircuit.Conditions;
 
-
-
-
-namespace Cirrus.Gembalaya.Objects.Characters
+namespace Cirrus.GemCircuit.Objects.Characters
 {
     [System.Serializable]
     public struct Axes
@@ -26,7 +23,7 @@ namespace Cirrus.Gembalaya.Objects.Characters
         public override ObjectId Id { get { return ObjectId.Character; } }
 
         [SerializeField]
-        private Gembalaya.Controls.PlayerNumber _playerNumber;
+        private GemCircuit.Controls.PlayerNumber _playerNumber;
 
         private Color _color;// = Color.red;
 

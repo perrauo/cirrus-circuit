@@ -2,7 +2,7 @@
 //using System.Collections;
 //using Cirrus.FSM;
 
-//namespace Cirrus.Gembalaya.Objects.FSM
+//namespace Cirrus.GemCircuit.Objects.FSM
 //{
 //    public class Entering : Cirrus.FSM.Resource
 //    {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace Cirrus.Gembalaya.Objects.Characters
+namespace Cirrus.GemCircuit.Objects.Characters
 {
     public class Guide : MonoBehaviour
     {

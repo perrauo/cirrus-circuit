@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Cirrus.Gembalaya.Levels
+namespace Cirrus.GemCircuit.Levels
 {
     public class Level : MonoBehaviour
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Cirrus.Gembalaya.Objects
+namespace Cirrus.GemCircuit.Objects
 {
     public class Gem : BaseObject
     {

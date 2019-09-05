@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 using Inputs = UnityEngine.InputSystem;
 
 
-namespace Cirrus.Gembalaya.Controls
+namespace Cirrus.GemCircuit.Controls
 {
     public enum PlayerNumber
     {

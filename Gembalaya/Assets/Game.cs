@@ -1,11 +1,11 @@
-using Cirrus.Gembalaya.Objects.Characters.Controls;
+using Cirrus.GemCircuit.Objects.Characters.Controls;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
 
-namespace Cirrus.Gembalaya
+namespace Cirrus.GemCircuit
 {
     public class Layers
     {

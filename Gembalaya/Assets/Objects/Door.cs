@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace Cirrus.Gembalaya.Objects
+namespace Cirrus.GemCircuit.Objects
 {
     public class Door : BaseObject
     {
         private float _punchScaleAmount = 0.5f;
 
         private float _punchScaleTime = 0.5f;
+
+        [SerializeField]
+        private GemCircuit.Controls.PlayerNumber _playerNumber;
 
         IEnumerator PunchScale()
         {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Cirrus.Gembalaya.Objects.Characters;
+using Cirrus.GemCircuit.Objects.Characters;
 using UnityEngine;
 
-namespace Cirrus.Gembalaya.Objects
+namespace Cirrus.GemCircuit.Objects
 {
     // TODO remove
 

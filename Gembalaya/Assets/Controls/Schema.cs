@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
-namespace Cirrus.Gembalaya.Controls
+namespace Cirrus.GemCircuit.Controls
 {
     public class Schema : IInputActionCollection
     {
