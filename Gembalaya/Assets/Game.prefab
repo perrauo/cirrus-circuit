@@ -1,48 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3051976079563144455
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2210151538309288456}
-  - component: {fileID: 4644121444077934421}
-  m_Layer: 0
-  m_Name: Clock
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2210151538309288456
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3051976079563144455}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 3260204704723261362}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4644121444077934421
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3051976079563144455}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af062d0851f583b45b570c2b54069dae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8324118305943800484
 GameObject:
   m_ObjectHideFlags: 0
@@ -53,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3260204704723261362}
   - component: {fileID: 8610181461659773747}
+  - component: {fileID: 1438632337032714811}
   m_Layer: 0
   m_Name: Game
   m_TagString: Untagged
@@ -70,9 +28,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 2210151538309288456}
-  - {fileID: 4131885868992389262}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -88,96 +44,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6225b9b59c0a3de4ab4818b680f44701, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _clock: {fileID: 4644121444077934421}
-  Players:
-  - {fileID: 1676660959676824160}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
---- !u!1001 &7278122593724993718
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 3260204704723261362}
-    m_Modifications:
-    - target: {fileID: 1373886338333027014, guid: b163f096f33b1804eb1a114476858102,
-        type: 3}
-      propertyPath: m_Name
-      value: Player1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6653643756480655416, guid: b163f096f33b1804eb1a114476858102,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6653643756480655416, guid: b163f096f33b1804eb1a114476858102,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6653643756480655416, guid: b163f096f33b1804eb1a114476858102,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6653643756480655416, guid: b163f096f33b1804eb1a114476858102,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6653643756480655416, guid: b163f096f33b1804eb1a114476858102,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6653643756480655416, guid: b163f096f33b1804eb1a114476858102,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6653643756480655416, guid: b163f096f33b1804eb1a114476858102,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6653643756480655416, guid: b163f096f33b1804eb1a114476858102,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6653643756480655416, guid: b163f096f33b1804eb1a114476858102,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6653643756480655416, guid: b163f096f33b1804eb1a114476858102,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6653643756480655416, guid: b163f096f33b1804eb1a114476858102,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: b163f096f33b1804eb1a114476858102, type: 3}
---- !u!4 &4131885868992389262 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6653643756480655416, guid: b163f096f33b1804eb1a114476858102,
-    type: 3}
-  m_PrefabInstance: {fileID: 7278122593724993718}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1676660959676824160 stripped
+  _clock: {fileID: 0}
+--- !u!114 &1438632337032714811
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8234171878692121302, guid: b163f096f33b1804eb1a114476858102,
-    type: 3}
-  m_PrefabInstance: {fileID: 7278122593724993718}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 8324118305943800484}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76bbe936d3b941f47a47a4e44860482b, type: 3}
+  m_Script: {fileID: 11500000, guid: a2d0447e8daf5ea4b8834ad0be798636, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _level: {fileID: 0}
+  _colors:
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0, g: 0.3885045, b: 1, a: 1}
+  - {r: 1, g: 0.52359486, b: 0, a: 1}
+  - {r: 0.3210839, g: 0.6981132, b: 0, a: 1}
+  PlayerCount: 0
+  PlayerMax: 4

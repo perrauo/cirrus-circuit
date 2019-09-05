@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 097fa209f8d04b540898c2c0897484c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _visual: {fileID: 2742191588411864026}
+  _visual: {fileID: 2481250479907166003}
   _collider: {fileID: 1702144198615138103}
   _stateMachine: {fileID: 4140453299057945867}
   _stepDistance: 2
@@ -273,6 +273,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6890873901226151178, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: _meshRenderers.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6890873901226151178, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: _meshRenderers.Array.data[0]
+      value: 
+      objectReference: {fileID: 3269741375603518266}
+    - target: {fileID: 6890873901226151178, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: _meshRenderers.Array.data[1]
+      value: 
+      objectReference: {fileID: 2210546001670483478}
+    - target: {fileID: 6890873901226151178, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: Parent
+      value: 
+      objectReference: {fileID: 2742191588411864026}
     - target: {fileID: 5852841529885708232, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
       propertyPath: _object
@@ -358,6 +378,24 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 7515557843924984515}
   m_PrefabAsset: {fileID: 0}
+--- !u!23 &3269741375603518266 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4984592530192599545, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+    type: 3}
+  m_PrefabInstance: {fileID: 7515557843924984515}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2481250479907166003 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5342267654032782832, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+    type: 3}
+  m_PrefabInstance: {fileID: 7515557843924984515}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2742191588411864026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c207cb311c8305440a7b4d8450d9c1d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &8793457529897979273
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -434,11 +472,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Color.b
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 163887281138613410, guid: c2319dfabb42f7f46a0957d7435a33fc,
-        type: 3}
-      propertyPath: m_Color.a
-      value: 0.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c2319dfabb42f7f46a0957d7435a33fc, type: 3}

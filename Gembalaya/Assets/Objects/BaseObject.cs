@@ -24,7 +24,7 @@ namespace Cirrus.Gembalaya.Objects
         public virtual ObjectId Id { get { return ObjectId.Default; } }
 
         [SerializeField]
-        protected GameObject _visual;
+        protected Visual _visual;
 
         [SerializeField]
         public Collider _collider;

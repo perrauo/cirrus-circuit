@@ -12,16 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c828eaddb44da53459118299ab503ee1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _visual: {fileID: 2849053032030188904}
+  _visual: {fileID: 5272430702369877454}
   _collider: {fileID: 7591302798213922096}
   _stateMachine: {fileID: 5166573095585787660}
+  _stepDistance: 2
+  _stepSpeed: 0.6
+  _fallSpeed: 0.6
+  _fallDistance: 100
+  _scaleSpeed: 0.6
+  _destination: {fileID: 0}
   _step: {x: 0, y: 0, z: 0}
   _targetPosition: {x: 0, y: 0, z: 0}
   _targetScale: 1
-  _stepDistance: 2
-  _stepSpeed: 0.6
-  _fallDistance: 100
-  _scaleSpeed: 0.6
 --- !u!1001 &1624148582309748932
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29,11 +31,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5852841529885708232, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+    - target: {fileID: 6890873901226151178, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
-      propertyPath: _object
+      propertyPath: _meshRenderers.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6890873901226151178, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: _meshRenderers.Array.data[0]
       value: 
-      objectReference: {fileID: 1359340385645810667}
+      objectReference: {fileID: 641828989102673239}
     - target: {fileID: 8829410553811671551, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
       propertyPath: m_Name
@@ -94,7 +101,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1990478567839656891, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+    - target: {fileID: 5852841529885708232, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
       propertyPath: _object
       value: 
@@ -104,6 +111,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1990478567839656891, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: _object
+      value: 
+      objectReference: {fileID: 1359340385645810667}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 06d9e1aa028280e4c97369fef81e3fdc, type: 3}
 --- !u!1 &7854355473408733724 stripped
@@ -134,6 +146,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dfd4e8324eadedf48b972ff97f261cea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5272430702369877454 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6890873901226151178, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+    type: 3}
+  m_PrefabInstance: {fileID: 1624148582309748932}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7854355473408733724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c207cb311c8305440a7b4d8450d9c1d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &7530544920951970388
@@ -203,12 +227,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 6348799379987122221, guid: 62a03573524149449b1dc31028a3a445, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 62a03573524149449b1dc31028a3a445, type: 3}
---- !u!1 &2849053032030188904 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5694801824408563516, guid: 62a03573524149449b1dc31028a3a445,
+--- !u!23 &641828989102673239 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 6947333101252351747, guid: 62a03573524149449b1dc31028a3a445,
     type: 3}
   m_PrefabInstance: {fileID: 7530544920951970388}
   m_PrefabAsset: {fileID: 0}

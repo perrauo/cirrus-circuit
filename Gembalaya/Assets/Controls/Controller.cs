@@ -9,6 +9,7 @@ using UnityEngine.AI;
 using UnityInput = UnityEngine.InputSystem;
 //using Cirrus.Gembalaya.Playable;
 
+using Inputs = UnityEngine.InputSystem;
 
 // Controls Navmesh Navigation
 
@@ -20,6 +21,17 @@ namespace Cirrus.Gembalaya.Controls
 {
     public class Controller : Schema.IPlayerActions
     {
+        public delegate void OnReady(Controller ctrl);
+
+        public OnReady OnReadyHandler;
+
+        private bool _joined = false;
+
+        private Color _color;
+
+        [SerializeField]
+        public Lobby _lobby;
+
         [SerializeField]
         public UnityInput.Users.InputUser _user;
 
@@ -33,13 +45,29 @@ namespace Cirrus.Gembalaya.Controls
         [SerializeField]
         private Objects.Characters.Character _character;
 
-        public Controller()
+        public Controller(Inputs.InputDevice device)
         {
-            _user = UnityInput.Users.InputUser.CreateUserWithoutPairedDevices();
+            //Inputs.InputDevice.all
+            _user = Inputs.Users.InputUser.CreateUserWithoutPairedDevices();
+            Inputs.Users.InputUser.PerformPairingWithDevice(device, _user);
             _schema = new Schema();
             _user.AssociateActionsWithUser(_schema);
             Enable();
-        }         
+        }
+
+        public void Pair(Inputs.InputDevice device)
+        {
+            
+        }
+
+        public void Join(Lobby lobby, Objects.Characters.Character character)
+        {
+            _joined = true;
+            _lobby = lobby;
+            _character = character;
+            _character.Color = _color;
+        }
+
 
         public void Enable(bool enabled = true)
         {
@@ -58,6 +86,11 @@ namespace Cirrus.Gembalaya.Controls
         // TODO: Simulate LeftStick continuous axis with WASD
         public void OnAxesLeft(UnityInput.InputAction.CallbackContext context)
         {
+            if (!_joined)
+            {
+                OnReadyHandler?.Invoke(this);
+            }
+
             var val = context.ReadValue<Vector2>();
 
             var axis = Vector2.ClampMagnitude(val, 1);

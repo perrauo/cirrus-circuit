@@ -306,6 +306,23 @@ namespace Cirrus.Gembalaya.Controls
             ]
         },
         {
+            ""name"": ""Keyboard.WASD"",
+            ""basedOn"": """",
+            ""bindingGroup"": ""Keyboard.WASD"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<Keyboard>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                },
+                {
+                    ""devicePath"": ""<Mouse>"",
+                    ""isOptional"": true,
+                    ""isOR"": false
+                }
+            ]
+        },
+        {
             ""name"": ""Gamepad"",
             ""basedOn"": """",
             ""bindingGroup"": ""Gamepad"",
@@ -435,6 +452,15 @@ namespace Cirrus.Gembalaya.Controls
             {
                 if (m_KeyboardSchemeIndex == -1) m_KeyboardSchemeIndex = asset.GetControlSchemeIndex("Keyboard");
                 return asset.controlSchemes[m_KeyboardSchemeIndex];
+            }
+        }
+        private int m_KeyboardWASDSchemeIndex = -1;
+        public InputControlScheme KeyboardWASDScheme
+        {
+            get
+            {
+                if (m_KeyboardWASDSchemeIndex == -1) m_KeyboardWASDSchemeIndex = asset.GetControlSchemeIndex("Keyboard.WASD");
+                return asset.controlSchemes[m_KeyboardWASDSchemeIndex];
             }
         }
         private int m_GamepadSchemeIndex = -1;

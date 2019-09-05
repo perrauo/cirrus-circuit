@@ -16,7 +16,6 @@ namespace Cirrus.Gembalaya.Objects
                     return false;
                 default:
                     return false;
-
             }
         }
 
@@ -25,7 +24,7 @@ namespace Cirrus.Gembalaya.Objects
         {
             base.Awake();
 
-            _visual.gameObject.SetActive(false);
+            _visual.Enabled = false;
         }
 
         public override bool Accept(BaseObject incoming)

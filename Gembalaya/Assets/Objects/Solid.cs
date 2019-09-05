@@ -14,14 +14,13 @@ namespace Cirrus.Gembalaya.Objects
             {
                 default:
                     return false;
-
             }
         }
 
         // Start is called before the first frame update
-        public void Start()
+        public override void Start()
         {
-
+            base.Start();
         }
     }
 }

@@ -26,7 +26,9 @@ namespace Cirrus.Gembalaya.Objects.Characters
         public override ObjectId Id { get { return ObjectId.Character; } }
 
         [SerializeField]
-        private Color _color = Color.red;
+        private Gembalaya.Controls.PlayerNumber _playerNumber;
+
+        private Color _color;// = Color.red;
 
         [SerializeField]
         private Guide _guide;
@@ -46,11 +48,22 @@ namespace Cirrus.Gembalaya.Objects.Characters
 
         private bool _wasMovingVertical = false;
 
-        public void OnValidate()
-        {
 
-            if(_guide != null)
-            _guide.Color = _color;
+        public Color Color {
+
+            get
+            {
+                return _color;
+            }
+
+            set
+            {
+                _color = value;
+                if (_guide != null)
+                {
+                    _guide.Color = _color;
+                }
+            }
         }
 
         protected override void Awake()
@@ -108,7 +121,7 @@ namespace Cirrus.Gembalaya.Objects.Characters
 
 
             if (_direction != Vector3.zero)
-                _visual.transform.rotation = Quaternion.LookRotation(_direction, transform.up);
+                _visual.Parent.transform.rotation = Quaternion.LookRotation(_direction, transform.up);
         }
 
         public override void Fall()
