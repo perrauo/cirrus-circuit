@@ -1,13 +1,13 @@
-﻿using Cirrus.GemCircuit.Controls;
+﻿using Cirrus.Circuit.Controls;
 using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
 using UnityEngine.AI;
-//using Cirrus.GemCircuit.Objects.Characters.Actions;
-//using Cirrus.GemCircuit.Controls;
+//using Cirrus.Circuit.Objects.Characters.Actions;
+//using Cirrus.Circuit.Controls;
 using UnityInput = UnityEngine.InputSystem;
-//using Cirrus.GemCircuit.Playable;
+//using Cirrus.Circuit.Playable;
 
 using Inputs = UnityEngine.InputSystem;
 
@@ -17,7 +17,7 @@ using Inputs = UnityEngine.InputSystem;
 
 
 
-namespace Cirrus.GemCircuit.Controls
+namespace Cirrus.Circuit.Controls
 {
     public class Controller : Schema.IPlayerActions
     {
@@ -26,8 +26,6 @@ namespace Cirrus.GemCircuit.Controls
         public OnReady OnReadyHandler;
 
         private bool _joined = false;
-
-        private Color _color;
 
         [SerializeField]
         public Lobby _lobby;
@@ -65,7 +63,6 @@ namespace Cirrus.GemCircuit.Controls
             _joined = true;
             _lobby = lobby;
             _character = character;
-            _character.Color = _color;
         }
 
 

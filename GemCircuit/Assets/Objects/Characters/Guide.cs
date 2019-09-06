@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace Cirrus.GemCircuit.Objects.Characters
+namespace Cirrus.Circuit.Objects.Characters
 {
     public class Guide : MonoBehaviour
     {
@@ -87,6 +87,7 @@ namespace Cirrus.GemCircuit.Objects.Characters
                 for (int i = 0; i < count; i++)
                 {
                     GameObject square = _pool.Get();
+                    square.GetComponentInChildren<SpriteRenderer>().color = _color;
                     square.transform.SetParent(transform);
                     square.transform.position = transform.position + step * i;
                     _squares.Add(square);

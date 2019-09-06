@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Cirrus.GemCircuit.Objects
+namespace Cirrus.Circuit.Objects
 {
     public class Gem : BaseObject
     {
@@ -10,8 +10,6 @@ namespace Cirrus.GemCircuit.Objects
 
         [SerializeField]
         private float _rotateSpeed = 0.6f;
-
-        public Controls.PlayerNumber PlayerNumber;
 
         // Update is called once per frame
         public override void FixedUpdate()

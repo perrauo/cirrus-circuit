@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 using Inputs = UnityEngine.InputSystem;
 
 
-namespace Cirrus.GemCircuit.Controls
+namespace Cirrus.Circuit.Controls
 {
     public enum PlayerNumber
     {
@@ -35,6 +35,10 @@ namespace Cirrus.GemCircuit.Controls
         [SerializeField]
         public int PlayerMax = 4;
 
+        [SerializeField]
+        private bool _update;
+
+ 
         public void Awake()
         {
             Players = new Controller[PlayerMax];
@@ -42,9 +46,15 @@ namespace Cirrus.GemCircuit.Controls
 
         public void OnValidate()
         {
-            for (int i = 0; i < PlayerMax; i++)
+            _update = false;
+
+            if (_level == null)
+                return;
+
+            for (int i = 0; i < _level.CharacterCount; i++)
             {
-                _level?.UpdateColors(i, _colors[i]);
+                if(_level != null)
+                    _level.UpdateColors(i, _colors[i]);
             }
         }
 
@@ -66,7 +76,7 @@ namespace Cirrus.GemCircuit.Controls
                     }
                 }
 
-                if (PlayerCount > PlayerMax || PlayerCount > Levels.Level.Instance.Characters.Length) break;
+                if (PlayerCount > PlayerMax || PlayerCount > _level.CharacterCount) break;
             }
 
             Inputs.Users.InputUser.onUnpairedDeviceUsed += OnUnpairedInputDeviceUsed;

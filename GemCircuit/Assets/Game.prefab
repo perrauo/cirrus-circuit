@@ -59,9 +59,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _level: {fileID: 0}
   _colors:
-  - {r: 1, g: 0, b: 0, a: 1}
-  - {r: 0, g: 0.3885045, b: 1, a: 1}
-  - {r: 1, g: 0.52359486, b: 0, a: 1}
-  - {r: 0.3210839, g: 0.6981132, b: 0, a: 1}
+  - {r: 1, g: 0, b: 0.27877426, a: 1}
+  - {r: 0, g: 0.6216736, b: 1, a: 1}
+  - {r: 0, g: 1, b: 0.60343385, a: 1}
+  - {r: 1, g: 0.8970643, b: 0, a: 1}
   PlayerCount: 0
   PlayerMax: 4

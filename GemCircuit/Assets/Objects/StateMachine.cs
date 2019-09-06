@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Cirrus.GemCircuit.Objects
+namespace Cirrus.Circuit.Objects
 {
     [System.Serializable]
     public class StateMachine : FSM.Lightweight.Machine
@@ -12,6 +12,7 @@ namespace Cirrus.GemCircuit.Objects
             Entering,
             Falling,
             Idle,
+            RampIdle,
             Moving
         }
 
@@ -33,12 +34,13 @@ namespace Cirrus.GemCircuit.Objects
                 case State.Entering:
                 case State.Falling:
                 case State.Idle:
+                case State.RampIdle:
                 case State.Moving:
 
-                    _object.transform.position = Vector3.Lerp(_object.transform.position, _object._targetPosition, _object._stepSpeed);
+                    _object.Object.transform.position = Vector3.Lerp(_object.Object.transform.position, _object._targetPosition, _object._stepSpeed);
 
-                    float scale = Mathf.Lerp(_object.transform.localScale.x, _object._targetScale, _object._scaleSpeed);
-                    _object.transform.localScale = new Vector3(scale, scale, scale);
+                    float scale = Mathf.Lerp(_object.Object.transform.localScale.x, _object._targetScale, _object._scaleSpeed);
+                    _object.Object.transform.localScale = new Vector3(scale, scale, scale);
 
                     break;
             }
@@ -53,16 +55,19 @@ namespace Cirrus.GemCircuit.Objects
                 case State.Entering:
                 case State.Falling:
                 case State.Idle:
+                case State.RampIdle:
                 case State.Moving:
 
-                    if (Utils.Vectors.CloseEnough(transform.position, _object._targetPosition))
+                    if (Utils.Vectors.CloseEnough(_object.Object.transform.position, _object._targetPosition))
                     {
                         // If the destination can coexist with incoming object once arrived we return true
-                        if (
-                            _object._destination == null || 
-                            !_object._destination.Accept(_object))
+                        if (_object._destination == null)
                         {
                             TryChangeState(State.Idle);
+                        }
+                        else
+                        {
+
                         }
                     }
 
@@ -84,6 +89,7 @@ namespace Cirrus.GemCircuit.Objects
                         case State.Entering:
                         case State.Falling:
                         case State.Idle:
+                        case State.RampIdle:
                         case State.Moving:
                             return true;
                     }
@@ -95,6 +101,7 @@ namespace Cirrus.GemCircuit.Objects
                         case State.Entering:
                         case State.Falling:
                         case State.Idle:
+                        case State.RampIdle:
                         case State.Moving:
                             return true;
                     }
@@ -106,6 +113,7 @@ namespace Cirrus.GemCircuit.Objects
                         case State.Entering:
                         case State.Falling:
                         case State.Idle:
+                        case State.RampIdle:
                         case State.Moving:
                             return true;
                     }
@@ -117,6 +125,7 @@ namespace Cirrus.GemCircuit.Objects
                         case State.Entering:
                         case State.Falling:
                         case State.Idle:
+                        case State.RampIdle:
                         //case State.Moving:
                             return true;
                     }
@@ -139,16 +148,20 @@ namespace Cirrus.GemCircuit.Objects
                     return true;
 
                 case State.Falling:
-
                     _state = target;
                     _object._targetPosition += Vector3.up * -_object._fallDistance;
                     _object._stepSpeed = _object._fallSpeed;
                     return true;
 
                 case State.Idle:
-
                     _state = target;
                     _object._collider.enabled = true;
+                    return true;
+
+                case State.RampIdle:
+
+                    _state = target;
+                    _object._collider.enabled = false;
                     return true;
 
                 case State.Moving:
@@ -162,11 +175,19 @@ namespace Cirrus.GemCircuit.Objects
                         out RaycastHit hit,
                         Levels.Level.CubeSize / 2))
                     {
-                        _object._destination = hit.collider.GetComponent<BaseObject>();
+                        _object._destination = hit.collider.GetComponentInParent<BaseObject>();
 
                         if (_object._destination != null)
                         {
                             if (_object._destination.TryMove(step, _object))
+                            {
+                                _object._destination = null; // We pushed it the destination was moved
+                                _state = target;
+                                _object._collider.enabled = false;
+                                _object._targetPosition += step;
+                                return true;
+                            }
+                            else if (_object._destination.TryEnter(step, _object))
                             {
                                 _state = target;
                                 _object._collider.enabled = false;

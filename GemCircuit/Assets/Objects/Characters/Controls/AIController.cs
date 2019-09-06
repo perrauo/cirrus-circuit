@@ -4,15 +4,15 @@ using System.Linq;
 
 using UnityEngine;
 using UnityEngine.AI;
-//using Cirrus.GemCircuit.Objects.Characters.Actions;
+//using Cirrus.Circuit.Objects.Characters.Actions;
 using UnityInput = UnityEngine.InputSystem;// .Input;
-//using Cirrus.GemCircuit.Controls;
+//using Cirrus.Circuit.Controls;
 
 
 // Controls Navmesh Navigation
 
 
-namespace Cirrus.GemCircuit.Objects.Characters.Controls
+namespace Cirrus.Circuit.Objects.Characters.Controls
 {
     public class AIController : MonoBehaviour
     {

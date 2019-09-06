@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
-namespace Cirrus.GemCircuit.Controls
+namespace Cirrus.Circuit.Controls
 {
     public class Schema : IInputActionCollection
     {

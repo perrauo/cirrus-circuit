@@ -1,15 +1,15 @@
-﻿//using Cirrus.GemCircuit.Objects.Actions;
-//using Cirrus.GemCircuit.Objects.Attributes;
-using Cirrus.GemCircuit.Objects.Characters.Controls;
-//using Cirrus.GemCircuit.UI.HUD;
-//using Cirrus.GemCircuit.Objects.Characters.Strategies;
+﻿//using Cirrus.Circuit.Objects.Actions;
+//using Cirrus.Circuit.Objects.Attributes;
+using Cirrus.Circuit.Objects.Characters.Controls;
+//using Cirrus.Circuit.UI.HUD;
+//using Cirrus.Circuit.Objects.Characters.Strategies;
 using KinematicCharacterController;
 using System.Collections;
 using UnityEngine;
-//using Cirrus.GemCircuit.Actions;
-//using Cirrus.GemCircuit.Conditions;
+//using Cirrus.Circuit.Actions;
+//using Cirrus.Circuit.Conditions;
 
-namespace Cirrus.GemCircuit.Objects.Characters
+namespace Cirrus.Circuit.Objects.Characters
 {
     [System.Serializable]
     public struct Axes
@@ -39,7 +39,6 @@ namespace Cirrus.GemCircuit.Objects.Characters
         private Vector3 _direction = Vector3.zero;
 
         private bool _wasMovingVertical = false;
-
 
         public override Color Color {
 

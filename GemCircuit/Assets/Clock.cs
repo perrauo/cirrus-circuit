@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace Cirrus.GemCircuit
+namespace Cirrus.Circuit
 {
     public class Clock : MonoBehaviour
     {

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Cirrus.GemCircuit
+namespace Cirrus.Circuit
 {
     public class HUD : MonoBehaviour
     {

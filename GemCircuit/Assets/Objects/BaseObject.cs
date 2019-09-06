@@ -7,7 +7,7 @@ using Cirrus.Tags;
 //using Cirrus.DH.Conditions;
 //using Cirrus.DH.Objects.Actions;
 
-namespace Cirrus.GemCircuit.Objects
+namespace Cirrus.Circuit.Objects
 {
     //public delegate void OnMoved();
 
@@ -28,6 +28,17 @@ namespace Cirrus.GemCircuit.Objects
 
         [SerializeField]
         public Collider _collider;
+
+        [SerializeField]
+        public GameObject _object;
+
+        public GameObject Object
+        {
+            get
+            {
+                return _object;
+            }
+        }        
 
         [SerializeField]
         protected StateMachine _stateMachine;
@@ -58,6 +69,18 @@ namespace Cirrus.GemCircuit.Objects
         [SerializeField]
         protected Controls.PlayerNumber _playerNumber;
 
+        protected BaseObject _visitor;
+
+
+        public virtual Controls.PlayerNumber PlayerNumber
+        {
+            get
+            {
+                return _playerNumber;
+            }
+        }
+
+        [SerializeField]
         protected Color _color;
 
         public virtual Color Color
@@ -80,15 +103,13 @@ namespace Cirrus.GemCircuit.Objects
         {
             get
             {
-                if (transform.parent == null)
-                    return "<Unknown>";
-                else return transform.parent.name;
+                return transform.name;
             }
         }
 
         protected virtual void Awake()
         {
-            _targetPosition = transform.position;
+            _targetPosition = Object.transform.position;
             _targetScale = 1f;
         }
 
@@ -102,15 +123,26 @@ namespace Cirrus.GemCircuit.Objects
 
         }
 
+        public bool TryChangeState(StateMachine.State state, params object[] args)
+        {
+            return _stateMachine.TryChangeState(state, args);
+        }
+
         public virtual bool TryMove(Vector3 step, BaseObject incoming = null)
         {
             return _stateMachine.TryChangeState(StateMachine.State.Moving, step, incoming);
         }
 
-        // If two items can cooexist
-        public virtual bool Accept(BaseObject incoming)
+        public virtual bool TryEnter(Vector3 step, BaseObject incoming = null)
         {
             return false;
+        }
+
+        // If two items can cooexist
+        public virtual bool Visit(BaseObject incoming)
+        {
+            _visitor = incoming;
+            return true;
         }
 
         public virtual void Fall()

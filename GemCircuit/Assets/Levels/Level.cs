@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Cirrus.GemCircuit.Levels
+namespace Cirrus.Circuit.Levels
 {
     public class Level : MonoBehaviour
     {
@@ -16,6 +16,14 @@ namespace Cirrus.GemCircuit.Levels
                 return _characters;
             }
         }
+
+        public int CharacterCount
+        {
+            get
+            {
+                return _characters.Length;
+            }
+        }
         
         [SerializeField]
         public GameObject _charactersParent;
@@ -25,6 +33,12 @@ namespace Cirrus.GemCircuit.Levels
 
         [SerializeField]
         public GameObject _gemsParent;
+
+        [SerializeField]
+        public Objects.Door[] _doors;
+
+        [SerializeField]
+        public GameObject _doorsParent;
 
         public static float CubeSize = 2f;
 
@@ -49,6 +63,18 @@ namespace Cirrus.GemCircuit.Levels
                     gem.Color = color;
                 }
             }
+
+
+            foreach (Objects.Door door in _doors)
+            {
+                if (door == null)
+                    continue;
+
+                if (door.PlayerNumber == (Controls.PlayerNumber)player)
+                {
+                    door.Color = color;
+                }
+            }
         }
 
         public void OnValidate()
@@ -58,6 +84,13 @@ namespace Cirrus.GemCircuit.Levels
                 _gems = _gemsParent.GetComponentsInChildren<Objects.Gem>();
                 _gemsParent = null;
             }
+
+            if (_doorsParent)
+            {
+                _doors = _doorsParent.GetComponentsInChildren<Objects.Door>();
+                _doorsParent = null;
+            }
+
 
             if (_charactersParent)
             {

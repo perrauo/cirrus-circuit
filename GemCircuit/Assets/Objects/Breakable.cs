@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace Cirrus.GemCircuit.Objects
+namespace Cirrus.Circuit.Objects
 {
     public class Breakable : BaseObject
     { 

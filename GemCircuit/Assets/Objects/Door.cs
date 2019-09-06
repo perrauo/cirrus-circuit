@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace Cirrus.GemCircuit.Objects
+namespace Cirrus.Circuit.Objects
 {
     public class Door : BaseObject
     {
@@ -13,13 +13,13 @@ namespace Cirrus.GemCircuit.Objects
 
         IEnumerator PunchScale()
         {
-            iTween.Stop(gameObject);
+            iTween.Stop(Object);
 
-            transform.localScale = new Vector3(1, 1, 1);
+            Object.transform.localScale = new Vector3(1, 1, 1);
 
             yield return new WaitForSeconds(0.01f);
 
-            iTween.PunchScale(gameObject,
+            iTween.PunchScale(Object,
                 new Vector3(_punchScaleAmount, _punchScaleAmount, _punchScaleAmount),
                 _punchScaleTime);
         }
@@ -30,9 +30,9 @@ namespace Cirrus.GemCircuit.Objects
             switch (incoming.Id)
             {
                 case ObjectId.Gem:
-                    iTween.Init(gameObject);
-                    iTween.Stop(gameObject);
-                    transform.localScale = new Vector3(1, 1, 1);
+                    iTween.Init(Object);
+                    iTween.Stop(Object);
+                    Object.transform.localScale = new Vector3(1, 1, 1);
                     StartCoroutine(PunchScale());
                     return true;
 
@@ -45,7 +45,7 @@ namespace Cirrus.GemCircuit.Objects
 
         }
 
-        public override bool Accept(BaseObject incoming)
+        public override bool Visit(BaseObject incoming)
         {
             incoming.Enter();
             return true;
