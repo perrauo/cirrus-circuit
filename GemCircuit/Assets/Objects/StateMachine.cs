@@ -4,7 +4,7 @@ using System.Collections;
 namespace Cirrus.Circuit.Objects
 {
     [System.Serializable]
-    public class StateMachine : FSM.Lightweight.Machine
+    public class StateMachine : MonoBehaviour
     {
         [System.Serializable]
         public enum State
@@ -13,7 +13,8 @@ namespace Cirrus.Circuit.Objects
             Falling,
             Idle,
             RampIdle,
-            Moving
+            Moving,
+            RampMoving
         }
 
         [SerializeField]
@@ -22,14 +23,14 @@ namespace Cirrus.Circuit.Objects
         [SerializeField]
         private BaseObject _object;
 
-        public override void Awake()
+        public void Awake()
         {
             TryChangeState(State.Idle);
         }
 
-        public override void FixedUpdate()
+        public void FixedUpdate()
         {
-            switch ((object)_state)
+            switch (_state)
             {
                 case State.Entering:
                 case State.Falling:
@@ -48,9 +49,9 @@ namespace Cirrus.Circuit.Objects
 
         }
 
-        public override void Update()
+        public void Update()
         {
-            switch ((object)_state)
+            switch (_state)
             {
                 case State.Entering:
                 case State.Falling:
@@ -67,7 +68,7 @@ namespace Cirrus.Circuit.Objects
                         }
                         else
                         {
-
+                            _object._destination.Visit(_object);
                         }
                     }
 
@@ -75,69 +76,86 @@ namespace Cirrus.Circuit.Objects
             }
         }
 
-
-        protected override bool VerifyTransition<T>(T state, params object[] args)
+        public bool TryChangeState(State transition, params object[] args)
         {
-            State target = (State)(object)state;
-
-            switch (_state)
+            if (TryTransition(transition, out State destination))
             {
-                case State.Entering:
-
-                    switch (target)
-                    {
-                        case State.Entering:
-                        case State.Falling:
-                        case State.Idle:
-                        case State.RampIdle:
-                        case State.Moving:
-                            return true;
-                    }
-                    break;
-
-                case State.Falling:
-                    switch (target)
-                    {
-                        case State.Entering:
-                        case State.Falling:
-                        case State.Idle:
-                        case State.RampIdle:
-                        case State.Moving:
-                            return true;
-                    }
-                    break;
-
-                case State.Idle:
-                    switch (target)
-                    {
-                        case State.Entering:
-                        case State.Falling:
-                        case State.Idle:
-                        case State.RampIdle:
-                        case State.Moving:
-                            return true;
-                    }
-                    break;
-
-                case State.Moving:
-                    switch (target)
-                    {
-                        case State.Entering:
-                        case State.Falling:
-                        case State.Idle:
-                        case State.RampIdle:
-                        //case State.Moving:
-                            return true;
-                    }
-                    break;
+                return TryFinishChangeState(destination, args);
             }
 
             return false;
         }
 
-        protected override bool TryFinishChangeState<T>(T state, params object[] args)
+        protected bool TryTransition(State transition, out State destination, params object[] args)
         {
-            State target = (State)(object)state;
+            switch (_state)
+            {
+                case State.Entering:
+
+                    switch (transition)
+                    {
+                        case State.Entering:
+                        case State.Falling:
+                        case State.Idle:
+                        case State.RampIdle:
+                        case State.Moving:
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
+                case State.Falling:
+                    switch (transition)
+                    {
+                        case State.Entering:
+                        case State.Falling:
+                        case State.Idle:
+                        case State.RampIdle:
+                        case State.Moving:
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
+                case State.Idle:
+                    switch (transition)
+                    {
+                        case State.Entering:
+                        case State.Falling:
+                        case State.Idle:
+                        case State.RampIdle:
+                        case State.Moving:
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
+                case State.Moving:
+                    switch (transition)
+                    {
+                        case State.Entering:
+                        case State.Falling:
+                        case State.Idle:
+                            //case State.Moving:
+                            destination = transition;
+                            return true;
+
+                        case State.RampIdle:
+                            destination = State.RampMoving;
+                            return true;
+                    }
+                    break;
+            }
+
+            destination = State.Idle;
+            return false;
+        }
+
+        protected bool TryFinishChangeState(State target, params object[] args)
+        {
+            Vector3 step;
+            BaseObject incoming;
+            RaycastHit hit;
 
             switch (target)
             {
@@ -164,15 +182,75 @@ namespace Cirrus.Circuit.Objects
                     _object._collider.enabled = false;
                     return true;
 
+                case State.RampMoving:
+
+                    step = (Vector3)args[0];
+                    incoming = (BaseObject)args[1];
+
+                    // Determine which direction to cast the ray
+
+                    Ray ray;
+                    // Same direction (Look up)
+                    if (Utils.Vectors.CloseEnough(step.normalized, _object.Object.transform.forward))
+                    {
+                        ray = new Ray(_object._targetPosition + Vector3.up * Levels.Level.CubeSize + Vector3.up / 2, step);
+                    }
+                    // Opposing direction (look down)
+                    else if (Utils.Vectors.CloseEnough(step.normalized, -_object.Object.transform.forward))
+                    {
+                        ray = new Ray(_object._targetPosition + Vector3.up * -Levels.Level.CubeSize + Vector3.up / 2, step);
+                    }
+                    // Perp direction (Look ahead)
+                    else
+                    {
+                        ray = new Ray(_object._targetPosition + Vector3.up / 2, step);
+                    }
+
+
+                    if (Physics.Raycast(ray, out hit, Levels.Level.CubeSize / 2))
+                    {
+                        _object._destination = hit.collider.GetComponentInParent<BaseObject>();
+
+                        if (_object._destination != null)
+                        {
+                            if (_object._destination.TryMove(step, _object))
+                            {
+                                _object._destination = null; // We pushed it the destination was moved
+                                _state = target;
+                                _object._collider.enabled = false;
+                                _object._targetPosition += step;
+                                return true;
+                            }
+                            else if (_object._destination.TryEnter(step, _object))
+                            {
+                                _state = target;
+                                _object._collider.enabled = false;
+                                _object._targetPosition += step;
+                                return true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _state = target;
+                        _object._destination = null;
+                        _object._collider.enabled = false;
+                        _object._targetPosition += step;
+                        return true;
+                    }
+
+
+                    break;
+
                 case State.Moving:
 
-                    Vector3 step = (Vector3)args[0];
-                    BaseObject incoming = (BaseObject)args[1];
+                    step = (Vector3)args[0];
+                    incoming = (BaseObject)args[1];
 
                     if (Physics.Raycast(
                         _object._targetPosition + Vector3.up / 2,
                         step,
-                        out RaycastHit hit,
+                        out hit,
                         Levels.Level.CubeSize / 2))
                     {
                         _object._destination = hit.collider.GetComponentInParent<BaseObject>();
