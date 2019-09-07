@@ -20,19 +20,7 @@ namespace Cirrus.Circuit.Objects
         {
             if (Utils.Vectors.CloseEnough(step.normalized, Object.transform.forward))
             {
-                if (_visitor == null)
-                {
-                    incoming._targetPosition += Vector3.up * Levels.Level.CubeSize / 2;
-                }
-                else if (_visitor.TryMove(step, incoming))
-                {
-                    incoming._targetPosition += Vector3.up * Levels.Level.CubeSize / 2;
-                }
-                else
-                {
-                    return false;
-                }               
-
+                incoming._targetPosition += Vector3.up * Levels.Level.BlockSize / 2;
                 return true;
             }
 
@@ -47,17 +35,9 @@ namespace Cirrus.Circuit.Objects
             base.Start();
         }
 
-        public override bool Visit(BaseObject incoming)
+        public override void Accept(BaseObject incoming)
         {
-            switch (incoming.Id)
-            {
-                case ObjectId.Gem:
-                case ObjectId.Character:
-                    base.Visit(incoming);
-                    return incoming.TryChangeState(StateMachine.State.RampIdle);
-                default:
-                    return false;
-            }
+            incoming.TryChangeState(StateMachine.State.RampIdle);
         }
     }
 }

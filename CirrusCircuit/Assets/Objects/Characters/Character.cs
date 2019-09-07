@@ -57,6 +57,13 @@ namespace Cirrus.Circuit.Objects.Characters
             }
         }
 
+        public virtual void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+
+            Gizmos.DrawSphere(_targetPosition, 0.1f);
+        }
+
         protected override void Awake()
         {
             base.Awake(); 
@@ -115,10 +122,7 @@ namespace Cirrus.Circuit.Objects.Characters
                 _visual.Parent.transform.rotation = Quaternion.LookRotation(_direction, transform.up);
         }
 
-        public override void Fall()
-        {
-            
-        }
+
 
     }
 

@@ -32,15 +32,5 @@ namespace Cirrus.Circuit.Objects
             _visual.Enabled = false;
         }
 
-        public override bool Visit(BaseObject incoming)
-        {
-            switch (incoming.Id)
-            {
-                case ObjectId.Gem:
-                    return incoming.TryChangeState(StateMachine.State.Falling);                    
-                default:
-                    return false;
-            }
-        }
     }
 }

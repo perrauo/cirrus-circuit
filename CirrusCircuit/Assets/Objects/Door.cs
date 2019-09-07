@@ -26,6 +26,12 @@ namespace Cirrus.Circuit.Objects
 
         public override bool TryMove(Vector3 step, BaseObject incoming = null)
         {
+            return false;
+        }
+
+
+        public override bool TryEnter(Vector3 step, BaseObject incoming = null)
+        {
 
             switch (incoming.Id)
             {
@@ -44,12 +50,5 @@ namespace Cirrus.Circuit.Objects
             }
 
         }
-
-        public override bool Visit(BaseObject incoming)
-        {
-            incoming.Enter();
-            return true;
-        }
-
     }
 }

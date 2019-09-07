@@ -68,10 +68,8 @@ namespace Cirrus.Circuit.Objects.Characters
                 ~Game.Instance.Layers.MoveableFlags
                 ))
             {
-                Debug.Log(hit.distance);
 
-
-                int count = Mathf.FloorToInt(hit.distance / Levels.Level.CubeSize);
+                int count = Mathf.FloorToInt(hit.distance / Levels.Level.BlockSize);
 
 
                 foreach (var s in _squares)

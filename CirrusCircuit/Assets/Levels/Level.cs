@@ -40,7 +40,7 @@ namespace Cirrus.Circuit.Levels
         [SerializeField]
         public GameObject _doorsParent;
 
-        public static float CubeSize = 2f;
+        public static float BlockSize = 2f;
 
         public static Level Instance;
 

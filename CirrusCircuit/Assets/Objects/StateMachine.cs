@@ -37,6 +37,7 @@ namespace Cirrus.Circuit.Objects
                 case State.Idle:
                 case State.RampIdle:
                 case State.Moving:
+                case State.RampMoving:
 
                     _object.Object.transform.position = Vector3.Lerp(_object.Object.transform.position, _object._targetPosition, _object._stepSpeed);
 
@@ -54,21 +55,53 @@ namespace Cirrus.Circuit.Objects
             switch (_state)
             {
                 case State.Entering:
-                case State.Falling:
+                
                 case State.Idle:
                 case State.RampIdle:
+                    return;
+
+                case State.Falling:
                 case State.Moving:
+                case State.RampMoving:
 
                     if (Utils.Vectors.CloseEnough(_object.Object.transform.position, _object._targetPosition))
                     {
                         // If the destination can coexist with incoming object once arrived we return true
                         if (_object._destination == null)
                         {
-                            TryChangeState(State.Idle);
+                            RaycastHit hit;
+
+                            if (Physics.Raycast(
+                                _object._targetPosition,
+                                Vector3.down,
+                                out hit,
+                                Levels.Level.BlockSize / 2))
+                            {
+                                TryChangeState(State.Idle);
+                            }
+                            else
+                            {
+                                // Raycast down to get distance
+                                if (Physics.Raycast(
+                                _object._targetPosition,
+                                Vector3.down,
+                                out hit,
+                                10f))
+                                {
+                                    Debug.Log(_object._targetPosition);
+                                    Debug.Log(hit.point);
+                                    TryChangeState(State.Falling, hit.distance);
+                                }
+                                else
+                                {
+                                    // TODO
+                                    // Fall to infinity and destroy
+                                }
+                            }
                         }
                         else
                         {
-                            _object._destination.Visit(_object);
+                            _object._destination.Accept(_object);
                         }
                     }
 
@@ -130,18 +163,41 @@ namespace Cirrus.Circuit.Objects
                     }
                     break;
 
+                case State.RampIdle:
+                    switch (transition)
+                    {
+                        case State.Moving:
+                            //case State.Moving:
+                            destination = State.RampMoving;
+                            return true;
+
+                        default:
+                            destination = State.Idle;
+                            return false;
+                    }
+
                 case State.Moving:
                     switch (transition)
                     {
                         case State.Entering:
                         case State.Falling:
                         case State.Idle:
+                        case State.RampIdle:
                             //case State.Moving:
                             destination = transition;
                             return true;
+                    }
+                    break;
 
+                case State.RampMoving:
+                    switch (transition)
+                    {
+                        case State.Entering:
+                        case State.Falling:
+                        case State.Idle:
                         case State.RampIdle:
-                            destination = State.RampMoving;
+                            //case State.Moving:
+                            destination = transition;
                             return true;
                     }
                     break;
@@ -160,15 +216,17 @@ namespace Cirrus.Circuit.Objects
             switch (target)
             {
                 case State.Entering:
-
                     _state = target;
                     _object._targetScale = 0;
                     return true;
 
                 case State.Falling:
+
+                    float distance = (float)args[0];
                     _state = target;
-                    _object._targetPosition += Vector3.up * -_object._fallDistance;
-                    _object._stepSpeed = _object._fallSpeed;
+                    _object._targetPosition += Vector3.down * distance;
+                    _object._targetPosition += Vector3.up * Levels.Level.BlockSize/2;
+                    //_object._stepSpeed = _object._fallSpeed;
                     return true;
 
                 case State.Idle:
@@ -187,59 +245,83 @@ namespace Cirrus.Circuit.Objects
                     step = (Vector3)args[0];
                     incoming = (BaseObject)args[1];
 
+                    Vector3 offset = Vector3.zero;;
                     // Determine which direction to cast the ray
 
                     Ray ray;
+
                     // Same direction (Look up)
                     if (Utils.Vectors.CloseEnough(step.normalized, _object.Object.transform.forward))
                     {
-                        ray = new Ray(_object._targetPosition + Vector3.up * Levels.Level.CubeSize + Vector3.up / 2, step);
+                        ray = new Ray(_object._targetPosition + Vector3.up * Levels.Level.BlockSize, step);
+                        offset += Vector3.up * Levels.Level.BlockSize/2;
                     }
                     // Opposing direction (look down)
                     else if (Utils.Vectors.CloseEnough(step.normalized, -_object.Object.transform.forward))
                     {
-                        ray = new Ray(_object._targetPosition + Vector3.up * -Levels.Level.CubeSize + Vector3.up / 2, step);
+                        ray = new Ray(_object._targetPosition + Vector3.down*Levels.Level.BlockSize, step);
+                        offset -= Vector3.up * Levels.Level.BlockSize/2;
                     }
                     // Perp direction (Look ahead)
                     else
                     {
-                        ray = new Ray(_object._targetPosition + Vector3.up / 2, step);
+                        ray = new Ray(_object._targetPosition, step);
                     }
 
-
-                    if (Physics.Raycast(ray, out hit, Levels.Level.CubeSize / 2))
+                    if (Physics.Raycast(ray, out hit, Levels.Level.BlockSize))
                     {
-                        _object._destination = hit.collider.GetComponentInParent<BaseObject>();
+                        _object._collider.enabled = true;
+                        var destination = hit.collider.GetComponentInParent<BaseObject>();
 
-                        if (_object._destination != null)
+                        if (destination != null)
                         {
-                            if (_object._destination.TryMove(step, _object))
+                            if (destination.TryMove(step, _object))
                             {
+                                destination._user = null;
                                 _object._destination = null; // We pushed it the destination was moved
                                 _state = target;
-                                _object._collider.enabled = false;
                                 _object._targetPosition += step;
+                                _object._targetPosition += offset;
                                 return true;
                             }
-                            else if (_object._destination.TryEnter(step, _object))
+                            else if (destination.TryEnter(step, _object))
                             {
-                                _state = target;
-                                _object._collider.enabled = false;
-                                _object._targetPosition += step;
-                                return true;
+                                if (destination._user)
+                                {
+                                    if (destination._user.TryMove(step, _object))
+                                    {
+                                        destination._user = _object; // We pushed it the destination was moved
+                                        _object._destination = destination;
+                                        _state = target;
+                                        _object._targetPosition += step;
+                                        _object._targetPosition += offset;
+                                        return true;
+                                    }
+                                }
+                                else
+                                {
+                                    _state = target;
+                                    destination._user = _object;
+                                    _object._destination = destination;
+                                    _object._targetPosition += step;
+                                    _object._targetPosition += offset;
+                                    return true;
+                                }
                             }
                         }
                     }
                     else
                     {
                         _state = target;
+                        if (_object._destination)
+                            _object._destination._user = null;
+
                         _object._destination = null;
-                        _object._collider.enabled = false;
                         _object._targetPosition += step;
+                        _object._targetPosition += offset;
                         return true;
                     }
-
-
+                    
                     break;
 
                 case State.Moving:
@@ -247,41 +329,61 @@ namespace Cirrus.Circuit.Objects
                     step = (Vector3)args[0];
                     incoming = (BaseObject)args[1];
 
+                    // Raycast front
                     if (Physics.Raycast(
-                        _object._targetPosition + Vector3.up / 2,
+                        _object._targetPosition,
                         step,
                         out hit,
-                        Levels.Level.CubeSize / 2))
+                        Levels.Level.BlockSize))
                     {
-                        _object._destination = hit.collider.GetComponentInParent<BaseObject>();
+                        _object._collider.enabled = true;
+                        var destination = hit.collider.GetComponentInParent<BaseObject>();
 
-                        if (_object._destination != null)
+                        if (destination != null)
                         {
-                            if (_object._destination.TryMove(step, _object))
+                            if (destination.TryMove(step, _object))
                             {
+                                destination._user = null;
                                 _object._destination = null; // We pushed it the destination was moved
                                 _state = target;
-                                _object._collider.enabled = false;
                                 _object._targetPosition += step;
                                 return true;
                             }
-                            else if (_object._destination.TryEnter(step, _object))
+                            else if (destination.TryEnter(step, _object))
                             {
-                                _state = target;
-                                _object._collider.enabled = false;
-                                _object._targetPosition += step;
-                                return true;
+                                if (destination._user)
+                                {
+                                    if (destination._user.TryMove(step, _object))
+                                    {
+                                        destination._user = _object; // We pushed it the destination was moved
+                                        _object._destination = destination;
+                                        _state = target;
+                                        _object._targetPosition += step;
+                                        return true;
+                                    }
+                                }
+                                else
+                                {
+                                    _state = target;
+                                    destination._user = _object;
+                                    _object._destination = destination;
+                                    _object._targetPosition += step;
+                                    return true;
+                                }
                             }
                         }
                     }
                     else
                     {
                         _state = target;
+                        if (_object._destination)
+                            _object._destination._user = null;
+
                         _object._destination = null;
-                        _object._collider.enabled = false;
                         _object._targetPosition += step;
                         return true;
                     }
+
 
                     break;
 

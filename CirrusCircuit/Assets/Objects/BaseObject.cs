@@ -47,7 +47,7 @@ namespace Cirrus.Circuit.Objects
         public float _stepDistance = 2f;
 
         [SerializeField]
-        public float _stepSpeed = 0.6f;
+        public float _stepSpeed = 0.2f;
 
         [SerializeField]
         public float _fallSpeed = 0.6f;
@@ -60,6 +60,8 @@ namespace Cirrus.Circuit.Objects
 
         public BaseObject _destination = null;
 
+        public BaseObject _user = null;
+
         public Vector3 _step;
 
         public Vector3 _targetPosition;
@@ -69,7 +71,7 @@ namespace Cirrus.Circuit.Objects
         [SerializeField]
         protected Controls.PlayerNumber _playerNumber;
 
-        protected BaseObject _visitor;
+        //protected BaseObject _visitor;
 
 
         public virtual Controls.PlayerNumber PlayerNumber
@@ -123,6 +125,13 @@ namespace Cirrus.Circuit.Objects
 
         }
 
+        //public virtual void OnDrawGizmos()
+        //{
+        //    Gizmos.color = Color.red;
+
+        //    Gizmos.DrawSphere(_targetPosition, 0.1f);
+        //}
+
         public bool TryChangeState(StateMachine.State state, params object[] args)
         {
             return _stateMachine.TryChangeState(state, args);
@@ -138,22 +147,12 @@ namespace Cirrus.Circuit.Objects
             return false;
         }
 
-        // If two items can cooexist
-        public virtual bool Visit(BaseObject incoming)
+        public virtual void Accept(BaseObject incoming)
         {
-            _visitor = incoming;
-            return true;
+            //incoming.TryChangeState
         }
 
-        public virtual void Fall()
-        {
-            _stateMachine.TryChangeState(StateMachine.State.Falling);
-        }
 
-        public virtual bool Enter()//Vector3 step, BaseObject incoming = null)
-        {
-            return _stateMachine.TryChangeState(StateMachine.State.Entering);
-        }
 
     }
 }
