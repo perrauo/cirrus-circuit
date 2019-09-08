@@ -4,6 +4,7 @@ using Cirrus.Circuit.Objects.Characters.Controls;
 //using Cirrus.Circuit.UI.HUD;
 //using Cirrus.Circuit.Objects.Characters.Strategies;
 using KinematicCharacterController;
+using System;
 using System.Collections;
 using UnityEngine;
 //using Cirrus.Circuit.Actions;
@@ -122,8 +123,15 @@ namespace Cirrus.Circuit.Objects.Characters
                 _visual.Parent.transform.rotation = Quaternion.LookRotation(_direction, transform.up);
         }
 
+        public void TryAction0()
+        {
+            throw new NotImplementedException();
+        }
 
-
+        public void TryAction1()
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

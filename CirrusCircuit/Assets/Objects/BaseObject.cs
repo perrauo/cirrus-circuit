@@ -41,7 +41,7 @@ namespace Cirrus.Circuit.Objects
         }        
 
         [SerializeField]
-        protected StateMachine _stateMachine;
+        protected FSM _stateMachine;
 
         [SerializeField]
         public float _stepDistance = 2f;
@@ -69,18 +69,10 @@ namespace Cirrus.Circuit.Objects
         public float _targetScale = 1;
 
         [SerializeField]
-        protected Controls.PlayerNumber _playerNumber;
+        public Controls.PlayerNumber PlayerNumber;
 
         //protected BaseObject _visitor;
 
-
-        public virtual Controls.PlayerNumber PlayerNumber
-        {
-            get
-            {
-                return _playerNumber;
-            }
-        }
 
         [SerializeField]
         protected Color _color;
@@ -132,14 +124,14 @@ namespace Cirrus.Circuit.Objects
         //    Gizmos.DrawSphere(_targetPosition, 0.1f);
         //}
 
-        public bool TryChangeState(StateMachine.State state, params object[] args)
+        public bool TryChangeState(FSM.State state, params object[] args)
         {
             return _stateMachine.TryChangeState(state, args);
         }
 
         public virtual bool TryMove(Vector3 step, BaseObject incoming = null)
         {
-            return _stateMachine.TryChangeState(StateMachine.State.Moving, step, incoming);
+            return _stateMachine.TryChangeState(FSM.State.Moving, step, incoming);
         }
 
         public virtual bool TryEnter(Vector3 step, BaseObject incoming = null)

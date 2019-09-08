@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Inputs = UnityEngine.InputSystem;
-
+using System.Collections.Generic;
 
 namespace Cirrus.Circuit.Controls
 {
@@ -22,76 +21,103 @@ namespace Cirrus.Circuit.Controls
     public class Lobby : MonoBehaviour
     {
         [SerializeField]
-        private Levels.Level _level;
+        private Inputs.InputActionAsset _inputActionAsset;
 
         [SerializeField]
-        private Color[] _colors = new Color[4];
+        public Color[] Colors = new Color[4];
 
-        [HideInInspector]
-        public Controller[] Players;
+        public Controller[] Controllers;
 
-        public int PlayerCount = 0;
+        public int ControllerCount = 0;
 
-        [SerializeField]
-        public int PlayerMax = 4;
+        public int _joinedCount = 0;
 
-        [SerializeField]
-        private bool _update;
+        private const int _playerMax = 8;
 
- 
+        private List<Objects.Characters.Character> _characters;
+
         public void Awake()
         {
-            Players = new Controller[PlayerMax];
+            Controllers = new Controller[_playerMax];
+            _characters = new List<Objects.Characters.Character>();
         }
+
+
+        public bool TryJoin(Controller controller)
+        {
+            if (controller.Character == null)
+            {
+                if (_joinedCount >= Game.Instance.CurrentLevel.CharacterCount)
+                    return false;
+
+                controller.Character = Game.Instance.CurrentLevel.Characters[_joinedCount];
+                _joinedCount++;
+                return true;
+            }
+            else return false;
+        }
+
+        public bool TryLeave(Controller controller)
+        {
+            if (controller.Character != null)
+            {
+                if (_joinedCount >= Game.Instance.CurrentLevel.CharacterCount)
+                    return false;
+
+                controller.Character = Game.Instance.CurrentLevel.Characters[_joinedCount];
+
+                _joinedCount--;
+
+                return true;
+            }
+            else return false;
+        }
+
 
         public void OnValidate()
         {
-            _update = false;
-
-            if (_level == null)
-                return;
-
-            for (int i = 0; i < _level.CharacterCount; i++)
-            {
-                if(_level != null)
-                    _level.UpdateColors(i, _colors[i]);
-            }
         }
 
         // Update is called once per frame
         public void Start()
         {
             var devices = Inputs.InputDevice.all;
-
+            
+            // TODO: do not assume one player per device?
             foreach(var device in devices)
             {
                 if (device != null)
                 {
-                    if (device is Keyboard ||
-                        device is Gamepad)
+                    if (device is Inputs.Keyboard ||
+                        device is Inputs.Gamepad)
                     {
-                        Players[PlayerCount] = new Controller(device);
-                        Players[PlayerCount].OnReadyHandler += OnControllerReady;
-                        PlayerCount++;
+                        //InputActionAsset actions;
+                        foreach (Inputs.InputControlScheme scheme in _inputActionAsset.controlSchemes)
+                        {
+                            if (scheme.SupportsDevice(device))
+                            {
+                                Controllers[ControllerCount] = new Controller(device, scheme);
+                                ControllerCount++;
+                            }
+                        }                        
                     }
                 }
 
-                if (PlayerCount > PlayerMax || PlayerCount > _level.CharacterCount) break;
+                if (ControllerCount > _playerMax || ControllerCount > Game.Instance.CurrentLevel.CharacterCount) break;
             }
 
             Inputs.Users.InputUser.onUnpairedDeviceUsed += OnUnpairedInputDeviceUsed;
         }
 
-        public void OnControllerReady(Controller ctrl)
+        public void OnApplicationQuit()
         {
-            var character = _level.Characters[PlayerCount - 1];
-            ctrl.Join(this, character);
+            Controllers = null;
         }
 
         private void OnUserChange(
             Inputs.Users.InputUser user, 
-            Inputs.Users.InputUserChange change, 
-            InputDevice device)
+            Inputs.Users.InputUserChange change,
+            Inputs.InputDevice device)
         {
             switch (change)
             {
@@ -138,9 +164,9 @@ namespace Cirrus.Circuit.Controls
             }
         }
 
-        public void OnUnpairedInputDeviceUsed(InputControl control)
+        public void OnUnpairedInputDeviceUsed(Inputs.InputControl control)
         {
-            if (control.device is Gamepad)
+            if (control.device is Inputs.Gamepad)
             {
                 //for(var i = 0; i < _users.Length; i++)
                 //{
@@ -153,7 +179,7 @@ namespace Cirrus.Circuit.Controls
                 //    }
                 //}
             }
-            else if(control.device is Keyboard)
+            else if(control.device is Inputs.Keyboard)
             {
 
             }

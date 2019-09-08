@@ -4,11 +4,12 @@ using System.Collections;
 namespace Cirrus.Circuit.Objects
 {
     [System.Serializable]
-    public class StateMachine : MonoBehaviour
+    public class FSM : MonoBehaviour
     {
         [System.Serializable]
         public enum State
         {
+            LevelSelect,
             Entering,
             Falling,
             Idle,
@@ -25,13 +26,16 @@ namespace Cirrus.Circuit.Objects
 
         public void Awake()
         {
-            TryChangeState(State.Idle);
+            TryChangeState(State.LevelSelect);
         }
 
         public void FixedUpdate()
         {
             switch (_state)
             {
+                case State.LevelSelect:
+                    break;
+
                 case State.Entering:
                 case State.Falling:
                 case State.Idle:
@@ -54,6 +58,9 @@ namespace Cirrus.Circuit.Objects
         {
             switch (_state)
             {
+                case State.LevelSelect:
+                    return;
+
                 case State.Entering:
                 
                 case State.Idle:
@@ -88,8 +95,8 @@ namespace Cirrus.Circuit.Objects
                                 out hit,
                                 10f))
                                 {
-                                    Debug.Log(_object._targetPosition);
-                                    Debug.Log(hit.point);
+                                    //Debug.Log(_object._targetPosition);
+                                    //Debug.Log(hit.point);
                                     TryChangeState(State.Falling, hit.distance);
                                 }
                                 else

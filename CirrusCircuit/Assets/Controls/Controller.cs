@@ -19,94 +19,80 @@ using Inputs = UnityEngine.InputSystem;
 
 namespace Cirrus.Circuit.Controls
 {
-    public class Controller : Schema.IPlayerActions
+    public class Controller : ActionMap.IPlayerActions
     {
         public delegate void OnReady(Controller ctrl);
 
         public OnReady OnReadyHandler;
 
-        private bool _joined = false;
 
-        [SerializeField]
-        public Lobby _lobby;
+        private UnityInput.Users.InputUser _user;
 
-        [SerializeField]
-        public UnityInput.Users.InputUser _user;
+        private ActionMap _actionMap;
 
-        [SerializeField]
-        public Schema _schema;
+        private Inputs.InputDevice _device;
+
+        private Inputs.InputControlScheme _scheme;
 
         // TODO: Rework ? replace by mult action map
 
-        public Schema.PlayerActions Actions { get { return _schema.Player; } }
+        public Objects.Characters.Character Character;
+  
 
-        [SerializeField]
-        private Objects.Characters.Character _character;
-
-        public Controller(Inputs.InputDevice device)
+        public Controller(Inputs.InputDevice device, Inputs.InputControlScheme scheme)
         {
-            //Inputs.InputDevice.all
+            _device = device;
             _user = Inputs.Users.InputUser.CreateUserWithoutPairedDevices();
-            Inputs.Users.InputUser.PerformPairingWithDevice(device, _user);
-            _schema = new Schema();
-            _user.AssociateActionsWithUser(_schema);
+            Inputs.Users.InputUser.PerformPairingWithDevice(_device, _user);
+
+            // Each player gets a separate action setup. This makes the state of actions and bindings
+            // local to each player and also ensures we're not stepping on the action setup used by
+            // DemoGame itself for the main menu (where we are not using control schemes and just blindly
+            // bind to whatever devices are available locally).
+            _actionMap = new ActionMap();
+            _actionMap.bindingMask = new Inputs.InputBinding { groups = scheme.bindingGroup }; 
+
+            _user.AssociateActionsWithUser(_actionMap);
             Enable();
         }
 
-        public void Pair(Inputs.InputDevice device)
+        ~Controller()
         {
-            
+            Enable(false);
+            _user.UnpairDevicesAndRemoveUser();
         }
-
-        public void Join(Lobby lobby, Objects.Characters.Character character)
-        {
-            _joined = true;
-            _lobby = lobby;
-            _character = character;
-        }
-
 
         public void Enable(bool enabled = true)
         {
             if (enabled)
             {
-                Actions.Enable();
-                Actions.SetCallbacks(this);
+                _actionMap.Player.Enable();
+                _actionMap.Player.SetCallbacks(this);
             }
             else
             {
-                Actions.Disable(); ;
-                Actions.SetCallbacks(null);
+                _actionMap.Player.Disable(); ;
+                _actionMap.Player.SetCallbacks(null);
             }
         }
 
         // TODO: Simulate LeftStick continuous axis with WASD
         public void OnAxesLeft(UnityInput.InputAction.CallbackContext context)
-        {
-            if (!_joined)
-            {
-                OnReadyHandler?.Invoke(this);
-            }
-
-            var val = context.ReadValue<Vector2>();
-
-            var axis = Vector2.ClampMagnitude(val, 1);
-
-            _character.TryMove(axis);
+        { 
+            var axis = Vector2.ClampMagnitude(context.ReadValue<Vector2>(), 1);
+            Game.Instance.HandleAxesLeft(this, axis);
         }
 
-
-        public void OnAxesRight(UnityInput.InputAction.CallbackContext context)
+        // Cancel
+        public void OnAction0(UnityInput.InputAction.CallbackContext context)
         {
-            //var value = context.ReadValue<Vector2>();
-
-            //_character.Controller.AxesRight = value;
-
+            Game.Instance.HandleAction0(this);
         }
 
-        public void OnJump(UnityInput.InputAction.CallbackContext context)
+        // Accept
+        public void OnAction1(UnityInput.InputAction.CallbackContext context)
         {
-
+            Game.Instance.HandleAction1(this);
         }
     }
 }

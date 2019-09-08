@@ -24,6 +24,16 @@ namespace Cirrus.Circuit.Levels
                 return _characters.Length;
             }
         }
+
+        [SerializeField]
+        private string _name;
+
+        public string Name {
+            get
+            {
+                return  _name;
+            }
+        }
         
         [SerializeField]
         public GameObject _charactersParent;
@@ -42,15 +52,34 @@ namespace Cirrus.Circuit.Levels
 
         public static float BlockSize = 2f;
 
-        public static Level Instance;
+        [SerializeField]
+        public float DistanceLevelSelection = 35;
 
+        [SerializeField]
+        public float CameraSize = 10;
+
+        public Vector3 TargetPosition;
+
+        [SerializeField]
+        public float _positionSpeed = 0.4f;
+
+ 
         public void Awake()
         { 
-            Instance = this;
         }
+
+        public void FixedUpdate()
+        {
+            transform.position = Vector3.Lerp(transform.position, TargetPosition, _positionSpeed);
+        }
+
+
 
         public void UpdateColors(int player, Color color)
         {
+            if (_characters[player] == null)
+                return;
+
             _characters[player].Color = color;
 
             foreach (Objects.Gem gem in _gems)
@@ -63,7 +92,6 @@ namespace Cirrus.Circuit.Levels
                     gem.Color = color;
                 }
             }
-
 
             foreach (Objects.Door door in _doors)
             {
@@ -79,6 +107,9 @@ namespace Cirrus.Circuit.Levels
 
         public void OnValidate()
         {
+            _name = gameObject.name.Substring(gameObject.name.IndexOf('.')+1);
+            _name = _name.Replace('.', ' ');
+
             if (_gemsParent)
             {
                 _gems = _gemsParent.GetComponentsInChildren<Objects.Gem>();
@@ -97,6 +128,18 @@ namespace Cirrus.Circuit.Levels
                 _characters = _charactersParent.GetComponentsInChildren<Objects.Characters.Character>();
                 _charactersParent = null;
             }
+
+            for (int i = 0; i < _characters.Length; i++)
+            {
+                if (_characters[i] != null && _characters[i].gameObject.activeInHierarchy)
+                {
+                    if (_characters[i])
+                        _characters[i].PlayerNumber = (Controls.PlayerNumber)i;
+
+                    UpdateColors(i, Game.Instance.Lobby.Colors[i]);
+                }
+            }
+
         }
 
 

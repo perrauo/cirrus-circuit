@@ -37,7 +37,7 @@ namespace Cirrus.Circuit.Objects
 
         public override void Accept(BaseObject incoming)
         {
-            incoming.TryChangeState(StateMachine.State.RampIdle);
+            incoming.TryChangeState(FSM.State.RampIdle);
         }
     }
 }
