@@ -30,28 +30,34 @@ namespace Cirrus.Circuit.Controls
 
         public int ControllerCount = 0;
 
-        public int _joinedCount = 0;
+        public int JoinedCount = 0;
 
         private const int _playerMax = 8;
 
-        private List<Objects.Characters.Character> _characters;
+        public List<Objects.Characters.Character> Characters;
 
         public void Awake()
         {
             Controllers = new Controller[_playerMax];
-            _characters = new List<Objects.Characters.Character>();
+            Characters = new List<Objects.Characters.Character>();
         }
+
+        public void OnApplicationQuit()
+        {
+            Controllers = null;
+        }
+
 
 
         public bool TryJoin(Controller controller)
         {
             if (controller.Character == null)
             {
-                if (_joinedCount >= Game.Instance.CurrentLevel.CharacterCount)
+                if (JoinedCount >= Game.Instance.CurrentLevel.CharacterCount)
                     return false;
 
-                controller.Character = Game.Instance.CurrentLevel.Characters[_joinedCount];
-                _joinedCount++;
+                controller.Character = Game.Instance.CurrentLevel.Characters[JoinedCount];
+                JoinedCount++;
                 return true;
             }
             else return false;
@@ -61,12 +67,12 @@ namespace Cirrus.Circuit.Controls
         {
             if (controller.Character != null)
             {
-                if (_joinedCount >= Game.Instance.CurrentLevel.CharacterCount)
+                if (JoinedCount >= Game.Instance.CurrentLevel.CharacterCount)
                     return false;
 
-                controller.Character = Game.Instance.CurrentLevel.Characters[_joinedCount];
+                controller.Character = Game.Instance.CurrentLevel.Characters[JoinedCount];
 
-                _joinedCount--;
+                JoinedCount--;
 
                 return true;
             }
@@ -96,7 +102,7 @@ namespace Cirrus.Circuit.Controls
                         {
                             if (scheme.SupportsDevice(device))
                             {
-                                Controllers[ControllerCount] = new Controller(device, scheme);
+                                Controllers[ControllerCount] = new Controller(ControllerCount, device, scheme);
                                 ControllerCount++;
                             }
                         }                        
@@ -107,11 +113,6 @@ namespace Cirrus.Circuit.Controls
             }
 
             Inputs.Users.InputUser.onUnpairedDeviceUsed += OnUnpairedInputDeviceUsed;
-        }
-
-        public void OnApplicationQuit()
-        {
-            Controllers = null;
         }
 
         private void OnUserChange(

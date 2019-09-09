@@ -19,13 +19,14 @@ namespace Cirrus.Circuit.UI
         private float direction = 1;
 
         // Update is called once per frame
-        void Start()
+        public void OnEnable()
         {
+            gameObject.transform.rotation = Quaternion.identity;
             StartCoroutine(DoSeesaw(_seesawAngle));
         }
 
         public IEnumerator DoSeesaw(float angle)
-        {
+        {    
             iTween.RotateBy(gameObject, new Vector3(0, 0, angle), _seesawTime);
 
             yield return new WaitForSeconds(_seesawDelay);

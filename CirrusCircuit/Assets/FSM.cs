@@ -131,30 +131,54 @@ namespace Cirrus.Circuit
 
         protected bool TryFinishChangeState(State target, params object[] args)
         {
-
             switch (target)
             {
                 case State.LevelSelection:
 
-                    foreach(Levels.Level lv in Game.Instance._levels)
+                    _state = target;
+
+                    foreach (Levels.Level lv in Game.Instance._levels)
                     {
                         lv.gameObject.SetActive(true);
                     }
 
-                    Game.Instance.OnLevelSelected(0);
+                    Game.Instance.OnLevelSelect();
+                    Game.Instance.OnLevelSelected(0);                 
 
                     return true;
 
                 case State.Round:
+
+                    _state = target;
+                    
                     return true;
 
                 case State.Score:
 
+                    _state = target;
+
                     return true;
 
                 case State.WaitingNextRound:
+                    Game.Instance.Lobby.Characters.Clear();
+                    Game.Instance.Lobby.Characters.AddRange(Game.Instance.CurrentLevel.Characters);
 
+                    foreach (Controller ctrl in Game.Instance.Lobby.Controllers)
+                    {
+                        if (ctrl == null)
+                        {
+                            continue;
+                        }
+
+                        ctrl.Character = null;
+                    }
+
+                    _state = target;
+
+                    Game.Instance.OnWaiting();
                     return true;
+
+
                 default:
                     return false;
             }
@@ -210,7 +234,7 @@ namespace Cirrus.Circuit
                         int prev = Game.Instance._currentLevelIndex;
 
                         Game.Instance._currentLevelIndex =
-                            Mathf.Clamp(Game.Instance._currentLevelIndex + (int)Mathf.Sign(step.x), 0, Game.Instance._levels.Length);
+                            Mathf.Clamp(Game.Instance._currentLevelIndex + (int)Mathf.Sign(step.x), 0, Game.Instance._levels.Length-1);
 
                         if (prev != Game.Instance._currentLevelIndex)
                         { 
@@ -243,8 +267,26 @@ namespace Cirrus.Circuit
 
                 case State.WaitingNextRound:
 
-                    //Game.Instance.Lobby.Join()
-                    TryChangeState(State.LevelSelection);
+                    if (controller.Character != null)
+                    {
+                        Game.Instance.Lobby.Characters.Add(controller.Character);
+                        Game.Instance.HUD.UpdateDisplay(controller.Number, UI.PlayerDisplay.State.Waiting);
+                        controller.Character = null;
+                    }
+                    else
+                    {
+                        foreach (Controller ctrl in Game.Instance.Lobby.Controllers)
+                        {
+                            if (ctrl == null)
+                            {
+                                continue;
+                            }
+
+                            ctrl.Character = null;
+                        }
+
+                        TryChangeState(State.LevelSelection);
+                    }
 
                     break;
 
@@ -263,25 +305,31 @@ namespace Cirrus.Circuit
         {
             switch (_state)
             {
+
                 case State.LevelSelection:
                     TryChangeState(State.WaitingNextRound);
-                    break;
+                    break;                                       
 
                 case State.WaitingNextRound:
 
                     if (controller.Character == null)
                     {
-                        controller.Character = 
-                            Game.Instance.CurrentLevel.Characters[Game.Instance.Lobby.ControllerCount - 1];
-                    }
-                    else if(
-                        Game.Instance.Lobby.ControllerCount >= 
-                        Game.Instance.CurrentLevel.CharacterCount)
-                    {
-                        // Start
+                        if (Game.Instance.Lobby.Characters.Count != 0)
+                        {
+                            controller.Character = Game.Instance.Lobby.Characters[0];
+                            Game.Instance.Lobby.Characters.RemoveAt(0);
+
+
+                            Game.Instance.HUD.UpdateDisplay(controller.Number, UI.PlayerDisplay.State.Ready);
+                            // TODO update character color
+
+                        }                      
+
                     }
 
                     break;
+                    
+
 
                 case State.Round:
                     controller.Character?.TryAction0();

@@ -37,10 +37,21 @@ namespace Cirrus.Circuit.Controls
         // TODO: Rework ? replace by mult action map
 
         public Objects.Characters.Character Character;
-  
 
-        public Controller(Inputs.InputDevice device, Inputs.InputControlScheme scheme)
+        private int _number = 0;
+
+        public int Number
         {
+            get
+            {
+                return _number;
+            }
+        }
+
+
+        public Controller(int number, Inputs.InputDevice device, Inputs.InputControlScheme scheme)
+        {
+            _number = number;
             _device = device;
             _user = Inputs.Users.InputUser.CreateUserWithoutPairedDevices();
             Inputs.Users.InputUser.PerformPairingWithDevice(_device, _user);
@@ -49,9 +60,9 @@ namespace Cirrus.Circuit.Controls
             // local to each player and also ensures we're not stepping on the action setup used by
             // DemoGame itself for the main menu (where we are not using control schemes and just blindly
             // bind to whatever devices are available locally).
+            _scheme = scheme;
             _actionMap = new ActionMap();
-            _actionMap.bindingMask = new Inputs.InputBinding { groups = scheme.bindingGroup }; 
-
+            _actionMap.bindingMask = new Inputs.InputBinding { groups = _scheme.bindingGroup }; 
             _user.AssociateActionsWithUser(_actionMap);
             Enable();
         }

@@ -11,7 +11,8 @@ namespace Cirrus.Circuit.UI
             Disconnected,
             Waiting,
             Disabled,
-            Round
+            Round,
+            Ready
         }
 
         public State _state;
@@ -29,6 +30,8 @@ namespace Cirrus.Circuit.UI
         private const float _disconnectedAlpha = 0.1f;
 
         private const float _disabledAlpha = 0.5f;
+
+        private const float _readyAlpha = 1f;
 
         public Color Color
         {
@@ -59,7 +62,7 @@ namespace Cirrus.Circuit.UI
         }
 
 
-        public bool TryChangeState(State state)
+        public bool TryChangeState(State state, params object[] args)
         {
             _state = state;
 
@@ -75,10 +78,13 @@ namespace Cirrus.Circuit.UI
 
 
                 case State.Waiting:
-                    gameObject.SetActive(true);
+
+                    //int playerNumber = (int)args[0];
+
+                    //gameObject.SetActive(true);
   
-                    _color.a = _disabledAlpha;
-                    _image.color = _color;
+                    //_color.a = _disabledAlpha;
+                    //_image.color = Game.Instance.Lobby.Colors[playerNumber];
                     _text.text = "Press 'A' to join";
 
                     break;
@@ -86,6 +92,15 @@ namespace Cirrus.Circuit.UI
                 case State.Disabled:
                     gameObject.SetActive(false);
 
+                    break;
+
+
+                case State.Ready:
+                              
+                    int playerNumber = (int)args[0];
+                    _color = Game.Instance.Lobby.Colors[playerNumber];
+                    _color.a = _readyAlpha;
+                    _text.text = "Ready player " + playerNumber;
                     break;
 
                 case State.Round:

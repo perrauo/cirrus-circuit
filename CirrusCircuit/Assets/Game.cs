@@ -126,6 +126,9 @@ namespace Cirrus.Circuit
 
             }
 
+            Lobby.Characters.Clear();
+            Lobby.Characters.AddRange(CurrentLevel.Characters);
+
             CurrentLevel = _levels[_currentLevelIndex];
 
             _targetSizeCamera = CurrentLevel.CameraSize;
@@ -152,5 +155,14 @@ namespace Cirrus.Circuit
             _stateMachine.HandleAction1(controller);
         }
 
+        public void OnLevelSelect()
+        {
+            HUD.OnLevelSelect();
+        }
+
+        public void OnWaiting()
+        {
+            HUD.OnWaiting();
+        }
     }
 }

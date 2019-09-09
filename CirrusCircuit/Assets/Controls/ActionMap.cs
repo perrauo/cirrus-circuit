@@ -26,8 +26,8 @@ namespace Cirrus.Circuit.Controls
                     ""id"": ""149cc932-d56a-4338-b185-94fd9471a705"",
                     ""expectedControlLayout"": ""Axis"",
                     ""continuous"": true,
-                    ""passThrough"": true,
-                    ""initialStateCheck"": true,
+                    ""passThrough"": false,
+                    ""initialStateCheck"": false,
                     ""processors"": """",
                     ""interactions"": """",
                     ""bindings"": []
@@ -46,7 +46,7 @@ namespace Cirrus.Circuit.Controls
                 {
                     ""name"": ""Action.1"",
                     ""id"": ""22b556f9-b24e-489e-a3be-593ad29a0efb"",
-                    ""expectedControlLayout"": """",
+                    ""expectedControlLayout"": ""Button"",
                     ""continuous"": false,
                     ""passThrough"": false,
                     ""initialStateCheck"": false,
@@ -57,67 +57,7 @@ namespace Cirrus.Circuit.Controls
             ],
             ""bindings"": [
                 {
-                    ""name"": ""KeyBoard.WASD"",
-                    ""id"": ""2d7ae6a8-9bed-41c3-865d-685413787d31"",
-                    ""path"": ""2DVector"",
-                    ""interactions"": ""Hold"",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Axes.Left"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false,
-                    ""modifiers"": """"
-                },
-                {
-                    ""name"": ""Up"",
-                    ""id"": ""8cf182db-55dc-4945-afc6-5369f4dde369"",
-                    ""path"": ""<Keyboard>/w"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Keyboard"",
-                    ""action"": ""Axes.Left"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
-                },
-                {
-                    ""name"": ""Right"",
-                    ""id"": ""b7f5620c-4284-402e-8aa3-a784d23bd569"",
-                    ""path"": ""<Keyboard>/d"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""Axes.Left"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
-                },
-                {
-                    ""name"": ""Left"",
-                    ""id"": ""56da0287-c546-4d00-a1df-c4d2cb520c8e"",
-                    ""path"": ""<Keyboard>/a"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""Axes.Left"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
-                },
-                {
-                    ""name"": ""Down"",
-                    ""id"": ""e78a1cdf-3f0f-430f-8f9c-7ef9fb065121"",
-                    ""path"": ""<Keyboard>/s"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""Axes.Left"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
-                },
-                {
-                    ""name"": ""GamePad.DPad"",
+                    ""name"": ""Gamepad.Dpad "",
                     ""id"": ""35b4b9fd-490b-46b2-a0b8-2a1e08a73ac4"",
                     ""path"": ""2DVector"",
                     ""interactions"": ""Hold"",
@@ -132,9 +72,9 @@ namespace Cirrus.Circuit.Controls
                     ""name"": ""Up"",
                     ""id"": ""16cba554-6d72-4f81-be75-03b229060bbc"",
                     ""path"": ""<Gamepad>/dpad/up"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
                     ""processors"": """",
-                    ""groups"": "";Gamepad"",
+                    ""groups"": "";Gamepad;Gamepad.Joystick.Left;Gamepad.Joystick;Gamepad.Dpad"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true,
@@ -144,9 +84,9 @@ namespace Cirrus.Circuit.Controls
                     ""name"": ""Down"",
                     ""id"": ""a4dd7588-d13d-4e45-babe-811fdca8129c"",
                     ""path"": ""<Gamepad>/dpad/down"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
                     ""processors"": """",
-                    ""groups"": "";Gamepad"",
+                    ""groups"": "";Gamepad;Gamepad.Joystick.Left;Gamepad.Joystick;Gamepad.Dpad"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true,
@@ -156,9 +96,9 @@ namespace Cirrus.Circuit.Controls
                     ""name"": ""Left"",
                     ""id"": ""b4cf9297-abcf-4bdd-b7a2-6acd48e9f5a3"",
                     ""path"": ""<Gamepad>/dpad/left"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
                     ""processors"": """",
-                    ""groups"": "";Gamepad"",
+                    ""groups"": "";Gamepad;Gamepad.Joystick.Left;Gamepad.Joystick;Gamepad.Dpad"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true,
@@ -168,88 +108,16 @@ namespace Cirrus.Circuit.Controls
                     ""name"": ""Right"",
                     ""id"": ""c5cdbc85-7a7f-41d4-8896-7204459da4b6"",
                     ""path"": ""<Gamepad>/dpad/right"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
                     ""processors"": """",
-                    ""groups"": "";Gamepad"",
+                    ""groups"": "";Gamepad;Gamepad.Joystick.Left;Gamepad.Joystick;Gamepad.Dpad"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true,
                     ""modifiers"": """"
                 },
                 {
-                    ""name"": ""KeyBoard.Arrows"",
-                    ""id"": ""64483cd5-1de2-4585-b8c9-37c2b722c732"",
-                    ""path"": ""2DVector"",
-                    ""interactions"": ""Hold"",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Axes.Left"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false,
-                    ""modifiers"": """"
-                },
-                {
-                    ""name"": ""Up"",
-                    ""id"": ""8ec7097e-7872-4b58-b556-cd255e4685c2"",
-                    ""path"": ""<Keyboard>/upArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Keyboard"",
-                    ""action"": ""Axes.Left"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
-                },
-                {
-                    ""name"": ""Down"",
-                    ""id"": ""ddad3f75-6b34-47c8-a9e7-c02ba4fe328d"",
-                    ""path"": ""<Keyboard>/downArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Keyboard"",
-                    ""action"": ""Axes.Left"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
-                },
-                {
-                    ""name"": ""Left"",
-                    ""id"": ""298e68dd-3926-4424-8831-9463ea688187"",
-                    ""path"": ""<Keyboard>/leftArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Keyboard"",
-                    ""action"": ""Axes.Left"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
-                },
-                {
-                    ""name"": ""Right"",
-                    ""id"": ""4885437d-82f9-4b0b-b074-7a7ce419b1ef"",
-                    ""path"": ""<Keyboard>/rightArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Keyboard"",
-                    ""action"": ""Axes.Left"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""36531ca0-2dd3-47a1-87f1-93a9b05b7bd8"",
-                    ""path"": ""<Gamepad>/leftStick"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Gamepad"",
-                    ""action"": ""Axes.Left"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false,
-                    ""modifiers"": """"
-                },
-                {
-                    ""name"": ""2D Vector"",
+                    ""name"": ""Keyboard.Arrows"",
                     ""id"": ""c0a6a62a-d82f-4ab9-bbb9-78ced9b3dcbe"",
                     ""path"": ""2DVector"",
                     ""interactions"": ""Hold"",
@@ -266,7 +134,7 @@ namespace Cirrus.Circuit.Controls
                     ""path"": ""<Keyboard>/upArrow"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Keyboard.Arrow"",
+                    ""groups"": ""Keyboard.Arrow;Keyboard.Arrows"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true,
@@ -278,7 +146,7 @@ namespace Cirrus.Circuit.Controls
                     ""path"": ""<Keyboard>/downArrow"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Keyboard.Arrow"",
+                    ""groups"": ""Keyboard.Arrow;Keyboard.Arrows"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true,
@@ -290,7 +158,7 @@ namespace Cirrus.Circuit.Controls
                     ""path"": ""<Keyboard>/leftArrow"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Keyboard.Arrow"",
+                    ""groups"": ""Keyboard.Arrow;Keyboard.Arrows"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true,
@@ -302,17 +170,17 @@ namespace Cirrus.Circuit.Controls
                     ""path"": ""<Keyboard>/rightArrow"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Keyboard.Arrow"",
+                    ""groups"": ""Keyboard.Arrow;Keyboard.Arrows"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true,
                     ""modifiers"": """"
                 },
                 {
-                    ""name"": ""2D Vector"",
+                    ""name"": ""Keyboard.WASD"",
                     ""id"": ""aac9eb53-c7cd-4349-a748-80c9e1079305"",
                     ""path"": ""2DVector"",
-                    ""interactions"": """",
+                    ""interactions"": ""Hold"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Axes.Left"",
@@ -374,7 +242,7 @@ namespace Cirrus.Circuit.Controls
                     ""path"": ""<Keyboard>/escape"",
                     ""interactions"": ""Press"",
                     ""processors"": """",
-                    ""groups"": ""Keyboard"",
+                    ""groups"": ""Keyboard;Keyboard.WASD"",
                     ""action"": ""Action.0"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false,
@@ -386,7 +254,7 @@ namespace Cirrus.Circuit.Controls
                     ""path"": ""<Keyboard>/enter"",
                     ""interactions"": ""Press"",
                     ""processors"": """",
-                    ""groups"": ""Keyboard"",
+                    ""groups"": ""Keyboard;Keyboard.Arrows"",
                     ""action"": ""Action.1"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false,
@@ -398,7 +266,7 @@ namespace Cirrus.Circuit.Controls
                     ""path"": ""<Keyboard>/space"",
                     ""interactions"": ""Press"",
                     ""processors"": """",
-                    ""groups"": ""Keyboard"",
+                    ""groups"": ""Keyboard;Keyboard.WASD"",
                     ""action"": ""Action.1"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false,
@@ -410,7 +278,7 @@ namespace Cirrus.Circuit.Controls
                     ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": ""Press"",
                     ""processors"": """",
-                    ""groups"": ""Gamepad"",
+                    ""groups"": ""Gamepad;Gamepad.Joystick;Gamepad.Dpad"",
                     ""action"": ""Action.0"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false,
@@ -422,7 +290,7 @@ namespace Cirrus.Circuit.Controls
                     ""path"": ""<Keyboard>/backspace"",
                     ""interactions"": ""Press"",
                     ""processors"": """",
-                    ""groups"": ""Keyboard.Arrow"",
+                    ""groups"": ""Keyboard.Arrow;Keyboard.Arrows"",
                     ""action"": ""Action.0"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false,
@@ -446,31 +314,7 @@ namespace Cirrus.Circuit.Controls
                     ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": ""Press"",
                     ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Action.1"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false,
-                    ""modifiers"": """"
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""4525d395-53b7-4e32-ad7e-854a78fc5c1d"",
-                    ""path"": ""<Keyboard>/enter"",
-                    ""interactions"": ""Press"",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard.Arrow"",
-                    ""action"": ""Action.1"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false,
-                    ""modifiers"": """"
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""c8a128a6-e3dc-4605-b86a-db21a65389b1"",
-                    ""path"": ""<Keyboard>/space"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard.WASD"",
+                    ""groups"": ""Gamepad;Gamepad.Joystick;Gamepad.Dpad"",
                     ""action"": ""Action.1"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false,
@@ -481,26 +325,21 @@ namespace Cirrus.Circuit.Controls
     ],
     ""controlSchemes"": [
         {
-            ""name"": ""Keyboard.Arrow"",
+            ""name"": ""Keyboard.Arrows"",
             ""basedOn"": """",
-            ""bindingGroup"": ""Keyboard.Arrow"",
+            ""bindingGroup"": ""Keyboard.Arrows"",
             ""devices"": [
                 {
                     ""devicePath"": ""<Keyboard>"",
                     ""isOptional"": false,
                     ""isOR"": false
-                },
-                {
-                    ""devicePath"": ""<Mouse>"",
-                    ""isOptional"": true,
-                    ""isOR"": false
                 }
             ]
         },
         {
-            ""name"": ""Gamepad"",
+            ""name"": ""Gamepad.Dpad"",
             ""basedOn"": """",
-            ""bindingGroup"": ""Gamepad"",
+            ""bindingGroup"": ""Gamepad.Dpad"",
             ""devices"": [
                 {
                     ""devicePath"": ""<Gamepad>"",
@@ -513,7 +352,13 @@ namespace Cirrus.Circuit.Controls
             ""name"": ""Keyboard.WASD"",
             ""basedOn"": """",
             ""bindingGroup"": ""Keyboard.WASD"",
-            ""devices"": []
+            ""devices"": [
+                {
+                    ""devicePath"": ""<Keyboard>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
         }
     ]
 }");
@@ -626,22 +471,22 @@ namespace Cirrus.Circuit.Controls
                 return new PlayerActions(this);
             }
         }
-        private int m_KeyboardArrowSchemeIndex = -1;
-        public InputControlScheme KeyboardArrowScheme
+        private int m_KeyboardArrowsSchemeIndex = -1;
+        public InputControlScheme KeyboardArrowsScheme
         {
             get
             {
-                if (m_KeyboardArrowSchemeIndex == -1) m_KeyboardArrowSchemeIndex = asset.GetControlSchemeIndex("Keyboard.Arrow");
-                return asset.controlSchemes[m_KeyboardArrowSchemeIndex];
+                if (m_KeyboardArrowsSchemeIndex == -1) m_KeyboardArrowsSchemeIndex = asset.GetControlSchemeIndex("Keyboard.Arrows");
+                return asset.controlSchemes[m_KeyboardArrowsSchemeIndex];
             }
         }
-        private int m_GamepadSchemeIndex = -1;
-        public InputControlScheme GamepadScheme
+        private int m_GamepadDpadSchemeIndex = -1;
+        public InputControlScheme GamepadDpadScheme
         {
             get
             {
-                if (m_GamepadSchemeIndex == -1) m_GamepadSchemeIndex = asset.GetControlSchemeIndex("Gamepad");
-                return asset.controlSchemes[m_GamepadSchemeIndex];
+                if (m_GamepadDpadSchemeIndex == -1) m_GamepadDpadSchemeIndex = asset.GetControlSchemeIndex("Gamepad.Dpad");
+                return asset.controlSchemes[m_GamepadDpadSchemeIndex];
             }
         }
         private int m_KeyboardWASDSchemeIndex = -1;
