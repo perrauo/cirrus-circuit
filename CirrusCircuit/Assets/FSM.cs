@@ -150,6 +150,8 @@ namespace Cirrus.Circuit
                 case State.Round:
 
                     _state = target;
+                    Game.Instance._round = new Round(Game.Instance._roundTime);
+
                     
                     return true;
 
@@ -270,7 +272,7 @@ namespace Cirrus.Circuit
                     if (controller.Character != null)
                     {
                         Game.Instance.Lobby.Characters.Add(controller.Character);
-                        Game.Instance.HUD.UpdateDisplay(controller.Number, UI.PlayerDisplay.State.Waiting);
+                        Game.Instance.HUD.Leave(controller);
                         controller.Character = null;
                     }
                     else
@@ -318,12 +320,18 @@ namespace Cirrus.Circuit
                         {
                             controller.Character = Game.Instance.Lobby.Characters[0];
                             Game.Instance.Lobby.Characters.RemoveAt(0);
-
-
-                            Game.Instance.HUD.UpdateDisplay(controller.Number, UI.PlayerDisplay.State.Ready);
+                            Game.Instance.HUD.Join(controller);
                             // TODO update character color
 
-                        }                      
+                        }
+
+                    }
+                    else
+                    {
+                        if (Game.Instance.Lobby.Characters.Count == 0)
+                        {
+                            TryChangeState(State.Round, Game.Instance._roundTime);
+                        }
 
                     }
 

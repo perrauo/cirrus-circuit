@@ -8,7 +8,6 @@ namespace Cirrus.Circuit.UI
 
         public enum State
         {
-            Disconnected,
             Waiting,
             Disabled,
             Round,
@@ -27,11 +26,12 @@ namespace Cirrus.Circuit.UI
         private Color _color;
 
 
-        private const float _disconnectedAlpha = 0.1f;
-
-        private const float _disabledAlpha = 0.5f;
+        private const float _waitingAlpha = 0.5f;
 
         private const float _readyAlpha = 1f;
+
+        [SerializeField]
+        private Color _colorWaiting = Color.gray;
 
         public Color Color
         {
@@ -68,23 +68,12 @@ namespace Cirrus.Circuit.UI
 
             switch (_state)
             {
-                case State.Disconnected:
-                    gameObject.SetActive(true);
-
-                    _color.a = _disconnectedAlpha;
-                    _image.color = _color;
-                    _text.text = "Device disconnected";
-                    break;
-
-
                 case State.Waiting:
 
-                    //int playerNumber = (int)args[0];
+                    gameObject.SetActive(true);
 
-                    //gameObject.SetActive(true);
-  
-                    //_color.a = _disabledAlpha;
-                    //_image.color = Game.Instance.Lobby.Colors[playerNumber];
+                    _color.a = _waitingAlpha;
+                    _image.color = _colorWaiting;
                     _text.text = "Press 'A' to join";
 
                     break;
@@ -100,7 +89,9 @@ namespace Cirrus.Circuit.UI
                     int playerNumber = (int)args[0];
                     _color = Game.Instance.Lobby.Colors[playerNumber];
                     _color.a = _readyAlpha;
-                    _text.text = "Ready player " + playerNumber;
+                    this.Color = _color;
+
+                    _text.text = "Ready player " + ( playerNumber +1);
                     break;
 
                 case State.Round:

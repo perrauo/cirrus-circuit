@@ -23,6 +23,14 @@ namespace Cirrus.Circuit.UI
         private UnityEngine.UI.Text _next;
 
         [SerializeField]
+        private UI.Timer _timer;
+
+        [SerializeField]
+        private UI.CountDown _countDown;
+
+
+
+        [SerializeField]
         private float _selectPunchScale = 0.5f;
 
         [SerializeField]
@@ -33,6 +41,7 @@ namespace Cirrus.Circuit.UI
 
         [SerializeField]
         private GameObject _levelSelectDisplay;
+
 
 
         public void Awake()
@@ -81,28 +90,38 @@ namespace Cirrus.Circuit.UI
 
             for (int i = 0; i < Game.Instance.CurrentLevel.CharacterCount; i++)
             {
-                _playerDisplays[i].TryChangeState(PlayerDisplay.State.Disconnected);
-            }
-
-            for (int i = 0; i < Game.Instance.Lobby.ControllerCount; i++)
-            {
                 _playerDisplays[i].TryChangeState(PlayerDisplay.State.Waiting);
             }
         }
 
+        public void OnRound(Round round)
+        {
 
-        public void UpdateDisplay(int playerNumber, PlayerDisplay.State state)
+        }
+
+
+        public void Join(Controls.Controller controller)
         {
             if (_availablePlayerDisplays.Count != 0)
             {
-                _availablePlayerDisplays[0].TryChangeState(PlayerDisplay.State.Ready, playerNumber)
-
+                _availablePlayerDisplays[0].TryChangeState(PlayerDisplay.State.Ready, controller.Number);
+                _availablePlayerDisplays.RemoveAt(0);
                 //_playerDisplays[index]?.TryChangeState(state);
             }
 
             
         }
-        
+
+        public void Leave(Controls.Controller controller)
+        {
+            if (controller.PlayerDisplay)
+            {
+                controller.PlayerDisplay.TryChangeState(PlayerDisplay.State.Waiting);
+                _availablePlayerDisplays.Add(controller.PlayerDisplay);
+                controller.PlayerDisplay = null;
+            }
+        }
+
 
         public void OnLevelSelect()
         {
@@ -113,6 +132,25 @@ namespace Cirrus.Circuit.UI
 
         internal void OnLevelSelected(int step)
         {
+            if (Game.Instance._currentLevelIndex == 0)
+            {
+                _previous.gameObject.SetActive(false);
+            }
+            else
+            {
+                _previous.gameObject.SetActive(true);
+            }
+
+            if (Game.Instance._currentLevelIndex == Game.Instance._levels.Length-1)
+            {
+                _next.gameObject.SetActive(false);
+            }
+            else
+            {
+                _next.gameObject.SetActive(true);
+            }
+
+
 
             if (step < 0)
             {
@@ -128,16 +166,7 @@ namespace Cirrus.Circuit.UI
             foreach (var display in _playerDisplays)
             {
                 display.TryChangeState(PlayerDisplay.State.Disabled);
-            }
-
-            for (int i = 0; i < Game.Instance.CurrentLevel.CharacterCount; i++)
-            {
-                if (_playerDisplays[i] == null)
-                    continue;
-
-                _playerDisplays[i].Color = Game.Instance.Lobby.Colors[i];
-            }
-            
+            }            
         }
 
         public void OnValidate()

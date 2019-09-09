@@ -90,6 +90,14 @@ namespace Cirrus.Circuit
         public float _cameraSizeSpeed = 0.8f;
 
 
+        [SerializeField]
+        public float _roundTime = 60f;
+
+
+        public Round _round;
+
+
+
         void Awake()
         {
             //if (_instance != null)

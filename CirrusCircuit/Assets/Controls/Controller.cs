@@ -38,6 +38,9 @@ namespace Cirrus.Circuit.Controls
 
         public Objects.Characters.Character Character;
 
+        public UI.PlayerDisplay PlayerDisplay = null;
+
+
         private int _number = 0;
 
         public int Number
