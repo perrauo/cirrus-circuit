@@ -69,7 +69,7 @@ namespace Cirrus.Circuit.Objects.Characters
                 ))
             {
 
-                int count = Mathf.FloorToInt(hit.distance / Levels.Level.BlockSize);
+                int count = Mathf.FloorToInt(hit.distance / Level.BlockSize);
 
 
                 foreach (var s in _squares)

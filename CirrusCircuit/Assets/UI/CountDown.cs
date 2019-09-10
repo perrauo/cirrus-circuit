@@ -22,15 +22,24 @@ namespace Cirrus.Circuit.UI
 
             set
             {
-                if (_value <= 0)
+
+                _value = value;
+
+                if (_value == 0)
                 {
+                    _text.gameObject.SetActive(true);
                     _value = 0;
                     _text.text = _message;
                     return;
                 }
+                else if(_value < 0)
+                {
+                    _text.gameObject.SetActive(false);
+                    return;
+                }
 
+                _text.gameObject.SetActive(true);
                 _text.text = _value.ToString();
-                _value = value;
             }
         }
 

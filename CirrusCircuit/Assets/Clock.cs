@@ -10,7 +10,7 @@ namespace Cirrus.Circuit
         public delegate void OnTick();
         public OnTick OnTickedHandler;
 
-        public void Update()
+        public void FixedUpdate()
         {
             OnTickedHandler?.Invoke();//
         }

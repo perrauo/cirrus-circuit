@@ -29,10 +29,8 @@ namespace Cirrus.Circuit.Objects
             return false;
         }
 
-
         public override bool TryEnter(Vector3 step, BaseObject incoming = null)
         {
-
             switch (incoming.Id)
             {
                 case ObjectId.Gem:
@@ -40,6 +38,8 @@ namespace Cirrus.Circuit.Objects
                     iTween.Stop(Object);
                     Object.transform.localScale = new Vector3(1, 1, 1);
                     StartCoroutine(PunchScale());
+                    incoming._targetScale = 0;
+
                     return true;
 
                 case ObjectId.Character:
@@ -48,7 +48,25 @@ namespace Cirrus.Circuit.Objects
                     return false;
 
             }
+        }
 
+        public override void Accept(BaseObject incoming)
+        {
+            switch (incoming.Id)
+            {
+                case ObjectId.Gem:
+                    iTween.Init(Object);
+                    iTween.Stop(Object);
+                    Object.transform.localScale = new Vector3(1, 1, 1);
+                    StartCoroutine(PunchScale());
+                    incoming._targetScale = 0;
+
+                    return;
+                default:
+                    return;
+
+
+            }
         }
     }
 }

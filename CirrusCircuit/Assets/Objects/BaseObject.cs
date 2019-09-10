@@ -126,12 +126,17 @@ namespace Cirrus.Circuit.Objects
 
         public bool TryChangeState(FSM.State state, params object[] args)
         {
-            return _stateMachine.TryChangeState(state, args);
+            if (_stateMachine)
+                return _stateMachine.TryChangeState(state, args);
+            else return false;
         }
 
         public virtual bool TryMove(Vector3 step, BaseObject incoming = null)
         {
-            return _stateMachine.TryChangeState(FSM.State.Moving, step, incoming);
+            if (_stateMachine)
+                return _stateMachine.TryChangeState(FSM.State.Moving, step, incoming);
+            else
+                return false;
         }
 
         public virtual bool TryEnter(Vector3 step, BaseObject incoming = null)

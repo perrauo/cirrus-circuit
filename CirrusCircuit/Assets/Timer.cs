@@ -28,6 +28,7 @@ namespace Cirrus.Circuit
 
         public Timer(float limit, bool start = true, bool repeat = false)
         {
+            _time = 0;
             _limit = limit;
             _repeat = repeat;
 
@@ -37,8 +38,21 @@ namespace Cirrus.Circuit
             }
         }
 
-        public void Reset()
+        public float Time
         {
+            get
+            {
+                return _time;
+            }
+        }
+
+        public void Reset(float limit=-1)
+        {
+            if (limit > 0)
+            {
+                _limit = limit;
+            }
+
             _time = 0;
         }
 
@@ -65,7 +79,7 @@ namespace Cirrus.Circuit
 
         private void OnTicked()
         {
-            _time += Time.deltaTime;
+            _time += UnityEngine.Time.deltaTime;
             if (_time >= _limit)
             {
                 OnTimeLimitHandler?.Invoke();

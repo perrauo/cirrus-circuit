@@ -17,13 +17,22 @@ namespace Cirrus.Circuit.UI
         public State _state;
 
         [SerializeField]
-        private UnityEngine.UI.Image _image;
+        private UnityEngine.UI.Image _playerBack;
+   
+        [SerializeField]
+        private UnityEngine.UI.Text _playerText;
 
 
         [SerializeField]
-        private UnityEngine.UI.Text _text;
+        private UnityEngine.UI.Image _gemsBack;
+
+        [SerializeField]
+        private UnityEngine.UI.Text _gemsText;
 
         private Color _color;
+
+        [SerializeField]
+        private float _gemsColorMult = 1.5f;
 
 
         private const float _waitingAlpha = 0.5f;
@@ -43,25 +52,31 @@ namespace Cirrus.Circuit.UI
             set
             {
                 _color = value;
-                _image.color = _color;
+                _playerBack.color = _color;
+                _gemsBack.color = new Color(_color.r * _gemsColorMult, _color.g * _gemsColorMult, _color.b * _gemsColorMult);
             }
         }
 
 
-        public string Text
+        public string PlayerName
         {
             get
             {
-                return _text.text;
+                return _playerText.text;
             }
 
             set
             {
-                _text.text  = value;
+                _playerText.text  = value;
             }
         }
 
+        public void OnGemCountChanged(int count)
+        {
 
+
+        }
+        
         public bool TryChangeState(State state, params object[] args)
         {
             _state = state;
@@ -73,8 +88,8 @@ namespace Cirrus.Circuit.UI
                     gameObject.SetActive(true);
 
                     _color.a = _waitingAlpha;
-                    _image.color = _colorWaiting;
-                    _text.text = "Press 'A' to join";
+                    this.Color = _color;
+                    _playerText.text = "Press 'A' to join";
 
                     break;
 
@@ -91,7 +106,7 @@ namespace Cirrus.Circuit.UI
                     _color.a = _readyAlpha;
                     this.Color = _color;
 
-                    _text.text = "Ready player " + ( playerNumber +1);
+                    _playerText.text = "player " + ( playerNumber +1);
                     break;
 
                 case State.Round:

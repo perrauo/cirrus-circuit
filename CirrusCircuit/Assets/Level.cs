@@ -2,10 +2,23 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Cirrus.Circuit.Levels
+namespace Cirrus.Circuit
 {
     public class Level : MonoBehaviour
     {
+        public static float BlockSize = 2f;
+
+        [SerializeField]
+        private string _name;
+
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+        }
+
         [SerializeField]
         public Objects.Characters.Character[] _characters;
 
@@ -26,31 +39,13 @@ namespace Cirrus.Circuit.Levels
         }
 
         [SerializeField]
-        private string _name;
-
-        public string Name {
-            get
-            {
-                return  _name;
-            }
-        }
-        
-        [SerializeField]
-        public GameObject _charactersParent;
-
-        [SerializeField]
         public Objects.Gem[] _gems;
-
-        [SerializeField]
-        public GameObject _gemsParent;
 
         [SerializeField]
         public Objects.Door[] _doors;
 
         [SerializeField]
-        public GameObject _doorsParent;
-
-        public static float BlockSize = 2f;
+        public Objects.BaseObject[] _objects;
 
         [SerializeField]
         public float DistanceLevelSelection = 35;
@@ -62,15 +57,27 @@ namespace Cirrus.Circuit.Levels
 
         [SerializeField]
         public float _positionSpeed = 0.4f;
-
  
         public void Awake()
-        { 
+        {
+
         }
 
         public void FixedUpdate()
         {
             transform.position = Vector3.Lerp(transform.position, TargetPosition, _positionSpeed);
+        }
+
+
+        public void OnBeginRound()
+        {
+            foreach (Objects.BaseObject obj in _objects)
+            {
+                if (obj == null)
+                    continue;
+
+                obj.TryChangeState(Objects.FSM.State.Idle);
+            }
         }
 
 
@@ -110,24 +117,18 @@ namespace Cirrus.Circuit.Levels
             _name = gameObject.name.Substring(gameObject.name.IndexOf('.')+1);
             _name = _name.Replace('.', ' ');
 
-            if (_gemsParent)
-            {
-                _gems = _gemsParent.GetComponentsInChildren<Objects.Gem>();
-                _gemsParent = null;
-            }
+            if(_gems.Length == 0)
+                _gems = gameObject.GetComponentsInChildren<Objects.Gem>();
 
-            if (_doorsParent)
-            {
-                _doors = _doorsParent.GetComponentsInChildren<Objects.Door>();
-                _doorsParent = null;
-            }
+            if (_doors.Length == 0)
+                _doors = gameObject.GetComponentsInChildren<Objects.Door>();
 
+            if(_characters.Length == 0)
+                _characters = gameObject.GetComponentsInChildren<Objects.Characters.Character>();
 
-            if (_charactersParent)
-            {
-                _characters = _charactersParent.GetComponentsInChildren<Objects.Characters.Character>();
-                _charactersParent = null;
-            }
+            if (_objects.Length == 0)
+                _objects = gameObject.GetComponentsInChildren<Objects.BaseObject>();
+
 
             for (int i = 0; i < _characters.Length; i++)
             {

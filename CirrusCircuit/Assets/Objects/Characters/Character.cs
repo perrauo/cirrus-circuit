@@ -58,13 +58,6 @@ namespace Cirrus.Circuit.Objects.Characters
             }
         }
 
-        public virtual void OnDrawGizmos()
-        {
-            Gizmos.color = Color.red;
-
-            Gizmos.DrawSphere(_targetPosition, 0.1f);
-        }
-
         protected override void Awake()
         {
             base.Awake(); 
@@ -125,12 +118,12 @@ namespace Cirrus.Circuit.Objects.Characters
 
         public void TryAction0()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void TryAction1()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 

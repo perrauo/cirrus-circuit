@@ -68,9 +68,9 @@ namespace Cirrus.Circuit
         public Layers Layers;
 
         [SerializeField]
-        public Levels.Level[] _levels;
+        public Level[] _levels;
 
-        public Levels.Level CurrentLevel;
+        public Level CurrentLevel;
 
         public int _currentLevelIndex = 0;
 
@@ -92,6 +92,12 @@ namespace Cirrus.Circuit
 
         [SerializeField]
         public float _roundTime = 60f;
+
+        [SerializeField]
+        public float _countDownTime = 5f;
+
+        [SerializeField]
+        public int _countDown = 3;
 
 
         public Round _round;
@@ -118,7 +124,7 @@ namespace Cirrus.Circuit
 
         public void OnValidate()
         {
-            _levels = GetComponentsInChildren<Levels.Level>(true);
+            _levels = GetComponentsInChildren<Level>(true);
             CurrentLevel = _levels.Length == 0 ? null : _levels[0];
         }
 
@@ -136,7 +142,6 @@ namespace Cirrus.Circuit
 
             Lobby.Characters.Clear();
             Lobby.Characters.AddRange(CurrentLevel.Characters);
-
             CurrentLevel = _levels[_currentLevelIndex];
 
             _targetSizeCamera = CurrentLevel.CameraSize;
@@ -145,13 +150,11 @@ namespace Cirrus.Circuit
 
         }
 
-
         // TODO: Simulate LeftStick continuous axis with WASD
         public void HandleAxesLeft(Controller controller, Vector2 axis)
         {
             _stateMachine.HandleAxesLeft(controller, axis);
         }
-
 
         public void HandleAction0(Controller controller)
         {

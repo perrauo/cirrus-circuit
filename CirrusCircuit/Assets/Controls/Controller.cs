@@ -23,6 +23,10 @@ namespace Cirrus.Circuit.Controls
     {
         public delegate void OnReady(Controller ctrl);
 
+        public delegate void OnGemsCount(int count);
+
+        public OnGemsCount OnGemsCountHandler;
+
         public OnReady OnReadyHandler;
 
 
@@ -50,6 +54,23 @@ namespace Cirrus.Circuit.Controls
                 return _number;
             }
         }
+
+        private int _gemsCount = 0;
+
+        public int GemsCount
+        {
+            get
+            {
+                return _gemsCount;
+            }
+
+            set
+            {
+                _gemsCount = value;
+                OnGemsCountHandler?.Invoke(_gemsCount);
+            }
+        }
+
 
 
         public Controller(int number, Inputs.InputDevice device, Inputs.InputControlScheme scheme)

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 namespace Cirrus.Circuit.UI
 {
@@ -9,12 +10,14 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private UnityEngine.UI.Text _text;
 
-
-        //private
-
-        public void Start()
+        public float Time
         {
-            //_timer = new Circuit.Timer()
+            set
+            {
+                var span = new TimeSpan(0, 0, (int)value); //Or TimeSpan.FromSeconds(seconds); (see Jakob C´s answer)
+                _text.text = string.Format(span.ToString(@"mm\:ss"));
+            }
+
         }
 
     }

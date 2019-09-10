@@ -23,11 +23,10 @@ namespace Cirrus.Circuit.UI
         private UnityEngine.UI.Text _next;
 
         [SerializeField]
-        private UI.Timer _timer;
+        private Timer _timer;
 
         [SerializeField]
-        private UI.CountDown _countDown;
-
+        private CountDown _countDown;
 
 
         [SerializeField]
@@ -42,6 +41,7 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private GameObject _levelSelectDisplay;
 
+        private Round _round;
 
 
         public void Awake()
@@ -79,10 +79,12 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-
         public void OnWaiting()
         {
+            _countDown.gameObject.SetActive(false);
+            _timer.gameObject.SetActive(false);
             _levelSelectDisplay.SetActive(false);
+
             _playerDisplay.SetActive(true);
 
             _availablePlayerDisplays.Clear();
@@ -96,8 +98,41 @@ namespace Cirrus.Circuit.UI
 
         public void OnRound(Round round)
         {
+            _round = round;
+            _levelSelectDisplay.SetActive(false);
+            //_playerDisplay.SetActive(false);
+
+            _countDown.gameObject.SetActive(true);
+            _timer.gameObject.SetActive(true);
+
+            round.OnCountdownHandler += OnRoundCountdown;
+            round.OnRoundBeginHandler += OnRoundBegin;
+            round.OnRoundEndHandler += OnRoundEnd;
+        }
+
+
+        public void Update()
+        {
+            if(_round != null)
+            _timer.Time = _round.Time;
+        }
+
+        public void OnRoundCountdown(int count)
+        {
+            _countDown.Number = count;
+        }
+
+        public void OnRoundBegin()
+        {
 
         }
+
+        public void OnRoundEnd()
+        {
+
+        }
+
+
 
 
         public void Join(Controls.Controller controller)
@@ -123,10 +158,18 @@ namespace Cirrus.Circuit.UI
         }
 
 
+        public void CountDown(int count)
+        {
+            _countDown.Number = count;
+        }
+
         public void OnLevelSelect()
         {
-            _levelSelectDisplay.SetActive(true);
+            _countDown.gameObject.SetActive(false);
+            _timer.gameObject.SetActive(false);
             _playerDisplay.SetActive(false);
+
+            _levelSelectDisplay.SetActive(true);
         }
 
 
@@ -149,8 +192,6 @@ namespace Cirrus.Circuit.UI
             {
                 _next.gameObject.SetActive(true);
             }
-
-
 
             if (step < 0)
             {

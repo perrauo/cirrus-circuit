@@ -137,10 +137,11 @@ namespace Cirrus.Circuit
 
                     _state = target;
 
-                    foreach (Levels.Level lv in Game.Instance._levels)
+                    foreach (Level lv in Game.Instance._levels)
                     {
                         lv.gameObject.SetActive(true);
                     }
+
 
                     Game.Instance.OnLevelSelect();
                     Game.Instance.OnLevelSelected(0);                 
@@ -150,8 +151,30 @@ namespace Cirrus.Circuit
                 case State.Round:
 
                     _state = target;
-                    Game.Instance._round = new Round(Game.Instance._roundTime);
 
+                    // TODO enable
+                    foreach (Level level in Game.Instance._levels)
+                    {
+                        if (level == null)
+                            continue;
+
+                        if (level == Game.Instance.CurrentLevel)
+                            continue;
+
+                        level.gameObject.SetActive(false);
+                    }
+
+                    Game.Instance.CurrentLevel.TargetPosition = Vector3.zero;
+                    Game.Instance.CurrentLevel.transform.position = Vector3.zero;
+
+                    Game.Instance._round = 
+                        new Round(
+                            Game.Instance._countDown, 
+                            Game.Instance._roundTime, 
+                            Game.Instance._countDownTime);
+
+                    Game.Instance.HUD.OnRound(Game.Instance._round);
+                    Game.Instance._round.OnRoundBeginHandler += Game.Instance.CurrentLevel.OnBeginRound;
                     
                     return true;
 
@@ -227,7 +250,6 @@ namespace Cirrus.Circuit
 
             switch (_state)
             {
-
                 case State.LevelSelection:
 
                     if (Mathf.Abs(step.x) > 0)
@@ -251,8 +273,7 @@ namespace Cirrus.Circuit
                     break;
 
                 case State.Round:
-                    //character?.TryMove(axis);
-
+                    controller.Character?.TryMove(axis);
                     break;
 
                 case State.Score:
@@ -322,7 +343,6 @@ namespace Cirrus.Circuit
                             Game.Instance.Lobby.Characters.RemoveAt(0);
                             Game.Instance.HUD.Join(controller);
                             // TODO update character color
-
                         }
 
                     }
@@ -340,7 +360,7 @@ namespace Cirrus.Circuit
 
 
                 case State.Round:
-                    controller.Character?.TryAction0();
+                    controller.Character?.TryAction1();
                     break;
 
                 case State.Score:

@@ -9,7 +9,7 @@ namespace Cirrus.Circuit.Objects
         [System.Serializable]
         public enum State
         {
-            LevelSelect,
+            Disabled,
             Entering,
             Falling,
             Idle,
@@ -26,14 +26,14 @@ namespace Cirrus.Circuit.Objects
 
         public void Awake()
         {
-            TryChangeState(State.LevelSelect);
+            TryChangeState(State.Disabled);
         }
 
         public void FixedUpdate()
         {
             switch (_state)
             {
-                case State.LevelSelect:
+                case State.Disabled:
                     break;
 
                 case State.Entering:
@@ -58,7 +58,7 @@ namespace Cirrus.Circuit.Objects
         {
             switch (_state)
             {
-                case State.LevelSelect:
+                case State.Disabled:
                     return;
 
                 case State.Entering:
@@ -82,7 +82,7 @@ namespace Cirrus.Circuit.Objects
                                 _object._targetPosition,
                                 Vector3.down,
                                 out hit,
-                                Levels.Level.BlockSize / 2))
+                                Level.BlockSize / 2))
                             {
                                 TryChangeState(State.Idle);
                             }
@@ -130,6 +130,17 @@ namespace Cirrus.Circuit.Objects
         {
             switch (_state)
             {
+                case State.Disabled:
+
+                    switch (transition)
+                    {
+                        case State.Idle:
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
+
                 case State.Entering:
 
                     switch (transition)
@@ -232,7 +243,7 @@ namespace Cirrus.Circuit.Objects
                     float distance = (float)args[0];
                     _state = target;
                     _object._targetPosition += Vector3.down * distance;
-                    _object._targetPosition += Vector3.up * Levels.Level.BlockSize/2;
+                    _object._targetPosition += Vector3.up * Level.BlockSize/2;
                     //_object._stepSpeed = _object._fallSpeed;
                     return true;
 
@@ -260,14 +271,14 @@ namespace Cirrus.Circuit.Objects
                     // Same direction (Look up)
                     if (Utils.Vectors.CloseEnough(step.normalized, _object.Object.transform.forward))
                     {
-                        ray = new Ray(_object._targetPosition + Vector3.up * Levels.Level.BlockSize, step);
-                        offset += Vector3.up * Levels.Level.BlockSize/2;
+                        ray = new Ray(_object._targetPosition + Vector3.up * Level.BlockSize, step);
+                        offset += Vector3.up * Level.BlockSize/2;
                     }
                     // Opposing direction (look down)
                     else if (Utils.Vectors.CloseEnough(step.normalized, -_object.Object.transform.forward))
                     {
-                        ray = new Ray(_object._targetPosition + Vector3.down*Levels.Level.BlockSize, step);
-                        offset -= Vector3.up * Levels.Level.BlockSize/2;
+                        ray = new Ray(_object._targetPosition + Vector3.down*Level.BlockSize, step);
+                        offset -= Vector3.up * Level.BlockSize/2;
                     }
                     // Perp direction (Look ahead)
                     else
@@ -275,7 +286,7 @@ namespace Cirrus.Circuit.Objects
                         ray = new Ray(_object._targetPosition, step);
                     }
 
-                    if (Physics.Raycast(ray, out hit, Levels.Level.BlockSize))
+                    if (Physics.Raycast(ray, out hit, Level.BlockSize))
                     {
                         _object._collider.enabled = true;
                         var destination = hit.collider.GetComponentInParent<BaseObject>();
@@ -341,7 +352,7 @@ namespace Cirrus.Circuit.Objects
                         _object._targetPosition,
                         step,
                         out hit,
-                        Levels.Level.BlockSize))
+                        Level.BlockSize))
                     {
                         _object._collider.enabled = true;
                         var destination = hit.collider.GetComponentInParent<BaseObject>();
