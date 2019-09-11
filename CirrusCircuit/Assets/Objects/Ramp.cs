@@ -27,8 +27,6 @@ namespace Cirrus.Circuit.Objects
             return false;
         }
 
-
-
         // Start is called before the first frame update
         public override void Start()
         {
@@ -37,7 +35,7 @@ namespace Cirrus.Circuit.Objects
 
         public override void Accept(BaseObject incoming)
         {
-            incoming.TryChangeState(FSM.State.RampIdle);
+            incoming.TryChangeState(BaseObject.State.RampIdle);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Cirrus.Circuit.Objects
         // Start is called before the first frame update
         public override void Start()
         {
-
+            base.Start();
         }
     }
 }

@@ -61,8 +61,18 @@ namespace Cirrus.Circuit.Objects.Characters
         protected override void Awake()
         {
             base.Awake(); 
-        }       
-        
+        }
+
+        public override void Start()
+        {
+            base.Start();
+        }
+
+        public override void FixedUpdate()
+        {
+            base.FixedUpdate();
+        }
+
         // Use the same raycast to show guide
         public void TryMove(Vector2 axis)
         {
@@ -110,7 +120,6 @@ namespace Cirrus.Circuit.Objects.Characters
             // Smoothly interpolate from current to target look direction  
             _targetDirection = new Vector3(axis.x, 0.0f, axis.y);
             _direction = Vector3.Lerp(_direction, _targetDirection, _rotationSpeed).normalized;
-
 
             if (_direction != Vector3.zero)
                 _visual.Parent.transform.rotation = Quaternion.LookRotation(_direction, transform.up);

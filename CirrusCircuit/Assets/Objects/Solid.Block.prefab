@@ -15,18 +15,19 @@ MonoBehaviour:
   _visual: {fileID: 5272430702369877454}
   _collider: {fileID: 7591302798213922096}
   _object: {fileID: 7854355473408733724}
-  _stateMachine: {fileID: 0}
   _stepDistance: 2
   _stepSpeed: 0.6
   _fallSpeed: 0.6
   _fallDistance: 100
   _scaleSpeed: 0.6
   _destination: {fileID: 0}
+  _user: {fileID: 0}
   _step: {x: 0, y: 0, z: 0}
   _targetPosition: {x: 0, y: 0, z: 0}
   _targetScale: 1
-  _playerNumber: 0
+  PlayerNumber: 0
   _color: {r: 0, g: 0, b: 0, a: 0}
+  _state: 0
 --- !u!1001 &1624148582309748932
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -37,7 +38,7 @@ PrefabInstance:
     - target: {fileID: 8829410553811671551, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
       propertyPath: m_Name
-      value: Solid.Cube
+      value: Solid.Block
       objectReference: {fileID: 0}
     - target: {fileID: 1819615786462522110, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
@@ -99,6 +100,11 @@ PrefabInstance:
       propertyPath: _object
       value: 
       objectReference: {fileID: 2929681681481360225}
+    - target: {fileID: 5639237576735248665, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6890873901226151178, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
       propertyPath: _meshRenderers.Array.size
@@ -109,11 +115,6 @@ PrefabInstance:
       propertyPath: _meshRenderers.Array.data[0]
       value: 
       objectReference: {fileID: 641828989102673239}
-    - target: {fileID: 5639237576735248665, guid: 06d9e1aa028280e4c97369fef81e3fdc,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1990478567839656891, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
       propertyPath: _object

@@ -76,7 +76,7 @@ namespace Cirrus.Circuit
                 if (obj == null)
                     continue;
 
-                obj.TryChangeState(Objects.FSM.State.Idle);
+                obj.TryChangeState(Objects.BaseObject.State.Idle);
             }
         }
 
@@ -117,16 +117,16 @@ namespace Cirrus.Circuit
             _name = gameObject.name.Substring(gameObject.name.IndexOf('.')+1);
             _name = _name.Replace('.', ' ');
 
-            if(_gems.Length == 0)
+            if(_gems != null && _gems.Length == 0)
                 _gems = gameObject.GetComponentsInChildren<Objects.Gem>();
 
-            if (_doors.Length == 0)
+            if (_doors != null && _doors.Length == 0)
                 _doors = gameObject.GetComponentsInChildren<Objects.Door>();
 
-            if(_characters.Length == 0)
+            if(_characters != null && _characters.Length == 0)
                 _characters = gameObject.GetComponentsInChildren<Objects.Characters.Character>();
 
-            if (_objects.Length == 0)
+            if (_objects != null &&_objects.Length == 0)
                 _objects = gameObject.GetComponentsInChildren<Objects.BaseObject>();
 
 
