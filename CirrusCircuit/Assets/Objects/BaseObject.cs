@@ -26,6 +26,9 @@ namespace Cirrus.Circuit.Objects
         public virtual ObjectId Id { get { return ObjectId.Default; } }
 
         [SerializeField]
+        protected Level _level;
+
+        [SerializeField]
         protected Visual _visual;
 
         [SerializeField]
@@ -65,6 +68,9 @@ namespace Cirrus.Circuit.Objects
 
         public Vector3 _targetPosition;
 
+        private Vector3Int _gridPosition;
+
+
         public float _targetScale = 1;
 
         [SerializeField]
@@ -97,8 +103,15 @@ namespace Cirrus.Circuit.Objects
             }
         }
 
+        public virtual void OnValidate()
+        {
+            if (_level == null)
+                _level = GetComponentInParent<Level>();
+        }
+
         protected virtual void Awake()
         {
+            (transform.position, _gridPosition) = _level.RegisterObject(this);
             _targetPosition = Object.transform.position;
             _targetScale = 1f;
 

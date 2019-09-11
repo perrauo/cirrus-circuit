@@ -2,11 +2,20 @@
 using System.Collections;
 using System.Collections.Generic;
 
+using Cirrus.Circuit.Objects;
+
 namespace Cirrus.Circuit
 {
     public class Level : MonoBehaviour
     {
-        public static float BlockSize = 2f;
+        [SerializeField]
+        public static int BlockSize = 2;
+
+        [SerializeField]
+        private Vector3Int Dimension = new Vector3Int(10, 10, 10);
+
+        private BaseObject[,,] Objects;
+
 
         [SerializeField]
         private string _name;
@@ -45,9 +54,6 @@ namespace Cirrus.Circuit
         public Objects.Door[] _doors;
 
         [SerializeField]
-        public Objects.BaseObject[] _objects;
-
-        [SerializeField]
         public float DistanceLevelSelection = 35;
 
         [SerializeField]
@@ -58,25 +64,48 @@ namespace Cirrus.Circuit
         [SerializeField]
         public float _positionSpeed = 0.4f;
  
-        public void Awake()
-        {
-
-        }
-
         public void FixedUpdate()
         {
             transform.position = Vector3.Lerp(transform.position, TargetPosition, _positionSpeed);
         }
 
+        public void Awake()
+        {
+            Objects = new Objects.BaseObject[Dimension.x, Dimension.y, Dimension.z];
+        }
+
+
+        public Vector3Int WorldToGrid(Vector3 pos)
+        {
+            return new Vector3Int(
+                Mathf.RoundToInt(pos.x / BlockSize),
+                Mathf.RoundToInt(pos.y / BlockSize),
+                Mathf.RoundToInt(pos.z / BlockSize));
+        }
+
+        public Vector3 GridToWorld(Vector3Int pos)
+        {
+            return new Vector3Int(
+                pos.x * BlockSize,
+                pos.y * BlockSize,
+                pos.z * BlockSize);
+        }
+
+        public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
+        {
+            Vector3Int gridPos = WorldToGrid(obj.transform.position);
+            Objects[gridPos.x, gridPos.y, gridPos.z] = obj;
+            return (GridToWorld(gridPos), gridPos);
+        }
 
         public void OnBeginRound()
         {
-            foreach (Objects.BaseObject obj in _objects)
+            foreach (BaseObject obj in Objects)
             {
                 if (obj == null)
                     continue;
 
-                obj.TryChangeState(Objects.BaseObject.State.Idle);
+                obj.TryChangeState(BaseObject.State.Idle);
             }
         }
 
@@ -125,10 +154,6 @@ namespace Cirrus.Circuit
 
             if(_characters != null && _characters.Length == 0)
                 _characters = gameObject.GetComponentsInChildren<Objects.Characters.Character>();
-
-            if (_objects != null &&_objects.Length == 0)
-                _objects = gameObject.GetComponentsInChildren<Objects.BaseObject>();
-
 
             for (int i = 0; i < _characters.Length; i++)
             {
