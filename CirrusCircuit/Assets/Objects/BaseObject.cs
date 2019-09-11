@@ -68,7 +68,7 @@ namespace Cirrus.Circuit.Objects
 
         public Vector3 _targetPosition;
 
-        private Vector3Int _gridPosition;
+        public Vector3Int GridPosition;
 
 
         public float _targetScale = 1;
@@ -111,9 +111,9 @@ namespace Cirrus.Circuit.Objects
 
         protected virtual void Awake()
         {
-            (transform.position, _gridPosition) = _level.RegisterObject(this);
-            _targetPosition = Object.transform.position;
-            _targetScale = 1f;
+            //(transform.position, _gridPosition) = _level.RegisterObject(this);
+            //_targetPosition = Object.transform.position;
+            //_targetScale = 1f;
 
             FSMAwake();
         }
@@ -232,44 +232,44 @@ namespace Cirrus.Circuit.Objects
 
                     if (Utils.Vectors.CloseEnough(Object.transform.position, _targetPosition))
                     {
-                        // If the destination can coexist with incoming object once arrived we return true
-                        if (_destination == null)
-                        {
-                            RaycastHit hit;
+                        //// If the destination can coexist with incoming object once arrived we return true
+                        //if (_destination == null)
+                        //{
+                        //    RaycastHit hit;
 
-                            if (Physics.Raycast(
-                                _targetPosition,
-                                Vector3.down,
-                                out hit,
-                                Level.BlockSize / 2))
-                            {
-                                TryChangeState(State.Idle);
-                            }
-                            else
-                            {
-                                // Raycast down to get distance
-                                if (
-                                    Physics.Raycast(
-                                    _targetPosition,
-                                    Vector3.down,
-                                    out hit,
-                                    10f))
-                                {
-                                    //Debug.Log(_object._targetPosition);
-                                    //Debug.Log(hit.point);
-                                    TryChangeState(State.Falling, hit.distance);
-                                }
-                                else
-                                {
-                                    // TODO
-                                    // Fall to infinity and destroy
-                                }
-                            }
-                        }
-                        else
-                        {
-                            _destination.Accept(this);
-                        }
+                        //    if (Physics.Raycast(
+                        //        _targetPosition,
+                        //        Vector3.down,
+                        //        out hit,
+                        //        Level.BlockSize / 2))
+                        //    {
+                        //        TryChangeState(State.Idle);
+                        //    }
+                        //    else
+                        //    {
+                        //        // Raycast down to get distance
+                        //        if (
+                        //            Physics.Raycast(
+                        //            _targetPosition,
+                        //            Vector3.down,
+                        //            out hit,
+                        //            10f))
+                        //        {
+                        //            //Debug.Log(_object._targetPosition);
+                        //            //Debug.Log(hit.point);
+                        //            TryChangeState(State.Falling, hit.distance);
+                        //        }
+                        //        else
+                        //        {
+                        //            // TODO
+                        //            // Fall to infinity and destroy
+                        //        }
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    _destination.Accept(this);
+                        //}
                     }
 
                     break;
@@ -402,8 +402,8 @@ namespace Cirrus.Circuit.Objects
 
                 case State.Falling:
                     float distance = (float)args[0];
-                    _targetPosition += Vector3.down * distance;
-                    _targetPosition += Vector3.up * Level.BlockSize / 2;
+                    //_targetPosition += Vector3.down * distance;
+                    //_targetPosition += Vector3.up * Level.BlockSize / 2;
 
                     _state = target;
                     return true;
@@ -513,14 +513,10 @@ namespace Cirrus.Circuit.Objects
                     incoming = (BaseObject)args[1];
 
                     // Raycast front
-                    if (Physics.Raycast(
-                        _targetPosition,
-                        step,
-                        out hit,
-                        Level.BlockSize))
+                    //if (_gridPosition.x)
                     {
                         _collider.enabled = true;
-                        var destination = hit.collider.GetComponentInParent<BaseObject>();
+                        BaseObject destination = null;// hit.collider.GetComponentInParent<BaseObject>();
 
                         if (destination != null)
                         {
@@ -559,7 +555,7 @@ namespace Cirrus.Circuit.Objects
                             }
                         }
                     }
-                    else
+                    //else
                     {
                         if (_destination)
                             _destination._user = null;

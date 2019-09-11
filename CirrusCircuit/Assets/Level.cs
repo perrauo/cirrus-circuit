@@ -71,7 +71,7 @@ namespace Cirrus.Circuit
 
         public void Awake()
         {
-            Objects = new Objects.BaseObject[Dimension.x, Dimension.y, Dimension.z];
+            Objects = new BaseObject[Dimension.x, Dimension.y, Dimension.z];
         }
 
 
@@ -90,6 +90,28 @@ namespace Cirrus.Circuit
                 pos.y * BlockSize,
                 pos.z * BlockSize);
         }
+
+        //public bool TryMove(BaseObject source, Vector3Int step, out BaseObject destination)
+        //{
+        //    Vector3Int pos = source.GridPosition + step;
+
+        //    destination = Objects[pos.x, pos.y, pos.z];
+        //    if (destination == null)
+        //    {
+        //        return true;
+        //    }
+        //    else if (TryMove(destination, step, position))
+        //    {
+                
+        //    }
+
+        //}
+
+        //public bool TryEnter(BaseObject source, Vector3Int position, out BaseObject destination)
+        //{
+
+        //}
+
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
         {
@@ -118,7 +140,7 @@ namespace Cirrus.Circuit
 
             _characters[player].Color = color;
 
-            foreach (Objects.Gem gem in _gems)
+            foreach (Gem gem in _gems)
             {
                 if (gem == null)
                     continue;
@@ -129,7 +151,7 @@ namespace Cirrus.Circuit
                 }
             }
 
-            foreach (Objects.Door door in _doors)
+            foreach (Door door in _doors)
             {
                 if (door == null)
                     continue;
