@@ -1,9 +1,7 @@
 // GENERATED AUTOMATICALLY FROM 'Assets/Controls/ActionMap.inputactions'
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
@@ -23,36 +21,27 @@ namespace Cirrus.Circuit.Controls
             ""actions"": [
                 {
                     ""name"": ""Axes.Left"",
+                    ""type"": ""Value"",
                     ""id"": ""149cc932-d56a-4338-b185-94fd9471a705"",
-                    ""expectedControlLayout"": ""Axis"",
-                    ""continuous"": true,
-                    ""passThrough"": false,
-                    ""initialStateCheck"": false,
+                    ""expectedControlType"": ""Axis"",
                     ""processors"": """",
-                    ""interactions"": """",
-                    ""bindings"": []
+                    ""interactions"": """"
                 },
                 {
                     ""name"": ""Action.0"",
+                    ""type"": ""Button"",
                     ""id"": ""b8f36fdc-aeae-47f1-ae24-22c832a43bd6"",
-                    ""expectedControlLayout"": ""Button"",
-                    ""continuous"": false,
-                    ""passThrough"": false,
-                    ""initialStateCheck"": false,
+                    ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """",
-                    ""bindings"": []
+                    ""interactions"": """"
                 },
                 {
                     ""name"": ""Action.1"",
+                    ""type"": ""Button"",
                     ""id"": ""22b556f9-b24e-489e-a3be-593ad29a0efb"",
-                    ""expectedControlLayout"": ""Button"",
-                    ""continuous"": false,
-                    ""passThrough"": false,
-                    ""initialStateCheck"": false,
+                    ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """",
-                    ""bindings"": []
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -65,8 +54,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": """",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": true,
-                    ""isPartOfComposite"": false,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": false
                 },
                 {
                     ""name"": ""Up"",
@@ -77,8 +65,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": "";Gamepad;Gamepad.Joystick.Left;Gamepad.Joystick;Gamepad.Dpad"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""Down"",
@@ -89,8 +76,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": "";Gamepad;Gamepad.Joystick.Left;Gamepad.Joystick;Gamepad.Dpad"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""Left"",
@@ -101,8 +87,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": "";Gamepad;Gamepad.Joystick.Left;Gamepad.Joystick;Gamepad.Dpad"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""Right"",
@@ -113,8 +98,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": "";Gamepad;Gamepad.Joystick.Left;Gamepad.Joystick;Gamepad.Dpad"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""Keyboard.Arrows"",
@@ -125,8 +109,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": """",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": true,
-                    ""isPartOfComposite"": false,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": false
                 },
                 {
                     ""name"": ""up"",
@@ -137,8 +120,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": ""Keyboard.Arrow;Keyboard.Arrows"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""down"",
@@ -149,8 +131,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": ""Keyboard.Arrow;Keyboard.Arrows"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""left"",
@@ -161,8 +142,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": ""Keyboard.Arrow;Keyboard.Arrows"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""right"",
@@ -173,8 +153,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": ""Keyboard.Arrow;Keyboard.Arrows"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""Keyboard.WASD"",
@@ -185,8 +164,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": """",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": true,
-                    ""isPartOfComposite"": false,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": false
                 },
                 {
                     ""name"": ""up"",
@@ -197,8 +175,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": ""Keyboard.WASD"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""down"",
@@ -209,8 +186,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": ""Keyboard.WASD"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""left"",
@@ -221,8 +197,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": ""Keyboard.WASD"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""right"",
@@ -233,8 +208,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": ""Keyboard.WASD"",
                     ""action"": ""Axes.Left"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": true,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": """",
@@ -245,8 +219,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": ""Keyboard;Keyboard.WASD"",
                     ""action"": ""Action.0"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
@@ -257,8 +230,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": ""Keyboard;Keyboard.Arrows"",
                     ""action"": ""Action.1"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
@@ -269,8 +241,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": ""Keyboard;Keyboard.WASD"",
                     ""action"": ""Action.1"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
@@ -281,8 +252,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": ""Gamepad;Gamepad.Joystick;Gamepad.Dpad"",
                     ""action"": ""Action.0"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
@@ -293,8 +263,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": ""Keyboard.Arrow;Keyboard.Arrows"",
                     ""action"": ""Action.0"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
@@ -305,8 +274,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": ""Keyboard.WASD"",
                     ""action"": ""Action.0"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
@@ -317,8 +285,7 @@ namespace Cirrus.Circuit.Controls
                     ""groups"": ""Gamepad;Gamepad.Joystick;Gamepad.Dpad"",
                     ""action"": ""Action.1"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false,
-                    ""modifiers"": """"
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -326,7 +293,6 @@ namespace Cirrus.Circuit.Controls
     ""controlSchemes"": [
         {
             ""name"": ""Keyboard.Arrows"",
-            ""basedOn"": """",
             ""bindingGroup"": ""Keyboard.Arrows"",
             ""devices"": [
                 {
@@ -338,7 +304,6 @@ namespace Cirrus.Circuit.Controls
         },
         {
             ""name"": ""Gamepad.Dpad"",
-            ""basedOn"": """",
             ""bindingGroup"": ""Gamepad.Dpad"",
             ""devices"": [
                 {
@@ -350,7 +315,6 @@ namespace Cirrus.Circuit.Controls
         },
         {
             ""name"": ""Keyboard.WASD"",
-            ""basedOn"": """",
             ""bindingGroup"": ""Keyboard.WASD"",
             ""devices"": [
                 {
@@ -386,10 +350,7 @@ namespace Cirrus.Circuit.Controls
             set => asset.devices = value;
         }
 
-        public ReadOnlyArray<InputControlScheme> controlSchemes
-        {
-            get => asset.controlSchemes;
-        }
+        public ReadOnlyArray<InputControlScheme> controlSchemes => asset.controlSchemes;
 
         public bool Contains(InputAction action)
         {
@@ -417,23 +378,22 @@ namespace Cirrus.Circuit.Controls
         }
 
         // Player
-        private InputActionMap m_Player;
+        private readonly InputActionMap m_Player;
         private IPlayerActions m_PlayerActionsCallbackInterface;
-        private InputAction m_Player_AxesLeft;
-        private InputAction m_Player_Action0;
-        private InputAction m_Player_Action1;
+        private readonly InputAction m_Player_AxesLeft;
+        private readonly InputAction m_Player_Action0;
+        private readonly InputAction m_Player_Action1;
         public struct PlayerActions
         {
             private ActionMap m_Wrapper;
             public PlayerActions(ActionMap wrapper) { m_Wrapper = wrapper; }
-            public InputAction @AxesLeft { get { return m_Wrapper.m_Player_AxesLeft; } }
-            public InputAction @Action0 { get { return m_Wrapper.m_Player_Action0; } }
-            public InputAction @Action1 { get { return m_Wrapper.m_Player_Action1; } }
+            public InputAction @AxesLeft => m_Wrapper.m_Player_AxesLeft;
+            public InputAction @Action0 => m_Wrapper.m_Player_Action0;
+            public InputAction @Action1 => m_Wrapper.m_Player_Action1;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
-            public bool enabled { get { return Get().enabled; } }
-            public InputActionMap Clone() { return Get().Clone(); }
+            public bool enabled => Get().enabled;
             public static implicit operator InputActionMap(PlayerActions set) { return set.Get(); }
             public void SetCallbacks(IPlayerActions instance)
             {
@@ -464,13 +424,7 @@ namespace Cirrus.Circuit.Controls
                 }
             }
         }
-        public PlayerActions @Player
-        {
-            get
-            {
-                return new PlayerActions(this);
-            }
-        }
+        public PlayerActions @Player => new PlayerActions(this);
         private int m_KeyboardArrowsSchemeIndex = -1;
         public InputControlScheme KeyboardArrowsScheme
         {

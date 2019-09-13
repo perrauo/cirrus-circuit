@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cirrus.Tags;
+using Cirrus.Extensions;
 //using Cirrus.DH.Conditions;
 //using Cirrus.DH.Objects.Actions;
 
@@ -68,7 +69,7 @@ namespace Cirrus.Circuit.Objects
 
         public Vector3 _targetPosition;
 
-        public Vector3Int GridPosition;
+        public Vector3Int _gridPosition;
 
 
         public float _targetScale = 1;
@@ -111,15 +112,16 @@ namespace Cirrus.Circuit.Objects
 
         protected virtual void Awake()
         {
-            //(transform.position, _gridPosition) = _level.RegisterObject(this);
-            //_targetPosition = Object.transform.position;
-            //_targetScale = 1f;
+            _targetPosition = Object.transform.position;
+            _targetScale = 1f;
 
             FSMAwake();
         }
 
         public virtual void Start()
         {
+            (transform.position, _gridPosition) = _level.RegisterObject(this);
+
             FSMStart();
         }
 
@@ -388,9 +390,11 @@ namespace Cirrus.Circuit.Objects
 
         protected virtual bool TryFinishChangeState(State target, params object[] args)
         {
-            Vector3 step;
+            Vector3Int step;
             BaseObject incoming;
+            BaseObject destination;
             RaycastHit hit;
+
 
             switch (target)
             {
@@ -422,7 +426,7 @@ namespace Cirrus.Circuit.Objects
 
                 case State.RampMoving:
 
-                    step = (Vector3)args[0];
+                    step = (Vector3Int)args[0];
                     incoming = (BaseObject)args[1];
 
                     Vector3 offset = Vector3.zero; ;
@@ -430,29 +434,22 @@ namespace Cirrus.Circuit.Objects
 
                     Ray ray;
                     // Same direction (Look up)
-                    if (Utils.Vectors.CloseEnough(step.normalized, Object.transform.forward))
+                    if (Utils.Vectors.CloseEnough(step, Object.transform.forward))
                     {
-                        ray = new Ray(_targetPosition + Vector3.up * Level.BlockSize, step);
-                        offset += Vector3.up * Level.BlockSize / 2;
+                        ray = new Ray(_targetPosition + Vector3.up * Level.GridSize, step);
+                        offset += Vector3.up * Level.GridSize / 2;
                     }
                     // Opposing direction (look down)
-                    else if (Utils.Vectors.CloseEnough(step.normalized, -Object.transform.forward))
+                    else if (Utils.Vectors.CloseEnough(step, -Object.transform.forward))
                     {
-                        ray = new Ray(_targetPosition + Vector3.down * Level.BlockSize, step);
-                        offset -= Vector3.up * Level.BlockSize / 2;
-                    }
-                    // Perp direction (Look ahead)
-                    else
-                    {
-                        ray = new Ray(_targetPosition, step);
+                        ray = new Ray(_targetPosition + Vector3.down * Level.GridSize, step);
+                        offset -= Vector3.up * Level.GridSize / 2;
                     }
 
-                    if (Physics.Raycast(ray, out hit, Level.BlockSize))
-                    {
-                        _collider.enabled = true;
-                        var destination = hit.collider.GetComponentInParent<BaseObject>();
 
-                        if (destination != null)
+                    if (_level.IsWithinBounds(_gridPosition + step))
+                    {
+                        if (_level.TryGetObject(_gridPosition + step, out destination))
                         {
                             if (destination.TryMove(step, this))
                             {
@@ -491,34 +488,30 @@ namespace Cirrus.Circuit.Objects
                                 }
                             }
                         }
-                    }
-                    else
-                    {
-                        if (_destination)
-                            _destination._user = null;
+                        else
+                        {
+                            if (_destination)
+                                _destination._user = null;
 
-                        _destination = null;
-                        _targetPosition += step;
-                        _targetPosition += offset;
+                            _destination = null;
+                            _targetPosition += step;
+                            _targetPosition += offset;
 
-                        _state = target;
-                        return true;
+                            _state = target;
+                            return true;
+                        }
                     }
 
                     break;
 
                 case State.Moving:
 
-                    step = (Vector3)args[0];
+                    step = ((Vector3)args[0]).ToVector3Int();
                     incoming = (BaseObject)args[1];
 
-                    // Raycast front
-                    //if (_gridPosition.x)
+                    if (_level.IsWithinBounds(_gridPosition + step))
                     {
-                        _collider.enabled = true;
-                        BaseObject destination = null;// hit.collider.GetComponentInParent<BaseObject>();
-
-                        if (destination != null)
+                        if (_level.TryGetObject(_gridPosition + step, out destination))
                         {
                             if (destination.TryMove(step, this))
                             {
@@ -554,17 +547,17 @@ namespace Cirrus.Circuit.Objects
                                 }
                             }
                         }
-                    }
-                    //else
-                    {
-                        if (_destination)
-                            _destination._user = null;
+                        //else
+                        {
+                            if (_destination)
+                                _destination._user = null;
 
-                        _destination = null;
-                        _targetPosition += step;
+                            _destination = null;
+                            _targetPosition += step;
 
-                        _state = target;
-                        return true;
+                            _state = target;
+                            return true;
+                        }
                     }
 
 

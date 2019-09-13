@@ -30,7 +30,7 @@ namespace Cirrus.Circuit.Controls
         public OnReady OnReadyHandler;
 
 
-        private UnityInput.Users.InputUser _user;
+        //private UnityInput.Users.InputUser _user;
 
         private ActionMap _actionMap;
 
@@ -77,8 +77,8 @@ namespace Cirrus.Circuit.Controls
         {
             _number = number;
             _device = device;
-            _user = Inputs.Users.InputUser.CreateUserWithoutPairedDevices();
-            Inputs.Users.InputUser.PerformPairingWithDevice(_device, _user);
+            //_user = Inputs.Users.InputUser.CreateUserWithoutPairedDevices();
+            //Inputs.Users.InputUser.PerformPairingWithDevice(_device, _user);
 
             // Each player gets a separate action setup. This makes the state of actions and bindings
             // local to each player and also ensures we're not stepping on the action setup used by
@@ -87,14 +87,14 @@ namespace Cirrus.Circuit.Controls
             _scheme = scheme;
             _actionMap = new ActionMap();
             _actionMap.bindingMask = new Inputs.InputBinding { groups = _scheme.bindingGroup }; 
-            _user.AssociateActionsWithUser(_actionMap);
+            //_user.AssociateActionsWithUser(_actionMap);
             Enable();
         }
 
-        ~Controller()
+        public void Disconnect()
         {
             Enable(false);
-            _user.UnpairDevicesAndRemoveUser();
+            //_user.UnpairDevicesAndRemoveUser();
         }
 
         public void Enable(bool enabled = true)
@@ -106,8 +106,13 @@ namespace Cirrus.Circuit.Controls
             }
             else
             {
+                //_actionMap.Player.SetCallbacks(null);
                 _actionMap.Player.Disable(); ;
-                _actionMap.Player.SetCallbacks(null);
+                _actionMap.Disable();
+                _actionMap.Player.AxesLeft.Disable();
+                _actionMap.Player.AxesLeft.Dispose();
+                //_actionMap.
+                //_actionMap.
             }
         }
 

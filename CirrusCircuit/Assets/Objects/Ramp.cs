@@ -20,7 +20,7 @@ namespace Cirrus.Circuit.Objects
         {
             if (Utils.Vectors.CloseEnough(step.normalized, Object.transform.forward))
             {
-                incoming._targetPosition += Vector3.up * Level.BlockSize / 2;
+                incoming._targetPosition += Vector3.up * Level.GridSize / 2;
                 return true;
             }
 

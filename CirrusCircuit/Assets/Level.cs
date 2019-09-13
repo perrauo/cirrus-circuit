@@ -3,18 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 
 using Cirrus.Circuit.Objects;
+using System;
 
 namespace Cirrus.Circuit
 {
     public class Level : MonoBehaviour
     {
         [SerializeField]
-        public static int BlockSize = 2;
+        public static int GridSize = 2;
 
         [SerializeField]
-        private Vector3Int Dimension = new Vector3Int(10, 10, 10);
+        private Vector3Int _offset = new Vector3Int(2, 2, 2);
 
-        private BaseObject[,,] Objects;
+        [SerializeField]
+        private Vector3Int _dimension = new Vector3Int(20, 20, 20);
+
+        private BaseObject[,,] _objects;
 
 
         [SerializeField]
@@ -48,10 +52,10 @@ namespace Cirrus.Circuit
         }
 
         [SerializeField]
-        public Objects.Gem[] _gems;
+        public Gem[] _gems;
 
         [SerializeField]
-        public Objects.Door[] _doors;
+        public Door[] _doors;
 
         [SerializeField]
         public float DistanceLevelSelection = 35;
@@ -71,41 +75,47 @@ namespace Cirrus.Circuit
 
         public void Awake()
         {
-            Objects = new BaseObject[Dimension.x, Dimension.y, Dimension.z];
+            _objects = new BaseObject[_dimension.x, _dimension.y, _dimension.z];
         }
 
 
         public Vector3Int WorldToGrid(Vector3 pos)
         {
             return new Vector3Int(
-                Mathf.RoundToInt(pos.x / BlockSize),
-                Mathf.RoundToInt(pos.y / BlockSize),
-                Mathf.RoundToInt(pos.z / BlockSize));
+                Mathf.RoundToInt(pos.x / GridSize) + _offset.x,
+                Mathf.RoundToInt(pos.y / GridSize) + _offset.y,
+                Mathf.RoundToInt(pos.z / GridSize) + _offset.z);
         }
 
         public Vector3 GridToWorld(Vector3Int pos)
         {
             return new Vector3Int(
-                pos.x * BlockSize,
-                pos.y * BlockSize,
-                pos.z * BlockSize);
+                (pos.x - _offset.x) * GridSize,
+                (pos.y - _offset.y) * GridSize,
+                (pos.z - _offset.z) * GridSize);
         }
 
-        //public bool TryMove(BaseObject source, Vector3Int step, out BaseObject destination)
-        //{
-        //    Vector3Int pos = source.GridPosition + step;
+        public bool IsWithinBounds(Vector3Int pos)
+        {
+            return
+                (pos.x < 0 || pos.x > _dimension.x ||
+                pos.y < 0 || pos.y > _dimension.y ||
+                pos.z < 0 || pos.z > _dimension.z);
+        }
 
-        //    destination = Objects[pos.x, pos.y, pos.z];
-        //    if (destination == null)
-        //    {
-        //        return true;
-        //    }
-        //    else if (TryMove(destination, step, position))
-        //    {
-                
-        //    }
+        public bool TryGetObject(Vector3Int pos, out BaseObject obj)
+        {
+            if (pos.x < 0 || pos.x > _dimension.x ||
+                pos.y < 0 || pos.y > _dimension.y ||
+                pos.z < 0 || pos.z > _dimension.z)
+            {
+                obj = null;
+                return false;
+            }
 
-        //}
+            obj = _objects[pos.x, pos.y, pos.z];
+            return obj == null;            
+        }
 
         //public bool TryEnter(BaseObject source, Vector3Int position, out BaseObject destination)
         //{
@@ -116,13 +126,22 @@ namespace Cirrus.Circuit
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
         {
             Vector3Int gridPos = WorldToGrid(obj.transform.position);
-            Objects[gridPos.x, gridPos.y, gridPos.z] = obj;
+
+            try
+            {
+                _objects[gridPos.x, gridPos.y, gridPos.z] = obj;
+            }
+            catch (Exception e)
+            {
+                Debug.Log("");
+            }
+
             return (GridToWorld(gridPos), gridPos);
         }
 
         public void OnBeginRound()
         {
-            foreach (BaseObject obj in Objects)
+            foreach (BaseObject obj in _objects)
             {
                 if (obj == null)
                     continue;

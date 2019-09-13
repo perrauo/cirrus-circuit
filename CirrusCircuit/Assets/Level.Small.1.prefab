@@ -258,6 +258,61 @@ PrefabInstance:
       propertyPath: m_Name
       value: Level.Small.1
       objectReference: {fileID: 0}
+    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 471735032589428009, guid: c02e13e8543376c488804ea059149107,
         type: 3}
       propertyPath: _gems.Array.size
@@ -323,60 +378,10 @@ PrefabInstance:
       propertyPath: _gems.Array.data[0]
       value: 
       objectReference: {fileID: 2154744205360595897}
-    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
+    - target: {fileID: 471735032589428009, guid: c02e13e8543376c488804ea059149107,
         type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 471735032589428008, guid: c02e13e8543376c488804ea059149107,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      propertyPath: _name
+      value: Small 1
       objectReference: {fileID: 0}
     - target: {fileID: 3334443529680324940, guid: c02e13e8543376c488804ea059149107,
         type: 3}
@@ -388,6 +393,11 @@ PrefabInstance:
       propertyPath: PlayerNumber
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3534369090388530920, guid: c02e13e8543376c488804ea059149107,
+        type: 3}
+      propertyPath: _level
+      value: 
+      objectReference: {fileID: 3053538426482241656}
     - target: {fileID: 8898918519672001340, guid: c02e13e8543376c488804ea059149107,
         type: 3}
       propertyPath: PlayerNumber
@@ -445,6 +455,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c02e13e8543376c488804ea059149107, type: 3}
+--- !u!114 &3053538426482241656 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 471735032589428009, guid: c02e13e8543376c488804ea059149107,
+    type: 3}
+  m_PrefabInstance: {fileID: 3236867150318867793}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 564df8f876e8952419dca6ce525ca8cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &3053538427226299937 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 471735033186945904, guid: c02e13e8543376c488804ea059149107,

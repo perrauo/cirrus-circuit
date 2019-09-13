@@ -68,7 +68,7 @@ namespace Cirrus.Circuit.Objects.Characters
                 ~Game.Instance.Layers.MoveableFlags
                 ))
             {
-                int count = Mathf.FloorToInt(hit.distance / Level.BlockSize);
+                int count = Mathf.FloorToInt(hit.distance / Level.GridSize);
 
                 foreach (var s in _squares)
                 {

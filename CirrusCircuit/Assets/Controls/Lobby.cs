@@ -42,11 +42,16 @@ namespace Cirrus.Circuit.Controls
             Characters = new List<Objects.Characters.Character>();
         }
 
-        public void OnApplicationQuit()
+        public void OnDestroy()
         {
-            Controllers = null;
-        }
+            foreach (var ctrl in Controllers)
+            {
+                if (ctrl == null)
+                    continue;
 
+                ctrl.Disconnect();
+            }
+        }
 
 
         public bool TryJoin(Controller controller)
@@ -112,58 +117,9 @@ namespace Cirrus.Circuit.Controls
                 if (ControllerCount > _playerMax || ControllerCount > Game.Instance.CurrentLevel.CharacterCount) break;
             }
 
-            Inputs.Users.InputUser.onUnpairedDeviceUsed += OnUnpairedInputDeviceUsed;
+            //Inputs.Users.InputUser.onUnpairedDeviceUsed += OnUnpairedInputDeviceUsed;
         }
-
-        private void OnUserChange(
-            Inputs.Users.InputUser user, 
-            Inputs.Users.InputUserChange change,
-            Inputs.InputDevice device)
-        {
-            switch (change)
-            {
-                case Inputs.Users.InputUserChange.Added:
-
-                    break;
-
-                // A player has switched accounts. This will only happen on platforms that have user account
-                // management (PS4, Xbox, Switch). On PS4, for example, this can happen at any time by the
-                // player pressing the PS4 button and switching accounts. We simply update the information
-                // we display for the player's active user account.
-                case Inputs.Users.InputUserChange.AccountChanged:
-
-                    break;
-
-                // If the user has canceled account selection, we remove the user if there's no devices
-                // already paired to it. This usually happens when a player initiates a join on a device on
-                // Xbox or Switch, has the account picker come up, but then cancels instead of making an
-                // account selection. In this case, we want to cancel the join.
-                // NOTE: We are only adding DemoPlayerControllers once device pairing is complete
-                case Inputs.Users.InputUserChange.AccountSelectionCanceled:
-
-                    break;
-
-                // An InputUser gained a new device. If we're in the lobby and don't yet have a player
-                // for the user, it means a new player has joined. We don't join players until they have
-                // a device paired to them which is why we ignore InputUserChange.Added and only react
-                // to InputUserChange.DevicePaired instead.
-                case Inputs.Users.InputUserChange.DevicePaired:
-
-                    break;
-
-                // Some player ran out of battery or unplugged a wired device.
-                case Inputs.Users.InputUserChange.DeviceLost:
-
-                    break;
-
-
-                // Some player has customized controls or had previously customized controls loaded.
-                case Inputs.Users.InputUserChange.BindingsChanged:
-
-                    break;
-
-            }
-        }
+        
 
         public void OnUnpairedInputDeviceUsed(Inputs.InputControl control)
         {

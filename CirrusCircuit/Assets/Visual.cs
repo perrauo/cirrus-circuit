@@ -64,9 +64,12 @@ namespace Cirrus.Circuit
                 Material mat = null;
 
                 if (_meshRenderers.Length != 0)
-                {          
-                    mat = new Material(_meshRenderers[0].sharedMaterial);
-                    mat.color = _color;//.red;
+                {
+                    if (_meshRenderers[0].sharedMaterial != null)
+                    {
+                        mat = new Material(_meshRenderers[0].sharedMaterial);
+                        mat.color = _color;//.red;
+                    }
                 }
 
                 foreach (var rend in _meshRenderers)
