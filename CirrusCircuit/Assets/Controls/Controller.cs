@@ -91,7 +91,7 @@ namespace Cirrus.Circuit.Controls
             Enable();
         }
 
-        public void Disconnect()
+        ~Controller()
         {
             Enable(false);
             //_user.UnpairDevicesAndRemoveUser();

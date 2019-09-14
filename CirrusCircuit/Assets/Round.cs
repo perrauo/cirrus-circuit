@@ -38,13 +38,20 @@ namespace Cirrus.Circuit
         public Round(int countDown, float time, float countDownTime)
         {
             _countDown = countDown;
+
             _roundTime = time;
             _countDownTime = countDownTime;
 
-            _countDownTimer = new Timer(countDownTime, repeat:true);
+            _countDownTimer = new Timer(countDownTime, start:false, repeat:true);
             _countDownTimer.OnTimeLimitHandler += OnTimeOut;
 
-            _timer = new Timer(_roundTime, false);
+            _timer = new Timer(_roundTime, start:false);
+        }
+
+        public void BeginCountdown()
+        {
+            OnCountdownHandler?.Invoke(_countDown);
+            _countDownTimer.Start();
         }
 
         private void OnTimeOut()
@@ -53,8 +60,13 @@ namespace Cirrus.Circuit
 
             if (_countDown < -1)
             {
-                OnRoundBeginHandler.Invoke();
+                OnCountdownHandler?.Invoke(_countDown);
                 _countDownTimer.Stop();
+            }
+            else if (_countDown < 0)
+            {
+                OnCountdownHandler?.Invoke(_countDown);
+                OnRoundBeginHandler.Invoke();
                 _timer.Start();
                 _timer.OnTimeLimitHandler += OnRoundEnd;
                 return;

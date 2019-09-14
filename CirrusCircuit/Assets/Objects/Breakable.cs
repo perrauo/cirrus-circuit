@@ -7,7 +7,7 @@ namespace Cirrus.Circuit.Objects
 {
     public class Breakable : BaseObject
     { 
-        public override bool TryMove(Vector3 step, BaseObject incoming = null)
+        public override bool TryMove(Vector3Int step, BaseObject incoming = null)
         {
             return false;
         }

@@ -35,9 +35,9 @@ namespace Cirrus.Circuit.Objects.Characters
         [SerializeField]
         public Animator Animator;
 
-        private Vector3 _targetDirection = Vector3.zero;
+        //private Vector3 _targetDirection = Vector3.zero;
 
-        private Vector3 _direction = Vector3.zero;
+        //private Vector3 _direction = Vector3.zero;
 
         private bool _wasMovingVertical = false;
 
@@ -79,8 +79,8 @@ namespace Cirrus.Circuit.Objects.Characters
             bool isMovingHorizontal = Mathf.Abs(axis.x) > 0.5f;
             bool isMovingVertical = Mathf.Abs(axis.y) > 0.5f;
 
-            Vector3 stepHorizontal = new Vector3(_stepDistance * Mathf.Sign(axis.x), 0, 0);
-            Vector3 stepVertical = new Vector3(0, 0, _stepDistance * Mathf.Sign(axis.y));
+            Vector3Int stepHorizontal = new Vector3Int(_stepSize * Math.Sign(axis.x), 0, 0);
+            Vector3Int stepVertical = new Vector3Int(0, 0, _stepSize * Math.Sign(axis.y));
 
             if (isMovingVertical && isMovingHorizontal)
             {
@@ -117,9 +117,9 @@ namespace Cirrus.Circuit.Objects.Characters
                 }
             }
                         
-            // Smoothly interpolate from current to target look direction  
-            _targetDirection = new Vector3(axis.x, 0.0f, axis.y);
-            _direction = Vector3.Lerp(_direction, _targetDirection, _rotationSpeed).normalized;
+            //// Smoothly interpolate from current to target look direction  
+            //_targetDirection = new Vector3(axis.x, 0.0f, axis.y);
+            //_direction = Vector3.Lerp(_direction, _targetDirection, _rotationSpeed).normalized;
 
             if (_direction != Vector3.zero)
                 _visual.Parent.transform.rotation = Quaternion.LookRotation(_direction, transform.up);

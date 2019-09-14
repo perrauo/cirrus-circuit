@@ -355,8 +355,11 @@ namespace Cirrus.Circuit
                             _countDownTime);
 
                     HUD.OnRound(_round);
+
                     _round.OnRoundBeginHandler += CurrentLevel.OnBeginRound;
 
+                    _round.BeginCountdown();
+                    
                     return true;
 
                 case State.Score:

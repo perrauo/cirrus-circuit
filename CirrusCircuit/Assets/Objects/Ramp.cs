@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cirrus.Extensions;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ namespace Cirrus.Circuit.Objects
 {
     public class Ramp : BaseObject
     {
-        public override bool TryMove(Vector3 step, BaseObject incoming = null)
+        public override bool TryMove(Vector3Int step, BaseObject incoming = null)
         {
             switch (incoming.Id)
             {
@@ -15,13 +16,17 @@ namespace Cirrus.Circuit.Objects
                     return false;
             }
         }
-        
-        public override bool TryEnter(Vector3 step, BaseObject incoming = null)
+
+        public override bool TryEnter(Vector3Int step, ref Vector3 offset, BaseObject incoming = null)
         {
-            if (Utils.Vectors.CloseEnough(step.normalized, Object.transform.forward))
+            if (step == _direction)
             {
-                incoming._targetPosition += Vector3.up * Level.GridSize / 2;
-                return true;
+                if (base.TryEnter(step, ref offset, incoming))
+                {
+                    _user = incoming;
+                    offset += Vector3.up * Level.GridSize / 2;
+                    return true;
+                }
             }
 
             return false;

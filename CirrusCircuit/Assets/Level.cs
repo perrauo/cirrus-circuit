@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Cirrus.Circuit.Objects;
 using System;
 
+using System.Threading;
+
 namespace Cirrus.Circuit
 {
     public class Level : MonoBehaviour
@@ -17,6 +19,8 @@ namespace Cirrus.Circuit
 
         [SerializeField]
         private Vector3Int _dimension = new Vector3Int(20, 20, 20);
+
+        Mutex _mutex;
 
         private BaseObject[,,] _objects;
 
@@ -75,6 +79,7 @@ namespace Cirrus.Circuit
 
         public void Awake()
         {
+            _mutex = new Mutex(false);
             _objects = new BaseObject[_dimension.x, _dimension.y, _dimension.z];
         }
 
@@ -98,44 +103,99 @@ namespace Cirrus.Circuit
         public bool IsWithinBounds(Vector3Int pos)
         {
             return
-                (pos.x < 0 || pos.x > _dimension.x ||
-                pos.y < 0 || pos.y > _dimension.y ||
-                pos.z < 0 || pos.z > _dimension.z);
+                (pos.x > 0 && pos.x < _dimension.x &&
+                pos.y > 0 && pos.y < _dimension.y &&
+                pos.z > 0 && pos.z < _dimension.z);
         }
 
-        public bool TryGetObject(Vector3Int pos, out BaseObject obj)
+        public bool TryGet(Vector3Int pos, out BaseObject obj)
         {
-            if (pos.x < 0 || pos.x > _dimension.x ||
-                pos.y < 0 || pos.y > _dimension.y ||
-                pos.z < 0 || pos.z > _dimension.z)
+            _mutex.WaitOne();
+            obj = _objects[pos.x, pos.y, pos.z];
+            _mutex.ReleaseMutex();
+            return obj != null;            
+        }
+
+        public void Set(Vector3Int position, BaseObject obj)
+        {
+            _mutex.WaitOne();
+            _objects[position.x, position.y, position.z] = obj;
+            _mutex.ReleaseMutex();
+        }
+
+
+        public bool TryMove(BaseObject source, Vector3Int step, ref Vector3 offset, out BaseObject destination)
+        {
+            destination = null;
+
+            Vector3Int direction = step;
+            direction.y = 0;
+
+            if (IsWithinBounds(source._gridPosition + step))
             {
-                obj = null;
-                return false;
+                if (TryGet(source._gridPosition + step, out destination))
+                {
+                    if (destination.TryMove(direction, source))
+                    {
+                        destination = null;
+
+                        // Only set occupying tile if not visiting
+                        // Only set occupying tile if not visiting
+                        if (source._destination == null)
+                        {
+                            Set(source._gridPosition, null);
+                        }
+                        else
+                        {
+                            source._destination._user = null;
+                        }
+
+                        Set(source._gridPosition + step, source);
+                        return true;
+
+                    }
+                    else if (destination.TryEnter(direction, ref offset, source))
+                    {
+                        // Only set occupying tile if not visiting
+                        if (source._destination == null)
+                        {
+                            Set(source._gridPosition, null);
+                        }
+                        else
+                        {
+                            source._destination._user = null;
+                        }
+
+                        return true;
+                    }
+                }
+                else
+                {
+                    // Only set occupying tile if not visiting
+                    // Only set occupying tile if not visiting
+                    if (source._destination == null)
+                    {
+                        Set(source._gridPosition, null);
+                    }
+                    else
+                    {
+                        source._destination._user = null;
+                    }
+
+                    Set(source._gridPosition + step, source);
+                    return true;
+                }
             }
 
-            obj = _objects[pos.x, pos.y, pos.z];
-            return obj == null;            
+            return false;
         }
 
-        //public bool TryEnter(BaseObject source, Vector3Int position, out BaseObject destination)
-        //{
-
-        //}
 
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
         {
             Vector3Int gridPos = WorldToGrid(obj.transform.position);
-
-            try
-            {
-                _objects[gridPos.x, gridPos.y, gridPos.z] = obj;
-            }
-            catch (Exception e)
-            {
-                Debug.Log("");
-            }
-
+            _objects[gridPos.x, gridPos.y, gridPos.z] = obj;
             return (GridToWorld(gridPos), gridPos);
         }
 
@@ -148,9 +208,7 @@ namespace Cirrus.Circuit
 
                 obj.TryChangeState(BaseObject.State.Idle);
             }
-        }
-
-
+        }        
 
         public void UpdateColors(int player, Color color)
         {

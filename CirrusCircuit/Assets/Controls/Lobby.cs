@@ -42,18 +42,6 @@ namespace Cirrus.Circuit.Controls
             Characters = new List<Objects.Characters.Character>();
         }
 
-        public void OnDestroy()
-        {
-            foreach (var ctrl in Controllers)
-            {
-                if (ctrl == null)
-                    continue;
-
-                ctrl.Disconnect();
-            }
-        }
-
-
         public bool TryJoin(Controller controller)
         {
             if (controller.Character == null)

@@ -19,5 +19,10 @@ namespace Cirrus.Circuit.Objects
             _visual.transform.Rotate(Vector3.right * Time.deltaTime * _rotateSpeed);
         }
 
+        public override bool TryEnter(Vector3Int step, ref Vector3 offset, BaseObject incoming = null)
+        {
+            return false;
+        }
+
     }
 }

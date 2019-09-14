@@ -32,8 +32,8 @@ namespace Cirrus.Circuit.Objects
         [SerializeField]
         protected Visual _visual;
 
-        [SerializeField]
-        public Collider _collider;
+        //[SerializeField]
+        //public Collider _collider;
 
         [SerializeField]
         public GameObject _object;
@@ -47,7 +47,7 @@ namespace Cirrus.Circuit.Objects
         }        
 
         [SerializeField]
-        public float _stepDistance = 2f;
+        public int _stepSize = 1;
 
         [SerializeField]
         public float _stepSpeed = 0.2f;
@@ -65,7 +65,7 @@ namespace Cirrus.Circuit.Objects
 
         public BaseObject _user = null;
 
-        public Vector3 _step;
+        public Vector3Int _direction;
 
         public Vector3 _targetPosition;
 
@@ -112,6 +112,7 @@ namespace Cirrus.Circuit.Objects
 
         protected virtual void Awake()
         {
+            _direction = Object.transform.forward.ToVector3Int();
             _targetPosition = Object.transform.position;
             _targetScale = 1f;
 
@@ -135,33 +136,43 @@ namespace Cirrus.Circuit.Objects
             FSMUpdate();
         }
 
-        //public virtual void OnDrawGizmos()
-        //{
-        //    Gizmos.color = Color.red;
-
-        //    Gizmos.DrawSphere(_targetPosition, 0.1f);
-        //}
-
         public bool TryChangeState(FSM.State state, params object[] args)
         {    
             return TryChangeState(state, args);
         }
 
-        public virtual bool TryMove(Vector3 step, BaseObject incoming = null)
+        public virtual bool TryMove(Vector3Int step, BaseObject incoming = null)
         {
             return TryChangeState(State.Moving, step, incoming);
         }
 
-        public virtual bool TryEnter(Vector3 step, BaseObject incoming = null)
+        public virtual bool TryEnter(Vector3Int step, ref Vector3 offset, BaseObject incoming = null)
         {
+            if (_user != null)
+            {
+                if (_user.TryMove(step, incoming))
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                return true;
+            }
+
             return false;
+
+        }
+
+        public virtual bool TryFall(BaseObject incoming = null)
+        {
+            return TryChangeState(State.Falling, Vector3Int.down);
         }
 
         public virtual void Accept(BaseObject incoming)
         {
             //incoming.TryChangeState
         }
-
 
         #endregion
 
@@ -234,44 +245,23 @@ namespace Cirrus.Circuit.Objects
 
                     if (Utils.Vectors.CloseEnough(Object.transform.position, _targetPosition))
                     {
-                        //// If the destination can coexist with incoming object once arrived we return true
-                        //if (_destination == null)
-                        //{
-                        //    RaycastHit hit;
+                        if (_destination == null)
+                        {
+                            BaseObject obj;
 
-                        //    if (Physics.Raycast(
-                        //        _targetPosition,
-                        //        Vector3.down,
-                        //        out hit,
-                        //        Level.BlockSize / 2))
-                        //    {
-                        //        TryChangeState(State.Idle);
-                        //    }
-                        //    else
-                        //    {
-                        //        // Raycast down to get distance
-                        //        if (
-                        //            Physics.Raycast(
-                        //            _targetPosition,
-                        //            Vector3.down,
-                        //            out hit,
-                        //            10f))
-                        //        {
-                        //            //Debug.Log(_object._targetPosition);
-                        //            //Debug.Log(hit.point);
-                        //            TryChangeState(State.Falling, hit.distance);
-                        //        }
-                        //        else
-                        //        {
-                        //            // TODO
-                        //            // Fall to infinity and destroy
-                        //        }
-                        //    }
-                        //}
-                        //else
-                        //{
-                        //    _destination.Accept(this);
-                        //}
+                            if (_level.TryGet(_gridPosition + Vector3Int.down, out obj))
+                            {
+                                TryChangeState(State.Idle);
+                            }
+                            else
+                            {
+                                TryFall();// State.Falling, Vector3Int.down);                                
+                            }
+                        }
+                        else
+                        {
+                            _destination.Accept(this);
+                        }
                     }
 
                     break;
@@ -390,11 +380,14 @@ namespace Cirrus.Circuit.Objects
 
         protected virtual bool TryFinishChangeState(State target, params object[] args)
         {
+            Vector3Int previousGridPosition = _gridPosition;
             Vector3Int step;
-            BaseObject incoming;
+            BaseObject incoming  = null;
             BaseObject destination;
-            RaycastHit hit;
-
+            BaseObject above;
+            Vector3 offset = Vector3.zero;
+            Vector3Int stepOffset = Vector3Int.zero;
+            bool result = false;
 
             switch (target)
             {
@@ -402,172 +395,120 @@ namespace Cirrus.Circuit.Objects
                     _targetScale = 0;
 
                     _state = target;
-                    return true;
+                    result = true;
+                    break;
 
                 case State.Falling:
-                    float distance = (float)args[0];
-                    //_targetPosition += Vector3.down * distance;
-                    //_targetPosition += Vector3.up * Level.BlockSize / 2;
 
-                    _state = target;
-                    return true;
+                    step = (Vector3Int)args[0];
+
+                    if (_level.TryMove(this, step, ref offset, out destination))
+                    {
+                        _destination = destination;
+                        _gridPosition += step;
+                        _targetPosition = _level.GridToWorld(_gridPosition);
+
+                        _state = target;
+                        result = true;
+                    }
+
+                    _state = State.Idle;
+                    result = false;
+                    break;
 
                 case State.Idle:
-                    _collider.enabled = true;
+                    //_collider.enabled = true;
 
                     _state = target;
-                    return true;
+                    result = true;
+                    break;
 
                 case State.RampIdle:
-                    _collider.enabled = false;
+                    //_collider.enabled = false;
 
                     _state = target;
-                    return true;
+                    result = true;
+                    break;
 
                 case State.RampMoving:
 
                     step = (Vector3Int)args[0];
                     incoming = (BaseObject)args[1];
 
-                    Vector3 offset = Vector3.zero; ;
                     // Determine which direction to cast the ray
 
-                    Ray ray;
                     // Same direction (Look up)
-                    if (Utils.Vectors.CloseEnough(step, Object.transform.forward))
+                    if (step == _destination._direction)
                     {
-                        ray = new Ray(_targetPosition + Vector3.up * Level.GridSize, step);
-                        offset += Vector3.up * Level.GridSize / 2;
+                        stepOffset += Vector3Int.up;
+                        //offset += Vector3.up * (Level.GridSize / 2);
                     }
                     // Opposing direction (look down)
-                    else if (Utils.Vectors.CloseEnough(step, -Object.transform.forward))
-                    {
-                        ray = new Ray(_targetPosition + Vector3.down * Level.GridSize, step);
-                        offset -= Vector3.up * Level.GridSize / 2;
+                    else if (step == _destination._direction * -1)
+                    { 
+                        stepOffset += Vector3Int.up;
+                        //offset -= Vector3.up * (Level.GridSize / 2);
                     }
 
-
-                    if (_level.IsWithinBounds(_gridPosition + step))
+                    if (_level.TryMove(this, step + stepOffset, ref offset, out destination))
                     {
-                        if (_level.TryGetObject(_gridPosition + step, out destination))
-                        {
-                            if (destination.TryMove(step, this))
-                            {
-                                destination._user = null;
-                                _destination = null; // We pushed it the destination was moved
-                                _targetPosition += step;
-                                _targetPosition += offset;
+                        _destination = destination;
+                        _gridPosition += step + stepOffset;
+                        _targetPosition = _level.GridToWorld(_gridPosition);
+                        _targetPosition += offset;
+                        _direction = step;
 
-                                _state = target;
-                                return true;
-                            }
-                            else if (destination.TryEnter(step, this))
-                            {
-                                if (destination._user)
-                                {
-                                    if (destination._user.TryMove(step, this))
-                                    {
-                                        destination._user = this; // We pushed it the destination was moved
-                                        _destination = destination;
-                                        _targetPosition += step;
-                                        _targetPosition += offset;
-
-                                        _state = target;
-                                        return true;
-                                    }
-                                }
-                                else
-                                {
-                                    destination._user = this;
-                                    _destination = destination;
-                                    _targetPosition += step;
-                                    _targetPosition += offset;
-
-                                    _state = target;
-                                    return true;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (_destination)
-                                _destination._user = null;
-
-                            _destination = null;
-                            _targetPosition += step;
-                            _targetPosition += offset;
-
-                            _state = target;
-                            return true;
-                        }
+                        _state = target;
+                        result = true;
                     }
 
                     break;
 
                 case State.Moving:
 
-                    step = ((Vector3)args[0]).ToVector3Int();
+                    step = (Vector3Int)args[0];
                     incoming = (BaseObject)args[1];
 
-                    if (_level.IsWithinBounds(_gridPosition + step))
+                    if (_level.TryMove(this, step, ref offset, out destination))
                     {
-                        if (_level.TryGetObject(_gridPosition + step, out destination))
-                        {
-                            if (destination.TryMove(step, this))
-                            {
-                                destination._user = null;
-                                _destination = null; // We pushed it the destination was moved                                
-                                _targetPosition += step;
+                        _destination = destination;
+                        _gridPosition += step;
+                        _targetPosition = _level.GridToWorld(_gridPosition);
+                        _targetPosition += offset;
+                        _direction = step;
 
-                                _state = target;
-                                return true;
-                            }
-                            else if (destination.TryEnter(step, this))
-                            {
-                                if (destination._user)
-                                {
-                                    if (destination._user.TryMove(step, this))
-                                    {
-                                        destination._user = this; // We pushed it the destination was moved
-                                        _destination = destination;
-                                        _targetPosition += step;
-
-                                        _state = target;
-                                        return true;
-                                    }
-                                }
-                                else
-                                {
-                                    destination._user = this;
-                                    _destination = destination;
-                                    _targetPosition += step;
-
-                                    _state = target;
-                                    return true;
-                                }
-                            }
-                        }
-                        //else
-                        {
-                            if (_destination)
-                                _destination._user = null;
-
-                            _destination = null;
-                            _targetPosition += step;
-
-                            _state = target;
-                            return true;
-                        }
+                        _state = target;
+                        result = true;                        
                     }
-
 
                     break;
 
                 default:
-                    return false;
+                    result = false;
+                    break;
             }
 
-            return false;
+            if (result && incoming == null)
+            {
+                // Determine if object above to make it fall
+                switch (target)
+                {
+                    case State.Moving:
+                    case State.RampMoving:
+                    case State.Falling:
+
+                        if (_level.TryGet(previousGridPosition + Vector3Int.up, out above))
+                        {
+                            above.TryFall();// (State.Falling, Vector3Int.down);
+                        }
+
+                        _state = target;
+                        break;
+                }
+            }
+
+
+            return result;
         }
 
         #endregion
