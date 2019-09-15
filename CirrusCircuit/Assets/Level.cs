@@ -205,6 +205,16 @@ namespace Cirrus.Circuit
             return false;
         }
 
+        public void OnRoundEnd()
+        {
+            foreach (BaseObject obj in _objects)
+            {
+                if (obj == null)
+                    continue;
+
+                obj.TryChangeState(BaseObject.State.Disabled);
+            }
+        }
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
         {

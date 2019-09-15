@@ -42,14 +42,31 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private GameObject _levelSelectDisplay;
 
+        [SerializeField]
+        private GameObject _timesUp;
+
+        private Circuit.Timer _timesUpTimer;
+
+        [SerializeField]
+        private float _timesUpTime = 2f;
+
+
         private Round _round;
 
 
-        public void Awake()
-        {
-            _availablePlayerDisplays = new List<PlayerDisplay>();
-        }
+        private bool _init = false;
 
+        public void OnEnable()
+        {
+            if (!_init)
+            {
+                _init = true;
+                _availablePlayerDisplays = new List<PlayerDisplay>();
+
+                _timesUpTimer = new Circuit.Timer(_timesUpTime, start: false, repeat: false);
+                _timesUpTimer.OnTimeLimitHandler += OnTimesUpTimeOut;
+            }
+        }
 
         public IEnumerator PunchScale(bool previous)
         {
@@ -108,7 +125,7 @@ namespace Cirrus.Circuit.UI
 
             round.OnCountdownHandler += OnRoundCountdown;
             round.OnRoundBeginHandler += OnRoundBegin;
-            round.OnRoundEndHandler += OnRoundEnd;
+            //round.OnRoundEndHandler += OnRoundEnd;
         }
         public void Update()
         {
@@ -128,7 +145,14 @@ namespace Cirrus.Circuit.UI
 
         public void OnRoundEnd()
         {
+            _timesUp.gameObject.SetActive(true);
+            _timesUpTimer.Start();
+        }
 
+
+        private void OnTimesUpTimeOut()
+        {
+            _timesUp.gameObject.SetActive(false);
         }
 
 

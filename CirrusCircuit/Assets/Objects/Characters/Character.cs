@@ -117,12 +117,32 @@ namespace Cirrus.Circuit.Objects.Characters
                 }
             }
                         
-            //// Smoothly interpolate from current to target look direction  
-            //_targetDirection = new Vector3(axis.x, 0.0f, axis.y);
-            //_direction = Vector3.Lerp(_direction, _targetDirection, _rotationSpeed).normalized;
+        }
 
-            if (_direction != Vector3.zero)
-                _visual.Parent.transform.rotation = Quaternion.LookRotation(_direction, transform.up);
+
+        public override void FSMUpdate()
+        {
+            base.FSMUpdate();
+
+
+            switch (_state)
+            {
+                case State.Disabled:
+                    break;
+
+                case State.Moving:
+                case State.Falling:
+                case State.Entering:
+                case State.Idle:
+                case State.RampIdle:
+                    
+                    if (_direction != Vector3.zero)
+                        Object.transform.rotation = Quaternion.LookRotation(_direction, Object.transform.up);
+                    break;
+
+            }
+
+
         }
 
         public void TryAction0()

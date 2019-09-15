@@ -71,6 +71,10 @@ namespace Cirrus.Circuit
         public Camera  _camera;
 
         [SerializeField]
+        private Objects.Podium _podium;
+
+
+        [SerializeField]
         public float _targetSizeCamera = 10f;
 
         [SerializeField]
@@ -88,6 +92,9 @@ namespace Cirrus.Circuit
 
 
         public Round _round;
+
+        [SerializeField]
+        public float _podiumTransitionSpeed = 0.2f;
 
 
         void Awake()
@@ -183,7 +190,28 @@ namespace Cirrus.Circuit
             HUD.OnWaiting();
         }
 
+        public void OnRoundEnd()
+        {
+            CurrentLevel.TargetPosition = Vector3.zero + Vector3.right * _distanceLevelSelect;
+            CurrentLevel._positionSpeed = _podiumTransitionSpeed;
 
+            _podium.transform.position = Vector3.zero + Vector3.right * -_distanceLevelSelect;
+            _podium.gameObject.SetActive(true);
+            _podium.TargetPosition = Vector3.zero;
+
+            _podium.OnRoundEnd();
+
+            foreach (var c in Lobby.Controllers)
+            {
+                if (c == null)
+                    continue;
+
+                _podium.Add(c, c.Character);
+            }
+
+            CurrentLevel.OnRoundEnd();   
+            TryChangeState(State.Podium);
+        }
 
         #endregion
 
@@ -197,6 +225,7 @@ namespace Cirrus.Circuit
             Round,
             Score,
             WaitingNextRound,
+            Podium
         }
 
         [SerializeField]
@@ -220,6 +249,7 @@ namespace Cirrus.Circuit
                 case State.LevelSelection:
                 case State.Round:
                 case State.Score:
+                case State.Podium:
 
                     _camera.orthographicSize =
                         Mathf.Lerp(
@@ -238,6 +268,8 @@ namespace Cirrus.Circuit
                 case State.LevelSelection:
                 case State.Round:
                 case State.Score:
+                case State.Podium:
+
                     break;
             }
         }
@@ -263,6 +295,7 @@ namespace Cirrus.Circuit
                         case State.WaitingNextRound:
                         case State.LevelSelection:
                         case State.Score:
+                        case State.Podium:
                             destination = transition;
                             return true;
                     }
@@ -274,6 +307,7 @@ namespace Cirrus.Circuit
                         case State.WaitingNextRound:
                         case State.LevelSelection:
                         case State.Score:
+                        case State.Podium:
                             destination = transition;
                             return true;
                     }
@@ -285,6 +319,7 @@ namespace Cirrus.Circuit
                         case State.WaitingNextRound:
                         case State.LevelSelection:
                         case State.Round:
+                        case State.Podium:
                             destination = transition;
                             return true;
                     }
@@ -295,6 +330,19 @@ namespace Cirrus.Circuit
                     {
                         case State.LevelSelection:
                         case State.Round:
+                        case State.Podium:
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
+                case State.Podium:
+                    switch (transition)
+                    {
+                        case State.WaitingNextRound:
+                        case State.LevelSelection:
+                        case State.Round:
+                        case State.Podium:
                             destination = transition;
                             return true;
                     }
@@ -329,7 +377,6 @@ namespace Cirrus.Circuit
                     {
                         lv.gameObject.SetActive(true);
                     }
-
 
                     OnLevelSelect();
                     OnLevelSelected(0);
@@ -377,7 +424,11 @@ namespace Cirrus.Circuit
                     _round.OnRoundBeginHandler += CurrentLevel.OnBeginRound;
 
                     _round.BeginCountdown();
-                    
+
+                    _round.OnRoundEndHandler += OnRoundEnd;
+
+                    _round.OnRoundEndHandler += HUD.OnRoundEnd;
+
                     return true;
 
                 case State.Score:
@@ -529,6 +580,9 @@ namespace Cirrus.Circuit
         {
             switch (_state)
             {
+                case State.Podium:
+
+                    break;
 
                 case State.LevelSelection:
                     TryChangeState(State.WaitingNextRound);

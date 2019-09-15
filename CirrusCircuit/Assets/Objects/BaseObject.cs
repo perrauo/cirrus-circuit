@@ -197,7 +197,7 @@ namespace Cirrus.Circuit.Objects
         }
 
         [SerializeField]
-        private State _state = State.Idle;
+        protected State _state = State.Idle;
 
         public virtual void FSMAwake()
         {
@@ -303,6 +303,7 @@ namespace Cirrus.Circuit.Objects
 
                     switch (transition)
                     {
+                        case State.Disabled:
                         case State.Entering:
                         case State.Falling:
                         case State.Idle:
@@ -316,6 +317,7 @@ namespace Cirrus.Circuit.Objects
                 case State.Falling:
                     switch (transition)
                     {
+                        case State.Disabled:
                         case State.Entering:
                         case State.Falling:
                         case State.Idle:
@@ -343,6 +345,7 @@ namespace Cirrus.Circuit.Objects
                 case State.RampIdle:
                     switch (transition)
                     {
+                        case State.Disabled:
                         case State.Moving:
                             //case State.Moving:
                             destination = State.RampMoving;
@@ -356,6 +359,7 @@ namespace Cirrus.Circuit.Objects
                 case State.Moving:
                     switch (transition)
                     {
+                        case State.Disabled:
                         case State.Entering:
                         case State.Falling:
                         case State.Idle:
@@ -369,6 +373,7 @@ namespace Cirrus.Circuit.Objects
                 case State.RampMoving:
                     switch (transition)
                     {
+                        case State.Disabled:
                         case State.Entering:
                         case State.Falling:
                         case State.Idle:
@@ -397,6 +402,11 @@ namespace Cirrus.Circuit.Objects
 
             switch (target)
             {
+                case State.Disabled:
+                    result = true;
+                    _state = target;
+                    break;
+
                 case State.Entering:
                     _targetScale = 0;
 
