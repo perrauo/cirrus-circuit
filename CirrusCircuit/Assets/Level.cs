@@ -11,6 +11,8 @@ namespace Cirrus.Circuit
 {
     public class Level : MonoBehaviour
     {
+        public Door.OnScoreValueAdded OnScoreValueAdded;
+
         [SerializeField]
         public static int GridSize = 2;
 
@@ -71,18 +73,31 @@ namespace Cirrus.Circuit
 
         [SerializeField]
         public float _positionSpeed = 0.4f;
- 
+
         public void FixedUpdate()
         {
             transform.position = Vector3.Lerp(transform.position, TargetPosition, _positionSpeed);
         }
 
-        public void Awake()
-        {
-            _mutex = new Mutex(false);
-            _objects = new BaseObject[_dimension.x, _dimension.y, _dimension.z];
-        }
+        private bool init = false;
 
+        public void OnEnable()
+        {
+            if (!init)
+            {
+                _mutex = new Mutex(false);
+                _objects = new BaseObject[_dimension.x, _dimension.y, _dimension.z];
+
+                foreach (Door door in _doors)
+                {
+                    door.OnScoreValueAddedHandler += OnGemEntered;
+
+                    //Game.Instance.Lobby.Controllers[(int)door.PlayerNumber].On
+                }
+
+                init = true;
+            }
+        }
 
         public Vector3Int WorldToGrid(Vector3 pos)
         {
@@ -191,7 +206,6 @@ namespace Cirrus.Circuit
         }
 
 
-
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
         {
             Vector3Int gridPos = WorldToGrid(obj.transform.position);
@@ -208,7 +222,14 @@ namespace Cirrus.Circuit
 
                 obj.TryChangeState(BaseObject.State.Idle);
             }
-        }        
+        }
+
+
+        private void OnGemEntered(Controls.PlayerNumber player, float value)
+        {
+            OnScoreValueAdded?.Invoke(player, value);
+        }
+        
 
         public void UpdateColors(int player, Color color)
         {

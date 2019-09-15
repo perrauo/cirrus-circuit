@@ -1,10 +1,5 @@
-using Cirrus.Circuit.Controls;
-using Cirrus.Circuit.Objects.Characters;
-using Cirrus.Circuit.Objects.Characters.Controls;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
+using Cirrus.Circuit.Controls;
 using UnityEngine;
 
 
@@ -22,6 +17,8 @@ namespace Cirrus.Circuit
     public class Game : MonoBehaviour
     {
         #region Game
+
+        public Objects.Door.OnScoreValueAdded OnScoreValueAddedHandler;
 
         private static Game _instance;
 
@@ -131,6 +128,13 @@ namespace Cirrus.Circuit
         }
 
 
+        private void OnScoreValueAdded(PlayerNumber player, float value)
+        {
+            Lobby.Controllers[(int)player].Score += value;
+            HUD.OnScoreChanged(player, Lobby.Controllers[(int)player].Score);
+        }
+
+
         public void OnLevelSelected(int step)
         {
             for (int i = 0; i < _levels.Length; i++)
@@ -168,6 +172,7 @@ namespace Cirrus.Circuit
             FSMHandleAction1(controller);
         }
 
+
         public void OnLevelSelect()
         {
             HUD.OnLevelSelect();
@@ -177,6 +182,8 @@ namespace Cirrus.Circuit
         {
             HUD.OnWaiting();
         }
+
+
 
         #endregion
 
@@ -356,6 +363,17 @@ namespace Cirrus.Circuit
 
                     HUD.OnRound(_round);
 
+                    CurrentLevel.OnScoreValueAdded += OnScoreValueAdded;
+
+                    foreach (var ctrl in Lobby.Controllers)
+                    {
+                        if (ctrl == null)
+                            continue;
+
+                        //ctrl.OnScoreChangedHandler += HUD.OnScoreChanged;
+                        //ctrl.OnMultiplierChangedHandler += HUD.OnMultiplierChanged;
+                    }
+
                     _round.OnRoundBeginHandler += CurrentLevel.OnBeginRound;
 
                     _round.BeginCountdown();
@@ -504,7 +522,6 @@ namespace Cirrus.Circuit
                 case State.Score:
                     break;
             }
-
         }
 
 

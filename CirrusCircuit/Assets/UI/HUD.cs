@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using Cirrus.Circuit.Controls;
 
 namespace Cirrus.Circuit.UI
 {
@@ -109,8 +110,6 @@ namespace Cirrus.Circuit.UI
             round.OnRoundBeginHandler += OnRoundBegin;
             round.OnRoundEndHandler += OnRoundEnd;
         }
-
-
         public void Update()
         {
             if(_round != null)
@@ -171,6 +170,12 @@ namespace Cirrus.Circuit.UI
 
             _levelSelectDisplay.SetActive(true);
         }
+
+        public void OnScoreChanged(PlayerNumber player, float score)
+        {
+            _playerDisplays[(int)player].OnScoreChanged(score);
+        }
+
 
 
         internal void OnLevelSelected(int step)

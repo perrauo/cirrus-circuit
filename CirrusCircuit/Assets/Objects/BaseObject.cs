@@ -110,6 +110,7 @@ namespace Cirrus.Circuit.Objects
                 _level = GetComponentInParent<Level>();
         }
 
+        // TODO: will not be called on disabled level
         protected virtual void Awake()
         {
             _direction = Object.transform.forward.ToVector3Int();
@@ -117,6 +118,11 @@ namespace Cirrus.Circuit.Objects
             _targetScale = 1f;
 
             FSMAwake();
+        }
+
+        protected virtual void OnEnable()
+        {
+            
         }
 
         public virtual void Start()

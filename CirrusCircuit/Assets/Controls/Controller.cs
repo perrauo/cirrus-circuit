@@ -21,16 +21,11 @@ namespace Cirrus.Circuit.Controls
 {
     public class Controller : ActionMap.IPlayerActions
     {
+        public float Score { get; set; }
+
         public delegate void OnReady(Controller ctrl);
 
-        public delegate void OnGemsCount(int count);
-
-        public OnGemsCount OnGemsCountHandler;
-
         public OnReady OnReadyHandler;
-
-
-        //private UnityInput.Users.InputUser _user;
 
         private ActionMap _actionMap;
 
@@ -44,7 +39,6 @@ namespace Cirrus.Circuit.Controls
 
         public UI.PlayerDisplay PlayerDisplay = null;
 
-
         private int _number = 0;
 
         public int Number
@@ -54,24 +48,6 @@ namespace Cirrus.Circuit.Controls
                 return _number;
             }
         }
-
-        private int _gemsCount = 0;
-
-        public int GemsCount
-        {
-            get
-            {
-                return _gemsCount;
-            }
-
-            set
-            {
-                _gemsCount = value;
-                OnGemsCountHandler?.Invoke(_gemsCount);
-            }
-        }
-
-
 
         public Controller(int number, Inputs.InputDevice device, Inputs.InputControlScheme scheme)
         {

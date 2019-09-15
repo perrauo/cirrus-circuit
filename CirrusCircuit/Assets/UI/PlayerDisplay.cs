@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 namespace Cirrus.Circuit.UI
 {
@@ -17,23 +18,30 @@ namespace Cirrus.Circuit.UI
         public State _state;
 
         [SerializeField]
-        private UnityEngine.UI.Image _playerBack;
+        private UnityEngine.UI.Image _playerImage;
    
         [SerializeField]
         private UnityEngine.UI.Text _playerText;
 
+        [SerializeField]
+        private UnityEngine.UI.Image _scoreImage;
 
         [SerializeField]
-        private UnityEngine.UI.Image _gemsBack;
+        private UnityEngine.UI.Text _scoreText;
+
 
         [SerializeField]
-        private UnityEngine.UI.Text _gemsText;
+        private float _scorePunchScaleAmount = 0.5f;
+
+        [SerializeField]
+        private float _scorePunchScaleTime = 1f;
+
 
         private Color _color;
 
+        // TODO rename
         [SerializeField]
         private float _gemsColorMult = 1.5f;
-
 
         private const float _waitingAlpha = 0.5f;
 
@@ -52,8 +60,8 @@ namespace Cirrus.Circuit.UI
             set
             {
                 _color = value;
-                _playerBack.color = _color;
-                _gemsBack.color = new Color(_color.r * _gemsColorMult, _color.g * _gemsColorMult, _color.b * _gemsColorMult);
+                _playerImage.color = _color;
+                _scoreImage.color = new Color(_color.r * _gemsColorMult, _color.g * _gemsColorMult, _color.b * _gemsColorMult);
             }
         }
 
@@ -71,12 +79,35 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-        public void OnGemCountChanged(int count)
+        IEnumerator PunchValue()
         {
+            iTween.Stop(_scoreText.gameObject);
+            _scoreText.gameObject.transform.localScale = new Vector3(1, 1, 1);
 
+            yield return new WaitForSeconds(0.01f);
 
+            iTween.PunchScale(_scoreText.gameObject,
+                new Vector3(_scorePunchScaleAmount, _scorePunchScaleAmount, _scorePunchScaleAmount),
+                _scorePunchScaleTime);
+
+            
+            yield return null;
         }
-        
+
+
+        public void OnScoreChanged(float score)
+        {
+            _scoreText.text = score.ToString();
+            iTween.Init(_scoreText.gameObject); //TODO move elsewhere
+            iTween.Stop(_scoreText.gameObject);
+            _scoreText.gameObject.transform.localScale = new Vector3(1, 1, 1);
+            // TODO reset fade
+
+            StartCoroutine(PunchValue());
+        }
+
+
+
         public bool TryChangeState(State state, params object[] args)
         {
             _state = state;

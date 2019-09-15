@@ -8,6 +8,19 @@ namespace Cirrus.Circuit.Objects
     {
         public override ObjectId Id { get { return ObjectId.Gem; } }
 
+        public enum GemType
+        {
+            Small,
+            Large,
+
+        }
+
+        [SerializeField]
+        public GemType Type;
+
+        [SerializeField]
+        public float Value = 1f;
+
         [SerializeField]
         private float _rotateSpeed = 0.6f;
 

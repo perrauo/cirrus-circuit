@@ -60,21 +60,33 @@ namespace Cirrus.Circuit
         {
             Reset();
 
+            if (!active)
+            {
+                Game.Instance.Clock.OnTickedHandler += OnTicked;
+            }
+
             active = true;
-            Game.Instance.Clock.OnTickedHandler += OnTicked;
         }
 
         public void Resume()
         {
+            if (!active)
+            {
+                Game.Instance.Clock.OnTickedHandler += OnTicked;
+            }
+
             active = true;
-            Game.Instance.Clock.OnTickedHandler += OnTicked;
         }
 
 
         public void Stop()
         {
+            if (active)
+            {
+                Game.Instance.Clock.OnTickedHandler -= OnTicked;
+            }
+
             active = false;
-            Game.Instance.Clock.OnTickedHandler -= OnTicked;
         }
 
         private void OnTicked()

@@ -106,7 +106,7 @@ RectTransform:
   m_GameObject: {fileID: 2901098550869898065}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 572113768946487604}
   m_RootOrder: 0
@@ -146,7 +146,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: cf671bdb3acb5a84b9c42462fa82ecaa, type: 3}
-    m_FontSize: 15
+    m_FontSize: 24
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 0
@@ -170,7 +170,7 @@ GameObject:
   - component: {fileID: 5218357492896952455}
   - component: {fileID: 6926089357627373397}
   m_Layer: 5
-  m_Name: Gems
+  m_Name: Score
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -185,7 +185,7 @@ RectTransform:
   m_GameObject: {fileID: 4981974543901021060}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7691346218706971401}
   m_Father: {fileID: 6816656908452982192}
@@ -194,7 +194,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 72, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 64, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5218357492896952455
 CanvasRenderer:
@@ -295,10 +295,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _state: 0
-  _playerBack: {fileID: 7650116397191936598}
+  _playerImage: {fileID: 7650116397191936598}
   _playerText: {fileID: 4310245275244556396}
-  _gemsBack: {fileID: 6926089357627373397}
-  _gemsText: {fileID: 8158135473487913777}
+  _scoreImage: {fileID: 6926089357627373397}
+  _scoreText: {fileID: 8158135473487913777}
+  _scorePunchScaleAmount: 0.5
+  _scorePunchScaleTime: 1
   _gemsColorMult: 1.5
   _colorWaiting: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!114 &6377105620367991131

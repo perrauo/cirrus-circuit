@@ -17,6 +17,15 @@ namespace Cirrus.Circuit
         [SerializeField]
         private UnityEngine.UI.Image[] _images;
 
+        [SerializeField]
+        private UnityEngine.UI.Text[] _texts;
+
+        [SerializeField]
+        private UnityEngine.UI.Outline[] _outlines;
+
+        [SerializeField]
+        private PlayfulSystems.ProgressBar.BarViewColor[] _barcolors;
+
         private Color _color;
 
         private bool _enabled;
@@ -94,6 +103,33 @@ namespace Cirrus.Circuit
                         continue;
 
                     im.color = _color;
+                }
+
+
+           
+
+                foreach (var o in _outlines)
+                {
+                    if (o == null)
+                        continue;
+
+                    o.effectColor = _color;
+                }
+
+                foreach (var o in _texts)
+                {
+                    if (o == null)
+                        continue;
+
+                    o.color = _color;
+                }
+
+                foreach (var o in _barcolors)
+                {
+                    if (o == null)
+                        continue;
+
+                    o.SetBarColor(_color);// = _color;
                 }
             }
         }
