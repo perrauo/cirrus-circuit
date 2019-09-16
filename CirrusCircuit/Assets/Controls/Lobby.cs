@@ -15,11 +15,15 @@ namespace Cirrus.Circuit.Controls
         Five,
         Six,
         Seven,
-        Eight
+        Eight,
+        None
     }
 
     public class Lobby : MonoBehaviour
     {
+        [SerializeField]
+        private Game _game;
+
         [SerializeField]
         private Inputs.InputActionAsset _inputActionAsset;
 
@@ -30,51 +34,31 @@ namespace Cirrus.Circuit.Controls
 
         public int ControllerCount = 0;
 
-        public int JoinedCount = 0;
-
         private const int _playerMax = 8;
 
-        public List<Objects.Characters.Character> Characters;
+        public Color GetColor(PlayerNumber number)
+        {
+            Color color = Color.white;
+            if ((int)number < _playerMax)
+            {
+                color = Colors[(int)number];
+            }
+
+            return color;
+        }
+
+
 
         public void Awake()
         {
             Controllers = new Controller[_playerMax];
-            Characters = new List<Objects.Characters.Character>();
         }
-
-        public bool TryJoin(Controller controller)
-        {
-            if (controller.Character == null)
-            {
-                if (JoinedCount >= Game.Instance.CurrentLevel.CharacterCount)
-                    return false;
-
-                controller.Character = Game.Instance.CurrentLevel.Characters[JoinedCount];
-                JoinedCount++;
-                return true;
-            }
-            else return false;
-        }
-
-        public bool TryLeave(Controller controller)
-        {
-            if (controller.Character != null)
-            {
-                if (JoinedCount >= Game.Instance.CurrentLevel.CharacterCount)
-                    return false;
-
-                controller.Character = Game.Instance.CurrentLevel.Characters[JoinedCount];
-
-                JoinedCount--;
-
-                return true;
-            }
-            else return false;
-        }
-
 
         public void OnValidate()
         {
+            if (_game == null)
+                _game = FindObjectOfType<Game>();
+
         }
 
         // Update is called once per frame
@@ -102,7 +86,7 @@ namespace Cirrus.Circuit.Controls
                     }
                 }
 
-                if (ControllerCount > _playerMax || ControllerCount > Game.Instance.CurrentLevel.CharacterCount) break;
+                if (ControllerCount > _playerMax || ControllerCount > _game._selectedLevel.CharacterCount) break;
             }
 
             //Inputs.Users.InputUser.onUnpairedDeviceUsed += OnUnpairedInputDeviceUsed;

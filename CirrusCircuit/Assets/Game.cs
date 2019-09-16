@@ -2,6 +2,8 @@ using System;
 using Cirrus.Circuit.Controls;
 using UnityEngine;
 
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Cirrus.Circuit
 {
@@ -18,7 +20,7 @@ namespace Cirrus.Circuit
     {
         #region Game
 
-        public Objects.Door.OnScoreValueAdded OnScoreValueAddedHandler;
+        public World.Objects.Door.OnScoreValueAdded OnScoreValueAddedHandler;
 
         private static Game _instance;
 
@@ -35,7 +37,6 @@ namespace Cirrus.Circuit
 
             }
         }
-
 
         [SerializeField]
         public Clock _clock;
@@ -59,19 +60,22 @@ namespace Cirrus.Circuit
         public Layers Layers;
 
         [SerializeField]
-        public Level[] _levels;
+        public World.Level[] _levels;
 
-        public Level CurrentLevel;
+        public World.Level _selectedLevel;
+
+        public World.Level _currentLevel;
+
 
         public int _currentLevelIndex = 0;
 
         public float _distanceLevelSelect = 35;
 
         [SerializeField]
-        public Camera  _camera;
+        public Camera _camera;
 
         [SerializeField]
-        private Objects.Podium _podium;
+        private Podium _podium;
 
 
         [SerializeField]
@@ -94,19 +98,28 @@ namespace Cirrus.Circuit
         public Round _round;
 
         [SerializeField]
+        private int _roundAmount = 3;
+
+        public int _roundIndex;
+
+
+        [SerializeField]
         public float _podiumTransitionSpeed = 0.2f;
 
+        [SerializeField]
+        private float _intermissionTime = 2f;
+
+        /// Controllers in player in game
+        private List<Controller> _controllers;
 
         void Awake()
         {
-            //if (_instance != null)
-            //{
-            //    Destroy(gameObject);
-            //    return;
-            //}
+            _controllers = new List<Controller>();
 
             Layers = new Layers();
             DontDestroyOnLoad(this.gameObject);
+
+            _podium.OnPodiumFinishedHandler += OnPodiumFinished;
 
             FSMAwake();
         }
@@ -114,7 +127,6 @@ namespace Cirrus.Circuit
         public void Start()
         {
             FSMStart();
-            
         }
 
         public void FixedUpdate()
@@ -130,8 +142,8 @@ namespace Cirrus.Circuit
 
         public void OnValidate()
         {
-            _levels = GetComponentsInChildren<Level>(true);
-            CurrentLevel = _levels.Length == 0 ? null : _levels[0];
+            _levels = GetComponentsInChildren<World.Level>(true);
+            _selectedLevel = _levels.Length == 0 ? null : _levels[0];
         }
 
 
@@ -153,14 +165,13 @@ namespace Cirrus.Circuit
 
             }
 
-            Lobby.Characters.Clear();
-            Lobby.Characters.AddRange(CurrentLevel.Characters);
-            CurrentLevel = _levels[_currentLevelIndex];
+            //Lobby.Characters.Clear();
+            //Lobby.Characters.AddRange(_selectedLevel.Characters);
+            _selectedLevel = _levels[_currentLevelIndex];
 
-            _targetSizeCamera = CurrentLevel.CameraSize;
+            _targetSizeCamera = _selectedLevel.CameraSize;
 
             HUD.OnLevelSelected(step);
-
         }
 
         // TODO: Simulate LeftStick continuous axis with WASD
@@ -192,25 +203,51 @@ namespace Cirrus.Circuit
 
         public void OnRoundEnd()
         {
-            CurrentLevel.TargetPosition = Vector3.zero + Vector3.right * _distanceLevelSelect;
-            CurrentLevel._positionSpeed = _podiumTransitionSpeed;
+            _roundIndex++;
 
-            _podium.transform.position = Vector3.zero + Vector3.right * -_distanceLevelSelect;
-            _podium.gameObject.SetActive(true);
-            _podium.TargetPosition = Vector3.zero;
-
-            _podium.OnRoundEnd();
-
-            foreach (var c in Lobby.Controllers)
+            if (_roundIndex < _roundAmount)
             {
-                if (c == null)
-                    continue;
-
-                _podium.Add(c, c.Character);
+                _currentLevel.OnRoundEnd();
+                TryChangeState(State.Podium);
             }
+            else
+            {
+                _roundIndex = 0;
+                TryChangeState(State.FinalPodium);
+            }
+        }
 
-            CurrentLevel.OnRoundEnd();   
-            TryChangeState(State.Podium);
+        private void OnPodiumFinished()
+        {
+            if (_state == State.FinalPodium)
+            {
+                TryChangeState(State.LevelSelection);
+            }
+            else
+            {
+                TryChangeState(State.Round);
+            }
+        }
+
+
+        public bool TryJoin(Controller controller)
+        {
+            if (_controllers.Count >= _selectedLevel.CharacterCount)
+                return false;
+
+            _controllers.Add(controller);
+
+            return false;
+        }
+
+        public bool TryLeave(Controller controller)
+        {
+            if (_controllers.Count >= _selectedLevel.CharacterCount)
+                return false;
+
+            _controllers.Remove(controller);
+
+            return false;
         }
 
         #endregion
@@ -225,7 +262,8 @@ namespace Cirrus.Circuit
             Round,
             Score,
             WaitingNextRound,
-            Podium
+            Podium,
+            FinalPodium
         }
 
         [SerializeField]
@@ -250,6 +288,7 @@ namespace Cirrus.Circuit
                 case State.Round:
                 case State.Score:
                 case State.Podium:
+                case State.FinalPodium:
 
                     _camera.orthographicSize =
                         Mathf.Lerp(
@@ -269,6 +308,7 @@ namespace Cirrus.Circuit
                 case State.Round:
                 case State.Score:
                 case State.Podium:
+                case State.FinalPodium:
 
                     break;
             }
@@ -296,6 +336,8 @@ namespace Cirrus.Circuit
                         case State.LevelSelection:
                         case State.Score:
                         case State.Podium:
+                        case State.FinalPodium:
+
                             destination = transition;
                             return true;
                     }
@@ -308,6 +350,8 @@ namespace Cirrus.Circuit
                         case State.LevelSelection:
                         case State.Score:
                         case State.Podium:
+                        case State.FinalPodium:
+
                             destination = transition;
                             return true;
                     }
@@ -320,6 +364,8 @@ namespace Cirrus.Circuit
                         case State.LevelSelection:
                         case State.Round:
                         case State.Podium:
+                        case State.FinalPodium:
+
                             destination = transition;
                             return true;
                     }
@@ -331,6 +377,8 @@ namespace Cirrus.Circuit
                         case State.LevelSelection:
                         case State.Round:
                         case State.Podium:
+                        case State.FinalPodium:
+
                             destination = transition;
                             return true;
                     }
@@ -343,6 +391,22 @@ namespace Cirrus.Circuit
                         case State.LevelSelection:
                         case State.Round:
                         case State.Podium:
+                        case State.FinalPodium:
+
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
+                case State.FinalPodium:
+                    switch (transition)
+                    {
+                        case State.WaitingNextRound:
+                        case State.LevelSelection:
+                        case State.Round:
+                        case State.Podium:
+                        case State.FinalPodium:
+
                             destination = transition;
                             return true;
                     }
@@ -353,7 +417,7 @@ namespace Cirrus.Circuit
             return false;
         }
 
-        internal void Join(Controller ctrl)
+        public void Join(Controller ctrl)
         {
 
             switch (_state)
@@ -365,15 +429,59 @@ namespace Cirrus.Circuit
             }
         }
 
+
+        IEnumerator OnRound()
+        {
+            yield return new WaitForEndOfFrame();
+
+            _currentLevel.OnRound();
+
+            HUD.OnRound(_round);
+
+            for (int i = 0; i < _currentLevel.CharacterCount; i++)
+            {
+                _controllers[i]._character = _currentLevel._characters[i];
+            }
+
+        }
+
+
         protected bool TryFinishChangeState(State target, params object[] args)
         {
             switch (target)
             {
+                case State.Podium:
+                    _currentLevel.TargetPosition = Vector3.zero + Vector3.right * _distanceLevelSelect;
+                    _currentLevel._positionSpeed = _podiumTransitionSpeed;
+
+                    _podium.transform.position = Vector3.zero + Vector3.right * -_distanceLevelSelect;
+                    _podium.gameObject.SetActive(true);
+                    _podium.TargetPosition = Vector3.zero;
+
+                    if (_podium.IsEmpty)
+                    {
+
+                        foreach (var c in Lobby.Controllers)
+                        {
+                            if (c == null)
+                                continue;
+
+                            _podium.Add(c, c._character);
+                        }
+                    }
+
+                    _state = target;
+                    return true;
+
+                case State.FinalPodium:
+                    _state = target;
+                    return true;
+
                 case State.LevelSelection:
 
                     _state = target;
 
-                    foreach (Level lv in _levels)
+                    foreach (World.Level lv in _levels)
                     {
                         lv.gameObject.SetActive(true);
                     }
@@ -388,46 +496,65 @@ namespace Cirrus.Circuit
                     _state = target;
 
                     // TODO enable
-                    foreach (Level level in _levels)
+                    foreach (World.Level level in _levels)
                     {
                         if (level == null)
                             continue;
 
-                        if (level == CurrentLevel)
+                        if (level == _selectedLevel)
                             continue;
 
                         level.gameObject.SetActive(false);
                     }
 
-                    CurrentLevel.TargetPosition = Vector3.zero;
-                    CurrentLevel.transform.position = Vector3.zero;
+                    _selectedLevel.TargetPosition = Vector3.zero;
+                    _selectedLevel.transform.position = Vector3.zero;
+
+                    _currentLevel =
+                        Instantiate(
+                            _selectedLevel.gameObject,
+                            Vector3.zero, Quaternion.identity,
+                            gameObject.transform).GetComponent<World.Level>();
+
+                    // Disable template
+                    _selectedLevel.gameObject.SetActive(false);
 
                     _round =
                         new Round(
                             _countDown,
                             _roundTime,
-                            _countDownTime);
+                            _countDownTime,
+                            _intermissionTime,
+                            _roundIndex);
 
-                    HUD.OnRound(_round);
 
-                    CurrentLevel.OnScoreValueAdded += OnScoreValueAdded;
+                    _currentLevel.OnScoreValueAdded += OnScoreValueAdded;
+
+                    //_currentLevel.Invoke(_currentLevel.OnRound, 0.01f);
 
                     foreach (var ctrl in Lobby.Controllers)
                     {
                         if (ctrl == null)
                             continue;
-
-                        //ctrl.OnScoreChangedHandler += HUD.OnScoreChanged;
-                        //ctrl.OnMultiplierChangedHandler += HUD.OnMultiplierChanged;
                     }
 
-                    _round.OnRoundBeginHandler += CurrentLevel.OnBeginRound;
-
-                    _round.BeginCountdown();
+                    _round.OnRoundBeginHandler += _currentLevel.OnBeginRound;
 
                     _round.OnRoundEndHandler += OnRoundEnd;
 
                     _round.OnRoundEndHandler += HUD.OnRoundEnd;
+
+                    _round.OnCountdownHandler += HUD.OnRoundCountdown;
+
+
+                    _round.OnRoundEndHandler += _podium.OnRoundEnd;
+
+                    _round.OnIntermissionHandler += HUD.OnIntermission;
+
+                    _round.BeginIntermission();
+
+                    StartCoroutine(OnRound());
+
 
                     return true;
 
@@ -438,8 +565,8 @@ namespace Cirrus.Circuit
                     return true;
 
                 case State.WaitingNextRound:
-                    Lobby.Characters.Clear();
-                    Lobby.Characters.AddRange(CurrentLevel.Characters);
+                    //Lobby.Characters.Clear();
+                    //Lobby.Characters.AddRange(_selectedLevel.Characters);
 
                     foreach (Controller ctrl in Lobby.Controllers)
                     {
@@ -448,7 +575,7 @@ namespace Cirrus.Circuit
                             continue;
                         }
 
-                        ctrl.Character = null;
+                        //ctrl.Character = null;
                     }
 
                     _state = target;
@@ -500,7 +627,6 @@ namespace Cirrus.Circuit
                 _wasMovingVertical = true;
             }
 
-
             switch (_state)
             {
                 case State.LevelSelection:
@@ -526,7 +652,8 @@ namespace Cirrus.Circuit
                     break;
 
                 case State.Round:
-                    controller.Character?.TryMove(axis);
+                    if (controller._character)
+                        controller._character?.TryMove(axis);
                     break;
 
                 case State.Score:
@@ -543,11 +670,10 @@ namespace Cirrus.Circuit
 
                 case State.WaitingNextRound:
 
-                    if (controller.Character != null)
+                    if (_controllers.Contains(controller))
                     {
-                        Lobby.Characters.Add(controller.Character);
                         HUD.Leave(controller);
-                        controller.Character = null;
+                        _controllers.Remove(controller);
                     }
                     else
                     {
@@ -557,8 +683,6 @@ namespace Cirrus.Circuit
                             {
                                 continue;
                             }
-
-                            ctrl.Character = null;
                         }
 
                         TryChangeState(State.LevelSelection);
@@ -567,7 +691,9 @@ namespace Cirrus.Circuit
                     break;
 
                 case State.Round:
-                    controller.Character?.TryAction0();
+                    if (controller._character)
+                        controller._character?.TryAction0();
+
                     break;
 
                 case State.Score:
@@ -590,32 +716,28 @@ namespace Cirrus.Circuit
 
                 case State.WaitingNextRound:
 
-                    if (controller.Character == null)
+                    if (!_controllers.Contains(controller))
                     {
-                        if (Lobby.Characters.Count != 0)
+                        if (_controllers.Count <= _selectedLevel.CharacterCount)
                         {
-                            controller.Character = Lobby.Characters[0];
-                            Lobby.Characters.RemoveAt(0);
+                            _controllers.Add(controller);
                             HUD.Join(controller);
-                            // TODO update character color
                         }
-
                     }
                     else
                     {
-                        if (Lobby.Characters.Count == 0)
+                        if (_controllers.Count == _selectedLevel.CharacterCount)
                         {
                             TryChangeState(State.Round, _roundTime);
                         }
-
                     }
 
                     break;
 
 
-
                 case State.Round:
-                    controller.Character?.TryAction1();
+                    if(controller._character)
+                    controller._character?.TryAction1();
                     break;
 
                 case State.Score:

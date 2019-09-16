@@ -5,6 +5,9 @@ namespace Cirrus.Circuit
 {
     public class Visual : MonoBehaviour
     {
+        //[SerializeField]
+        //private World.Resources _resources;
+
         [SerializeField]
         public GameObject Parent;
 
@@ -29,6 +32,12 @@ namespace Cirrus.Circuit
         private Color _color;
 
         private bool _enabled;
+
+        public void OnValidate()
+        {
+            //if (_resources == null)
+            //    _resources = Utils.AssetDatabase.FindObjectOfType<World.Resources>();
+        }
 
         public bool Enabled
         {
@@ -72,21 +81,24 @@ namespace Cirrus.Circuit
                 _color = value;
                 Material mat = null;
 
-                if (_meshRenderers.Length != 0)
-                {
-                    if (_meshRenderers[0].sharedMaterial != null)
-                    {
-                        mat = new Material(_meshRenderers[0].sharedMaterial);
-                        mat.color = _color;//.red;
-                    }
-                }
+                //if (_meshRenderers.Length != 0)
+                //{
+                //    if (_meshRenderers[0].sharedMaterial != null)
+                //    {
+                //        mat = new Material(_meshRenderers[0].sharedMaterial);
+                //        mat.color = _color;//.red;
+                //    }
+                //}
 
                 foreach (var rend in _meshRenderers)
                 {
                     if (rend == null)
                         continue;
 
-                    rend.sharedMaterial = mat;
+                    if (rend.sharedMaterial == null)
+                        continue;
+
+                    rend.sharedMaterial.color = _color;
                 }
 
                 foreach (var rend in _spriteRenderers)
@@ -104,10 +116,7 @@ namespace Cirrus.Circuit
 
                     im.color = _color;
                 }
-
-
            
-
                 foreach (var o in _outlines)
                 {
                     if (o == null)

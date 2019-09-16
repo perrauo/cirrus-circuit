@@ -9,6 +9,9 @@ namespace Cirrus.Circuit.UI
     public class HUD : MonoBehaviour
     {
         [SerializeField]
+        private Game _game;
+
+        [SerializeField]
         private PlayerDisplay[] _playerDisplays;
 
         private List<PlayerDisplay> _availablePlayerDisplays;
@@ -51,7 +54,10 @@ namespace Cirrus.Circuit.UI
         private float _timesUpTime = 2f;
 
 
-        private Round _round;
+        private Circuit.Round _round;
+
+        [SerializeField]
+        private Round _roundDisplay;
 
 
         private bool _init = false;
@@ -108,23 +114,19 @@ namespace Cirrus.Circuit.UI
             _availablePlayerDisplays.Clear();
             _availablePlayerDisplays.AddRange(_playerDisplays);
 
-            for (int i = 0; i < Game.Instance.CurrentLevel.CharacterCount; i++)
+            for (int i = 0; i < Game.Instance._selectedLevel.CharacterCount; i++)
             {
                 _playerDisplays[i].TryChangeState(PlayerDisplay.State.Waiting);
             }
         }
 
-        public void OnRound(Round round)
+        public void OnRound(Circuit.Round round)
         {
             _round = round;
             _levelSelectDisplay.SetActive(false);
             //_playerDisplay.SetActive(false);
 
-            _countDown.gameObject.SetActive(true);
-            _timer.gameObject.SetActive(true);
 
-            round.OnCountdownHandler += OnRoundCountdown;
-            round.OnRoundBeginHandler += OnRoundBegin;
             //round.OnRoundEndHandler += OnRoundEnd;
         }
         public void Update()
@@ -135,12 +137,14 @@ namespace Cirrus.Circuit.UI
 
         public void OnRoundCountdown(int count)
         {
+            _countDown.gameObject.SetActive(true);
             _countDown.Number = count;
         }
 
-        public void OnRoundBegin()
+        public void OnIntermission(int roundNumber)
         {
-
+            _timer.gameObject.SetActive(true);
+            _roundDisplay.Number = roundNumber;
         }
 
         public void OnRoundEnd()
@@ -154,9 +158,6 @@ namespace Cirrus.Circuit.UI
         {
             _timesUp.gameObject.SetActive(false);
         }
-
-
-
 
         public void Join(Controls.Controller controller)
         {
@@ -204,7 +205,7 @@ namespace Cirrus.Circuit.UI
 
         internal void OnLevelSelected(int step)
         {
-            if (Game.Instance._currentLevelIndex == 0)
+            if (_game._currentLevelIndex == 0)
             {
                 _previous.gameObject.SetActive(false);
             }
@@ -213,7 +214,7 @@ namespace Cirrus.Circuit.UI
                 _previous.gameObject.SetActive(true);
             }
 
-            if (Game.Instance._currentLevelIndex == Game.Instance._levels.Length-1)
+            if (_game._currentLevelIndex == _game._levels.Length-1)
             {
                 _next.gameObject.SetActive(false);
             }
@@ -231,7 +232,8 @@ namespace Cirrus.Circuit.UI
                 StartCoroutine(PunchScale(false));
             }
 
-            _levelName.text = Game.Instance.CurrentLevel.Name;
+            if(_game._selectedLevel != null)
+                _levelName.text = _game._selectedLevel.Name;
 
             foreach (var display in _playerDisplays)
             {
@@ -241,6 +243,9 @@ namespace Cirrus.Circuit.UI
 
         public void OnValidate()
         {
+            if (_game == null)
+                _game = FindObjectOfType<Game>();
+
             OnLevelSelected(0);
         }
     }

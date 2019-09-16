@@ -4,7 +4,7 @@ using System.Linq;
 
 using UnityEngine;
 using UnityEngine.AI;
-//using Cirrus.Circuit.Objects.Characters.Actions;
+//using Cirrus.Circuit.World.Objects.Characters.Actions;
 //using Cirrus.Circuit.Controls;
 using UnityInput = UnityEngine.InputSystem;
 //using Cirrus.Circuit.Playable;
@@ -35,7 +35,7 @@ namespace Cirrus.Circuit.Controls
 
         // TODO: Rework ? replace by mult action map
 
-        public Objects.Characters.Character Character;
+        public World.Objects.Character _character;
 
         public UI.PlayerDisplay PlayerDisplay = null;
 

@@ -3,14 +3,18 @@ using System.Collections;
 
 namespace Cirrus.Circuit
 {
+    public delegate void OnIntermission(int count);
+
     public delegate void OnCountdown(int count);
 
-    public delegate void OnRoundBegin();
+    public delegate void OnRoundBegin(int roundNumber);
 
     public delegate void OnRoundEnd();
 
     public class Round
     {
+        public OnIntermission OnIntermissionHandler;
+
         public OnCountdown OnCountdownHandler;
 
         public OnRoundBegin OnRoundBeginHandler;
@@ -20,6 +24,10 @@ namespace Cirrus.Circuit
         private Timer _timer;
 
         private Timer _countDownTimer;
+
+        private float _intermissionTime = 0; // Where we show the round number
+
+        private Timer _intermissionTimer;
 
         public float Time
         {
@@ -35,8 +43,23 @@ namespace Cirrus.Circuit
 
         private float _roundTime;
 
-        public Round(int countDown, float time, float countDownTime)
+
+        private int _number = 0;
+
+
+        public int Number
         {
+            get {
+                return _number;
+            }
+        }
+
+        public Round(int countDown, float time, float countDownTime, float intermissionTime, int number)
+        {
+            _intermissionTime = intermissionTime;
+
+            _number = number;
+
             _countDown = countDown;
 
             _roundTime = time;
@@ -46,9 +69,18 @@ namespace Cirrus.Circuit
             _countDownTimer.OnTimeLimitHandler += OnTimeOut;
 
             _timer = new Timer(_roundTime, start:false);
+
+            _intermissionTimer = new Timer(_intermissionTime, start: false, repeat:false);
+            _intermissionTimer.OnTimeLimitHandler += OnIntermissionTimeoutBeginCountdown;
         }
 
-        public void BeginCountdown()
+        public void BeginIntermission()
+        {
+            OnIntermissionHandler?.Invoke(_number);
+            _intermissionTimer.Start();
+        }
+        
+        public void OnIntermissionTimeoutBeginCountdown()
         {
             OnCountdownHandler?.Invoke(_countDown);
             _countDownTimer.Start();
@@ -66,7 +98,7 @@ namespace Cirrus.Circuit
             else if (_countDown < 0)
             {
                 OnCountdownHandler?.Invoke(_countDown);
-                OnRoundBeginHandler.Invoke();
+                OnRoundBeginHandler.Invoke(_number);
                 _timer.Start();
                 _timer.OnTimeLimitHandler += OnRoundEnd;
                 return;
