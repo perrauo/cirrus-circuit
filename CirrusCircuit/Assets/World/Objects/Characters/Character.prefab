@@ -542,11 +542,6 @@ PrefabInstance:
       propertyPath: Parent
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 4984592530192599545, guid: 06d9e1aa028280e4c97369fef81e3fdc,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 1cafdeca9f5664c4588655de2e284fc5, type: 2}
     - target: {fileID: 722455233584832878, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
       propertyPath: _object
@@ -562,6 +557,11 @@ PrefabInstance:
       propertyPath: _object
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 4984592530192599545, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1cafdeca9f5664c4588655de2e284fc5, type: 2}
     - target: {fileID: 6003051912600897280, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
       propertyPath: Motor

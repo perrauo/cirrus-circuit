@@ -85,6 +85,7 @@ namespace Cirrus.Circuit
             set
             {
                 _score = value;
+                _finishedTimer.Start();
                 StartCoroutine(Grow());
             }
 

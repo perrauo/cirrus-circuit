@@ -31,7 +31,7 @@ namespace Cirrus.Circuit.World.Objects
         protected Game _game;
 
         [SerializeField]
-        protected World.Level _level;
+        protected Level _level;
 
         [SerializeField]
         protected Visual _visual;
@@ -110,7 +110,7 @@ namespace Cirrus.Circuit.World.Objects
         public virtual void OnValidate()
         {
             if (_level == null)
-                _level = GetComponentInParent<World.Level>();
+                _level = GetComponentInParent<Level>();
 
             if (_game == null)
                 _game = FindObjectOfType<Game>();

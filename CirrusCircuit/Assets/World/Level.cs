@@ -262,37 +262,6 @@ namespace Cirrus.Circuit.World
             OnScoreValueAdded?.Invoke(player, value);
         }
         
-
-        //public void UpdateColors(int player, Color color)
-        //{
-        //    if (_characters[player] == null)
-        //        return;
-
-        //    _characters[player].Color = color;
-
-        //    foreach (Gem gem in _gems)
-        //    {
-        //        if (gem == null)
-        //            continue;
-
-        //        if (gem.PlayerNumber == (Controls.PlayerNumber)player)
-        //        {
-        //            gem.Color = color;
-        //        }
-        //    }
-
-        //    foreach (Door door in _doors)
-        //    {
-        //        if (door == null)
-        //            continue;
-
-        //        if (door.PlayerNumber == (Controls.PlayerNumber)player)
-        //        {
-        //            door.Color = color;
-        //        }
-        //    }
-        //}
-
         public void OnValidate()
         {
             if (_game == null)
@@ -309,17 +278,6 @@ namespace Cirrus.Circuit.World
 
             if(_characters != null && _characters.Length == 0)
                 _characters = gameObject.GetComponentsInChildren<Objects.Character>();
-
-            //for (int i = 0; i < _characters.Length; i++)
-            //{
-            //    if (_characters[i] != null && _characters[i].gameObject.activeInHierarchy)
-            //    {
-            //        if (_characters[i])
-            //            _characters[i].PlayerNumber = (Controls.PlayerNumber)i;
-
-            //        UpdateColors(i, _game.Lobby.Colors[i]);
-            //    }
-            //}
 
         }
 
