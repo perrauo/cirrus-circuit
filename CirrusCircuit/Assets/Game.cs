@@ -311,6 +311,7 @@ namespace Cirrus.Circuit
         public enum State
         {
             LevelSelection,
+            Begin,
             Round,
             Score,
             WaitingNextRound,
@@ -337,6 +338,7 @@ namespace Cirrus.Circuit
         {
             switch (_state)
             {
+                case State.Begin:
                 case State.LevelSelection:
                 case State.Round:
                 case State.Score:
@@ -357,7 +359,7 @@ namespace Cirrus.Circuit
         {
             switch (_state)
             {
-
+                case State.Begin:
                 case State.LevelSelection:
                 case State.Round:
                 case State.Score:
@@ -382,9 +384,25 @@ namespace Cirrus.Circuit
         {
             switch (_state)
             {
+                case State.Begin:
+                    switch (transition)
+                    {
+                        case State.Begin:
+                        case State.WaitingNextRound:
+                        case State.LevelSelection:
+                        case State.Score:
+                        case State.Podium:
+                        case State.FinalPodium:
+
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
                 case State.Transition:
                     switch (transition)
-                    {                       
+                    {
+                        case State.Begin:
                         case State.WaitingNextRound:
                         case State.LevelSelection:
                         case State.Score:
@@ -400,6 +418,7 @@ namespace Cirrus.Circuit
 
                     switch (transition)
                     {
+                        case State.Begin:
                         case State.Transition:
                         case State.WaitingNextRound:
                         case State.LevelSelection:
@@ -415,6 +434,7 @@ namespace Cirrus.Circuit
                 case State.LevelSelection:
                     switch (transition)
                     {
+                        case State.Begin:
                         case State.Transition:
                         case State.WaitingNextRound:
                         case State.LevelSelection:
@@ -427,24 +447,11 @@ namespace Cirrus.Circuit
                     }
                     break;
 
-                case State.Score:
-                    switch (transition)
-                    {
-                        case State.Transition:
-                        case State.WaitingNextRound:
-                        case State.LevelSelection:
-                        case State.Round:
-                        case State.Podium:
-                        case State.FinalPodium:
-
-                            destination = transition;
-                            return true;
-                    }
-                    break;
 
                 case State.WaitingNextRound:
                     switch (transition)
                     {
+                        case State.Begin:
                         case State.Transition:
                         case State.LevelSelection:
                         case State.Round:
@@ -459,6 +466,7 @@ namespace Cirrus.Circuit
                 case State.Podium:
                     switch (transition)
                     {
+                        case State.Begin:
                         case State.Transition:
                         case State.WaitingNextRound:
                         case State.LevelSelection:
@@ -474,6 +482,7 @@ namespace Cirrus.Circuit
                 case State.FinalPodium:
                     switch (transition)
                     {
+                        case State.Begin:
                         case State.Transition:
                         case State.WaitingNextRound:
                         case State.LevelSelection:
@@ -496,6 +505,24 @@ namespace Cirrus.Circuit
         {
             switch (target)
             {
+                case State.Begin:
+
+                    _podium.gameObject.SetActive(true);
+                    _podium.Clear();
+
+                    foreach (var c in Lobby.Controllers)
+                    {
+                        if (c == null)
+                            continue;
+
+                        _podium.Add(c, c._character);
+                    }
+
+                    _podium.gameObject.SetActive(false);
+
+                    _state = target;
+                    return TryChangeState(State.Round, _roundTime);
+
 
                 case State.Transition:
 
@@ -505,23 +532,20 @@ namespace Cirrus.Circuit
                     switch (_transition)
                     {
                         case State.Podium:
-                            _currentLevel.TargetPosition = Vector3.zero + Vector3.right * _distanceLevelSelect;
-                            _currentLevel._positionSpeed = _podiumTransitionSpeed;
 
-                            _podium.transform.position = Vector3.zero + Vector3.right * -_distanceLevelSelect;
-                            _podium.gameObject.SetActive(true);
-                            _podium.TargetPosition = Vector3.zero;
-
-                            if (_podium.IsEmpty)
+                            switch (_state)
                             {
+                                case State.LevelSelection:
+                                case State.Round:
 
-                                foreach (var c in Lobby.Controllers)
-                                {
-                                    if (c == null)
-                                        continue;
+                                    _currentLevel.TargetPosition = Vector3.zero + Vector3.right * _transitionDistance;
+                                    _currentLevel._positionSpeed = _podiumTransitionSpeed;
 
-                                    _podium.Add(c, c._character);
-                                }
+                                    _podium.transform.position = Vector3.zero + Vector3.right * -_transitionDistance;
+                                    _podium.gameObject.SetActive(true);
+                                    _podium.TargetPosition = Vector3.zero;
+
+                                break;
                             }
 
                             break;
@@ -803,7 +827,7 @@ namespace Cirrus.Circuit
                     {
                         if (_controllers.Count == _selectedLevel.CharacterCount)
                         {
-                            TryChangeState(State.Round, _roundTime);
+                            TryChangeState(State.Begin);
                         }
                     }
 

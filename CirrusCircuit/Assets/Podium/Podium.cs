@@ -40,16 +40,16 @@ namespace Cirrus.Circuit
         [SerializeField]
         public float _positionSpeed = 0.4f;
 
-        bool init = false;
+        bool _init = false;
 
         private int _platformFinishedCount = 0;
 
 
         public void OnEnable()
         {
-            if (!init)
+            if (!_init)
             {
-                init = true;
+                _init = true;
                 _timer = new Timer(_timeTransitionTo, start: false, repeat: false);
             }
         }
