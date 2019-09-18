@@ -32,7 +32,6 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private CountDown _countDown;
 
-
         [SerializeField]
         private float _selectPunchScale = 0.5f;
 
@@ -53,6 +52,9 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private float _timesUpTime = 2f;
 
+        [SerializeField]
+        private CharacterSelect _characterSelect;
+
 
         private Circuit.Round _round;
 
@@ -72,6 +74,17 @@ namespace Cirrus.Circuit.UI
                 _timesUpTimer = new Circuit.Timer(_timesUpTime, start: false, repeat: false);
                 _timesUpTimer.OnTimeLimitHandler += OnTimesUpTimeOut;
             }
+        }
+
+        public void OnValidate()
+        {
+            if (_game == null)
+                _game = FindObjectOfType<Game>();
+
+            if (_characterSelect == null)
+                _characterSelect = FindObjectOfType<CharacterSelect>();
+
+            OnLevelSelected(0);
         }
 
         public IEnumerator PunchScale(bool previous)
@@ -239,14 +252,6 @@ namespace Cirrus.Circuit.UI
             {
                 display.TryChangeState(PlayerDisplay.State.Disabled);
             }            
-        }
-
-        public void OnValidate()
-        {
-            if (_game == null)
-                _game = FindObjectOfType<Game>();
-
-            OnLevelSelected(0);
         }
     }
 }

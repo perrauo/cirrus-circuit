@@ -29,7 +29,7 @@ namespace Cirrus.Circuit.World.Objects
         {
             base.FixedUpdate();
 
-            _visual.transform.Rotate(Vector3.right * Time.deltaTime * _rotateSpeed);
+            _visual.Parent.transform.Rotate(Vector3.right * Time.deltaTime * _rotateSpeed);
         }
 
         public override bool TryEnter(Vector3Int step, ref Vector3 offset, BaseObject incoming = null)

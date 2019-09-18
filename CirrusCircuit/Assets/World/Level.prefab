@@ -1667,6 +1667,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Door.1
       objectReference: {fileID: 0}
+    - target: {fileID: 3804810142333432474, guid: 7c4c013ae47ae824bb40a739f15900ee,
+        type: 3}
+      propertyPath: _level
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4096643264017319132, guid: 7c4c013ae47ae824bb40a739f15900ee,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1721,11 +1726,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3804810142333432474, guid: 7c4c013ae47ae824bb40a739f15900ee,
-        type: 3}
-      propertyPath: _level
-      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 4802017025094716381, guid: 7c4c013ae47ae824bb40a739f15900ee,
         type: 3}

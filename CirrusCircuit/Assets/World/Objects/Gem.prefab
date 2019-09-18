@@ -52,7 +52,7 @@ MonoBehaviour:
   _state: 3
   Type: 0
   Value: 1
-  _rotateSpeed: 0.6
+  _rotateSpeed: 30
 --- !u!1 &3848309428402309546
 GameObject:
   m_ObjectHideFlags: 0
