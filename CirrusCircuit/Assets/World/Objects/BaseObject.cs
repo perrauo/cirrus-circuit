@@ -36,6 +36,9 @@ namespace Cirrus.Circuit.World.Objects
         [SerializeField]
         protected Visual _visual;
 
+        [SerializeField]
+        private UnityEngine.Color[] _fallbackColors;
+
         //[SerializeField]
         //public Collider _collider;
 
@@ -99,6 +102,21 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
+        [SerializeField]
+        protected UnityEngine.Color _nextColor;
+
+        private Timer _nextColorTimer;
+
+        [SerializeField]
+        private float _nextColorTime = 2;
+
+        [SerializeField]
+        protected int _nextColorIndex = 0;
+
+        [SerializeField]
+        protected float _nextColorSpeed = 0.05f;
+
+
         public string Name
         {
             get
@@ -115,13 +133,17 @@ namespace Cirrus.Circuit.World.Objects
             if (_game == null)
                 _game = FindObjectOfType<Game>();
 
-            Color = _game.Lobby.GetColor(PlayerNumber);
+            if(_game != null)
+                Color = _game.Lobby.GetColor(PlayerNumber);
             
         }
 
         // TODO: will not be called on disabled level
         protected virtual void Awake()
         {
+            _nextColorTimer = new Timer(_nextColorTime, start: false, repeat: true);
+            _nextColorTimer.OnTimeLimitHandler += OnNextColorTimeOut;
+
             _direction = Object.transform.forward.ToVector3Int();
             _targetPosition = Object.transform.position;
             _targetScale = 1f;
@@ -191,6 +213,30 @@ namespace Cirrus.Circuit.World.Objects
             //incoming.TryChangeState
         }
 
+        public void OnNextColorTimeOut()
+        {
+            if (_game == null)
+            {
+                if (_fallbackColors.Length != 0)
+                {
+                    _nextColorIndex = _nextColorIndex + 1;
+                    _nextColorIndex = Utils.Mathf.Wrap(_nextColorIndex, 0, 2);
+                    _nextColor = _fallbackColors[_nextColorIndex];
+                }
+            }
+            else
+            {
+
+                if (_game._controllers.Count == 0)
+                    return;
+
+                _nextColorIndex = _nextColorIndex + 1;
+                _nextColorIndex = Utils.Mathf.Wrap(_nextColorIndex, 0, _game._controllers.Count);
+                _nextColor = _game._controllers[_nextColorIndex].Color;
+            }
+        }
+
+
         #endregion
 
         #region FSM
@@ -217,7 +263,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void FSMStart()
         {
-            TryChangeState(State.Disabled);
+            //TryChangeState(State.Disabled);
         }
 
         public virtual void FSMFixedUpdate()
@@ -225,6 +271,10 @@ namespace Cirrus.Circuit.World.Objects
             switch (_state)
             {
                 case State.Disabled:
+                    //Color = 
+                    //Color = Fixed
+                    Color = UnityEngine.Color.Lerp(Color, _nextColor, _nextColorSpeed);
+
                     break;
 
                 case State.Entering:
@@ -235,7 +285,6 @@ namespace Cirrus.Circuit.World.Objects
                 case State.RampMoving:
 
                     Object.transform.position = Vector3.Lerp(Object.transform.position, _targetPosition, _stepSpeed);
-
                     float scale = Mathf.Lerp(Object.transform.localScale.x, _targetScale, _scaleSpeed);
                     Object.transform.localScale = new Vector3(scale, scale, scale);
 
@@ -318,7 +367,12 @@ namespace Cirrus.Circuit.World.Objects
 
                     switch (transition)
                     {
+                        case State.Disabled:
+                        case State.Entering:
+                        case State.Falling:
                         case State.Idle:
+                        case State.RampIdle:
+                        case State.Moving:
                             destination = transition;
                             return true;
                     }
@@ -429,6 +483,8 @@ namespace Cirrus.Circuit.World.Objects
             switch (target)
             {
                 case State.Disabled:
+                    OnNextColorTimeOut();
+                    _nextColorTimer.Start();
                     result = true;
                     _state = target;
                     break;

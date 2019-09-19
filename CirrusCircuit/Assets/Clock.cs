@@ -10,6 +10,13 @@ namespace Cirrus.Circuit
         public delegate void OnTick();
         public OnTick OnTickedHandler;
 
+        public static Clock Instance;
+
+        public void Awake()
+        {
+            Instance = this;
+        }
+
         public void FixedUpdate()
         {
             OnTickedHandler?.Invoke();//

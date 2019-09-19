@@ -62,7 +62,7 @@ namespace Cirrus.Circuit
 
             if (!active)
             {
-                Game.Instance.Clock.OnTickedHandler += OnTicked;
+                Clock.Instance.OnTickedHandler += OnTicked;
             }
 
             active = true;
@@ -72,7 +72,7 @@ namespace Cirrus.Circuit
         {
             if (!active)
             {
-                Game.Instance.Clock.OnTickedHandler += OnTicked;
+                Clock.Instance.OnTickedHandler += OnTicked;
             }
 
             active = true;

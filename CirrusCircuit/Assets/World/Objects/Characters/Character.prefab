@@ -47,6 +47,7 @@ MonoBehaviour:
   _game: {fileID: 0}
   _level: {fileID: 0}
   _visual: {fileID: 4590825821992199521}
+  _fallbackColors: []
   _object: {fileID: 1075740447395865748}
   _stepSize: 1
   _stepSpeed: 0.6
@@ -61,6 +62,10 @@ MonoBehaviour:
   _targetScale: 1
   PlayerNumber: 0
   _color: {r: 1, g: 0, b: 0, a: 1}
+  _nextColor: {r: 0, g: 0, b: 0, a: 0}
+  _nextColorTime: 2
+  _nextColorIndex: 0
+  _nextColorSpeed: 0.05
   _state: 0
   _guide: {fileID: 7203719092928459714}
   _rotationSpeed: 0.6

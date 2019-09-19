@@ -79,7 +79,7 @@ namespace Cirrus.Circuit.Controls
                         {
                             if (scheme.SupportsDevice(device))
                             {
-                                Controllers[ControllerCount] = new Controller(ControllerCount, device, scheme);
+                                Controllers[ControllerCount] = new Controller(ControllerCount, Colors[ControllerCount], device, scheme);
                                 ControllerCount++;
                             }
                         }                        

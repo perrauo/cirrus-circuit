@@ -33,6 +33,16 @@ namespace Cirrus.Circuit.World.Objects
             base.Start();
         }
 
+        public override void FSMFixedUpdate()
+        {
+            
+        }
+
+        public override void FSMUpdate()
+        {
+
+        }
+
 
     }
 }

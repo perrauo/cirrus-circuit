@@ -49,7 +49,6 @@ namespace Cirrus.Circuit
 
         //public OnLevelSelect OnLevelSelectHandler;
 
-
         private static Game _instance;
 
         public static Game Instance
@@ -107,7 +106,7 @@ namespace Cirrus.Circuit
         public float _distanceLevelSelect = 35;
 
         [SerializeField]
-        public Camera _camera;
+        public CameraWrapper _camera;
 
         [SerializeField]
         private Podium _podium;
@@ -157,7 +156,7 @@ namespace Cirrus.Circuit
         public void OnValidate()
         {
             if (_camera == null)
-                _camera = FindObjectOfType<Camera>();
+                _camera = FindObjectOfType<CameraWrapper>();
 
             _levels = GetComponentsInChildren<World.Level>(true);
             _selectedLevel = _levels.Length == 0 ? null : _levels[0];
@@ -210,8 +209,6 @@ namespace Cirrus.Circuit
         {
             TryChangeState(State.Transition, State.LevelSelection);
         }
-
-
 
         private void OnScoreValueAdded(PlayerNumber player, float value)
         {
@@ -343,7 +340,6 @@ namespace Cirrus.Circuit
 
         }
 
-
         #endregion
 
 
@@ -380,9 +376,9 @@ namespace Cirrus.Circuit
                 case State.Podium:
                 case State.FinalPodium:
 
-                    _camera.UnityCamera.orthographicSize =
+                    _camera.Camera.orthographicSize =
                         Mathf.Lerp(
-                            _camera.UnityCamera.orthographicSize,
+                            _camera.Camera.orthographicSize,
                             _targetSizeCamera,
                             _cameraSizeSpeed);
 

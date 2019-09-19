@@ -43,6 +43,17 @@ namespace Cirrus.Circuit.Controls
 
         public UI.Player PlayerDisplay = null;
 
+        public Color _color;
+
+        public Color Color
+        {
+            get
+            {
+                return _color;
+            }
+        }
+
+
         private int _number = 0;
 
         public int Number
@@ -53,8 +64,9 @@ namespace Cirrus.Circuit.Controls
             }
         }
 
-        public Controller(int number, Inputs.InputDevice device, Inputs.InputControlScheme scheme)
+        public Controller(int number, Color color, Inputs.InputDevice device, Inputs.InputControlScheme scheme)
         {
+            _color = color;
             _number = number;
             _device = device;
             //_user = Inputs.Users.InputUser.CreateUserWithoutPairedDevices();

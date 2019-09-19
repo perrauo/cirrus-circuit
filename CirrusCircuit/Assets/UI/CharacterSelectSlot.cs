@@ -84,7 +84,7 @@ namespace Cirrus.Circuit.UI
         private State _state;
 
         [SerializeField]
-        private Camera _camera;
+        private CameraWrapper _camera;
 
 
         public void TryChangeState(State target)
@@ -118,7 +118,7 @@ namespace Cirrus.Circuit.UI
                     _characterSelect._readyCount++;
 
                     Vector3 position =
-                    _camera.UnityCamera.ScreenToWorldPoint(
+                    _camera.Camera.ScreenToWorldPoint(
                         _characterSpotlightAnchor.position);
 
                     // TODO maybe select locked character??
@@ -152,7 +152,7 @@ namespace Cirrus.Circuit.UI
                 _characterSelect = GetComponentInParent<CharacterSelect>();
 
             if (_camera == null)
-                _camera = FindObjectOfType<Camera>();
+                _camera = FindObjectOfType<CameraWrapper>();
 
             if (_rect == null)
                 _rect = _selection.GetComponent<RectTransform>();

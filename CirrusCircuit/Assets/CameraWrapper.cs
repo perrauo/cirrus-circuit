@@ -4,18 +4,18 @@ using System.Collections;
 
 namespace Cirrus.Circuit
 {
-    public class Camera : MonoBehaviour
+    public class CameraWrapper : MonoBehaviour
     {
         [SerializeField]
-        public UnityEngine.Camera UnityCamera;
+        public Camera Camera;
 
         public void OnValidate()
         {
-            if (UnityCamera == null)
-                UnityCamera = GetComponent<UnityEngine.Camera>();
+            if (Camera == null)
+                Camera = GetComponent<Camera>();
 
-            if (UnityCamera == null)
-                UnityCamera = FindObjectOfType<UnityEngine.Camera>();
+            if (Camera == null)
+                Camera = FindObjectOfType<Camera>();
         }
 
 

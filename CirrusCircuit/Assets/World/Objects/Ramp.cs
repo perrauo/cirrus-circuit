@@ -38,6 +38,16 @@ namespace Cirrus.Circuit.World.Objects
             base.Start();
         }
 
+        public override void FSMFixedUpdate()
+        {
+
+        }
+
+        public override void FSMUpdate()
+        {
+
+        }
+
         public override void Accept(BaseObject incoming)
         {
             incoming.TryChangeState(BaseObject.State.RampIdle);
