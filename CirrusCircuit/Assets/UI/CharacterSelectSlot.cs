@@ -30,6 +30,9 @@ namespace Cirrus.Circuit.UI
         private float _bound = 0;
 
         [SerializeField]
+        private CharacterSelect _characterSelect;
+
+        [SerializeField]
         private GameObject _selection;
 
         [SerializeField]
@@ -92,6 +95,12 @@ namespace Cirrus.Circuit.UI
                     break;
 
                 case State.Selecting:
+                    if (_state == State.Ready)
+                    {
+                        _characterSelect._readyCount--;
+                    }
+
+
                     if (_characterSpotlightAnchor.transform.childCount != 0)
                         Destroy(_characterSpotlightAnchor.GetChild(0).gameObject);
 
@@ -102,6 +111,27 @@ namespace Cirrus.Circuit.UI
                     break;
 
                 case State.Ready:
+                    _characterSelect._readyCount++;
+
+                    Vector3 position =
+                    _camera.UnityCamera.ScreenToWorldPoint(
+                        _characterSpotlightAnchor.position);
+
+                    // TODO maybe select locked character??
+                    Resource resource = _characterResources.Characters[_selectedIndex];
+
+                    World.Objects.Character character =
+                        resource.Create(
+                            position,
+                            _characterSpotlightAnchor,
+                            Quaternion.Euler(new Vector3(0, 180, 0)));
+
+                    character.transform.localScale = new Vector3(
+                        _characterSpotlightSize,
+                        _characterSpotlightSize,
+                        _characterSpotlightSize);
+
+
                     _up.gameObject.SetActive(false);
                     _down.gameObject.SetActive(false);
                     _maskRect.gameObject.SetActive(false);
@@ -114,6 +144,9 @@ namespace Cirrus.Circuit.UI
 
         private void OnValidate()
         {
+            if (_characterSelect == null)
+                _characterSelect = GetComponentInParent<CharacterSelect>();
+
             if (_camera == null)
                 _camera = FindObjectOfType<Camera>();
 
@@ -224,6 +257,7 @@ namespace Cirrus.Circuit.UI
                     break;
 
                 case State.Ready:
+                    _characterSelect.TryChangeState(CharacterSelect.State.Select);
                     TryChangeState(State.Selecting);
                     break;
 
@@ -232,40 +266,25 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-        public Resource HandleAction1()
+        public void HandleAction1(params object[] args)
         {
             switch (_state)
             {
                 case State.Selecting:
-                    Vector3 position =
-                        _camera.UnityCamera.ScreenToWorldPoint(
-                            _characterSpotlightAnchor.position);
-                    
-                    // TODO maybe select locked character??
-                    Resource resource = _characterResources.Characters[_selectedIndex];
-
-                    World.Objects.Character character =
-                        resource.Create(
-                            position,
-                            _characterSpotlightAnchor,
-                            Quaternion.Euler(new Vector3(0, 180, 0)));           
-
-                    character.transform.localScale = new Vector3(
-                        _characterSpotlightSize, 
-                        _characterSpotlightSize, 
-                        _characterSpotlightSize);
-
+                    Controls.Controller ctrl = (Controls.Controller) args[0];
+                    ctrl._characterResource = _characterResources.Characters[ctrl.Number];
                     TryChangeState(State.Ready);
-                    return resource;                    
+                    break;                    
 
                 case State.Ready:
+                    _characterSelect.TryChangeState(CharacterSelect.State.Ready);
                     break;
 
                 case State.Closed:
                     break;
             }
 
-            return null;
+            //return null;
         }      
 
         public void FixedUpdate()

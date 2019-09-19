@@ -129,7 +129,7 @@ namespace Cirrus.Circuit
         public int _roundIndex;
 
         /// Controllers in player in game
-        private List<Controller> _controllers;
+        public List<Controller> _controllers;
 
         [SerializeField]
         public float _podiumTransitionSpeed = 0.2f;
@@ -579,7 +579,7 @@ namespace Cirrus.Circuit
                     return true;
 
                 case State.CharacterSelection:
-                    OnCharacterSelectHandler.Invoke(true);
+                    OnCharacterSelectHandler?.Invoke(true);
                     _state = target;
                     return true;               
 
@@ -912,7 +912,7 @@ namespace Cirrus.Circuit
                     }
                     else
                     {
-                        controller._characterResource = controller._characterSlot.HandleAction1();
+                        controller._characterSlot.HandleAction1(controller);
                     }
 
                     break;
