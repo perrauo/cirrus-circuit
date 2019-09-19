@@ -37,7 +37,11 @@ namespace Cirrus.Circuit.Controls
 
         public World.Objects.Character _character;
 
-        public UI.PlayerDisplay PlayerDisplay = null;
+        public World.Objects.Characters.Resource _characterResource;
+
+        public UI.CharacterSelectSlot _characterSlot;      
+
+        public UI.Player PlayerDisplay = null;
 
         private int _number = 0;
 
@@ -83,7 +87,7 @@ namespace Cirrus.Circuit.Controls
             else
             {
                 //_actionMap.Player.SetCallbacks(null);
-                _actionMap.Player.Disable(); ;
+                _actionMap.Player.Disable();
                 _actionMap.Disable();
                 _actionMap.Player.AxesLeft.Disable();
                 _actionMap.Player.AxesLeft.Dispose();
@@ -94,7 +98,7 @@ namespace Cirrus.Circuit.Controls
 
         // TODO: Simulate LeftStick continuous axis with WASD
         public void OnAxesLeft(UnityInput.InputAction.CallbackContext context)
-        { 
+        {
             var axis = Vector2.ClampMagnitude(context.ReadValue<Vector2>(), 1);
             Game.Instance.HandleAxesLeft(this, axis);
         }
@@ -108,7 +112,7 @@ namespace Cirrus.Circuit.Controls
         // Accept
         public void OnAction1(UnityInput.InputAction.CallbackContext context)
         {
-            Game.Instance.HandleAction1(this);
+
         }
     }
 }

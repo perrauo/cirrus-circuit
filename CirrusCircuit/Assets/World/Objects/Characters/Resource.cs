@@ -10,8 +10,15 @@ namespace Cirrus.Circuit.World.Objects.Characters
         public Sprite Portrait;
 
         [SerializeField]
-        private GameObject CharacterTemplate;
-    
+        private Character CharacterTemplate;
+
+        public Character Create(Vector3 position, Transform parent)
+        {
+            return Instantiate(
+                CharacterTemplate.gameObject, 
+                parent)
+                .GetComponent<Character>();
+        }
     }
 
 }

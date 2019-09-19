@@ -218,7 +218,7 @@ namespace Cirrus.Circuit.World
             return (GridToWorld(gridPos), gridPos);
         }
 
-        public void OnRound()
+        public void OnRound(Round round)
         {
             foreach (BaseObject obj in _objects)
             {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Cirrus.Circuit.UI
 {
-    public class WorldScreenUI : MonoBehaviour
+    public class WorldScreen : MonoBehaviour
     {
         [SerializeField]
         private Transform _anchor;
@@ -36,12 +36,12 @@ namespace Cirrus.Circuit.UI
         {
             if (_camera != null)
             {
-                _camera.ResetWorldToCameraMatrix(); // Force camera matrix to be updated
+                _camera.UnityCamera.ResetWorldToCameraMatrix(); // Force camera matrix to be updated
 
                 _candidate.x = Mathf.Round(_anchor.position.x * 100f) / 100f;
                 _candidate.y = Mathf.Round(_anchor.position.y * 100f) / 100f;
                 _candidate.z = Mathf.Round(_anchor.position.z * 100f) / 100f;
-                _candidate = _camera.WorldToScreenPoint(_candidate);
+                _candidate = _camera.UnityCamera.WorldToScreenPoint(_candidate);
                 _candidate = Utils.Vectors.Round(_candidate); // Pixel snapping
                 _candidate.z = 0;
                 rect.position = _candidate + _offset;

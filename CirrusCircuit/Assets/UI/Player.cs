@@ -4,9 +4,8 @@ using System;
 
 namespace Cirrus.Circuit.UI
 {
-    public class PlayerDisplay : MonoBehaviour
+    public class Player : MonoBehaviour
     {
-
         public enum State
         {
             Waiting,
@@ -29,13 +28,11 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private UnityEngine.UI.Text _scoreText;
 
-
         [SerializeField]
         private float _scorePunchScaleAmount = 0.5f;
 
         [SerializeField]
         private float _scorePunchScaleTime = 1f;
-
 
         private Color _color;
 
@@ -79,6 +76,22 @@ namespace Cirrus.Circuit.UI
             }
         }
 
+        private bool _enabled = false;
+
+        public bool Enabled
+        {
+            get
+            {
+                return _enabled;
+            }
+
+            set
+            {
+                _enabled = value;
+                transform.GetChild(0).gameObject.SetActive(_enabled);
+            }
+        }
+
         IEnumerator PunchValue()
         {
             iTween.Stop(_scoreText.gameObject);
@@ -89,11 +102,9 @@ namespace Cirrus.Circuit.UI
             iTween.PunchScale(_scoreText.gameObject,
                 new Vector3(_scorePunchScaleAmount, _scorePunchScaleAmount, _scorePunchScaleAmount),
                 _scorePunchScaleTime);
-
             
             yield return null;
         }
-
 
         public void OnScoreChanged(float score)
         {
@@ -106,8 +117,6 @@ namespace Cirrus.Circuit.UI
             StartCoroutine(PunchValue());
         }
 
-
-
         public bool TryChangeState(State state, params object[] args)
         {
             _state = state;
@@ -115,27 +124,22 @@ namespace Cirrus.Circuit.UI
             switch (_state)
             {
                 case State.Waiting:
-
-                    gameObject.SetActive(true);
-
+                    Enabled = true;
                     _color.a = _waitingAlpha;
-                    this.Color = _color;
+                    Color = _color;
                     _playerText.text = "Press 'A' to join";
-
                     break;
 
                 case State.Disabled:
-                    gameObject.SetActive(false);
-
+                    Enabled = false;
                     break;
-
 
                 case State.Ready:
                               
                     int playerNumber = (int)args[0];
                     _color = Game.Instance.Lobby.Colors[playerNumber];
                     _color.a = _readyAlpha;
-                    this.Color = _color;
+                    Color = _color;
 
                     _playerText.text = "player " + ( playerNumber +1);
                     break;
@@ -146,12 +150,5 @@ namespace Cirrus.Circuit.UI
 
             return true;
         }
-
-
-        public void FixedUpdate()
-        {
-
-        }
-
     }
 }

@@ -33,7 +33,7 @@ namespace Cirrus.Circuit.Controls
                     ""id"": ""b8f36fdc-aeae-47f1-ae24-22c832a43bd6"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """"
+                    ""interactions"": ""Press""
                 },
                 {
                     ""name"": ""Action.1"",
@@ -41,7 +41,7 @@ namespace Cirrus.Circuit.Controls
                     ""id"": ""22b556f9-b24e-489e-a3be-593ad29a0efb"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """"
+                    ""interactions"": ""Press""
                 }
             ],
             ""bindings"": [
@@ -157,7 +157,7 @@ namespace Cirrus.Circuit.Controls
                 },
                 {
                     ""name"": ""Keyboard.WASD"",
-                    ""id"": ""aac9eb53-c7cd-4349-a748-80c9e1079305"",
+                    ""id"": ""57c9370e-1587-4b31-8cc9-fb84501c7c10"",
                     ""path"": ""2DVector"",
                     ""interactions"": ""Hold"",
                     ""processors"": """",
@@ -168,7 +168,7 @@ namespace Cirrus.Circuit.Controls
                 },
                 {
                     ""name"": ""up"",
-                    ""id"": ""533e134b-da9d-4ae1-809c-575bda3ce091"",
+                    ""id"": ""ff4e9725-2d41-43d9-b76d-0f24c8432991"",
                     ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -179,7 +179,7 @@ namespace Cirrus.Circuit.Controls
                 },
                 {
                     ""name"": ""down"",
-                    ""id"": ""05953ed0-d742-4d6e-a6c1-102e8d32d932"",
+                    ""id"": ""91fd13e9-e63e-47a9-a46f-b902ad6fb402"",
                     ""path"": ""<Keyboard>/s"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -190,7 +190,7 @@ namespace Cirrus.Circuit.Controls
                 },
                 {
                     ""name"": ""left"",
-                    ""id"": ""26d95925-b9ec-4ab4-81d2-d201a4489dce"",
+                    ""id"": ""237ce53a-c36d-457c-9677-84f2f4a63451"",
                     ""path"": ""<Keyboard>/a"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -201,7 +201,7 @@ namespace Cirrus.Circuit.Controls
                 },
                 {
                     ""name"": ""right"",
-                    ""id"": ""0615133a-3f77-4806-8f65-88d1c5d2e66f"",
+                    ""id"": ""b0387e29-09ca-4905-b6c6-a417afbfea83"",
                     ""path"": ""<Keyboard>/d"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -214,7 +214,7 @@ namespace Cirrus.Circuit.Controls
                     ""name"": """",
                     ""id"": ""50c15d99-5709-4325-82b5-69a4e7134a9f"",
                     ""path"": ""<Keyboard>/escape"",
-                    ""interactions"": ""Press"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard;Keyboard.WASD"",
                     ""action"": ""Action.0"",
@@ -223,20 +223,9 @@ namespace Cirrus.Circuit.Controls
                 },
                 {
                     ""name"": """",
-                    ""id"": ""d6f0bed5-c55d-43cf-9cba-8842591165c8"",
-                    ""path"": ""<Keyboard>/enter"",
-                    ""interactions"": ""Press"",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard;Keyboard.Arrows"",
-                    ""action"": ""Action.1"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""10473732-bb47-4144-aaa0-20942f79a40b"",
                     ""path"": ""<Keyboard>/space"",
-                    ""interactions"": ""Press"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard;Keyboard.WASD"",
                     ""action"": ""Action.1"",
@@ -247,7 +236,7 @@ namespace Cirrus.Circuit.Controls
                     ""name"": """",
                     ""id"": ""73023437-1b7a-4363-8403-798f573f0772"",
                     ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": ""Press"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad;Gamepad.Joystick;Gamepad.Dpad"",
                     ""action"": ""Action.0"",
@@ -258,7 +247,7 @@ namespace Cirrus.Circuit.Controls
                     ""name"": """",
                     ""id"": ""b2d0cb2d-27cb-4a17-ab00-4bc2c1559246"",
                     ""path"": ""<Keyboard>/backspace"",
-                    ""interactions"": ""Press"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard.Arrow;Keyboard.Arrows"",
                     ""action"": ""Action.0"",
@@ -267,22 +256,22 @@ namespace Cirrus.Circuit.Controls
                 },
                 {
                     ""name"": """",
-                    ""id"": ""4ba46cc7-e8ff-4dd1-a354-c1c492ff7d03"",
-                    ""path"": ""<Keyboard>/escape"",
+                    ""id"": ""e5e7eae2-8067-4c27-bf78-6215e5135083"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Keyboard.WASD"",
-                    ""action"": ""Action.0"",
+                    ""groups"": ""Gamepad;Gamepad.Joystick;Gamepad.Dpad"",
+                    ""action"": ""Action.1"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""e5e7eae2-8067-4c27-bf78-6215e5135083"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
-                    ""interactions"": ""Press"",
+                    ""id"": ""091dc393-1d52-4102-b97a-8ec75f95f792"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Gamepad;Gamepad.Joystick;Gamepad.Dpad"",
+                    ""groups"": ""Keyboard.Arrows"",
                     ""action"": ""Action.1"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false

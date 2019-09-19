@@ -29,8 +29,27 @@ namespace Cirrus.Circuit.Transitions
         [SerializeField]
         private float _distanceDown = -10;
 
+        [SerializeField]
+        private Game _game;
+
         private Vector3 _startPosition;
 
+        public void OnValidate()
+        {
+            if(_game == null)
+            _game = FindObjectOfType<Game>();
+        }
+
+
+        public void Awake()
+        {
+            _startPosition = _image.transform.position;
+        }
+
+        public void Start()
+        {
+            StartCoroutine(DoStart());
+        }
 
         public IEnumerator DoTransition()
         {
@@ -64,16 +83,6 @@ namespace Cirrus.Circuit.Transitions
             yield return null;
 
 
-        }
-
-        public void Awake()
-        {
-            _startPosition = _image.transform.position;
-        }
-
-        public void Start()
-        {
-            StartCoroutine(DoStart());
         }
 
         public void Perform()

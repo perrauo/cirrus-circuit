@@ -81,9 +81,9 @@ namespace Cirrus.Circuit.World.Objects
         public Controls.PlayerNumber PlayerNumber;
 
         [SerializeField]
-        protected Color _color;
+        protected UnityEngine.Color _color;
 
-        public virtual Color Color
+        public virtual UnityEngine.Color Color
         {
             get
             {
@@ -131,7 +131,8 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void Start()
         {
-            (transform.position, _gridPosition) = _level.RegisterObject(this);
+            if(_level != null)
+                (transform.position, _gridPosition) = _level.RegisterObject(this);
 
             FSMStart();
         }

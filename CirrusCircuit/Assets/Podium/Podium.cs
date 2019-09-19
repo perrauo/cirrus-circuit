@@ -80,6 +80,11 @@ namespace Cirrus.Circuit
             }
         }
 
+        public void OnRound(Round round)
+        {
+            round.OnRoundEndHandler += OnRoundEnd;
+        }
+
         public void Clear()
         {
             foreach (var p in _platforms)
@@ -89,7 +94,6 @@ namespace Cirrus.Circuit
 
                 Destroy(p.gameObject);
             }
-
 
             _platforms.Clear();
 
