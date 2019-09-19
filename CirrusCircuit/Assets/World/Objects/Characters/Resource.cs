@@ -19,6 +19,16 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 parent)
                 .GetComponent<Character>();
         }
+
+        public Character Create(Vector3 position, Transform parent, Quaternion rotation)
+        {
+            return Instantiate(
+                CharacterTemplate.gameObject,
+                parent.position,
+                rotation,
+                parent)
+                .GetComponent<Character>();
+        }
     }
 
 }

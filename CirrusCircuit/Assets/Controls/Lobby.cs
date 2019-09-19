@@ -64,8 +64,8 @@ namespace Cirrus.Circuit.Controls
         // Update is called once per frame
         public void Start()
         {
-            var devices = Inputs.InputDevice.all;
-            
+            var devices = Inputs.InputDevice.all;                     
+
             // TODO: do not assume one player per device?
             foreach(var device in devices)
             {

@@ -807,11 +807,11 @@ MonoBehaviour:
   _statusText: {fileID: 5985715594680511602}
   _up: {fileID: 799246497779607701}
   _down: {fileID: 5209508751046595381}
-  _speed: 0.5
+  _speed: 0.25
   _selectPunchScale: 0.5
   _selectPunchScaleTime: 1
   _characterSpotlightAnchor: {fileID: 8410811057465128657}
-  _characterSpotlightSize: 100
+  _characterSpotlightSize: 50
   _selectedIndex: 0
   _disabledArrowAlpha: 0.35
   _state: 0
@@ -877,7 +877,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7905866066053827124}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -64}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 238738604602693148}

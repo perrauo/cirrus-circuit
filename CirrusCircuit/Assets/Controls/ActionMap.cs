@@ -223,17 +223,6 @@ namespace Cirrus.Circuit.Controls
                 },
                 {
                     ""name"": """",
-                    ""id"": ""10473732-bb47-4144-aaa0-20942f79a40b"",
-                    ""path"": ""<Keyboard>/space"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard;Keyboard.WASD"",
-                    ""action"": ""Action.1"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""73023437-1b7a-4363-8403-798f573f0772"",
                     ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
@@ -272,6 +261,17 @@ namespace Cirrus.Circuit.Controls
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard.Arrows"",
+                    ""action"": ""Action.1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9880bad7-328f-4e28-b655-0e344621fe3a"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard.WASD"",
                     ""action"": ""Action.1"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false

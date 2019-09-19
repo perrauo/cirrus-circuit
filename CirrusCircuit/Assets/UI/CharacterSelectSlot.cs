@@ -92,6 +92,9 @@ namespace Cirrus.Circuit.UI
                     break;
 
                 case State.Selecting:
+                    if (_characterSpotlightAnchor.transform.childCount != 0)
+                        Destroy(_characterSpotlightAnchor.GetChild(0).gameObject);
+
                     _up.gameObject.SetActive(true);
                     _down.gameObject.SetActive(true);
                     _maskRect.gameObject.SetActive(true);                    
@@ -213,7 +216,23 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-        public Resource Select()
+        public void HandleAction0()
+        {
+            switch (_state)
+            {
+                case State.Selecting:
+                    break;
+
+                case State.Ready:
+                    TryChangeState(State.Selecting);
+                    break;
+
+                case State.Closed:
+                    break;
+            }
+        }
+
+        public Resource HandleAction1()
         {
             switch (_state)
             {
@@ -225,8 +244,16 @@ namespace Cirrus.Circuit.UI
                     // TODO maybe select locked character??
                     Resource resource = _characterResources.Characters[_selectedIndex];
 
-                    World.Objects.Character character = resource.Create(position, _characterSpotlightAnchor);
-                    character.transform.localScale = new Vector3(_characterSpotlightSize, _characterSpotlightSize, _characterSpotlightSize);
+                    World.Objects.Character character =
+                        resource.Create(
+                            position,
+                            _characterSpotlightAnchor,
+                            Quaternion.Euler(new Vector3(0, 180, 0)));           
+
+                    character.transform.localScale = new Vector3(
+                        _characterSpotlightSize, 
+                        _characterSpotlightSize, 
+                        _characterSpotlightSize);
 
                     TryChangeState(State.Ready);
                     return resource;                    

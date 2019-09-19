@@ -843,6 +843,20 @@ namespace Cirrus.Circuit
                 case State.LevelSelection:
                     break;
 
+                case State.CharacterSelection:
+
+                    //if (_controllers.Contains(controller))
+                    //{
+                    //    _controllers.Remove(controller);
+                    //    OnControllerJoinHandler?.Invoke(controller);
+                    //}
+                    //else
+                    {
+                        controller._characterSlot.HandleAction0();
+                    }
+
+                    break;
+
                 case State.WaitingNextRound:
 
                     if (_controllers.Contains(controller))
@@ -898,7 +912,7 @@ namespace Cirrus.Circuit
                     }
                     else
                     {
-                        controller._characterResource = controller._characterSlot.Select();
+                        controller._characterResource = controller._characterSlot.HandleAction1();
                     }
 
                     break;

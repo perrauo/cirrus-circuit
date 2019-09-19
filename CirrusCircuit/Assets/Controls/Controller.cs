@@ -66,15 +66,13 @@ namespace Cirrus.Circuit.Controls
             // bind to whatever devices are available locally).
             _scheme = scheme;
             _actionMap = new ActionMap();
-            _actionMap.bindingMask = new Inputs.InputBinding { groups = _scheme.bindingGroup }; 
-            //_user.AssociateActionsWithUser(_actionMap);
+            _actionMap.bindingMask = new Inputs.InputBinding { groups = _scheme.bindingGroup };            
             Enable();
         }
 
         ~Controller()
         {
             Enable(false);
-            //_user.UnpairDevicesAndRemoveUser();
         }
 
         public void Enable(bool enabled = true)
@@ -91,8 +89,6 @@ namespace Cirrus.Circuit.Controls
                 _actionMap.Disable();
                 _actionMap.Player.AxesLeft.Disable();
                 _actionMap.Player.AxesLeft.Dispose();
-                //_actionMap.
-                //_actionMap.
             }
         }
 
@@ -106,14 +102,15 @@ namespace Cirrus.Circuit.Controls
         // Cancel
         public void OnAction0(UnityInput.InputAction.CallbackContext context)
         {
-            Game.Instance.HandleAction0(this);
+            if(!context.performed)
+                Game.Instance.HandleAction0(this);
         }
 
         // Accept
         public void OnAction1(UnityInput.InputAction.CallbackContext context)
         {
-            Debug.Log(context);
-            Game.Instance.HandleAction1(this);
+            if(!context.performed)
+                Game.Instance.HandleAction1(this);
         }
     }
 }
