@@ -32,9 +32,9 @@ namespace Cirrus.Circuit
         public GameObject _characterAnchor;
 
         [SerializeField]
-        public World.Objects.Character _character;
+        public World.Objects.Characters.Character _character;
 
-        public World.Objects.Character Character
+        public World.Objects.Characters.Character Character
         {
             get
             {

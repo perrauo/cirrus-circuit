@@ -64,6 +64,10 @@ namespace Cirrus.Circuit.UI
         private float _characterSpotlightSize = 10f;
 
         [SerializeField]
+        private float _characterSpotlightRotateSpeed = 20f;
+
+
+        [SerializeField]
         private int _selectedIndex = 0;
 
         [SerializeField]
@@ -120,7 +124,7 @@ namespace Cirrus.Circuit.UI
                     // TODO maybe select locked character??
                     Resource resource = _characterResources.Characters[_selectedIndex];
 
-                    World.Objects.Character character =
+                    World.Objects.Characters.Character character =
                         resource.Create(
                             position,
                             _characterSpotlightAnchor,
@@ -290,6 +294,11 @@ namespace Cirrus.Circuit.UI
         public void FixedUpdate()
         {
             _rect.localPosition = Vector3.Lerp(_rect.localPosition, _targetPosition, _speed);
+
+            if(_characterSpotlightAnchor.childCount != 0)
+                _characterSpotlightAnchor.GetChild(0)
+                    .Rotate(Vector3.up * Time.deltaTime * _characterSpotlightRotateSpeed);
+
         }
     }
 }

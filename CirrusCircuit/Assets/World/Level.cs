@@ -42,9 +42,9 @@ namespace Cirrus.Circuit.World
         }
 
         [SerializeField]
-        public Character[] _characters;
+        public Objects.Characters.Character[] _characters;
 
-        public Character[] Characters
+        public Objects.Characters.Character[] Characters
         {
             get
             {
@@ -277,7 +277,7 @@ namespace Cirrus.Circuit.World
                 _doors = gameObject.GetComponentsInChildren<Objects.Door>();
 
             if(_characters != null && _characters.Length == 0)
-                _characters = gameObject.GetComponentsInChildren<Objects.Character>();
+                _characters = gameObject.GetComponentsInChildren<Objects.Characters.Character>();
 
         }
 

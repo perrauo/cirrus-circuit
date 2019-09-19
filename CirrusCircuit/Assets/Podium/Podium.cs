@@ -27,7 +27,7 @@ namespace Cirrus.Circuit
         private List<Platform> _platforms;
 
         [SerializeField]
-        private List<World.Objects.Character> _characters;
+        private List<World.Objects.Characters.Character> _characters;
 
         private Timer _timer;
 
@@ -100,7 +100,7 @@ namespace Cirrus.Circuit
             _characters.Clear();
         }
 
-        public void Add(Controls.Controller ctrl, World.Objects.Character character)
+        public void Add(Controls.Controller ctrl, World.Objects.Characters.Character character)
         {
             Platform platform = Instantiate(
                 _platformTemplate.gameObject,

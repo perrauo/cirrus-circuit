@@ -35,7 +35,7 @@ namespace Cirrus.Circuit.Controls
 
         // TODO: Rework ? replace by mult action map
 
-        public World.Objects.Character _character;
+        public World.Objects.Characters.Character _character;
 
         public World.Objects.Characters.Resource _characterResource;
 

@@ -40,7 +40,6 @@ namespace Cirrus.Circuit.Transitions
             _game = FindObjectOfType<Game>();
         }
 
-
         public void Awake()
         {
             _startPosition = _image.transform.position;
@@ -48,11 +47,29 @@ namespace Cirrus.Circuit.Transitions
 
         public void Start()
         {
-            StartCoroutine(DoStart());
+            //StartCoroutine(DoStart());
+        }
+
+        private bool _enabled = false;
+
+        public bool Enabled
+        {
+            get
+            {
+                return _enabled;
+            }
+
+            set
+            {
+                _enabled = value;
+                transform.GetChild(0).gameObject.SetActive(_enabled);
+            }
         }
 
         public IEnumerator DoTransition()
         {
+            Enabled = true;
+
             _image.transform.position = _startPosition + Vector3.up * _distanceAway;
 
             iTween.MoveTo(_image.gameObject, _startPosition, _transitionDownTime);
@@ -72,6 +89,8 @@ namespace Cirrus.Circuit.Transitions
 
         public IEnumerator DoStart()
         {
+            Enabled = true;
+
             yield return new WaitForSeconds(_transitionHeldTime);
 
             iTween.MoveTo(_image.gameObject, _startPosition + Vector3.up * _distanceDown, _anticipationTime);

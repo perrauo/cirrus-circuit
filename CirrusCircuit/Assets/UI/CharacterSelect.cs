@@ -4,10 +4,14 @@ using Cirrus.Circuit.Controls;
 
 namespace Cirrus.Circuit.UI
 {
+    public delegate void OnCharacterSelectReady(int numPlayers);
+
     public class CharacterSelect : MonoBehaviour
     {
         [SerializeField]
         private Game _game;
+
+        public OnCharacterSelectReady OnCharacterSelectReadyHandler;
 
         [SerializeField]
         private CharacterSelectSlot[] slots;
@@ -30,6 +34,8 @@ namespace Cirrus.Circuit.UI
         {
             _game.OnCharacterSelectHandler += OnCharacterSelect;
             _game.OnControllerJoinHandler += OnControllerJoin;
+            _game.OnLevelSelectHandler += OnLevelSelect;
+            _game.OnLevelSelectHandler += OnMenu;
         }
 
         private bool _enabled = false;
@@ -53,6 +59,17 @@ namespace Cirrus.Circuit.UI
             Enabled = true;
         }
 
+        public void OnLevelSelect(bool enabled)
+        {
+            Enabled = false;
+        }
+
+        public void OnMenu(bool enabled)
+        {
+            Enabled = false;
+        }
+
+
         public enum State
         {
             Disabled,
@@ -71,6 +88,12 @@ namespace Cirrus.Circuit.UI
                     return true;
 
                 case State.Ready:
+                    if (_state == State.Ready)
+                    {
+                        OnCharacterSelectReadyHandler?.Invoke(_readyCount);
+                        return false;
+                    }
+
                     if (_readyCount < 2)
                     {
                         return false;

@@ -42,19 +42,20 @@ namespace Cirrus.Circuit.UI
         public void Awake()
         {
             _buttonExit.onClick.AddListener(OnExitClick);
-            
-            _buttonPlay.onClick.AddListener(OnStartClick);
             _buttonPlay.onClick.AddListener(_game.OnStartClicked);
-        }
 
-        public void OnStartClick()
-        {
-            Enabled = false;   
+            _game.OnCharacterSelectHandler += OnCharacterSelect;
         }
 
         public void OnExitClick()
         {
 
+        }
+
+
+        public void OnCharacterSelect(bool enabled)
+        {
+            Enabled = false;
         }
 
     }

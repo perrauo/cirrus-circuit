@@ -14,7 +14,7 @@ using UnityEngine;
 using UnityInputs = UnityEngine.InputSystem;
 //using Cirrus.Circuit.Playable;
 
-namespace Cirrus.Circuit.World.Objects
+namespace Cirrus.Circuit.World.Objects.Characters
 {
     [System.Serializable]
     public struct Axes
