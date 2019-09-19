@@ -112,7 +112,8 @@ namespace Cirrus.Circuit.Controls
         // Accept
         public void OnAction1(UnityInput.InputAction.CallbackContext context)
         {
-
+            Debug.Log(context);
+            Game.Instance.HandleAction1(this);
         }
     }
 }
