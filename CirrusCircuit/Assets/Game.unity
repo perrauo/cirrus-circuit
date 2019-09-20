@@ -1138,6 +1138,8 @@ MonoBehaviour:
   _anticipationHeldTime: 0.5
   _distanceAway: 632
   _distanceDown: -10
+  _canvas: {fileID: 271282009}
+  _canvasRectTransform: {fileID: 271282010}
   _game: {fileID: 8610181462412150752}
 --- !u!1001 &583501191
 PrefabInstance:

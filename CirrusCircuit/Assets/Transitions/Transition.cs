@@ -30,6 +30,12 @@ namespace Cirrus.Circuit.Transitions
         private float _distanceDown = -10;
 
         [SerializeField]
+        private Canvas _canvas;
+
+        [SerializeField]
+        private RectTransform _canvasRectTransform;
+
+        [SerializeField]
         private Game _game;
 
         private Vector3 _startPosition;
@@ -38,11 +44,20 @@ namespace Cirrus.Circuit.Transitions
         {
             if(_game == null)
             _game = FindObjectOfType<Game>();
+
+            if (_canvas == null)
+                _canvas = GetComponentInParent<Canvas>();
+
+            if (_canvasRectTransform == null)
+                _canvasRectTransform = _canvas.GetComponent<RectTransform>();
         }
 
         public void Awake()
         {
             _startPosition = _image.transform.position;
+            _distanceAway = _canvasRectTransform.rect.height;
+            //_canvas.
+            //_distanceAway = _canvas.rec
         }
 
         public void Start()
