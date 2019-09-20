@@ -1002,7 +1002,7 @@ PrefabInstance:
     - target: {fileID: 3053538426482242438, guid: 1d38d026e647e4e45ac49d617d92eed2,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3053538426482241657, guid: 1d38d026e647e4e45ac49d617d92eed2,
         type: 3}
@@ -2201,6 +2201,11 @@ PrefabInstance:
       propertyPath: _level
       value: 
       objectReference: {fileID: 1063370197}
+    - target: {fileID: 5983154634494299953, guid: e33d54bd8d4e17f45987589f14ca0a7d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e33d54bd8d4e17f45987589f14ca0a7d, type: 3}
 --- !u!4 &1063370196 stripped
@@ -4124,7 +4129,7 @@ MonoBehaviour:
   _podium: {fileID: 439786719}
   _targetSizeCamera: 10
   _cameraSizeSpeed: 0.8
-  _roundTime: 15
+  _roundTime: 60
   _countDownTime: 1
   _countDown: 3
   _roundAmount: 3
