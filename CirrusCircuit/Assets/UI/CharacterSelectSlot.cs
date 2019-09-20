@@ -157,9 +157,11 @@ namespace Cirrus.Circuit.UI
             if (_rect == null)
                 _rect = _selection.GetComponent<RectTransform>();
 
+#if UNITY_EDITOR
             if (_characterResources == null)            
-                Utils.AssetDatabase.FindObjectOfType<World.Objects.Characters.Resources>();            
+                Utils.AssetDatabase.FindObjectOfType<World.Objects.Characters.Resources>();
 
+#endif
             int i = 0;
             foreach (var res in _characterResources.Characters)
             {
