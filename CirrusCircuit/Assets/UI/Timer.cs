@@ -47,10 +47,28 @@ namespace Cirrus.Circuit.UI
                 _game = FindObjectOfType<Game>();
         }
 
+        public void Awake()
+        {
+            _game.OnNewRoundHandler += OnNewRound;
+            _game.OnNewRoundHandler += OnRound;
+            //_on
+        }
+
+        public void Update()
+        {
+            if (_round != null)
+                Time = _round.Time;
+        }
+
         public void OnNewRound(Round round)
         {
             _round = round;
             _round.OnIntermissionHandler += OnIntermission;
+        }
+
+        public void OnRound(Round round)
+        {
+            Enabled = true;
         }
 
         public void OnIntermission(int count)
@@ -59,12 +77,6 @@ namespace Cirrus.Circuit.UI
         }
 
 
-
-        public void Update()
-        {
-            if (_round != null)
-                Time = _round.Time;
-        }
 
     }
 }

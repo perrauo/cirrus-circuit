@@ -41,13 +41,11 @@ namespace Cirrus.Circuit.World.Objects
         [SerializeField]
         private float _valueTime = 1.5f;
 
-
         [SerializeField]
         private float _scorePunchScaleAmount = 0.5f;
 
         [SerializeField]
         private float _scorePunchScaleTime = 1f;
-
 
         [SerializeField]
         private UnityEngine.UI.Text _textMultiplier;
@@ -61,8 +59,7 @@ namespace Cirrus.Circuit.World.Objects
         [SerializeField]
         private float _punchScaleTime = 1f;
 
-
-
+  
         IEnumerator PunchScale()
         {
             iTween.Stop(_visual.Parent.gameObject);
@@ -77,27 +74,20 @@ namespace Cirrus.Circuit.World.Objects
             yield return null;
         }
 
-        private bool init = false;
-
-        public override void OnEnable()
+        protected override void Awake()
         {
-            base.OnEnable();
+            base.Awake();
 
-            if (!init)
-            {
-                init = true;
-
-                _multiplierTimer = new Timer(_multiplierTime, start: false, repeat: false);
-                _multiplierTimer.OnTimeLimitHandler += OnMultiplierTimeOut;
+            _multiplierTimer = new Timer(_multiplierTime, start: false, repeat: false);
+            _multiplierTimer.OnTimeLimitHandler += OnMultiplierTimeOut;
 
 
-                _valueTimer = new Timer(_valueTime, start: false, repeat: false);
-                _valueTimer.OnTimeLimitHandler += OnValueTimeOut;
+            _valueTimer = new Timer(_valueTime, start: false, repeat: false);
+            _valueTimer.OnTimeLimitHandler += OnValueTimeOut;
 
-                Multiplier = 1;
+            Multiplier = 1;
 
-                Value = 0;
-            }
+            Value = 0;           
 
         }
 

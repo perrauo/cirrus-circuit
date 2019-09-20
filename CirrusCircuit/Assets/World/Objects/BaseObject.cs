@@ -31,7 +31,7 @@ namespace Cirrus.Circuit.World.Objects
         protected Game _game;
 
         [SerializeField]
-        protected Level _level;
+        public Level _level;
 
         [SerializeField]
         protected Visual _visual;
@@ -141,6 +141,7 @@ namespace Cirrus.Circuit.World.Objects
         // TODO: will not be called on disabled level
         protected virtual void Awake()
         {
+            _nextColorIndex = (int)PlayerNumber;
             _nextColorTimer = new Timer(_nextColorTime, start: false, repeat: true);
             _nextColorTimer.OnTimeLimitHandler += OnNextColorTimeOut;
 
@@ -174,6 +175,13 @@ namespace Cirrus.Circuit.World.Objects
         {
             FSMUpdate();
         }
+
+        public void OnDestroy()
+        {
+            if(_level != null)
+            _level.UnregisterObject(this);
+        }
+
 
         public bool TryChangeState(FSM.State state, params object[] args)
         {    
@@ -245,6 +253,7 @@ namespace Cirrus.Circuit.World.Objects
         public enum State
         {
             Disabled,
+            LevelSelect,
             Entering,
             Falling,
             Idle,
@@ -271,6 +280,9 @@ namespace Cirrus.Circuit.World.Objects
             switch (_state)
             {
                 case State.Disabled:
+                    break;
+
+                case State.LevelSelect:
                     //Color = 
                     //Color = Fixed
                     Color = UnityEngine.Color.Lerp(Color, _nextColor, _nextColorSpeed);
@@ -297,6 +309,8 @@ namespace Cirrus.Circuit.World.Objects
             switch (_state)
             {
                 case State.Disabled:
+                    return;
+                case State.LevelSelect:
                     return;
 
                 case State.Entering:
@@ -336,7 +350,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void OnRound()
         {
-            
+            TryChangeState(State.Idle);
         }
 
         public virtual void OnRoundBegin()
@@ -368,6 +382,23 @@ namespace Cirrus.Circuit.World.Objects
                     switch (transition)
                     {
                         case State.Disabled:
+                        case State.LevelSelect:
+                        case State.Entering:
+                        case State.Falling:
+                        case State.Idle:
+                        case State.RampIdle:
+                        case State.Moving:
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
+                case State.LevelSelect:
+
+                    switch (transition)
+                    {
+                        case State.Disabled:
+                        case State.LevelSelect:
                         case State.Entering:
                         case State.Falling:
                         case State.Idle:
@@ -384,6 +415,7 @@ namespace Cirrus.Circuit.World.Objects
                     switch (transition)
                     {
                         case State.Disabled:
+                        case State.LevelSelect:
                         case State.Entering:
                         case State.Falling:
                         case State.Idle:
@@ -398,6 +430,7 @@ namespace Cirrus.Circuit.World.Objects
                     switch (transition)
                     {
                         case State.Disabled:
+                        case State.LevelSelect:
                         case State.Entering:
                         case State.Falling:
                         case State.Idle:
@@ -412,6 +445,7 @@ namespace Cirrus.Circuit.World.Objects
                     switch (transition)
                     {
                         case State.Disabled:
+                        case State.LevelSelect:
                         case State.Entering:
                         case State.Falling:
                         case State.Idle:
@@ -426,6 +460,7 @@ namespace Cirrus.Circuit.World.Objects
                     switch (transition)
                     {
                         case State.Disabled:
+                        case State.LevelSelect:
                         case State.Moving:
                             //case State.Moving:
                             destination = State.RampMoving;
@@ -440,6 +475,7 @@ namespace Cirrus.Circuit.World.Objects
                     switch (transition)
                     {
                         case State.Disabled:
+                        case State.LevelSelect:
                         case State.Entering:
                         case State.Falling:
                         case State.Idle:
@@ -454,6 +490,7 @@ namespace Cirrus.Circuit.World.Objects
                     switch (transition)
                     {
                         case State.Disabled:
+                        case State.LevelSelect:
                         case State.Entering:
                         case State.Falling:
                         case State.Idle:
@@ -483,6 +520,11 @@ namespace Cirrus.Circuit.World.Objects
             switch (target)
             {
                 case State.Disabled:
+                    result = true;
+                    _state = target;
+                    break;
+
+                case State.LevelSelect:
                     OnNextColorTimeOut();
                     _nextColorTimer.Start();
                     result = true;

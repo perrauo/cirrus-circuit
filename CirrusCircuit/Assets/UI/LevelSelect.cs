@@ -86,7 +86,7 @@ namespace Cirrus.Circuit.UI
 
         public void OnLevelSelect(bool enabled)
         {
-            Enabled = true;
+            Enabled = enabled;
         }
 
 

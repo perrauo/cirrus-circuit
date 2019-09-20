@@ -67,6 +67,9 @@ namespace Cirrus.Circuit.World
         public Door[] _doors;
 
         [SerializeField]
+        public Objects.Characters.Placeholder[] _characterPlaceholders;
+
+        [SerializeField]
         public float DistanceLevelSelection = 35;
 
         [SerializeField]
@@ -77,32 +80,48 @@ namespace Cirrus.Circuit.World
         [SerializeField]
         public float _positionSpeed = 0.4f;
 
+
+        public void OnValidate()
+        {
+            if (_game == null)
+                _game = FindObjectOfType<Game>();
+
+            _name = gameObject.name.Substring(gameObject.name.IndexOf('.') + 1);
+            _name = _name.Replace('.', ' ');
+
+            if (_gems != null && _gems.Length == 0)
+                _gems = gameObject.GetComponentsInChildren<Objects.Gem>();
+
+            if (_doors != null && _doors.Length == 0)
+                _doors = gameObject.GetComponentsInChildren<Objects.Door>();
+
+            if (_characters != null && _characters.Length == 0)
+                _characters = gameObject.GetComponentsInChildren<Objects.Characters.Character>();
+
+            if (_characterPlaceholders != null && _characterPlaceholders.Length == 0)
+                _characterPlaceholders = gameObject.GetComponentsInChildren<Objects.Characters.Placeholder>();
+
+        }
+
         public void FixedUpdate()
         {
             transform.position = Vector3.Lerp(transform.position, TargetPosition, _positionSpeed);
         }
 
-        private bool init = false;
-
-        public void OnEnable()
+        public void Awake()
         {
-            if (!init)
+            _mutex = new Mutex(false);
+            _objects = new BaseObject[_dimension.x, _dimension.y, _dimension.z];
+
+            foreach (Door door in _doors)
             {
-                _mutex = new Mutex(false);
-                _objects = new BaseObject[_dimension.x, _dimension.y, _dimension.z];
+                if (door == null)
+                    continue;
 
-                foreach (Door door in _doors)
-                {
-                    if (door == null)
-                        continue;
+                door.OnScoreValueAddedHandler += OnGemEntered;
 
-                    door.OnScoreValueAddedHandler += OnGemEntered;
-
-                    //Game.Instance.Lobby.Controllers[(int)door.PlayerNumber].On
-                }
-
-                init = true;
-            }
+                //Game.Instance.Lobby.Controllers[(int)door.PlayerNumber].On
+            }            
         }
 
         public Vector3Int WorldToGrid(Vector3 pos)
@@ -218,6 +237,12 @@ namespace Cirrus.Circuit.World
             return (GridToWorld(gridPos), gridPos);
         }
 
+        public void UnregisterObject(BaseObject obj)
+        {
+            Set(obj._gridPosition, null);
+        }
+
+
         public void OnRound(Round round)
         {
             foreach (BaseObject obj in _objects)
@@ -225,7 +250,7 @@ namespace Cirrus.Circuit.World
                 if (obj == null)
                     continue;
 
-                obj.OnRound();
+                obj.TryChangeState(BaseObject.State.Disabled);
 
                 //OnRoun obj.OnRoundEnd;
             }
@@ -262,26 +287,15 @@ namespace Cirrus.Circuit.World
             OnScoreValueAdded?.Invoke(player, value);
         }
         
-        public void OnValidate()
+        public void OnLevelSelect()
         {
-            if (_game == null)
-                _game = FindObjectOfType<Game>();
+            foreach (BaseObject obj in _objects)
+            {
+                if (obj == null)
+                    continue;
 
-            _name = gameObject.name.Substring(gameObject.name.IndexOf('.')+1);
-            _name = _name.Replace('.', ' ');
-
-            if(_gems != null && _gems.Length == 0)
-                _gems = gameObject.GetComponentsInChildren<Objects.Gem>();
-
-            if (_doors != null && _doors.Length == 0)
-                _doors = gameObject.GetComponentsInChildren<Objects.Door>();
-
-            if(_characters != null && _characters.Length == 0)
-                _characters = gameObject.GetComponentsInChildren<Objects.Characters.Character>();
-
+                obj.TryChangeState(BaseObject.State.LevelSelect);
+            }
         }
-
-
-
     }
 }

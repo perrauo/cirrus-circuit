@@ -161,7 +161,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
             switch (_state)
             {
-                case State.Disabled:
+                case State.LevelSelect:
                     break;
 
                 case State.Moving:

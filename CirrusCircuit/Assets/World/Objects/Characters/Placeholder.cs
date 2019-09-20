@@ -20,10 +20,10 @@ namespace Cirrus.Circuit.World.Objects.Characters
         [SerializeField]
         private float _offset = 0.5f;
 
-        //private Vector3 _k
-
-        public void OnValidate()
+        public override void OnValidate()
         {
+            base.OnValidate();
+
             if (_camera == null)
                 _camera = FindObjectOfType<CameraWrapper>();
         }
@@ -31,7 +31,6 @@ namespace Cirrus.Circuit.World.Objects.Characters
         public override void Start()
         {
             base.Start();
-
         }
 
         public override void FixedUpdate()

@@ -4,6 +4,8 @@ using UnityEngine;
 
 using System.Collections;
 using System.Collections.Generic;
+using Cirrus.Extensions;
+using Cirrus.Circuit.World.Objects.Characters;
 
 namespace Cirrus.Circuit
 {
@@ -232,6 +234,8 @@ namespace Cirrus.Circuit
             _targetSizeCamera = _selectedLevel.CameraSize;
 
             OnLevelSelectedHandler?.Invoke(_selectedLevel, step);
+
+            
         }
 
         // TODO: Simulate LeftStick continuous axis with WASD
@@ -407,11 +411,22 @@ namespace Cirrus.Circuit
         {
             if (TryTransition(transition, out State destination))
             {
+                ExitState(destination);
                 return TryFinishChangeState(destination, args);
             }
 
             return false;
         }
+
+        public virtual void ExitState(State destination)
+        {
+            switch (_state)
+            {
+                case State.Menu:
+                    break;
+            }
+        }
+
 
         protected bool TryTransition(State transition, out State destination, params object[] args)
         {
@@ -618,10 +633,24 @@ namespace Cirrus.Circuit
                         _podium.Add(c, c._character);
                     }
 
+
                     _podium.gameObject.SetActive(false);
 
-                    _state = target;
+                    foreach (World.Level level in _levels)
+                    {
+                        if (level == null)
+                            continue;
 
+                        if (level == _selectedLevel)
+                            continue;
+
+                        level.gameObject.SetActive(false);
+                    }
+
+
+                    _selectedLevel.gameObject.SetActive(false);
+
+                    _state = target;
                     return TryChangeState(State.Round, _roundTime);
 
 
@@ -684,6 +713,7 @@ namespace Cirrus.Circuit
                     foreach (World.Level lv in _levels)
                     {
                         lv.gameObject.SetActive(true);
+                        lv.OnLevelSelect();
                     }
 
                     OnLevelSelect();
@@ -696,20 +726,11 @@ namespace Cirrus.Circuit
                     _state = target;
 
                     // TODO enable
-                    foreach (World.Level level in _levels)
-                    {
-                        if (level == null)
-                            continue;
 
-                        if (level == _selectedLevel)
-                            continue;
-
-                        level.gameObject.SetActive(false);
-                    }
-
-                    _selectedLevel.gameObject.SetActive(true);
                     _selectedLevel.TargetPosition = Vector3.zero;
                     _selectedLevel.transform.position = Vector3.zero;
+
+                    _selectedLevel.gameObject.SetActive(true);
 
                     _currentLevel =
                         Instantiate(
@@ -717,10 +738,9 @@ namespace Cirrus.Circuit
                             Vector3.zero, Quaternion.identity,
                             gameObject.transform).GetComponent<World.Level>();
 
-                    _currentLevel.OnScoreValueAdded += OnScoreValueAdded;
-
-                    // Disable template
                     _selectedLevel.gameObject.SetActive(false);
+
+                    _currentLevel.OnScoreValueAdded += OnScoreValueAdded;
 
                     _round =
                         new Round(
@@ -738,11 +758,23 @@ namespace Cirrus.Circuit
 
                     _round.BeginIntermission();
 
-                    for (int i = 0; i < _currentLevel.CharacterCount; i++)
-                    {
-                        _controllers[i]._character = _currentLevel._characters[i];
-                    }
+                    List<Placeholder> placeholders = new List<Placeholder>();
+                    placeholders.AddRange(_currentLevel._characterPlaceholders);
 
+                    int i = 0;
+                    while (!placeholders.IsEmpty())
+                    {
+                        Placeholder placeholder = placeholders.RemoveRandom();
+                        _controllers[i]._character = _controllers[i]
+                            ._characterResource.Create(_currentLevel.GridToWorld(placeholder._gridPosition), _currentLevel.transform);
+
+                        _controllers[i]._character._level = _currentLevel;
+
+                        Destroy(placeholder.gameObject);
+
+                        _controllers[i]._character.TryChangeState(Character.State.Disabled);
+                        i++;
+                    }
 
                     return true;
 
@@ -924,7 +956,7 @@ namespace Cirrus.Circuit
                     break;
 
                 case State.LevelSelection:
-                    TryChangeState(State.WaitingNextRound);
+                    TryChangeState(State.Transition, State.Begin);
                     break;
 
                 case State.CharacterSelection:

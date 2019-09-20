@@ -114,7 +114,7 @@ namespace Cirrus.Circuit.UI
             _scoreText.gameObject.transform.localScale = new Vector3(1, 1, 1);
             // TODO reset fade
 
-            StartCoroutine(PunchValue());
+            //StartCoroutine(PunchValue());
         }
 
         public bool TryChangeState(State state, params object[] args)
