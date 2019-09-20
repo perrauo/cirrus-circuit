@@ -52,10 +52,15 @@ namespace Cirrus.Circuit.Transitions
                 _canvasRectTransform = _canvas.GetComponent<RectTransform>();
         }
 
+
+        //public void OnS
+
         public void Awake()
         {
+            // Callback screen resolution
             _startPosition = _image.transform.position;
-            _distanceAway = _canvasRectTransform.rect.height;
+            _distanceAway = Screen.height;
+            
             //_canvas.
             //_distanceAway = _canvas.rec
         }
@@ -93,9 +98,9 @@ namespace Cirrus.Circuit.Transitions
             
             yield return new WaitForSeconds(_transitionHeldTime);
 
-            iTween.MoveTo(_image.gameObject, _startPosition + Vector3.up * _distanceDown, _anticipationTime);
+            //iTween.MoveTo(_image.gameObject, _startPosition + Vector3.up * _distanceDown, _anticipationTime);
 
-            yield return new WaitForSeconds(_anticipationHeldTime);
+            //yield return new WaitForSeconds(_anticipationHeldTime);
 
             iTween.MoveTo(_image.gameObject, _startPosition + Vector3.up * _distanceAway, _transitionUpTime);
 

@@ -113,6 +113,9 @@ namespace Cirrus.Circuit.World
             _mutex = new Mutex(false);
             _objects = new BaseObject[_dimension.x, _dimension.y, _dimension.z];
 
+            _game.OnNewRoundHandler += OnNewRound;
+            //_game.On
+
             foreach (Door door in _doors)
             {
                 if (door == null)
@@ -123,6 +126,14 @@ namespace Cirrus.Circuit.World
                 //Game.Instance.Lobby.Controllers[(int)door.PlayerNumber].On
             }            
         }
+
+        public void OnNewRound(Round round)
+        {
+            round.OnRoundBeginHandler += OnBeginRound;
+            round.OnRoundEndHandler += OnRoundEnd;
+            //round. += OnRound
+        }
+
 
         public Vector3Int WorldToGrid(Vector3 pos)
         {
@@ -263,7 +274,7 @@ namespace Cirrus.Circuit.World
                 if (obj == null)
                     continue;
 
-                obj.OnRoundBegin();
+                //obj.OnRoundBegin();
 
                 obj.TryChangeState(BaseObject.State.Idle);
             }

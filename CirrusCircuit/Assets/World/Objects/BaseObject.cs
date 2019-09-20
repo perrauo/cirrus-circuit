@@ -176,11 +176,11 @@ namespace Cirrus.Circuit.World.Objects
             FSMUpdate();
         }
 
-        public void OnDestroy()
-        {
-            if(_level != null)
-            _level.UnregisterObject(this);
-        }
+        //public void OnDestroy()
+        //{
+        //    if(_level != null)
+        //    _level.UnregisterObject(this);
+        //}
 
 
         public bool TryChangeState(FSM.State state, params object[] args)
@@ -382,12 +382,7 @@ namespace Cirrus.Circuit.World.Objects
                     switch (transition)
                     {
                         case State.Disabled:
-                        case State.LevelSelect:
-                        case State.Entering:
-                        case State.Falling:
                         case State.Idle:
-                        case State.RampIdle:
-                        case State.Moving:
                             destination = transition;
                             return true;
                     }

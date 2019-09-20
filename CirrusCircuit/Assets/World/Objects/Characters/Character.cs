@@ -88,6 +88,11 @@ namespace Cirrus.Circuit.World.Objects.Characters
             //_controller.SetCallbacks(this);
         }
 
+        public override bool TryChangeState(State transition, params object[] args)
+        {
+            return base.TryChangeState(transition, args);
+        }
+
         public override void OnRoundEnd()
         {
             // Remove callbacks??

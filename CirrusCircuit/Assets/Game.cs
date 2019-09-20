@@ -752,7 +752,7 @@ namespace Cirrus.Circuit
 
                     OnNewRoundHandler?.Invoke(_round);                    
 
-                    _round.OnRoundBeginHandler += _currentLevel.OnBeginRound;
+                    //_round.OnRoundBeginHandler += _currentLevel.OnBeginRound;
 
                     _round.OnRoundEndHandler += OnRoundEnd;
 
@@ -765,15 +765,16 @@ namespace Cirrus.Circuit
                     while (!placeholders.IsEmpty())
                     {
                         Placeholder placeholder = placeholders.RemoveRandom();
+ 
                         _controllers[i]._character = _controllers[i]
                             ._characterResource.Create(_currentLevel.GridToWorld(placeholder._gridPosition), _currentLevel.transform);
 
                         _controllers[i]._character._level = _currentLevel;
 
-                        Destroy(placeholder.gameObject);
-
                         _controllers[i]._character.TryChangeState(Character.State.Disabled);
                         i++;
+
+                        Destroy(placeholder.gameObject);
                     }
 
                     return true;
