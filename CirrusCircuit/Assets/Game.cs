@@ -24,6 +24,8 @@ namespace Cirrus.Circuit
 
     public delegate void OnMenu(bool enabled = true);
 
+    public delegate void OnPodium();
+
     public delegate void OnNewRound(Round round);
 
     public delegate void OnLevelSelected(World.Level level, int step);
@@ -35,6 +37,8 @@ namespace Cirrus.Circuit
         #region Game
 
         public World.Objects.Door.OnScoreValueAdded OnScoreValueAddedHandler;
+
+        public OnPodium OnPodiumHandler;
 
         public OnNewRound OnNewRoundHandler;
 
@@ -234,7 +238,6 @@ namespace Cirrus.Circuit
             _targetSizeCamera = _selectedLevel.CameraSize;
 
             OnLevelSelectedHandler?.Invoke(_selectedLevel, step);
-
             
         }
 
@@ -301,6 +304,19 @@ namespace Cirrus.Circuit
 
         private void OnTransitionTimeOut()
         {
+            switch (_transition)
+            {
+                case State.Podium:
+                case State.FinalPodium:
+                    Destroy(_currentLevel.gameObject);
+                    break;
+
+                case State.Round:
+                    //case State.FinalPodium:
+                    _podium.gameObject.SetActive(false);
+                    break;
+            }
+
             TryChangeState(_transition);
         }
 
@@ -341,7 +357,6 @@ namespace Cirrus.Circuit
             {
                 _controllers[i]._character = _currentLevel._characters[i];
             }
-
         }
 
         #endregion
@@ -365,7 +380,7 @@ namespace Cirrus.Circuit
         }
 
         [SerializeField]
-        public State _state = Game.State.LevelSelection;
+        public State _state = State.LevelSelection;
 
         public void FSMFixedUpdate()
         {
@@ -402,7 +417,6 @@ namespace Cirrus.Circuit
                 case State.Score:
                 case State.Podium:
                 case State.FinalPodium:
-
                     break;
             }
         }
@@ -424,6 +438,7 @@ namespace Cirrus.Circuit
             {
                 case State.Menu:
                     break;
+
             }
         }
 
@@ -436,17 +451,17 @@ namespace Cirrus.Circuit
 
                     switch (transition)
                     {
+                        case State.Round:
                         case State.Menu:
                         case State.CharacterSelection:
                         case State.Transition:
-                        case State.Round:
+                        //case State.Round:
                         case State.Begin:
                         case State.WaitingNextRound:
                         case State.LevelSelection:
                         case State.Score:
                         case State.Podium:
                         case State.FinalPodium:
-
                             destination = transition;
                             return true;
                     }
@@ -456,10 +471,11 @@ namespace Cirrus.Circuit
 
                     switch (transition)
                     {
+                        case State.Round:
                         case State.Menu:
                         case State.CharacterSelection:
                         case State.Transition:
-                        case State.Round:
+                        //case State.Round:
                         case State.Begin:
                         case State.WaitingNextRound:
                         case State.LevelSelection:
@@ -476,10 +492,11 @@ namespace Cirrus.Circuit
 
                     switch (transition)
                     {
+                        case State.Round:
                         case State.Menu:
                         case State.CharacterSelection:
                         case State.Transition:
-                        case State.Round:
+                        //case State.Round:
                         case State.Begin:
                         case State.WaitingNextRound:
                         case State.LevelSelection:
@@ -495,6 +512,7 @@ namespace Cirrus.Circuit
                 case State.Transition:
                     switch (transition)
                     {
+                        case State.Round:
                         case State.Menu:
                         case State.CharacterSelection:
                         case State.Transition:
@@ -551,12 +569,13 @@ namespace Cirrus.Circuit
                 case State.WaitingNextRound:
                     switch (transition)
                     {
+                        case State.Round:
                         case State.Menu:
                         case State.CharacterSelection:
                         case State.Begin:
                         case State.Transition:
                         case State.LevelSelection:
-                        case State.Round:
+                        //case State.Round:
                         case State.Podium:
                         case State.FinalPodium:
 
@@ -621,8 +640,6 @@ namespace Cirrus.Circuit
                     return true;               
 
                 case State.Begin:
-                    OnLevelSelectHandler.Invoke(false);
-                    _podium.gameObject.SetActive(true);
                     _podium.Clear();
 
                     foreach (var c in _controllers)
@@ -630,11 +647,12 @@ namespace Cirrus.Circuit
                         if (c == null)
                             continue;
 
-                        _podium.Add(c, c._character);
+                        _podium.Add(c, c._characterResource);
                     }
 
-
                     _podium.gameObject.SetActive(false);
+
+                    OnLevelSelectHandler.Invoke(false);
 
                     foreach (World.Level level in _levels)
                     {
@@ -660,37 +678,6 @@ namespace Cirrus.Circuit
                     _transitionTimer.Start();
 
                     _transitionEffect.Perform();
-
-                    switch (_transition)
-                    {
-                        // From level to podium
-                        case State.FinalPodium:
-                        case State.Podium:
-
-                            _podium.gameObject.SetActive(true);
-
-                            _currentLevel.TargetPosition = Vector3.zero + Vector3.right * _transitionDistance;
-                            _currentLevel._positionSpeed = _podiumTransitionSpeed;
-
-                            _podium.transform.position = Vector3.zero + Vector3.right * -_transitionDistance;
-                            _podium.TargetPosition = Vector3.zero;                            
-
-                            break;
-
-                        // From podium to level
-                        case State.Round:
-
-                            _podium.transform.position = Vector3.zero + Vector3.right * _transitionDistance;
-                            _podium.TargetPosition = Vector3.zero;
-
-                            _currentLevel.TargetPosition = Vector3.zero + Vector3.right * -_transitionDistance;
-                            _currentLevel._positionSpeed = _podiumTransitionSpeed;
-
-                            break;
-
-                        case State.LevelSelection:
-                            break;
-                    }
                                        
 
                     _state = target;
@@ -698,6 +685,10 @@ namespace Cirrus.Circuit
 
 
                 case State.Podium:
+
+                    _podium.gameObject.SetActive(true);
+
+                    OnPodiumHandler?.Invoke();
 
                     _state = target;
                     return true;

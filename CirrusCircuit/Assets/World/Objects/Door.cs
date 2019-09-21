@@ -194,8 +194,6 @@ namespace Cirrus.Circuit.World.Objects
             yield return null;
         }
 
-
-
         public void OnGemEntered(Gem gem)
         {
             if (_previousGem != null &&
@@ -266,13 +264,19 @@ namespace Cirrus.Circuit.World.Objects
 
                 if (_multiplier <= 1)
                 {
+                    if(_textMultiplier)
                     _textMultiplier.text = "";
-                    _progressBar.gameObject.SetActive(false);
+
+                    if(_progressBar)
+                        _progressBar.gameObject.SetActive(false);
                 }
                 else
                 {
+                    if(_textMultiplier)
                     _textMultiplier.text = " x" + _multiplier.ToString() + "";
-                    _progressBar.gameObject.SetActive(true);
+
+                    if (_progressBar)
+                        _progressBar.gameObject.SetActive(true);
                 }
             }
 
@@ -293,11 +297,13 @@ namespace Cirrus.Circuit.World.Objects
 
                 if (_value <= 0)
                 {
-                    _textValue.text = "";
+                    if(_textValue)
+                        _textValue.text = "";
                 }
                 else
                 {
-                    _textValue.text = " +" + _value.ToString();
+                    if (_textValue)
+                        _textValue.text = " +" + _value.ToString();
                 }
                 
             }

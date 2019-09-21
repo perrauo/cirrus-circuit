@@ -12,6 +12,9 @@ namespace Cirrus.Circuit
         public OnPodiumFinished OnPodiumFinishedHandler;
 
         [SerializeField]
+        private Game _game;
+
+        [SerializeField]
         private Platform _platformTemplate;
 
         [SerializeField]
@@ -32,7 +35,7 @@ namespace Cirrus.Circuit
         private Timer _timer;
 
         [SerializeField]
-        private float _timeTransitionTo = 2f;
+        private float _timeTransition = 2f;
 
         [SerializeField]
         private float _timeTransitionFrom = 2f;
@@ -40,18 +43,18 @@ namespace Cirrus.Circuit
         [SerializeField]
         public float _positionSpeed = 0.4f;
 
-        bool _init = false;
-
         private int _platformFinishedCount = 0;
 
-
-        public void OnEnable()
+        public void OnValidate()
         {
-            if (!_init)
-            {
-                _init = true;
-                _timer = new Timer(_timeTransitionTo, start: false, repeat: false);
-            }
+            if (_game == null)
+                _game = FindObjectOfType<Game>();
+        }
+
+        public void Awake()
+        {
+            _timer = new Timer(_timeTransition, start: false, repeat: false);
+            _game.OnPodiumHandler += OnPodium;
         }
 
         public void FixedUpdate()
@@ -82,7 +85,13 @@ namespace Cirrus.Circuit
 
         public void OnRound(Round round)
         {
-            round.OnRoundEndHandler += OnRoundEnd;
+            //round.OnRoundEndHandler += OnRoundEnd;
+        }
+
+        public void OnPodium()
+        {
+            _platformFinishedCount = 0;
+            _timer.Start();
         }
 
         public void Clear()
@@ -96,34 +105,26 @@ namespace Cirrus.Circuit
             }
 
             _platforms.Clear();
-
             _characters.Clear();
         }
 
-        public void Add(Controls.Controller ctrl, World.Objects.Characters.Character character)
+        public void Add(Controls.Controller ctrl, World.Objects.Characters.Resource characterResource)
         {
-            Platform platform = Instantiate(
-                _platformTemplate.gameObject,
+            Platform platform = _platformTemplate.Create(
                 _platformsParent.transform.position + Vector3.right * _platforms.Count * _platformOffset,
-                Quaternion.identity,
-                _platformsParent.transform).GetComponent<Platform>();
-
-            _characters.Add(character);
-
-            platform.Character = character;
-            platform.Controller = ctrl;
-            _platforms.Add(platform);
-
+                _platformsParent.transform,
+                ctrl);
             _timer.OnTimeLimitHandler += platform.OnTransitionToTimeOut;
+            _platforms.Add(platform);
             platform.OnPlatformFinishedHandler += OnPlatformFinished;
-        }
 
-        public void OnRoundEnd()
-        {
-            _platformFinishedCount = 0;
-            _timer.Start();
+            World.Objects.Characters.Character character = 
+                characterResource.Create(platform._characterAnchor.transform.position, 
+                platform._characterAnchor.transform);
+            _characters.Add(character);
+            character.transform.rotation = platform._visual.Parent.transform.rotation;
+            platform.Character = character;
         }
-
 
         public void OnPlatformFinished()
         {

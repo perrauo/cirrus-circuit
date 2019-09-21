@@ -262,7 +262,6 @@ namespace Cirrus.Circuit.World
                     continue;
 
                 obj.TryChangeState(BaseObject.State.Disabled);
-
                 //OnRoun obj.OnRoundEnd;
             }
         }

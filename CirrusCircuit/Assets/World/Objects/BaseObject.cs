@@ -183,10 +183,10 @@ namespace Cirrus.Circuit.World.Objects
         //}
 
 
-        public bool TryChangeState(FSM.State state, params object[] args)
-        {    
-            return TryChangeState(state, args);
-        }
+        //public bool TryChangeState(FSM.State state, params object[] args)
+        //{    
+        //    return TryChangeState(state, args);
+        //}
 
         public virtual bool TryMove(Vector3Int step, BaseObject incoming = null)
         {
@@ -365,6 +365,8 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual bool TryChangeState(State transition, params object[] args)
         {
+            //Debug.Log(transition);
+
             if (TryTransition(transition, out State destination))
             {
                 return TryFinishChangeState(destination, args);
@@ -381,6 +383,7 @@ namespace Cirrus.Circuit.World.Objects
 
                     switch (transition)
                     {
+                        case State.LevelSelect:
                         case State.Disabled:
                         case State.Idle:
                             destination = transition;

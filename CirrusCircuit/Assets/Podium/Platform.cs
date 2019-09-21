@@ -10,23 +10,29 @@ namespace Cirrus.Circuit
     {
         public OnPlatformFinished OnPlatformFinishedHandler;
 
+        [SerializeField]
+        private UnityEngine.UI.Text _text;
+
         private float _score;
 
-        [SerializeField]
-        public Controls.Controller _controller;
+        private float _maxScore;
 
-        public Controls.Controller Controller
-        {
-            get
-            {
-                return _controller;
-            }
+        //[SerializeField]
+        //public Controls.Controller _controller;
 
-            set
-            {
-                _controller = value;
-            }
-        }
+        //public Controls.Controller Controller
+        //{
+        //    get
+        //    {
+        //        return _controller;
+        //    }
+
+        //    set
+        //    {
+        //        _controller = value;
+        //    }
+        //}
+        private Controls.Controller _controller;
 
         [SerializeField]
         public GameObject _characterAnchor;
@@ -60,83 +66,64 @@ namespace Cirrus.Circuit
         [SerializeField]
         private float _growthTime = 2f;
 
-        private Timer _finishedTimer = null;
+        private Timer _finishedTimer = null;        
 
-
-        private bool _init = false;
-
-        public void OnEnable()
+        public void Awake()
         {
-            if (!_init)
-            {
-                _finishedTimer = new Timer(_growthTime, start: false, repeat: false);
-                _finishedTimer.OnTimeLimitHandler += OnPlatformFinishedTimeOut;
-            }            
+            _finishedTimer = new Timer(_growthTime, start: false, repeat: false);
+            _finishedTimer.OnTimeLimitHandler += OnPlatformFinishedTimeOut;
+        }
+
+        public void Update()
+        {
+            _score = Mathf.Lerp(_score, _maxScore, _finishedTimer.Time / _growthTime);
+            _text.text = _score.ToString("n1");
         }
 
 
-        public float Score
-        {
-            get
-            {
-                return _score;
-            }
 
-            set
-            {
-                _score = value;
-                _finishedTimer.Start();
-                StartCoroutine(Grow());
-            }
-
-        }
-
-        [SerializeField]
-        public bool _transition = true;
-
-        [SerializeField]
-        private float _transitionSpeed = 0.05f;
-
-        
         public void FixedUpdate()
         {
-            if (_transition)
-            {
-
-            }
-            else
-            {
-                _character.Object.transform.position = _characterAnchor.transform.position;
-            }
+            _character.Object.transform.position = _characterAnchor.transform.position;        
         }
 
         public void OnTransitionToTimeOut()
         {
-            _transition = false;
-            Score = _controller.Score;
-
+            _maxScore = _controller.Score;
+            _finishedTimer.Start();
+            Grow();
         }
 
-        public IEnumerator Grow()
+        public Platform Create(Vector3 position, Transform parent, Controls.Controller controller)
+        {
+            var val = Instantiate(
+                gameObject,
+                position,
+                Quaternion.identity,
+                parent).GetComponent<Platform>();
+
+            //val._maxScore = score;
+            val._controller = controller;
+            return val;
+        }
+
+        public void Grow()
         {
             iTween.ScaleAdd(
                 _visual.Parent.gameObject, 
-                new Vector3(0, _score * _growthFactor, 0), 
+                new Vector3(0, _maxScore * _growthFactor, 0), 
                 _growthTime);
 
             iTween.MoveAdd(
                 _visual.Parent.gameObject, 
-                new Vector3(0, _score * _growthFactor, 0), 
+                new Vector3(0, _maxScore * _growthFactor, 0), 
                 _growthTime);
 
             iTween.MoveAdd(
                 _characterAnchor.gameObject, 
-                new Vector3(0, _score * 2 * _growthFactor, 0), 
+                new Vector3(0, _maxScore * 2 * _growthFactor, 0), 
                 _growthTime);
-
-            yield return null;
         }
-
 
         public void OnPlatformFinishedTimeOut()
         {
