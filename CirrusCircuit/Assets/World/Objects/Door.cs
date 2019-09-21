@@ -9,7 +9,7 @@ namespace Cirrus.Circuit.World.Objects
     public class Door : BaseObject
     {
         public delegate void OnScoreValueAdded(
-        Controls.PlayerNumber playerNumber,
+        int playerNumber,
         float score
         );
 
@@ -197,7 +197,7 @@ namespace Cirrus.Circuit.World.Objects
         public void OnGemEntered(Gem gem)
         {
             if (_previousGem != null &&
-                gem.PlayerNumber == _previousGem.PlayerNumber &&
+                gem.Number == _previousGem.Number &&
                 gem.Type == _previousGem.Type)
             {
                 _multiplierTimer.Start();
@@ -220,7 +220,7 @@ namespace Cirrus.Circuit.World.Objects
 
             StartCoroutine(PunchValue());
 
-            OnScoreValueAddedHandler?.Invoke(PlayerNumber, Value);
+            OnScoreValueAddedHandler?.Invoke(Number, Value);
 
             _previousGem = gem;
 

@@ -67,5 +67,56 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4001282745868766237, guid: bf4551c291cbae542942abbc6d0da8b0,
+        type: 3}
+      propertyPath: PlayerNumber
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4001282745868766237, guid: bf4551c291cbae542942abbc6d0da8b0,
+        type: 3}
+      propertyPath: _color.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4001282745868766237, guid: bf4551c291cbae542942abbc6d0da8b0,
+        type: 3}
+      propertyPath: _color.g
+      value: 0.70026994
+      objectReference: {fileID: 0}
+    - target: {fileID: 4001282745868766237, guid: bf4551c291cbae542942abbc6d0da8b0,
+        type: 3}
+      propertyPath: _color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4001282745868766237, guid: bf4551c291cbae542942abbc6d0da8b0,
+        type: 3}
+      propertyPath: Number
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6557845487496652356, guid: bf4551c291cbae542942abbc6d0da8b0,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: aad6be46181bf6e409449ed74f834a7e, type: 2}
+    - target: {fileID: 535149460631041750, guid: bf4551c291cbae542942abbc6d0da8b0,
+        type: 3}
+      propertyPath: _color.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 535149460631041750, guid: bf4551c291cbae542942abbc6d0da8b0,
+        type: 3}
+      propertyPath: _color.g
+      value: 0.70026994
+      objectReference: {fileID: 0}
+    - target: {fileID: 6715603316303412919, guid: bf4551c291cbae542942abbc6d0da8b0,
+        type: 3}
+      propertyPath: Parent
+      value: 
+      objectReference: {fileID: 3082171778791303826}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf4551c291cbae542942abbc6d0da8b0, type: 3}
+--- !u!1 &3082171778791303826 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3848309428402309546, guid: bf4551c291cbae542942abbc6d0da8b0,
+    type: 3}
+  m_PrefabInstance: {fileID: 2279353498474783544}
+  m_PrefabAsset: {fileID: 0}

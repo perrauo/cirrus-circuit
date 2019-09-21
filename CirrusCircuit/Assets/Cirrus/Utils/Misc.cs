@@ -135,14 +135,6 @@ namespace Cirrus.Utils
             return (UnityEngine.Mathf.Abs(a - b) < tolerance);
         }
 
-        public static int Wrap(int x, int x_min, int x_max)
-        {
-            if (x < x_min)
-                return x_max - (x_min - x) % (x_max - x_min);
-            else
-                return x_min + (x - x_min) % (x_max - x_min);
-        }
-
         public static float Normalize(float value, float min, float max, float zero)
         {
             if (zero < min)

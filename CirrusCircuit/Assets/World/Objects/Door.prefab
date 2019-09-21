@@ -60,7 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.70026994, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -151,6 +151,7 @@ MonoBehaviour:
   _game: {fileID: 0}
   _level: {fileID: 0}
   _visual: {fileID: 3324398872031673421}
+  _fallbackColors: []
   _object: {fileID: 6830423953863144236}
   _stepSize: 1
   _stepSpeed: 0.2
@@ -163,8 +164,12 @@ MonoBehaviour:
   _targetPosition: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 0, y: 0, z: 0}
   _targetScale: 1
-  PlayerNumber: 1
-  _color: {r: 0, g: 0.70026994, b: 1, a: 1}
+  Number: 0
+  _color: {r: 1, g: 0, b: 0, a: 1}
+  _nextColor: {r: 0, g: 0, b: 0, a: 0}
+  _nextColorTime: 2
+  _nextColorIndex: 0
+  _nextColorSpeed: 0.05
   _state: 3
   _progressBar: {fileID: 6469718891972708306}
   _comboRequired: 2
@@ -361,7 +366,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.70026994, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -624,10 +629,35 @@ PrefabInstance:
       propertyPath: _object
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2786749743167607363, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2260829504269684254, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5639237576735248665, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2929681681481360225, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: Number
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2929681681481360225, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: _color.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2929681681481360225, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: _color.g
+      value: 0.70026994
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 06d9e1aa028280e4c97369fef81e3fdc, type: 3}
@@ -658,17 +688,17 @@ PrefabInstance:
     - target: {fileID: 2921761538098489601, guid: 2577280a4badf704192af0f188aed622,
         type: 3}
       propertyPath: defaultColor.r
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2921761538098489601, guid: 2577280a4badf704192af0f188aed622,
         type: 3}
       propertyPath: defaultColor.g
-      value: 0.70026994
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2921761538098489601, guid: 2577280a4badf704192af0f188aed622,
         type: 3}
       propertyPath: defaultColor.b
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2921761538098489601, guid: 2577280a4badf704192af0f188aed622,
         type: 3}

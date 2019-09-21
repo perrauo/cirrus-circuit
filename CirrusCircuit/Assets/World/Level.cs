@@ -6,12 +6,13 @@ using Cirrus.Circuit.World.Objects;
 using System;
 
 using System.Threading;
+using Cirrus.Extensions;
 
 namespace Cirrus.Circuit.World
 {
     public class Level : MonoBehaviour
     {
-        public Door.OnScoreValueAdded OnScoreValueAdded;
+        public Door.OnScoreValueAdded OnScoreValueAddedHandler;
 
         [SerializeField]
         private Game _game;
@@ -131,7 +132,27 @@ namespace Cirrus.Circuit.World
         {
             round.OnRoundBeginHandler += OnBeginRound;
             round.OnRoundEndHandler += OnRoundEnd;
-            //round. += OnRound
+
+            foreach (BaseObject obj in _objects)
+            {
+                if (obj == null)
+                    continue;
+
+                obj.TryChangeState(BaseObject.State.Disabled);
+
+                if (obj is Objects.Characters.Character)
+                    continue;
+
+                foreach (Controls.Controller ctrl in _game._controllers)
+                {
+                    if (obj.Number == ctrl._assignedNumber)
+                    {
+                        obj.Number = ctrl.Number;
+                        obj.UpdateColor();
+                        break;
+                    }
+                }
+            }
         }
 
 
@@ -154,13 +175,38 @@ namespace Cirrus.Circuit.World
         public bool IsWithinBounds(Vector3Int pos)
         {
             return
-                (pos.x > 0 && pos.x < _dimension.x &&
-                pos.y > 0 && pos.y < _dimension.y &&
-                pos.z > 0 && pos.z < _dimension.z);
+                (pos.x >= 0 && pos.x < _dimension.x &&
+                pos.y >= 0 && pos.y < _dimension.y &&
+                pos.z >= 0 && pos.z < _dimension.z);
+        }
+
+        public bool IsWithinBoundsX(int pos)
+        {
+            return pos >= 0 && pos < _dimension.x;
+        }
+
+        public bool IsWithinBoundsY(int pos)
+        {
+            return pos >= 0 && pos < _dimension.y;
+        }
+
+        public bool IsWithinBoundsZ(int pos)
+        {
+            return pos >= 0 && pos < _dimension.z;
+        }
+
+
+        public Vector3Int GetOverflow(Vector3Int pos)
+        {
+            return _dimension - pos;
         }
 
         public bool TryGet(Vector3Int pos, out BaseObject obj)
         {
+            obj = null;
+            if (!IsWithinBounds(pos))
+                return false;
+
             _mutex.WaitOne();
             obj = _objects[pos.x, pos.y, pos.z];
             _mutex.ReleaseMutex();
@@ -175,53 +221,14 @@ namespace Cirrus.Circuit.World
         }
 
 
-        public bool TryMove(BaseObject source, Vector3Int step, ref Vector3 offset, out BaseObject destination)
+        private bool InnerTryMove(BaseObject source, Vector3Int position, Vector3Int direction, ref Vector3 offset, out BaseObject destination)
         {
-            destination = null;
-
-            Vector3Int direction = step;
-            direction.y = 0;
-
-            if (IsWithinBounds(source._gridPosition + step))
+            if (TryGet(position, out destination))
             {
-                if (TryGet(source._gridPosition + step, out destination))
+                if (destination.TryMove(direction, source))
                 {
-                    if (destination.TryMove(direction, source))
-                    {
-                        destination = null;
+                    destination = null;
 
-                        // Only set occupying tile if not visiting
-                        // Only set occupying tile if not visiting
-                        if (source._destination == null)
-                        {
-                            Set(source._gridPosition, null);
-                        }
-                        else
-                        {
-                            source._destination._user = null;
-                        }
-
-                        Set(source._gridPosition + step, source);
-                        return true;
-
-                    }
-                    else if (destination.TryEnter(direction, ref offset, source))
-                    {
-                        // Only set occupying tile if not visiting
-                        if (source._destination == null)
-                        {
-                            Set(source._gridPosition, null);
-                        }
-                        else
-                        {
-                            source._destination._user = null;
-                        }
-
-                        return true;
-                    }
-                }
-                else
-                {
                     // Only set occupying tile if not visiting
                     // Only set occupying tile if not visiting
                     if (source._destination == null)
@@ -233,13 +240,88 @@ namespace Cirrus.Circuit.World
                         source._destination._user = null;
                     }
 
-                    Set(source._gridPosition + step, source);
+                    Set(position, source);
+                    return true;
+
+                }
+                else if (destination.TryEnter(direction, ref offset, source))
+                {
+                    // Only set occupying tile if not visiting
+                    if (source._destination == null)
+                    {
+                        Set(source._gridPosition, null);
+                    }
+                    else
+                    {
+                        source._destination._user = null;
+                    }
+
                     return true;
                 }
+            }
+            else
+            {
+                // Only set occupying tile if not visiting
+                if (source._destination == null)
+                {
+                    Set(source._gridPosition, null);
+                }
+                else
+                {
+                    source._destination._user = null;
+                }
+
+                Set(position, source);
+                return true;
             }
 
             return false;
         }
+
+        public bool TryMove(BaseObject source, Vector3Int step, ref Vector3 offset, out Vector3Int position, out BaseObject destination)
+        {
+            destination = null;
+
+            Vector3Int direction = step;//.SetXYZ(step.x, 0, step.z);
+
+            position = source._gridPosition + step;
+
+            if (IsWithinBounds(position))
+            {
+                return InnerTryMove(source, position, direction, ref offset, out destination);
+            }
+
+            return false;
+        }
+
+
+        public bool TryFallThrough(BaseObject source, Vector3Int step, ref Vector3 offset, out Vector3Int position, out BaseObject destination)
+        {
+            destination = null;
+
+            Vector3Int direction = step;//.SetXYZ(step.x, 0, step.z);
+
+            position = source._gridPosition + step;
+
+            if(!IsWithinBoundsY(position.y))
+            {
+                position = new Vector3Int(
+                    UnityEngine.Random.Range(_offset.x, _dimension.x - _offset.x - 2),
+                    _dimension.y-1,
+                    UnityEngine.Random.Range(_offset.x, _dimension.z - _offset.z - 2));
+
+                return InnerTryMove(source, position, direction, ref offset, out destination);
+
+                //position = new Vector3Int(
+                //   Utils.Math.Mod(position.x, _dimension.x),
+                //   Utils.Math.Mod(position.y, _dimension.y),
+                //   Utils.Math.Mod(position.z, _dimension.z));
+            }
+
+            return false;
+        }
+
+
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
         {
@@ -254,17 +336,17 @@ namespace Cirrus.Circuit.World
         }
 
 
-        public void OnRound(Round round)
-        {
-            foreach (BaseObject obj in _objects)
-            {
-                if (obj == null)
-                    continue;
+        //public void OnRound(Round round)
+        //{
+        //    foreach (BaseObject obj in _objects)
+        //    {
+        //        if (obj == null)
+        //            continue;
 
-                obj.TryChangeState(BaseObject.State.Disabled);
-                //OnRoun obj.OnRoundEnd;
-            }
-        }
+        //        obj.TryChangeState(BaseObject.State.Disabled);
+        //        //OnRoun obj.OnRoundEnd;
+        //    }
+        //}
 
         public void OnBeginRound(int number)
         {
@@ -292,9 +374,9 @@ namespace Cirrus.Circuit.World
             }
         }
 
-        private void OnGemEntered(Controls.PlayerNumber player, float value)
+        private void OnGemEntered(int player, float value)
         {
-            OnScoreValueAdded?.Invoke(player, value);
+            OnScoreValueAddedHandler?.Invoke(player, value);
         }
         
         public void OnLevelSelect()

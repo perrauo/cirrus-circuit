@@ -8,8 +8,7 @@ namespace Cirrus.Extensions
         // Use this for initialization
         public static T RemoveRandom<T>(this System.Collections.Generic.List<T> list)
         {
-            var random = new System.Random();
-            int index = random.Next(list.Count);
+            int index = UnityEngine.Random.Range(0, list.Count);
             var val = list[index];
             list.RemoveAt(index);
             return val;

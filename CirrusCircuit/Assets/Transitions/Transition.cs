@@ -5,6 +5,9 @@ namespace Cirrus.Circuit.Transitions
 {
     public class Transition : MonoBehaviour
     {
+        //[SerializeField]
+        //private Game _game;
+
         [SerializeField]
         private UnityEngine.UI.Image _image;
 
@@ -58,8 +61,10 @@ namespace Cirrus.Circuit.Transitions
         public void Awake()
         {
             // Callback screen resolution
-            _startPosition = _image.transform.position;
+            _startPosition = Vector3.zero + new Vector3(Screen.width/2, Screen.height / 2);
             _distanceAway = Screen.height;
+
+            _game.OnScreenResizedHandler += OnScreenResize;
             
             //_canvas.
             //_distanceAway = _canvas.rec
@@ -69,6 +74,17 @@ namespace Cirrus.Circuit.Transitions
         {
             //StartCoroutine(DoStart());
         }
+
+
+        public void OnScreenResize()
+        {
+            _startPosition = Vector3.zero + new Vector3(Screen.width / 2, Screen.height / 2);
+            _distanceAway = Screen.height;
+
+            _canvasRectTransform.sizeDelta = new Vector2(Screen.width, Screen.height);
+        }
+
+
 
         private bool _enabled = false;
 

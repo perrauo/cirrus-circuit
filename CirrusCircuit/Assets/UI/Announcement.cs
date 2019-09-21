@@ -19,7 +19,7 @@ namespace Cirrus.Circuit.UI
                 _game = FindObjectOfType<Game>();
         }
 
-        public int Number {
+        public int RoundNumber {
             get {
                 return _number;
             }
@@ -33,6 +33,27 @@ namespace Cirrus.Circuit.UI
             }
 
         }
+
+        private string _message = "";
+
+        public string Message
+        {
+            get
+            {
+                return _message;
+            }
+
+            set
+            {
+                Enabled = true;
+                _message = value;
+                _text.text = _message;
+                _timer.Start();
+            }
+
+        }
+
+
 
         private bool _enabled = false;
 
@@ -78,7 +99,7 @@ namespace Cirrus.Circuit.UI
 
         public void OnIntermission(int count)
         {
-            Number = count;
+            RoundNumber = count;
         }
 
         public void OnRoundEnd()

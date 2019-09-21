@@ -81,7 +81,7 @@ namespace Cirrus.Circuit.World.Objects
         public float _targetScale = 1;
 
         [SerializeField]
-        public Controls.PlayerNumber PlayerNumber;
+        public int Number;
 
         [SerializeField]
         protected UnityEngine.Color _color;
@@ -133,15 +133,15 @@ namespace Cirrus.Circuit.World.Objects
             if (_game == null)
                 _game = FindObjectOfType<Game>();
 
-            if(_game != null)
-                Color = _game.Lobby.GetColor(PlayerNumber);
+            if(_game.Lobby != null)
+                Color = _game.Lobby.GetColor(Number);
             
         }
 
         // TODO: will not be called on disabled level
         protected virtual void Awake()
         {
-            _nextColorIndex = (int)PlayerNumber;
+            _nextColorIndex = Number;
             _nextColorTimer = new Timer(_nextColorTime, start: false, repeat: true);
             _nextColorTimer.OnTimeLimitHandler += OnNextColorTimeOut;
 
@@ -176,17 +176,10 @@ namespace Cirrus.Circuit.World.Objects
             FSMUpdate();
         }
 
-        //public void OnDestroy()
-        //{
-        //    if(_level != null)
-        //    _level.UnregisterObject(this);
-        //}
-
-
-        //public bool TryChangeState(FSM.State state, params object[] args)
-        //{    
-        //    return TryChangeState(state, args);
-        //}
+        public void UpdateColor()
+        {
+            Color = _game._controllers[Number].Color;
+        }
 
         public virtual bool TryMove(Vector3Int step, BaseObject incoming = null)
         {
@@ -228,18 +221,17 @@ namespace Cirrus.Circuit.World.Objects
                 if (_fallbackColors.Length != 0)
                 {
                     _nextColorIndex = _nextColorIndex + 1;
-                    _nextColorIndex = Utils.Mathf.Wrap(_nextColorIndex, 0, 2);
+                    _nextColorIndex = Utils.Math.Wrap(_nextColorIndex, 0, 2);
                     _nextColor = _fallbackColors[_nextColorIndex];
                 }
             }
             else
             {
-
                 if (_game._controllers.Count == 0)
                     return;
 
                 _nextColorIndex = _nextColorIndex + 1;
-                _nextColorIndex = Utils.Mathf.Wrap(_nextColorIndex, 0, _game._controllers.Count);
+                _nextColorIndex = Utils.Math.Wrap(_nextColorIndex, 0, _game._controllers.Count);
                 _nextColor = _game._controllers[_nextColorIndex].Color;
             }
         }
@@ -285,7 +277,7 @@ namespace Cirrus.Circuit.World.Objects
                 case State.LevelSelect:
                     //Color = 
                     //Color = Fixed
-                    Color = UnityEngine.Color.Lerp(Color, _nextColor, _nextColorSpeed);
+                    Color = UnityEngine.Color.Lerp(_color, _nextColor, _nextColorSpeed);
 
                     break;
 
@@ -507,6 +499,7 @@ namespace Cirrus.Circuit.World.Objects
         protected virtual bool TryFinishChangeState(State target, params object[] args)
         {
             Vector3Int previousGridPosition = _gridPosition;
+            Vector3Int newGridPosition = Vector3Int.zero;
             Vector3Int step;
             BaseObject incoming  = null;
             BaseObject destination;
@@ -540,18 +533,40 @@ namespace Cirrus.Circuit.World.Objects
 
                     step = (Vector3Int)args[0];
 
-                    if (_level.TryMove(this, step, ref offset, out destination))
+                    if (_level.TryMove(
+                        this,
+                        step,
+                        ref offset,
+                        out newGridPosition,
+                        out destination))
                     {
                         _destination = destination;
-                        _gridPosition += step;
+                        _gridPosition = newGridPosition;// _level.GridToWorld(newGridPosition);
                         _targetPosition = _level.GridToWorld(_gridPosition);
 
                         _state = target;
                         result = true;
                     }
+                    else if (_level.TryFallThrough(this,
+                        step,
+                        ref offset,
+                        out newGridPosition,
+                        out destination))
+                    {
+                        _destination = destination;
+                        _gridPosition = newGridPosition;// _level.GridToWorld(newGridPosition);
+                        _targetPosition = _level.GridToWorld(_gridPosition);
+                        Object.transform.position = _targetPosition; 
 
-                    _state = State.Idle;
-                    result = false;
+                        _state = target;
+                        result = true;
+                    }
+                    else
+                    {
+                        _state = State.Idle;
+                        result = false;
+                    }
+
                     break;
 
                 case State.Idle:
@@ -588,10 +603,10 @@ namespace Cirrus.Circuit.World.Objects
                         //offset -= Vector3.up * (Level.GridSize / 2);
                     }
 
-                    if (_level.TryMove(this, step + stepOffset, ref offset, out destination))
+                    if (_level.TryMove(this, step + stepOffset, ref offset, out newGridPosition, out destination))
                     {
                         _destination = destination;
-                        _gridPosition += step + stepOffset;
+                        _gridPosition = newGridPosition;
                         _targetPosition = _level.GridToWorld(_gridPosition);
                         _targetPosition += offset;
                         _direction = step;
@@ -603,14 +618,13 @@ namespace Cirrus.Circuit.World.Objects
                     break;
 
                 case State.Moving:
-
                     step = (Vector3Int)args[0];
                     incoming = (BaseObject)args[1];
 
-                    if (_level.TryMove(this, step, ref offset, out destination))
+                    if (_level.TryMove(this, step, ref offset, out newGridPosition, out destination))
                     {
                         _destination = destination;
-                        _gridPosition += step;
+                        _gridPosition = newGridPosition;
                         _targetPosition = _level.GridToWorld(_gridPosition);
                         _targetPosition += offset;
                         _direction = step;

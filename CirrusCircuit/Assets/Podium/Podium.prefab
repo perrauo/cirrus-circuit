@@ -65,6 +65,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3b9262a1e1980344bdfc60654cf09d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _game: {fileID: 0}
   _platformTemplate: {fileID: 5811594321620954908, guid: ce65645fb5fa86741872a91c9941d909,
     type: 3}
   _platformOffset: 2
@@ -72,7 +73,7 @@ MonoBehaviour:
   TargetPosition: {x: 0, y: 0, z: 0}
   _platforms: []
   _characters: []
-  _timeTransitionTo: 2
+  _timeTransition: 2
   _timeTransitionFrom: 2
   _positionSpeed: 0.4
 --- !u!1 &6085920029123701764

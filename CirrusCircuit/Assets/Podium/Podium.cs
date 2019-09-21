@@ -15,6 +15,9 @@ namespace Cirrus.Circuit
         private Game _game;
 
         [SerializeField]
+        private UI.Announcement _announcement;
+
+        [SerializeField]
         private Platform _platformTemplate;
 
         [SerializeField]
@@ -37,11 +40,19 @@ namespace Cirrus.Circuit
         [SerializeField]
         private float _timeTransition = 2f;
 
+        private Timer _finalTimer;
+
+        [SerializeField]
+        private float _timeFinal = 3f;
+
         [SerializeField]
         private float _timeTransitionFrom = 2f;
 
         [SerializeField]
         public float _positionSpeed = 0.4f;
+
+
+        private bool _isFinal = false;
 
         private int _platformFinishedCount = 0;
 
@@ -49,12 +60,20 @@ namespace Cirrus.Circuit
         {
             if (_game == null)
                 _game = FindObjectOfType<Game>();
+
+            if (_announcement == null)
+                _announcement = FindObjectOfType<UI.Announcement>();
         }
 
         public void Awake()
         {
             _timer = new Timer(_timeTransition, start: false, repeat: false);
+            _finalTimer = new Timer(_timeFinal, start: false, repeat: false);
+
+            _finalTimer.OnTimeLimitHandler += OnFinalTimeout;
+
             _game.OnPodiumHandler += OnPodium;
+            _game.OnFinalPodiumHandler += OnFinalPodium;
         }
 
         public void FixedUpdate()
@@ -90,6 +109,14 @@ namespace Cirrus.Circuit
 
         public void OnPodium()
         {
+            _isFinal = false;
+            _platformFinishedCount = 0;
+            _timer.Start();
+        }
+
+        public void OnFinalPodium()
+        {
+            _isFinal = true;
             _platformFinishedCount = 0;
             _timer.Start();
         }
@@ -101,6 +128,7 @@ namespace Cirrus.Circuit
                 if (p == null)
                     continue;
 
+                _timer.OnTimeLimitHandler -= p.OnTransitionToTimeOut;
                 Destroy(p.gameObject);
             }
 
@@ -114,6 +142,7 @@ namespace Cirrus.Circuit
                 _platformsParent.transform.position + Vector3.right * _platforms.Count * _platformOffset,
                 _platformsParent.transform,
                 ctrl);
+
             _timer.OnTimeLimitHandler += platform.OnTransitionToTimeOut;
             _platforms.Add(platform);
             platform.OnPlatformFinishedHandler += OnPlatformFinished;
@@ -124,6 +153,15 @@ namespace Cirrus.Circuit
             _characters.Add(character);
             character.transform.rotation = platform._visual.Parent.transform.rotation;
             platform.Character = character;
+
+            character.Number = ctrl.Number;
+            character.UpdateColor();
+
+        }
+
+        public void OnFinalTimeout()
+        {
+            OnPodiumFinishedHandler?.Invoke();
         }
 
         public void OnPlatformFinished()
@@ -131,8 +169,32 @@ namespace Cirrus.Circuit
             _platformFinishedCount++;
             if (_platformFinishedCount >= _platforms.Count)
             {
-                OnPodiumFinishedHandler?.Invoke();
+                if (_isFinal)
+                {
+                    Controls.Controller winner = null;
+                    float max = -99999999f;
+                    foreach (Controls.Controller ctrl in _game._controllers)
+                    {
+                        if (ctrl.Score > max)
+                        {
+                            winner = ctrl;
+                            max = ctrl.Score;
+                        }
+                    }
+
+                    if (winner != null)
+                        _announcement.Message = winner.Name + " wins!";
+
+                    _finalTimer.Start();
+                }
+                else
+                {
+
+                    OnPodiumFinishedHandler?.Invoke();
+                }
             }
         }
+
+
     }
 }

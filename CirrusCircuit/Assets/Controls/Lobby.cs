@@ -6,19 +6,6 @@ using System.Collections.Generic;
 
 namespace Cirrus.Circuit.Controls
 {
-    public enum PlayerNumber
-    {
-        One,
-        Two,
-        Three,
-        Four,
-        Five,
-        Six,
-        Seven,
-        Eight,
-        None
-    }
-
     public class Lobby : MonoBehaviour
     {
         [SerializeField]
@@ -28,20 +15,23 @@ namespace Cirrus.Circuit.Controls
         private Inputs.InputActionAsset _inputActionAsset;
 
         [SerializeField]
+        public string[] Names = { "Red", "Blue", "Yellow", "Green" };
+
+        [SerializeField]
         public Color[] Colors = new Color[4];
 
         public Controller[] Controllers;
 
         public int ControllerCount = 0;
 
-        private const int _playerMax = 8;
+        private const int _playerMax = 4;
 
-        public Color GetColor(PlayerNumber number)
+        public Color GetColor(int number)
         {
             Color color = Color.white;
-            if ((int)number < _playerMax)
+            if (number < _playerMax)
             {
-                color = Colors[(int)number];
+                color = Colors[number];
             }
 
             return color;
@@ -79,7 +69,14 @@ namespace Cirrus.Circuit.Controls
                         {
                             if (scheme.SupportsDevice(device))
                             {
-                                Controllers[ControllerCount] = new Controller(ControllerCount, Colors[ControllerCount], device, scheme);
+                                Controllers[ControllerCount] = 
+                                    new Controller(
+                                        ControllerCount, 
+                                        Names[ControllerCount], 
+                                        Colors[ControllerCount], 
+                                        device, 
+                                        scheme);
+
                                 ControllerCount++;
                             }
                         }                        

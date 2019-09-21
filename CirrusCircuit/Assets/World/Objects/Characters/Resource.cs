@@ -12,6 +12,17 @@ namespace Cirrus.Circuit.World.Objects.Characters
         [SerializeField]
         private Character CharacterTemplate;
 
+        public string Name
+        {
+            get
+            {
+                string _name = name.Substring(name.IndexOf('.') + 1);
+                _name = _name.Replace('.', ' ');
+                return _name;
+            }
+        }
+
+
         public Character Create(Vector3 position, Transform parent)
         {
             return Instantiate(

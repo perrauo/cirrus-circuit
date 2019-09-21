@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace Cirrus.Circuit
 {
-    public class Debug : MonoBehaviour
+    public class DebugTool : MonoBehaviour
     {
         [SerializeField]
         private Game _game;

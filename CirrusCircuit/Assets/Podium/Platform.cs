@@ -89,7 +89,7 @@ namespace Cirrus.Circuit
 
         public void OnTransitionToTimeOut()
         {
-            _maxScore = _controller.Score;
+            _maxScore += _controller.Score;
             _finishedTimer.Start();
             Grow();
         }
@@ -111,17 +111,17 @@ namespace Cirrus.Circuit
         {
             iTween.ScaleAdd(
                 _visual.Parent.gameObject, 
-                new Vector3(0, _maxScore * _growthFactor, 0), 
+                new Vector3(0, _controller.Score * _growthFactor, 0), 
                 _growthTime);
 
             iTween.MoveAdd(
                 _visual.Parent.gameObject, 
-                new Vector3(0, _maxScore * _growthFactor, 0), 
+                new Vector3(0, _controller.Score * _growthFactor, 0), 
                 _growthTime);
 
             iTween.MoveAdd(
                 _characterAnchor.gameObject, 
-                new Vector3(0, _maxScore * 2 * _growthFactor, 0), 
+                new Vector3(0, _controller.Score * 2 * _growthFactor, 0), 
                 _growthTime);
         }
 

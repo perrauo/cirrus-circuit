@@ -33,6 +33,9 @@ namespace Cirrus.Circuit.World.Objects.Characters
         private Guide _guide;
 
         [SerializeField]
+        public float _moveDelay = 0.6f;
+
+        [SerializeField]
         public float _rotationSpeed = 0.6f;
 
         [SerializeField]
@@ -111,10 +114,12 @@ namespace Cirrus.Circuit.World.Objects.Characters
             //Game.Instance.HandleAction1(this);
         }
 
+        private bool _moveCoroutineActive = false;
 
-        // Use the same raycast to show guide
-        public void TryMove(Vector2 axis)
+        public IEnumerator MoveCoroutine(Vector2 axis)
         {
+            _moveCoroutineActive = true;
+
             bool isMovingHorizontal = Mathf.Abs(axis.x) > 0.5f;
             bool isMovingVertical = Mathf.Abs(axis.y) > 0.5f;
 
@@ -155,7 +160,19 @@ namespace Cirrus.Circuit.World.Objects.Characters
                     _wasMovingVertical = true;
                 }
             }
-                        
+
+            yield return new WaitForSeconds(_moveDelay);
+            _moveCoroutineActive = false;
+            yield return null;
+        }
+
+        private IEnumerator _moveCoroutine;
+
+        // Use the same raycast to show guide
+        public void TryMove(Vector2 axis)
+        {
+            if(!_moveCoroutineActive)
+                StartCoroutine(MoveCoroutine(axis));                        
         }
 
 

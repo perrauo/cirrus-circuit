@@ -53,8 +53,18 @@ namespace Cirrus.Circuit.Controls
             }
         }
 
+        public string _name;
 
-        private int _number = 0;
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+        }
+
+
+        public int _number = 0;
 
         public int Number
         {
@@ -64,8 +74,11 @@ namespace Cirrus.Circuit.Controls
             }
         }
 
-        public Controller(int number, Color color, Inputs.InputDevice device, Inputs.InputControlScheme scheme)
+        public int _assignedNumber = 0;
+
+        public Controller(int number, string name, Color color, Inputs.InputDevice device, Inputs.InputControlScheme scheme)
         {
+            _name = name;
             _color = color;
             _number = number;
             _device = device;
@@ -104,6 +117,14 @@ namespace Cirrus.Circuit.Controls
             }
         }
 
+        public Vector2 AxisLeft
+        {
+            get
+            {
+                return _actionMap.Player.AxesLeft.ReadValue<Vector2>();
+            }
+        }
+
         // TODO: Simulate LeftStick continuous axis with WASD
         public void OnAxesLeft(UnityInput.InputAction.CallbackContext context)
         {
@@ -121,6 +142,7 @@ namespace Cirrus.Circuit.Controls
         // Accept
         public void OnAction1(UnityInput.InputAction.CallbackContext context)
         {
+            //context.
             if(!context.performed)
                 Game.Instance.HandleAction1(this);
         }

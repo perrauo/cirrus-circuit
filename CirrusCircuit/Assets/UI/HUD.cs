@@ -65,7 +65,7 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-        public void OnScoreChanged(PlayerNumber player, float score)
+        public void OnScoreChanged(int player, float score)
         {
             _playerDisplays[(int)player].OnScoreChanged(score);
         }       
