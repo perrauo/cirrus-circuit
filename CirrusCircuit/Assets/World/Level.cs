@@ -81,6 +81,15 @@ namespace Cirrus.Circuit.World
         [SerializeField]
         public float _positionSpeed = 0.4f;
 
+        private Timer _randomDropRainTimer;
+
+        private float _randomDropRainTime;
+
+        private Timer _randomDropSpawnTimer;
+
+        private float _randomDropSpawnTime;
+
+        //_randomRainDropTime
 
         public void OnValidate()
         {
@@ -114,6 +123,15 @@ namespace Cirrus.Circuit.World
             _mutex = new Mutex(false);
             _objects = new BaseObject[_dimension.x, _dimension.y, _dimension.z];
 
+
+            _randomDropRainTimer = new Timer(_randomDropRainTime, start: false, repeat: true);
+            _randomDropRainTimer.OnTimeLimitHandler += OnRainTimeout;
+
+
+            _randomDropSpawnTimer = new Timer(_randomDropSpawnTime, start: false, repeat: false);
+            _randomDropSpawnTimer.OnTimeLimitHandler += OnSpawnTimeout;
+
+
             _game.OnNewRoundHandler += OnNewRound;
             //_game.On
 
@@ -127,6 +145,8 @@ namespace Cirrus.Circuit.World
                 //Game.Instance.Lobby.Controllers[(int)door.PlayerNumber].On
             }            
         }
+
+
 
         public void OnNewRound(Round round)
         {
@@ -324,7 +344,15 @@ namespace Cirrus.Circuit.World
             return false;
         }
 
+        private void OnSpawnTimeout()
+        {
+            // TODO
+        }
 
+        public void OnRainTimeout()
+        {
+            // TODO
+        }
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
         {
