@@ -6721,6 +6721,7 @@ MonoBehaviour:
   - {r: 0, g: 0.70026994, b: 1, a: 1}
   - {r: 1, g: 0.89918447, b: 0, a: 1}
   - {r: 0, g: 0.6415094, b: 0.16255747, a: 1}
+  Controllers: []
   ControllerCount: 0
 --- !u!1001 &2038501937039870137
 PrefabInstance:
@@ -6969,6 +6970,7 @@ MonoBehaviour:
   _countDown: 3
   _roundAmount: 3
   _roundIndex: 0
+  _controllers: []
   _podiumTransitionSpeed: 0.01
   _intermissionTime: 2
   _transitionTime: 0.5

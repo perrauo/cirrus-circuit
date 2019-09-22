@@ -155,7 +155,7 @@ namespace Cirrus.Circuit
             platform.Character = character;
 
             character.Number = ctrl.Number;
-            character.UpdateColor();
+            character.Color = ctrl.Color;
 
         }
 

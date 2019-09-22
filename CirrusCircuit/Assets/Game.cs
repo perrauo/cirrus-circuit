@@ -144,7 +144,6 @@ namespace Cirrus.Circuit
         [SerializeField]
         public int _countDown = 3;
 
-
         public Round _round;
 
         [SerializeField]
@@ -153,6 +152,7 @@ namespace Cirrus.Circuit
         public int _roundIndex;
 
         /// Controllers in player in game
+        [SerializeField]
         public List<Controller> _controllers;
 
         [SerializeField]
@@ -673,6 +673,21 @@ namespace Cirrus.Circuit
         }
 
 
+        public IEnumerator NewRoundCoroutine()
+        {
+            yield return new WaitForEndOfFrame();
+
+            OnNewRoundHandler?.Invoke(_round);
+
+            //_round.OnRoundBeginHandler += _currentLevel.OnBeginRound;
+
+            _round.OnRoundEndHandler += OnRoundEnd;
+
+            _round.BeginIntermission();
+
+            yield return null;
+        }
+
         protected bool TryFinishChangeState(State target, params object[] args)
         {
             switch (target)
@@ -785,15 +800,15 @@ namespace Cirrus.Circuit
                         Placeholder placeholder = placeholders.RemoveRandom();
  
                         _controllers[i]._character = _controllers[i]
-                            ._characterResource.Create(_currentLevel.GridToWorld(placeholder._gridPosition), _currentLevel.transform);
+                            ._characterResource.Create(
+                                _currentLevel.GridToWorld(placeholder._gridPosition), 
+                                _currentLevel.transform);
 
                         _controllers[i]._character.Number = _controllers[i].Number;
 
-                        _controllers[i]._character.UpdateColor();
+                        _controllers[i]._character.Color = _controllers[i].Color;
 
-                        _controllers[i]._character._level = _currentLevel;
-
-                        _controllers[i]._character.UpdateColor();
+                        _controllers[i]._character._level = _currentLevel;                        
 
                         _controllers[i]._character.TryChangeState(Character.State.Disabled);
 
@@ -806,7 +821,6 @@ namespace Cirrus.Circuit
                         Destroy(placeholder.gameObject);
                     }
 
-
                     _round =
                         new Round(
                             _countDown,
@@ -815,13 +829,7 @@ namespace Cirrus.Circuit
                             _intermissionTime,
                             _roundIndex);
 
-                    OnNewRoundHandler?.Invoke(_round);
-
-                    //_round.OnRoundBeginHandler += _currentLevel.OnBeginRound;
-
-                    _round.OnRoundEndHandler += OnRoundEnd;
-
-                    _round.BeginIntermission();
+                    StartCoroutine(NewRoundCoroutine());
 
                     _state = target;
 

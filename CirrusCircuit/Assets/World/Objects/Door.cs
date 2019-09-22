@@ -58,7 +58,6 @@ namespace Cirrus.Circuit.World.Objects
 
         [SerializeField]
         private float _punchScaleTime = 1f;
-
   
         IEnumerator PunchScale()
         {
@@ -87,7 +86,8 @@ namespace Cirrus.Circuit.World.Objects
 
             Multiplier = 1;
 
-            Value = 0;           
+            Value = 0;
+            OnValueTimeOut();
 
         }
 
@@ -197,7 +197,7 @@ namespace Cirrus.Circuit.World.Objects
         public void OnGemEntered(Gem gem)
         {
             if (_previousGem != null &&
-                gem.Number == _previousGem.Number &&
+                gem.Number == Number &&
                 gem.Type == _previousGem.Type)
             {
                 _multiplierTimer.Start();
@@ -214,7 +214,7 @@ namespace Cirrus.Circuit.World.Objects
             iTween.Stop(_textValue.gameObject);
             _textValue.gameObject.transform.localScale = new Vector3(1, 1, 1);
 
-            Value = gem.Value * _multiplier;
+            Value = gem.Number == Number ? gem.Value * _multiplier : -gem.Value;
 
             _valueTimer.Start();
 
@@ -247,7 +247,8 @@ namespace Cirrus.Circuit.World.Objects
 
         private void OnValueTimeOut()
         {
-            Value = 0;
+            if(_textValue)
+            _textValue.text = "";
         }
 
 
@@ -294,17 +295,22 @@ namespace Cirrus.Circuit.World.Objects
             set
             {
                 _value = value;
-
-                if (_value <= 0)
+  
+                if (_textValue)
                 {
-                    if(_textValue)
-                        _textValue.text = "";
+                    if (_value < 0)
+                    {
+                        _textValue.text = _value.ToString();
+                        _textValue.color = Color.black;
+                    }
+                    else
+                    {
+                        _textValue.text =  " +" + _value.ToString();
+                        _textValue.color = Color;
+                    }
+                       
                 }
-                else
-                {
-                    if (_textValue)
-                        _textValue.text = " +" + _value.ToString();
-                }
+                
                 
             }
 

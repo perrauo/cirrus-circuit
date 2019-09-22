@@ -6,7 +6,7 @@ namespace Cirrus.Circuit.World
     public class Resources : ScriptableObject
     {
         [SerializeField]
-        public Material PlayerMaterial;
+        public Level[] Levels;
 
     }
 }

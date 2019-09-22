@@ -130,6 +130,9 @@ namespace Cirrus.Circuit.World
 
         public void OnNewRound(Round round)
         {
+            if (!gameObject.activeInHierarchy)
+                return;
+
             round.OnRoundBeginHandler += OnBeginRound;
             round.OnRoundEndHandler += OnRoundEnd;
 
@@ -148,7 +151,7 @@ namespace Cirrus.Circuit.World
                     if (obj.Number == ctrl._assignedNumber)
                     {
                         obj.Number = ctrl.Number;
-                        obj.UpdateColor();
+                        obj.Color = ctrl.Color;
                         break;
                     }
                 }
@@ -354,8 +357,6 @@ namespace Cirrus.Circuit.World
             {
                 if (obj == null)
                     continue;
-
-                //obj.OnRoundBegin();
 
                 obj.TryChangeState(BaseObject.State.Idle);
             }

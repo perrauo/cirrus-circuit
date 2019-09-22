@@ -19,9 +19,18 @@ using Inputs = UnityEngine.InputSystem;
 
 namespace Cirrus.Circuit.Controls
 {
+    [System.Serializable]
     public class Controller : ActionMap.IPlayerActions
     {
-        public float Score { get; set; }
+        private float _score = 0;
+
+        public float Score
+        {
+            get { return _score; }
+
+            set {
+                _score = value < 0 ? 0 : value;
+            } }
 
         public delegate void OnReady(Controller ctrl);
 
@@ -43,6 +52,7 @@ namespace Cirrus.Circuit.Controls
 
         public UI.Player PlayerDisplay = null;
 
+        [SerializeField]
         public Color _color;
 
         public Color Color

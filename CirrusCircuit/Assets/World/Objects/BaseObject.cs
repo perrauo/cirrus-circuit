@@ -176,10 +176,18 @@ namespace Cirrus.Circuit.World.Objects
             FSMUpdate();
         }
 
-        public void UpdateColor()
-        {
-            Color = _game._controllers[Number].Color;
-        }
+        //public void UpdateColor()
+        //{
+        //    foreach (Controls.Controller ctrl in _game._controllers)
+        //    {
+        //        if (ctrl.Number == Number)
+        //        {
+        //            Color = ctrl.Color;
+        //            _nextColor = Color;
+        //            break;
+        //        }
+        //    }
+        //}
 
         public virtual bool TryMove(Vector3Int step, BaseObject incoming = null)
         {
@@ -216,6 +224,9 @@ namespace Cirrus.Circuit.World.Objects
 
         public void OnNextColorTimeOut()
         {
+            if (_state != State.LevelSelect)
+                return;
+
             if (_game == null)
             {
                 if (_fallbackColors.Length != 0)
