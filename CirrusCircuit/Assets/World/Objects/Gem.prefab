@@ -1,25 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &8572636412648899152
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6146626724538502216}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c207cb311c8305440a7b4d8450d9c1d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Parent: {fileID: 3848309428402309546}
-  _meshRenderers:
-  - {fileID: 6557845487496652356}
-  _spriteRenderers: []
-  _images: []
-  _texts: []
-  _outlines: []
-  _barcolors: []
 --- !u!114 &4001282745868766237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50,7 +30,7 @@ MonoBehaviour:
   _targetScale: 1
   Number: 0
   _color: {r: 1, g: 0, b: 0, a: 1}
-  _nextColor: {r: 0, g: 0, b: 0, a: 0}
+  _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorTime: 2
   _nextColorIndex: 0
   _nextColorSpeed: 0.05
@@ -58,6 +38,27 @@ MonoBehaviour:
   Type: 0
   Value: 1
   _rotateSpeed: 30
+  IsRequired: 0
+--- !u!114 &8572636412648899152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6146626724538502216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c207cb311c8305440a7b4d8450d9c1d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Parent: {fileID: 3848309428402309546}
+  _meshRenderers:
+  - {fileID: 6557845487496652356}
+  _spriteRenderers: []
+  _images: []
+  _texts: []
+  _outlines: []
+  _barcolors: []
 --- !u!1 &3848309428402309546
 GameObject:
   m_ObjectHideFlags: 0
@@ -212,6 +213,31 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2929681681481360225, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: Number
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2929681681481360225, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: _color.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2929681681481360225, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: _color.g
+      value: 0.70026994
+      objectReference: {fileID: 0}
+    - target: {fileID: 8284362496991488768, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: _meshRenderers.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8284362496991488768, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: _meshRenderers.Array.data[0]
+      value: 
+      objectReference: {fileID: 6557845487496652356}
     - target: {fileID: 6890873901226151178, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
       propertyPath: _meshRenderers.Array.size
@@ -267,31 +293,6 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 9
       objectReference: {fileID: 0}
-    - target: {fileID: 2929681681481360225, guid: 06d9e1aa028280e4c97369fef81e3fdc,
-        type: 3}
-      propertyPath: Number
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2929681681481360225, guid: 06d9e1aa028280e4c97369fef81e3fdc,
-        type: 3}
-      propertyPath: _color.r
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2929681681481360225, guid: 06d9e1aa028280e4c97369fef81e3fdc,
-        type: 3}
-      propertyPath: _color.g
-      value: 0.70026994
-      objectReference: {fileID: 0}
-    - target: {fileID: 8284362496991488768, guid: 06d9e1aa028280e4c97369fef81e3fdc,
-        type: 3}
-      propertyPath: _meshRenderers.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8284362496991488768, guid: 06d9e1aa028280e4c97369fef81e3fdc,
-        type: 3}
-      propertyPath: _meshRenderers.Array.data[0]
-      value: 
-      objectReference: {fileID: 6557845487496652356}
     m_RemovedComponents:
     - {fileID: 6890873901226151178, guid: 06d9e1aa028280e4c97369fef81e3fdc, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 06d9e1aa028280e4c97369fef81e3fdc, type: 3}

@@ -9,6 +9,7 @@ namespace Cirrus.Circuit.World.Objects
     public class Door : BaseObject
     {
         public delegate void OnScoreValueAdded(
+        Gem gem,
         int playerNumber,
         float score
         );
@@ -220,7 +221,7 @@ namespace Cirrus.Circuit.World.Objects
 
             StartCoroutine(PunchValue());
 
-            OnScoreValueAddedHandler?.Invoke(Number, Value);
+            OnScoreValueAddedHandler?.Invoke(gem, Number, Value);
 
             _previousGem = gem;
 

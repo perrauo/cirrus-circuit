@@ -254,10 +254,18 @@ namespace Cirrus.Circuit
             TryChangeState(State.Transition, State.LevelSelection);
         }
 
-        private void OnScoreValueAdded(int player, float value)
+        private void OnScoreValueAdded(World.Objects.Gem gem, int player, float value)
         {
             Lobby.Controllers[player].Score += value;
             HUD.OnScoreChanged(player, Lobby.Controllers[player].Score);
+        }
+
+        public void OnLevelCompleted(World.Level.Rule rule)
+        {
+            _round.Terminate();
+
+            //OnRoundEnd();
+            
         }
 
         public void OnLevelSelected(int step)
@@ -789,7 +797,10 @@ namespace Cirrus.Circuit
 
                     _selectedLevel.gameObject.SetActive(false);
 
+
                     _currentLevel.OnScoreValueAddedHandler += OnScoreValueAdded;
+
+                    _currentLevel.OnLevelCompletedHandler += OnLevelCompleted;
 
                     List<Placeholder> placeholders = new List<Placeholder>();
                     placeholders.AddRange(_currentLevel._characterPlaceholders);

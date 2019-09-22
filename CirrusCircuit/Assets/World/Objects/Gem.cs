@@ -24,6 +24,32 @@ namespace Cirrus.Circuit.World.Objects
         [SerializeField]
         private float _rotateSpeed = 0.6f;
 
+        public bool IsRequired = false;
+
+        public Gem Create(Transform parent, Vector3 position)
+        {
+            return Instantiate(gameObject, position, Quaternion.identity, parent).GetComponent<Gem>();
+        }
+
+        public override void Interact(BaseObject source)
+        {
+            base.Interact(source);
+
+            if (Number >= 4)
+            {
+                Number = source.Number;
+                Color = source.Color;
+            }
+        }
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            if(Number >= 4)
+                _visual.MakeUnique();
+        }
+
         // Update is called once per frame
         public override void FixedUpdate()
         {

@@ -133,17 +133,22 @@ namespace Cirrus.Circuit.World.Objects
             if (_game == null)
                 _game = FindObjectOfType<Game>();
 
-            if(_game.Lobby != null)
+            if (_game.Lobby != null)
+            {
                 Color = _game.Lobby.GetColor(Number);
-            
+                _nextColor = Color;
+            }
         }
 
         // TODO: will not be called on disabled level
         protected virtual void Awake()
         {
-            _nextColorIndex = Number;
-            _nextColorTimer = new Timer(_nextColorTime, start: false, repeat: true);
-            _nextColorTimer.OnTimeLimitHandler += OnNextColorTimeOut;
+            if (Number < 4)
+            {
+                _nextColorIndex = Number;
+                _nextColorTimer = new Timer(_nextColorTime, start: false, repeat: true);
+                _nextColorTimer.OnTimeLimitHandler += OnNextColorTimeOut;
+            }
 
             _direction = Object.transform.forward.ToVector3Int();
             _targetPosition = Object.transform.position;
@@ -152,10 +157,24 @@ namespace Cirrus.Circuit.World.Objects
             FSMAwake();
         }
 
+        private bool _isRegistered = false;
+
+        public void Register(Level level)
+        {
+            if (_isRegistered)
+                return;
+
+            _level = level;
+
+            if (_level != null)
+                (transform.position, _gridPosition) = _level.RegisterObject(this);
+
+            _isRegistered = true;
+        }
+
         public virtual void Start()
         {
-            if(_level != null)
-                (transform.position, _gridPosition) = _level.RegisterObject(this);
+            Register(_level);
 
             FSMStart();
         }
@@ -188,6 +207,15 @@ namespace Cirrus.Circuit.World.Objects
         //        }
         //    }
         //}
+
+        public virtual void Interact(BaseObject source)
+        {
+            //if (Number >= 4)
+            //{
+            //    Number = source.Number;
+            //    Color = source.Color;
+            //}
+        }
 
         public virtual bool TryMove(Vector3Int step, BaseObject incoming = null)
         {
@@ -288,7 +316,10 @@ namespace Cirrus.Circuit.World.Objects
                 case State.LevelSelect:
                     //Color = 
                     //Color = Fixed
-                    Color = UnityEngine.Color.Lerp(_color, _nextColor, _nextColorSpeed);
+                    if (Number < 4)
+                    {
+                        Color = Color.Lerp(_color, _nextColor, _nextColorSpeed);
+                    }
 
                     break;
 
@@ -386,9 +417,13 @@ namespace Cirrus.Circuit.World.Objects
 
                     switch (transition)
                     {
-                        case State.LevelSelect:
                         case State.Disabled:
+                        case State.LevelSelect:
+                        case State.Entering:
+                        case State.Falling:
                         case State.Idle:
+                        case State.RampIdle:
+                        case State.Moving:
                             destination = transition;
                             return true;
                     }
@@ -514,6 +549,7 @@ namespace Cirrus.Circuit.World.Objects
             Vector3Int step;
             BaseObject incoming  = null;
             BaseObject destination;
+            BaseObject pushed;
             BaseObject above;
             Vector3 offset = Vector3.zero;
             Vector3Int stepOffset = Vector3Int.zero;
@@ -527,8 +563,13 @@ namespace Cirrus.Circuit.World.Objects
                     break;
 
                 case State.LevelSelect:
-                    OnNextColorTimeOut();
-                    _nextColorTimer.Start();
+
+                    if (Number < 4)
+                    {
+                        OnNextColorTimeOut();
+                        _nextColorTimer.Start();
+                    }
+
                     result = true;
                     _state = target;
                     break;
@@ -549,7 +590,8 @@ namespace Cirrus.Circuit.World.Objects
                         step,
                         ref offset,
                         out newGridPosition,
-                        out destination))
+                        out destination,
+                        out pushed))
                     {
                         _destination = destination;
                         _gridPosition = newGridPosition;// _level.GridToWorld(newGridPosition);
@@ -583,8 +625,18 @@ namespace Cirrus.Circuit.World.Objects
                 case State.Idle:
                     //_collider.enabled = true;
 
-                    _state = target;
-                    result = true;
+                    // TODO: Redundant
+                    if (_level.TryGet(_gridPosition + Vector3Int.down, out destination))
+                    {
+                        _state = target;
+                        result = true;
+
+                    }
+                    else
+                    {
+                        TryFall();// State.Falling, Vector3Int.down);                                
+                    }
+
                     break;
 
                 case State.RampIdle:
@@ -614,8 +666,11 @@ namespace Cirrus.Circuit.World.Objects
                         //offset -= Vector3.up * (Level.GridSize / 2);
                     }
 
-                    if (_level.TryMove(this, step + stepOffset, ref offset, out newGridPosition, out destination))
+                    if (_level.TryMove(this, step + stepOffset, ref offset, out newGridPosition, out pushed, out destination))
                     {
+                        if (pushed)
+                            pushed.Interact(this);
+
                         _destination = destination;
                         _gridPosition = newGridPosition;
                         _targetPosition = _level.GridToWorld(_gridPosition);
@@ -632,8 +687,12 @@ namespace Cirrus.Circuit.World.Objects
                     step = (Vector3Int)args[0];
                     incoming = (BaseObject)args[1];
 
-                    if (_level.TryMove(this, step, ref offset, out newGridPosition, out destination))
+                    if (_level.TryMove(this, step, ref offset, out newGridPosition, out pushed, out destination))
                     {
+                        //destination.
+                        if(pushed)
+                            pushed.Interact(this);
+
                         _destination = destination;
                         _gridPosition = newGridPosition;
                         _targetPosition = _level.GridToWorld(_gridPosition);

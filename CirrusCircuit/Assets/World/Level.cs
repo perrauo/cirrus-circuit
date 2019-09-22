@@ -12,6 +12,19 @@ namespace Cirrus.Circuit.World
 {
     public class Level : MonoBehaviour
     {
+        public enum Rule
+        {
+            RequiredGemsCollected,
+        }
+
+        public delegate void OnLevelCompleted(Rule rule);
+        //{
+        
+        //}
+
+
+        public OnLevelCompleted OnLevelCompletedHandler;
+
         public Door.OnScoreValueAdded OnScoreValueAddedHandler;
 
         [SerializeField]
@@ -83,11 +96,16 @@ namespace Cirrus.Circuit.World
 
         private Timer _randomDropRainTimer;
 
-        private float _randomDropRainTime;
+        [SerializeField]
+        private float _randomDropRainTime = 2f;
 
         private Timer _randomDropSpawnTimer;
 
-        private float _randomDropSpawnTime;
+        [SerializeField]
+        private float _randomDropSpawnTime = 2f;
+
+        [SerializeField]
+        private Objects.Resources _objectResources;// _gemDropTemplate;
 
         //_randomRainDropTime
 
@@ -95,6 +113,13 @@ namespace Cirrus.Circuit.World
         {
             if (_game == null)
                 _game = FindObjectOfType<Game>();
+
+#if UNITY_EDITOR
+
+            if (_objectResources == null)
+                _objectResources = Utils.AssetDatabase.FindObjectOfType<Objects.Resources>();
+
+#endif
 
             _name = gameObject.name.Substring(gameObject.name.IndexOf('.') + 1);
             _name = _name.Replace('.', ' ');
@@ -146,11 +171,16 @@ namespace Cirrus.Circuit.World
             }            
         }
 
+        private int _requiredGems = 0;
 
+        private int _requiredGemCount = 0;
 
         public void OnNewRound(Round round)
         {
-            if (!gameObject.activeInHierarchy)
+            if (this == null)
+                return;
+
+            if(!gameObject.activeInHierarchy)
                 return;
 
             round.OnRoundBeginHandler += OnBeginRound;
@@ -162,6 +192,12 @@ namespace Cirrus.Circuit.World
                     continue;
 
                 obj.TryChangeState(BaseObject.State.Disabled);
+
+                if (obj is Gem)
+                {
+                    Gem gem = obj as Gem;
+                    _requiredGems += gem.IsRequired ? 1 : 0;
+                }
 
                 if (obj is Objects.Characters.Character)
                     continue;
@@ -244,14 +280,15 @@ namespace Cirrus.Circuit.World
         }
 
 
-        private bool InnerTryMove(BaseObject source, Vector3Int position, Vector3Int direction, ref Vector3 offset, out BaseObject destination)
+        private bool InnerTryMove(BaseObject source, Vector3Int position, Vector3Int direction, ref Vector3 offset, out BaseObject pushed, out BaseObject destination)
         {
-            if (TryGet(position, out destination))
-            {
-                if (destination.TryMove(direction, source))
-                {
-                    destination = null;
+            pushed = null;
+            destination = null;
 
+            if (TryGet(position, out pushed))
+            {
+                if (pushed.TryMove(direction, source))
+                {
                     // Only set occupying tile if not visiting
                     // Only set occupying tile if not visiting
                     if (source._destination == null)
@@ -267,8 +304,10 @@ namespace Cirrus.Circuit.World
                     return true;
 
                 }
-                else if (destination.TryEnter(direction, ref offset, source))
+                else if (pushed.TryEnter(direction, ref offset, source))
                 {
+                    destination = pushed;
+
                     // Only set occupying tile if not visiting
                     if (source._destination == null)
                     {
@@ -301,9 +340,16 @@ namespace Cirrus.Circuit.World
             return false;
         }
 
-        public bool TryMove(BaseObject source, Vector3Int step, ref Vector3 offset, out Vector3Int position, out BaseObject destination)
+        public bool TryMove(
+            BaseObject source, 
+            Vector3Int step, 
+            ref Vector3 offset,
+            out Vector3Int position, 
+            out BaseObject pushed, 
+            out BaseObject destination)
         {
             destination = null;
+            pushed = null;
 
             Vector3Int direction = step;//.SetXYZ(step.x, 0, step.z);
 
@@ -311,7 +357,7 @@ namespace Cirrus.Circuit.World
 
             if (IsWithinBounds(position))
             {
-                return InnerTryMove(source, position, direction, ref offset, out destination);
+                return InnerTryMove(source, position, direction, ref offset, out pushed, out destination);
             }
 
             return false;
@@ -321,6 +367,7 @@ namespace Cirrus.Circuit.World
         public bool TryFallThrough(BaseObject source, Vector3Int step, ref Vector3 offset, out Vector3Int position, out BaseObject destination)
         {
             destination = null;
+            
 
             Vector3Int direction = step;//.SetXYZ(step.x, 0, step.z);
 
@@ -333,7 +380,7 @@ namespace Cirrus.Circuit.World
                     _dimension.y-1,
                     UnityEngine.Random.Range(_offset.x, _dimension.z - _offset.z - 2));
 
-                return InnerTryMove(source, position, direction, ref offset, out destination);
+                return InnerTryMove(source, position, direction, ref offset, out BaseObject pushedl, out destination);
 
                 //position = new Vector3Int(
                 //   Utils.Math.Mod(position.x, _dimension.x),
@@ -351,7 +398,18 @@ namespace Cirrus.Circuit.World
 
         public void OnRainTimeout()
         {
-            // TODO
+            Vector3Int position = new Vector3Int(
+                UnityEngine.Random.Range(_offset.x, _dimension.x - _offset.x - 2),
+                _dimension.y - 1,
+                UnityEngine.Random.Range(_offset.x, _dimension.z - _offset.z - 2));
+
+            Gem gem = 
+                _objectResources.SimpleGems[UnityEngine.Random.Range(0,_objectResources.SimpleGems.Length)]              
+                .Create(transform, GridToWorld(position));
+
+            gem.Register(this);
+
+            gem.TryChangeState(BaseObject.State.Idle);
         }
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
@@ -388,6 +446,8 @@ namespace Cirrus.Circuit.World
 
                 obj.TryChangeState(BaseObject.State.Idle);
             }
+
+            _randomDropRainTimer.Start();
         }
 
         public void OnRoundEnd()
@@ -401,11 +461,23 @@ namespace Cirrus.Circuit.World
 
                 obj.TryChangeState(BaseObject.State.Disabled);
             }
+
+            _randomDropRainTimer.Stop();
         }
 
-        private void OnGemEntered(int player, float value)
+        private void OnGemEntered(Gem gem, int player, float value)
         {
-            OnScoreValueAddedHandler?.Invoke(player, value);
+
+            OnScoreValueAddedHandler?.Invoke(gem, player, value);
+
+            if (gem.IsRequired)
+            {
+                _requiredGemCount++;
+                if (_requiredGemCount >= _requiredGems)
+                {
+                    OnLevelCompletedHandler?.Invoke(Rule.RequiredGemsCollected);
+                }
+            }
         }
         
         public void OnLevelSelect()

@@ -171,19 +171,42 @@ namespace Cirrus.Circuit
             {
                 if (_isFinal)
                 {
+                    Controls.Controller second = null;
+                    float secondMax = -99999999f;
                     Controls.Controller winner = null;
                     float max = -99999999f;
                     foreach (Controls.Controller ctrl in _game._controllers)
                     {
                         if (ctrl.Score > max)
                         {
+                            if (second == null)
+                            {
+                                second = winner;
+                                secondMax = max;
+                            }
+
                             winner = ctrl;
                             max = ctrl.Score;
+
+                        }
+                        else if (ctrl.Score > secondMax)
+                        {
+                            second = ctrl;
+                            secondMax = ctrl.Score;
                         }
                     }
 
                     if (winner != null)
-                        _announcement.Message = winner.Name + " wins!";
+                    {
+                        if (Mathf.Approximately(max, secondMax))
+                        {
+                            _announcement.Message = "Tie.";
+                        }
+                        else
+                        {
+                            _announcement.Message = winner.Name + " wins!";
+                        }
+                    }
 
                     _finalTimer.Start();
                 }

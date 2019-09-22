@@ -86,6 +86,15 @@ namespace Cirrus.Circuit
             _countDownTimer.Start();
         }
 
+
+        public void Terminate()
+        {
+            _timer.Stop();
+            _countDownTimer.Stop();
+            _intermissionTimer.Stop();
+            OnRoundEnd();
+        }
+
         private void OnTimeOut()
         {
             _countDown--;
@@ -108,6 +117,8 @@ namespace Cirrus.Circuit
                 OnCountdownHandler?.Invoke(_countDown);
             }
         }
+
+
 
         public void OnRoundEnd()
         {

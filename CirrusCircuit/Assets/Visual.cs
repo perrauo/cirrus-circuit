@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Cirrus.Extensions;
+using System;
 
 namespace Cirrus.Circuit
 {
@@ -69,6 +71,20 @@ namespace Cirrus.Circuit
             }
         }
 
+        public void MakeUnique()
+        {
+            foreach (var rend in _meshRenderers)
+            {
+                if (rend == null)
+                    continue;
+
+                if (rend.sharedMaterial == null)
+                    continue;
+
+                rend.sharedMaterial = new Material(rend.sharedMaterial);//.color.Set(_color.r, _color.g, _color.b);
+            }
+        }
+
         public Color Color
         {
             get
@@ -98,7 +114,7 @@ namespace Cirrus.Circuit
                     if (rend.sharedMaterial == null)
                         continue;
 
-                    rend.sharedMaterial.color = _color;
+                    rend.sharedMaterial.color = rend.sharedMaterial.color.Set(_color.r, _color.g, _color.b);
                 }
 
                 foreach (var rend in _spriteRenderers)
@@ -106,7 +122,7 @@ namespace Cirrus.Circuit
                     if (rend == null)
                         continue;
 
-                        rend.color = _color;
+                        rend.color = rend.color.Set(_color.r, _color.g, _color.b);
                 }
 
                 foreach (var im in _images)
@@ -114,7 +130,7 @@ namespace Cirrus.Circuit
                     if (im == null)
                         continue;
 
-                    im.color = _color;
+                    im.color = im.color.Set(_color.r, _color.g, _color.b);
                 }
            
                 foreach (var o in _outlines)
@@ -122,7 +138,7 @@ namespace Cirrus.Circuit
                     if (o == null)
                         continue;
 
-                    o.effectColor = _color;
+                    o.effectColor = o.effectColor.Set(_color.r, _color.g, _color.b);
                 }
 
                 foreach (var o in _texts)
@@ -130,7 +146,7 @@ namespace Cirrus.Circuit
                     if (o == null)
                         continue;
 
-                    o.color = _color;
+                    o.color = o.color.Set(_color.r, _color.g, _color.b);
                 }
 
                 foreach (var o in _barcolors)

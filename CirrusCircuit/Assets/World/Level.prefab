@@ -150,6 +150,9 @@ MonoBehaviour:
   CameraSize: 10
   TargetPosition: {x: 0, y: 0, z: 0}
   _positionSpeed: 0.4
+  _randomDropRainTime: 4
+  _randomDropSpawnTime: 0
+  _objectResources: {fileID: 11400000, guid: 5b5543423aea2f845848e1600153025d, type: 2}
 --- !u!1 &471735033090732927
 GameObject:
   m_ObjectHideFlags: 0
@@ -4985,12 +4988,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 662856298502491459, guid: 9d71dfec3535f1a4ea5069b0b00b2abd,
+    - target: {fileID: 3804810142333432474, guid: 9d71dfec3535f1a4ea5069b0b00b2abd,
         type: 3}
       propertyPath: _level
       value: 
       objectReference: {fileID: 471735032589428009}
-    - target: {fileID: 3804810142333432474, guid: 9d71dfec3535f1a4ea5069b0b00b2abd,
+    - target: {fileID: 662856298502491459, guid: 9d71dfec3535f1a4ea5069b0b00b2abd,
         type: 3}
       propertyPath: _level
       value: 

@@ -3,7 +3,7 @@
 
 namespace Cirrus.Extensions
 {
-    public static class List
+    public static class ListExtension
     {
         // Use this for initialization
         public static T RemoveRandom<T>(this System.Collections.Generic.List<T> list)

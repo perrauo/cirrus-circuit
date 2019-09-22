@@ -2,7 +2,7 @@
 
 namespace Cirrus.Extensions
 {
-    public static class Color
+    public static class ColorExtension
     {
         public static UnityEngine.Color Copy(UnityEngine.Color c)
         {
@@ -58,6 +58,25 @@ namespace Cirrus.Extensions
             var c = im;
             c.a = a;
             im = c;
+            return im;
+        }
+
+
+        public static UnityEngine.Color Set(this UnityEngine.Color im, float r, float g, float b, float a)
+        {
+            im.r = r;
+            im.g = g;
+            im.b = b;
+            im.a = a;
+            return im;
+        }
+
+        public static UnityEngine.Color Set(this UnityEngine.Color im, float r, float g, float b)
+        {
+            im.r = r;
+            im.g = g;
+            im.b = b;
+            //im.a = a;
             return im;
         }
     }

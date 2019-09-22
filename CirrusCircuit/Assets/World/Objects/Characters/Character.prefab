@@ -62,20 +62,11 @@ MonoBehaviour:
   _targetScale: 1
   Number: 0
   _color: {r: 1, g: 0, b: 0, a: 1}
-  _nextColor: {r: 0, g: 0, b: 0, a: 0}
+  _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorTime: 2
   _nextColorIndex: 0
   _nextColorSpeed: 0.05
   _state: 0
-  _controller:
-    _character: {fileID: 0}
-    _characterResource: {fileID: 0}
-    _characterSlot: {fileID: 0}
-    PlayerDisplay: {fileID: 0}
-    _color: {r: 0, g: 0, b: 0, a: 0}
-    _name: 
-    _number: 0
-    _assignedNumber: 0
   _guide: {fileID: 7203719092928459714}
   _moveDelay: 0.05
   _rotationSpeed: 0.6

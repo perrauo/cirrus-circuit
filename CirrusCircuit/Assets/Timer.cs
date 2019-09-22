@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 // TODO: use in cooldown
 
@@ -110,6 +111,11 @@ namespace Cirrus.Circuit
         ~Timer()
         {
             Stop();
+        }
+
+        public static implicit operator float(Timer v)
+        {
+            throw new NotImplementedException();
         }
     }
 }

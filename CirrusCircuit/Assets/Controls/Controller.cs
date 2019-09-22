@@ -19,7 +19,7 @@ using Inputs = UnityEngine.InputSystem;
 
 namespace Cirrus.Circuit.Controls
 {
-    [System.Serializable]
+    //[System.Serializable]
     public class Controller : ActionMap.IPlayerActions
     {
         private float _score = 0;
@@ -52,7 +52,6 @@ namespace Cirrus.Circuit.Controls
 
         public UI.Player PlayerDisplay = null;
 
-        [SerializeField]
         public Color _color;
 
         public Color Color
