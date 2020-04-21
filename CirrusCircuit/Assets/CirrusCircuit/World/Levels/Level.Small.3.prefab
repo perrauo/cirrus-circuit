@@ -3310,12 +3310,12 @@ PrefabInstance:
     - target: {fileID: 471735032589428009, guid: c02e13e8543376c488804ea059149107,
         type: 3}
       propertyPath: _characters.Array.size
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 471735032589428009, guid: c02e13e8543376c488804ea059149107,
         type: 3}
       propertyPath: _doors.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 471735032589428009, guid: c02e13e8543376c488804ea059149107,
         type: 3}
@@ -3356,7 +3356,7 @@ PrefabInstance:
         type: 3}
       propertyPath: _doors.Array.data[0]
       value: 
-      objectReference: {fileID: 1513759631037843456}
+      objectReference: {fileID: 0}
     - target: {fileID: 471735032589428009, guid: c02e13e8543376c488804ea059149107,
         type: 3}
       propertyPath: _doors.Array.data[1]
@@ -3375,22 +3375,22 @@ PrefabInstance:
     - target: {fileID: 471735032589428009, guid: c02e13e8543376c488804ea059149107,
         type: 3}
       propertyPath: _dimension.x
-      value: 9
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 471735032589428009, guid: c02e13e8543376c488804ea059149107,
         type: 3}
       propertyPath: _dimension.y
-      value: 9
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 471735032589428009, guid: c02e13e8543376c488804ea059149107,
         type: 3}
       propertyPath: _dimension.z
-      value: 9
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 471735032589428009, guid: c02e13e8543376c488804ea059149107,
         type: 3}
       propertyPath: _offset.x
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 471735032589428009, guid: c02e13e8543376c488804ea059149107,
         type: 3}
@@ -3400,7 +3400,7 @@ PrefabInstance:
     - target: {fileID: 471735032589428009, guid: c02e13e8543376c488804ea059149107,
         type: 3}
       propertyPath: _offset.z
-      value: -1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 471735032589428439, guid: c02e13e8543376c488804ea059149107,
         type: 3}
@@ -4070,12 +4070,12 @@ PrefabInstance:
     - target: {fileID: 3890274615307332375, guid: c02e13e8543376c488804ea059149107,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1
+      value: 19
       objectReference: {fileID: 0}
     - target: {fileID: 3890274615307332375, guid: c02e13e8543376c488804ea059149107,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 4007891338198575235, guid: c02e13e8543376c488804ea059149107,
         type: 3}
@@ -4235,12 +4235,17 @@ PrefabInstance:
     - target: {fileID: 8910423058359677008, guid: c02e13e8543376c488804ea059149107,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8910423058359677008, guid: c02e13e8543376c488804ea059149107,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 19
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8910423058359677008, guid: c02e13e8543376c488804ea059149107,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9106294835319246716, guid: c02e13e8543376c488804ea059149107,
         type: 3}
@@ -4265,18 +4270,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 564df8f876e8952419dca6ce525ca8cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1513759631037843456 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4173251200909925713, guid: c02e13e8543376c488804ea059149107,
-    type: 3}
-  m_PrefabInstance: {fileID: 3236867150318867793}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ed0fae8bc010104a851f32fc2ebc3fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &6581116902799627079 stripped
