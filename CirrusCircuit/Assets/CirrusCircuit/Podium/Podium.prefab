@@ -65,7 +65,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3b9262a1e1980344bdfc60654cf09d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _game: {fileID: 0}
+  Game.Instance: {fileID: 0}
   _platformTemplate: {fileID: 5811594321620954908, guid: ce65645fb5fa86741872a91c9941d909,
     type: 3}
   _platformOffset: 2

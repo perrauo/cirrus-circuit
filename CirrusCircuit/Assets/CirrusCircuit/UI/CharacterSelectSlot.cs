@@ -2,7 +2,9 @@
 using System.Collections;
 
 using Cirrus.Circuit.World.Objects.Characters;
-using Cirrus.Extensions;
+using Cirrus.Utils;
+using System.Collections.Generic;
+using UnityEngine.UI;
 
 namespace Cirrus.Circuit.UI
 {
@@ -12,7 +14,10 @@ namespace Cirrus.Circuit.UI
         private World.Objects.Characters.Resources _characterResources;
 
         [SerializeField]
-        private UnityEngine.UI.Image[] _images;
+        private Image _imageTemplate;
+
+        [SerializeField]
+        private List<Image> _images;
 
         [SerializeField]
         private RectTransform _rect;
@@ -36,13 +41,13 @@ namespace Cirrus.Circuit.UI
         private GameObject _selection;
 
         [SerializeField]
-        private UnityEngine.UI.Text _statusText;
+        private Text _statusText;
 
         [SerializeField]
-        private UnityEngine.UI.Text _up;
+        private Text _up;
 
         [SerializeField]
-        private UnityEngine.UI.Text _down;
+        private Text _down;
 
         [SerializeField]
         private float _speed = 0.5f;
@@ -99,12 +104,7 @@ namespace Cirrus.Circuit.UI
                     break;
 
                 case State.Selecting:
-                    if (_state == State.Ready)
-                    {
-                        _characterSelect._readyCount--;
-                    }
-
-
+                    if (_state == State.Ready) _characterSelect._readyCount--;                
                     if (_characterSpotlightAnchor.transform.childCount != 0)
                         Destroy(_characterSpotlightAnchor.GetChild(0).gameObject);
 
@@ -122,9 +122,8 @@ namespace Cirrus.Circuit.UI
                         _characterSpotlightAnchor.position);
 
                     // TODO maybe select locked character??
-                    Resource resource = _characterResources.Characters[_selectedIndex];
-
-                    World.Objects.Characters.Character character =
+                    CharacterAsset resource = _characterResources.Characters[_selectedIndex];
+                    Character character =
                         resource.Create(
                             position,
                             _characterSpotlightAnchor,
@@ -134,7 +133,6 @@ namespace Cirrus.Circuit.UI
                         _characterSpotlightSize,
                         _characterSpotlightSize,
                         _characterSpotlightSize);
-
 
                     _up.gameObject.SetActive(false);
                     _down.gameObject.SetActive(false);
@@ -150,26 +148,41 @@ namespace Cirrus.Circuit.UI
         {
             if (_characterSelect == null)
                 _characterSelect = GetComponentInParent<CharacterSelect>();
+            if (_camera == null) _camera = FindObjectOfType<CameraWrapper>();
+            if (_rect == null) _rect = _selection.GetComponent<RectTransform>();
 
-            if (_camera == null)
-                _camera = FindObjectOfType<CameraWrapper>();
-
-            if (_rect == null)
-                _rect = _selection.GetComponent<RectTransform>();
 
 #if UNITY_EDITOR
             if (_characterResources == null)            
-                Utils.AssetDatabase.FindObjectOfType<World.Objects.Characters.Resources>();
-
+                Editor.AssetDatabase.FindObjectOfType<World.Objects.Characters.Resources>();
 #endif
-            int i = 0;
+      
+        }
+
+        public void Awake()
+        {
+            if (_imageTemplate == null) DebugUtils.Assert(false, "Portrait template is null");
+            else _imageTemplate.gameObject.SetActive(true);
+
+            _images = new List<Image>();
             foreach (var res in _characterResources.Characters)
             {
-                _images[i].sprite = res.Portrait;
-                i++;
+                if (res == null) continue;
+
+                var portrait = _imageTemplate.gameObject.Create(_imageTemplate.transform.parent)?.GetComponent<Image>();
+                if (portrait != null)
+                {
+                    portrait.sprite = res.Portrait;
+                    _images.Add(portrait);                    
+                }
             }
 
-            _bound = (_height * _characterResources.Characters.Length) / 2;
+            if (_imageTemplate != null)
+            {
+                _imageTemplate.gameObject.SetActive(false);
+                _height = _imageTemplate.transform.parent.GetComponent<RectTransform>().rect.height / _images.Count;
+            }
+            _bound = (_height * _images.Count)/2;
         }
 
         private void Start()
@@ -205,8 +218,8 @@ namespace Cirrus.Circuit.UI
                 iTween.PunchScale(
                     _down.gameObject,
                     new Vector3(_selectPunchScale,
-                    _selectPunchScale, 0),
-                    _selectPunchScaleTime);
+                        _selectPunchScale, 0),
+                        _selectPunchScaleTime);
             }
         }
 
@@ -214,29 +227,18 @@ namespace Cirrus.Circuit.UI
         {            
             _selectedIndex = up ? _selectedIndex - 1 : _selectedIndex + 1;
             _selectedIndex = Mathf.Clamp(_selectedIndex, 0, _characterResources.Characters.Length-1);
-
             _offset = up ? _offset - _height : _offset + _height;
-            _offset = Mathf.Clamp(_offset, -_bound, _bound-_height);
-
+            _offset = Mathf.Clamp(_offset, -_bound, _bound - _height);
             _targetPosition = _startPosition + Vector3.up * _offset;
 
             if (_selectedIndex == 0)
             {
                 _up.color = _up.color.SetA(_disabledArrowAlpha);
-
-                if (!up)
-                {
-                    StartCoroutine(PunchScale(false));
-                }
-
+                if (!up) StartCoroutine(PunchScale(false));
             }
             else if (_selectedIndex == _characterResources.Characters.Length - 1)
             {
-                if (up)
-                {
-                    StartCoroutine(PunchScale(true));
-                }
-
+                if (up) StartCoroutine(PunchScale(true));      
                 _down.color = _down.color.SetA(_disabledArrowAlpha);
             }
             else
@@ -244,14 +246,8 @@ namespace Cirrus.Circuit.UI
                 _up.color = _up.color.SetA(1f);
                 _down.color = _down.color.SetA(1f);
 
-                if (up)
-                {
-                    StartCoroutine(PunchScale(true));
-                }
-                else
-                {
-                    StartCoroutine(PunchScale(false));
-                }
+                if (up) StartCoroutine(PunchScale(true));
+                else StartCoroutine(PunchScale(false));
             }
         }
 
@@ -277,8 +273,8 @@ namespace Cirrus.Circuit.UI
             switch (_state)
             {
                 case State.Selecting:
-                    Controls.Controller ctrl = (Controls.Controller) args[0];
-                    ctrl._characterResource = _characterResources.Characters[ctrl.Number];
+                    Controls.Player ctrl = (Controls.Player) args[0];
+                    ctrl._characterResource = _characterResources.Characters[_selectedIndex];
                     TryChangeState(State.Ready);
                     break;                    
 
@@ -288,9 +284,7 @@ namespace Cirrus.Circuit.UI
 
                 case State.Closed:
                     break;
-            }
-
-            //return null;
+            }            
         }      
 
         public void FixedUpdate()

@@ -12,9 +12,6 @@ namespace Cirrus.Circuit
         public OnPodiumFinished OnPodiumFinishedHandler;
 
         [SerializeField]
-        private Game _game;
-
-        [SerializeField]
         private UI.Announcement _announcement;
 
         [SerializeField]
@@ -58,9 +55,6 @@ namespace Cirrus.Circuit
 
         public void OnValidate()
         {
-            if (_game == null)
-                _game = FindObjectOfType<Game>();
-
             if (_announcement == null)
                 _announcement = FindObjectOfType<UI.Announcement>();
         }
@@ -72,8 +66,8 @@ namespace Cirrus.Circuit
 
             _finalTimer.OnTimeLimitHandler += OnFinalTimeout;
 
-            _game.OnPodiumHandler += OnPodium;
-            _game.OnFinalPodiumHandler += OnFinalPodium;
+            Game.Instance.OnPodiumHandler += OnPodium;
+            Game.Instance.OnFinalPodiumHandler += OnFinalPodium;
         }
 
         public void FixedUpdate()
@@ -136,7 +130,7 @@ namespace Cirrus.Circuit
             _characters.Clear();
         }
 
-        public void Add(Controls.Controller ctrl, World.Objects.Characters.Resource characterResource)
+        public void Add(Controls.Player ctrl, World.Objects.Characters.CharacterAsset characterResource)
         {
             Platform platform = _platformTemplate.Create(
                 _platformsParent.transform.position + Vector3.right * _platforms.Count * _platformOffset,
@@ -171,11 +165,11 @@ namespace Cirrus.Circuit
             {
                 if (_isFinal)
                 {
-                    Controls.Controller second = null;
+                    Controls.Player second = null;
                     float secondMax = -99999999f;
-                    Controls.Controller winner = null;
+                    Controls.Player winner = null;
                     float max = -99999999f;
-                    foreach (Controls.Controller ctrl in _game._controllers)
+                    foreach (Controls.Player ctrl in Game.Instance._controllers)
                     {
                         if (ctrl.Score > max)
                         {

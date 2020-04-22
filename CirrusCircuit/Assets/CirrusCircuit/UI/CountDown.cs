@@ -14,20 +14,14 @@ namespace Cirrus.Circuit.UI
 
         private string _message = "Go!";
 
-        [SerializeField]
-        private Game _game;
-
-
         public void OnValidate()
         {
-            if(_game == null)
-                _game = FindObjectOfType<Game>();
         }
 
         public void Awake()
         {
-            _game.OnNewRoundHandler += OnNewRound;
-            //_game.On
+            Game.Instance.OnNewRoundHandler += OnNewRound;
+            //Game.Instance.On
         }
 
         private void OnNewRound(Round round)

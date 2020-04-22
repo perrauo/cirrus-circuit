@@ -4,7 +4,7 @@ using UnityEngine;
 
 using System.Collections;
 using System.Collections.Generic;
-using Cirrus.Extensions;
+using Cirrus.Utils;
 using Cirrus.Circuit.World.Objects.Characters;
 
 namespace Cirrus.Circuit
@@ -34,9 +34,9 @@ namespace Cirrus.Circuit
 
     public delegate void OnLevelSelected(World.Level level, int step);
 
-    public delegate void OnControllerJoin(Controller controller);
+    public delegate void OnControllerJoin(Player controller);
 
-    public class Game : MonoBehaviour
+    public class Game : BaseSingleton<Game>
     {
         #region Game
 
@@ -89,13 +89,7 @@ namespace Cirrus.Circuit
         public Clock _clock;
 
 
-        public Clock Clock
-        {
-            get
-            {
-                return _clock;
-            }
-        }
+        public Clock Clock => _clock;        
 
         [SerializeField]
         public Lobby Lobby;
@@ -153,7 +147,7 @@ namespace Cirrus.Circuit
 
         /// Controllers in player in game
         [SerializeField]
-        public List<Controller> _controllers;
+        public List<Player> _controllers;
 
         [SerializeField]
         public float _podiumTransitionSpeed = 0.2f;
@@ -208,7 +202,7 @@ namespace Cirrus.Circuit
 
             _transitionTimer.OnTimeLimitHandler += OnTransitionTimeOut;
 
-            _controllers = new List<Controller>();
+            _controllers = new List<Player>();
 
             Layers = new Layers();
             DontDestroyOnLoad(this.gameObject);
@@ -286,17 +280,17 @@ namespace Cirrus.Circuit
         }
 
         // TODO: Simulate LeftStick continuous axis with WASD
-        public void HandleAxesLeft(Controller controller, Vector2 axis)
+        public void HandleAxesLeft(Player controller, Vector2 axis)
         {
             FSMHandleAxesLeft(controller, axis);
         }
 
-        public void HandleAction0(Controller controller)
+        public void HandleAction0(Player controller)
         {
             FSMHandleAction0(controller);
         }
 
-        public void HandleAction1(Controller controller)
+        public void HandleAction1(Player controller)
         {
             FSMHandleAction1(controller);
         }
@@ -367,7 +361,7 @@ namespace Cirrus.Circuit
             TryChangeState(_transition);
         }
 
-        public bool TryJoin(Controller controller)
+        public bool TryJoin(Player controller)
         {
             if (_controllers.Count >= _selectedLevel.CharacterCount)
                 return false;
@@ -377,7 +371,7 @@ namespace Cirrus.Circuit
             return false;
         }
 
-        public bool TryLeave(Controller controller)
+        public bool TryLeave(Player controller)
         {
             if (_controllers.Count >= _selectedLevel.CharacterCount)
                 return false;
@@ -387,7 +381,7 @@ namespace Cirrus.Circuit
             return false;
         }
 
-        public void Join(Controller ctrl)
+        public void Join(Player ctrl)
         {
             switch (_state)
             {
@@ -442,7 +436,7 @@ namespace Cirrus.Circuit
                 case State.Podium:
                 case State.FinalPodium:
                     _camera.Camera.orthographicSize =
-                        Mathf.Lerp(
+                        UnityEngine.Mathf.Lerp(
                             _camera.Camera.orthographicSize,
                             _targetSizeCamera,
                             _cameraSizeSpeed);
@@ -458,7 +452,7 @@ namespace Cirrus.Circuit
 
                 case State.Round:
 
-                    foreach (Controller ctrl in _controllers)
+                    foreach (Player ctrl in _controllers)
                     {
                         ctrl._character.TryMove(ctrl.AxisLeft);
                     }
@@ -856,7 +850,7 @@ namespace Cirrus.Circuit
                     //Lobby.Characters.Clear();
                     //Lobby.Characters.AddRange(_selectedLevel.Characters);
 
-                    foreach (Controller ctrl in Lobby.Controllers)
+                    foreach (Player ctrl in Lobby.Controllers)
                     {
                         if (ctrl == null)
                         {
@@ -881,13 +875,13 @@ namespace Cirrus.Circuit
         private bool _wasMovingVertical = false;
 
         // TODO: Simulate LeftStick continuous axis with WASD
-        public void FSMHandleAxesLeft(Controller controller, Vector2 axis)
+        public void FSMHandleAxesLeft(Player controller, Vector2 axis)
         {
-            bool isMovingHorizontal = Mathf.Abs(axis.x) > 0.5f;
-            bool isMovingVertical = Mathf.Abs(axis.y) > 0.5f;
+            bool isMovingHorizontal = UnityEngine.Mathf.Abs(axis.x) > 0.5f;
+            bool isMovingVertical = UnityEngine.Mathf.Abs(axis.y) > 0.5f;
 
-            Vector3 stepHorizontal = new Vector3(Mathf.Sign(axis.x), 0, 0);
-            Vector3 stepVertical = new Vector3(0, 0, Mathf.Sign(axis.y));
+            Vector3 stepHorizontal = new Vector3(UnityEngine.Mathf.Sign(axis.x), 0, 0);
+            Vector3 stepVertical = new Vector3(0, 0, UnityEngine.Mathf.Sign(axis.y));
             Vector3 step = Vector3.zero;
 
             if (isMovingVertical && isMovingHorizontal)
@@ -921,7 +915,7 @@ namespace Cirrus.Circuit
                     if (controller._characterSlot == null)
                         break;
                  
-                    if (Mathf.Abs(step.z) > 0)
+                    if (UnityEngine.Mathf.Abs(step.z) > 0)
                     {
                         controller._characterSlot.Scroll(step.z > 0);
                     }                    
@@ -930,17 +924,17 @@ namespace Cirrus.Circuit
 
                 case State.LevelSelection:
 
-                    if (Mathf.Abs(step.x) > 0)
+                    if (UnityEngine.Mathf.Abs(step.x) > 0)
                     {
 
                         int prev = _currentLevelIndex;
 
                         _currentLevelIndex =
-                            Mathf.Clamp(_currentLevelIndex + (int)Mathf.Sign(step.x), 0, _levels.Length - 1);
+                            UnityEngine.Mathf.Clamp(_currentLevelIndex + (int)UnityEngine.Mathf.Sign(step.x), 0, _levels.Length - 1);
 
                         if (prev != _currentLevelIndex)
                         {
-                            OnLevelSelected((int)Mathf.Sign(step.x));
+                            OnLevelSelected((int)UnityEngine.Mathf.Sign(step.x));
                         }
                     }
 
@@ -963,7 +957,7 @@ namespace Cirrus.Circuit
             }
         }
 
-        public void FSMHandleAction0(Controller controller)
+        public void FSMHandleAction0(Player controller)
         {
             switch (_state)
             {
@@ -993,7 +987,7 @@ namespace Cirrus.Circuit
                     }
                     else
                     {
-                        foreach (Controller ctrl in Lobby.Controllers)
+                        foreach (Player ctrl in Lobby.Controllers)
                         {
                             if (ctrl == null)
                             {
@@ -1018,7 +1012,7 @@ namespace Cirrus.Circuit
         }
 
 
-        public void FSMHandleAction1(Controller controller)
+        public void FSMHandleAction1(Player controller)
         {
             switch (_state)
             {

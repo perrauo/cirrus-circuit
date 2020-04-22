@@ -33,7 +33,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7806d0482a4aee74f9a3b57728dea1fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _game: {fileID: 0}
+  Game.Instance: {fileID: 0}
   _level: {fileID: 0}
   _visual: {fileID: 2289089172541776485}
   _fallbackColors: []

@@ -37,21 +37,24 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private UnityEngine.UI.Text _next;
 
-        [SerializeField]
-        private Game _game;
-
         public void OnValidate()
         {
-            if (_game == null)
-                _game = FindObjectOfType<Game>();
         }
-
 
 
         public void Awake()
         {
-            _game.OnLevelSelectedHandler += OnLevelSelected;
-            _game.OnLevelSelectHandler += OnLevelSelect;
+            Game.Instance.OnLevelSelectedHandler += OnLevelSelected;
+            Game.Instance.OnLevelSelectHandler += OnLevelSelect;
+        }
+
+        public void OnDestroy()
+        {
+            if (Game.Instance.OnLevelSelectedHandler != null)
+            {
+                Game.Instance.OnLevelSelectedHandler -= OnLevelSelected;
+                Game.Instance.OnLevelSelectHandler -= OnLevelSelect;
+            }
         }
 
         public IEnumerator PunchScale(bool previous)
@@ -92,7 +95,7 @@ namespace Cirrus.Circuit.UI
 
         public void OnLevelSelected(World.Level level, int step)
         {
-            if (_game._currentLevelIndex == 0)
+            if (Game.Instance._currentLevelIndex == 0)
             {
                 _previous.gameObject.SetActive(false);
             }
@@ -101,7 +104,7 @@ namespace Cirrus.Circuit.UI
                 _previous.gameObject.SetActive(true);
             }
 
-            if (_game._currentLevelIndex == _game._levels.Length - 1)
+            if (Game.Instance._currentLevelIndex == Game.Instance._levels.Length - 1)
             {
                 _next.gameObject.SetActive(false);
             }
@@ -119,8 +122,8 @@ namespace Cirrus.Circuit.UI
                 StartCoroutine(PunchScale(false));
             }
 
-            if (_game._selectedLevel != null)
-                _levelName.text = _game._selectedLevel.Name;
+            if (Game.Instance._selectedLevel != null)
+                _levelName.text = Game.Instance._selectedLevel.Name;
 
             // TODO upd num of players ??
             //foreach (var display in _playerDisplays)

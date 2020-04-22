@@ -27,7 +27,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
     {
         public override ObjectId Id { get { return ObjectId.Character; } }
 
-        public Controller _controller;
+        public Player _controller;
 
         [SerializeField]
         private Guide _guide;

@@ -5,8 +5,7 @@ namespace Cirrus.Circuit.Transitions
 {
     public class Transition : MonoBehaviour
     {
-        //[SerializeField]
-        //private Game _game;
+
 
         [SerializeField]
         private UnityEngine.UI.Image _image;
@@ -38,16 +37,11 @@ namespace Cirrus.Circuit.Transitions
         [SerializeField]
         private RectTransform _canvasRectTransform;
 
-        [SerializeField]
-        private Game _game;
 
         private Vector3 _startPosition;
 
         public void OnValidate()
         {
-            if(_game == null)
-            _game = FindObjectOfType<Game>();
-
             if (_canvas == null)
                 _canvas = GetComponentInParent<Canvas>();
 
@@ -64,7 +58,7 @@ namespace Cirrus.Circuit.Transitions
             _startPosition = Vector3.zero + new Vector3(Screen.width/2, Screen.height / 2);
             _distanceAway = Screen.height;
 
-            _game.OnScreenResizedHandler += OnScreenResize;
+            Game.Instance.OnScreenResizedHandler += OnScreenResize;
             
             //_canvas.
             //_distanceAway = _canvas.rec

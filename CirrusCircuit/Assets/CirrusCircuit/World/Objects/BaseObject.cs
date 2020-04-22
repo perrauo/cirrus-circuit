@@ -3,8 +3,8 @@
 //using Cirrus.DH.Objects.Characters.Controls;
 using System.Collections.Generic;
 using UnityEngine;
-using Cirrus.Tags;
-using Cirrus.Extensions;
+using Cirrus.Resources;
+using Cirrus.Utils;
 using System;
 //using Cirrus.DH.Conditions;
 //using Cirrus.DH.Objects.Actions;
@@ -28,16 +28,10 @@ namespace Cirrus.Circuit.World.Objects
         public virtual ObjectId Id { get { return ObjectId.Default; } }
 
         [SerializeField]
-        protected Game _game;
-
-        [SerializeField]
-        public Level _level;
-
-        [SerializeField]
         protected Visual _visual;
 
         [SerializeField]
-        private UnityEngine.Color[] _fallbackColors;
+        private Color[] _fallbackColors;
 
         //[SerializeField]
         //public Collider _collider;
@@ -117,25 +111,20 @@ namespace Cirrus.Circuit.World.Objects
         protected float _nextColorSpeed = 0.05f;
 
 
-        public string Name
-        {
-            get
-            {
-                return transform.name;
-            }
-        }
+        public string Name => transform.name;
+
+        [SerializeField]
+        public Level _level = null;
 
         public virtual void OnValidate()
         {
             if (_level == null)
                 _level = GetComponentInParent<Level>();
 
-            if (_game == null)
-                _game = FindObjectOfType<Game>();
 
-            if (_game.Lobby != null)
+            if (Game.Instance.Lobby != null)
             {
-                Color = _game.Lobby.GetColor(Number);
+                Color = Game.Instance.Lobby.GetColor(Number);
                 _nextColor = Color;
             }
         }
@@ -197,7 +186,7 @@ namespace Cirrus.Circuit.World.Objects
 
         //public void UpdateColor()
         //{
-        //    foreach (Controls.Controller ctrl in _game._controllers)
+        //    foreach (Controls.Controller ctrl in Game.Instance._controllers)
         //    {
         //        if (ctrl.Number == Number)
         //        {
@@ -255,23 +244,23 @@ namespace Cirrus.Circuit.World.Objects
             if (_state != State.LevelSelect)
                 return;
 
-            if (_game == null)
+            if (Game.Instance == null)
             {
                 if (_fallbackColors.Length != 0)
                 {
                     _nextColorIndex = _nextColorIndex + 1;
-                    _nextColorIndex = Utils.Math.Wrap(_nextColorIndex, 0, 2);
+                    _nextColorIndex = Utils.MathUtils.Wrap(_nextColorIndex, 0, 2);
                     _nextColor = _fallbackColors[_nextColorIndex];
                 }
             }
             else
             {
-                if (_game._controllers.Count == 0)
+                if (Game.Instance._controllers.Count == 0)
                     return;
 
                 _nextColorIndex = _nextColorIndex + 1;
-                _nextColorIndex = Utils.Math.Wrap(_nextColorIndex, 0, _game._controllers.Count);
-                _nextColor = _game._controllers[_nextColorIndex].Color;
+                _nextColorIndex = Utils.MathUtils.Wrap(_nextColorIndex, 0, Game.Instance._controllers.Count);
+                _nextColor = Game.Instance._controllers[_nextColorIndex].Color;
             }
         }
 
@@ -331,7 +320,7 @@ namespace Cirrus.Circuit.World.Objects
                 case State.RampMoving:
 
                     Object.transform.position = Vector3.Lerp(Object.transform.position, _targetPosition, _stepSpeed);
-                    float scale = Mathf.Lerp(Object.transform.localScale.x, _targetScale, _scaleSpeed);
+                    float scale = UnityEngine.Mathf.Lerp(Object.transform.localScale.x, _targetScale, _scaleSpeed);
                     Object.transform.localScale = new Vector3(scale, scale, scale);
 
                     break;
@@ -357,7 +346,7 @@ namespace Cirrus.Circuit.World.Objects
                 case State.Moving:
                 case State.RampMoving:
 
-                    if (Utils.Vectors.CloseEnough(Object.transform.position, _targetPosition))
+                    if (VectorUtils.IsCloseEnough(Object.transform.position, _targetPosition))
                     {
                         if (_destination == null)
                         {

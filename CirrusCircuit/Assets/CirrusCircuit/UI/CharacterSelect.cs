@@ -8,9 +8,6 @@ namespace Cirrus.Circuit.UI
 
     public class CharacterSelect : MonoBehaviour
     {
-        [SerializeField]
-        private Game _game;
-
         public OnCharacterSelectReady OnCharacterSelectReadyHandler;
 
         [SerializeField]
@@ -23,19 +20,16 @@ namespace Cirrus.Circuit.UI
 
         public void OnValidate()
         {
-            if (_game == null)
-                _game = FindObjectOfType<Game>();
-
             if (slots.Length == 0)
                 slots = GetComponentsInChildren<CharacterSelectSlot>();
         }
 
         public void Awake()
         {
-            _game.OnCharacterSelectHandler += OnCharacterSelect;
-            _game.OnControllerJoinHandler += OnControllerJoin;
-            _game.OnLevelSelectHandler += OnLevelSelect;
-            _game.OnLevelSelectHandler += OnMenu;
+            Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
+            Game.Instance.OnControllerJoinHandler += OnControllerJoin;
+            Game.Instance.OnLevelSelectHandler += OnLevelSelect;
+            Game.Instance.OnLevelSelectHandler += OnMenu;
         }
 
         private bool _enabled = false;
@@ -125,7 +119,7 @@ namespace Cirrus.Circuit.UI
         }
 
 
-        public void OnControllerJoin(Controller controller)
+        public void OnControllerJoin(Controls.Player controller)
         {
             controller._characterSlot = slots[controller.Number];
             slots[controller.Number].TryChangeState(CharacterSelectSlot.State.Selecting);

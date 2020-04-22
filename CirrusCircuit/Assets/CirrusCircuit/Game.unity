@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.5748171, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -96,6 +96,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -150,7 +151,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _text: {fileID: 1772413776}
-  _game: {fileID: 8610181462412150752}
 --- !u!224 &19215285
 RectTransform:
   m_ObjectHideFlags: 0
@@ -972,7 +972,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0824698c5ebe77446847bcdb72de210e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _game: {fileID: 8610181462412150752}
   _playerDisplays:
   - {fileID: 534535098}
   - {fileID: 1123724349}
@@ -1028,7 +1027,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _text: {fileID: 2101761876}
-  _game: {fileID: 8610181462412150752}
 --- !u!1 &399804377 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2038501936665300832, guid: aed28243200195b49af436c75c39460e,
@@ -1058,7 +1056,6 @@ MonoBehaviour:
   _levelName: {fileID: 1786372427}
   _previous: {fileID: 663827754}
   _next: {fileID: 208772033}
-  _game: {fileID: 8610181462412150752}
 --- !u!4 &439786718 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5916538679130842025, guid: b769e27c925a60646a83a65eea004cd6,
@@ -2936,7 +2933,6 @@ MonoBehaviour:
   _distanceDown: -10
   _canvas: {fileID: 271282009}
   _canvasRectTransform: {fileID: 271282010}
-  _game: {fileID: 8610181462412150752}
 --- !u!1001 &583501191
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3528,8 +3524,9 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
   m_Enabled: 1
-  serializedVersion: 9
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
@@ -3656,7 +3653,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _text: {fileID: 127194100}
-  _game: {fileID: 8610181462412150752}
   _timesUpTime: 2
 --- !u!1 &858992220
 GameObject:
@@ -3708,7 +3704,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _text: {fileID: 1156510055}
-  _game: {fileID: 8610181462412150752}
   _timesUpTime: 2
 --- !u!1 &946515920
 GameObject:
@@ -5822,7 +5817,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ac17a1ae67f9c14588db86462fd3cb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _game: {fileID: 8610181462412150752}
   slots:
   - {fileID: 665928394}
   - {fileID: 213006544}
@@ -6057,6 +6051,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -6429,7 +6424,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _buttonPlay: {fileID: 1784233733}
   _buttonExit: {fileID: 120813559}
-  _game: {fileID: 8610181462412150752}
 --- !u!1001 &1575943471
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7175,7 +7169,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2d0447e8daf5ea4b8834ad0be798636, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _game: {fileID: 8610181462412150752}
   _inputActionAsset: {fileID: -944628639613478452, guid: 526b135b1fc25f646b83f27020f90823,
     type: 3}
   Names:
@@ -7400,7 +7393,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eefca01448e3f3a42b043d31abae6a0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _game: {fileID: 8610181462412150752}
   _lobby: {fileID: 1438632338796918504}
 --- !u!114 &8610181462412150752
 MonoBehaviour:

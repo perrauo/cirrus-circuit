@@ -39,13 +39,8 @@ namespace Cirrus.Circuit
             }
         }
 
-        public float Time
-        {
-            get
-            {
-                return _time;
-            }
-        }
+        public float Time => _time;
+        
 
         public void Reset(float limit=-1)
         {

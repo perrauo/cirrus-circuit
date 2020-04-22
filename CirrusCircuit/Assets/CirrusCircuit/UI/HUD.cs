@@ -8,8 +8,6 @@ namespace Cirrus.Circuit.UI
 {
     public class HUD : MonoBehaviour
     {
-        [SerializeField]
-        private Game _game;
 
         [SerializeField]
         private Player[] _playerDisplays;
@@ -20,13 +18,11 @@ namespace Cirrus.Circuit.UI
         public void Awake()
         {
             _availablePlayerDisplays = new List<Player>();
-            //_game.OnLevelSelectHandler += OnLevelSelect;
+            //Game.Instance.OnLevelSelectHandler += OnLevelSelect;
         }
 
         public void OnValidate()
         {
-            if (_game == null)
-                _game = FindObjectOfType<Game>();
 
             //if (_characterSelect == null)
             //    _characterSelect = FindObjectOfType<CharacterSelect>();            
@@ -45,7 +41,7 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-        public void Join(Controller controller)
+        public void Join(Controls.Player controller)
         {
             if (_availablePlayerDisplays.Count != 0)
             {
@@ -55,7 +51,7 @@ namespace Cirrus.Circuit.UI
             }            
         }
 
-        public void Leave(Controller controller)
+        public void Leave(Controls.Player controller)
         {
             if (controller.PlayerDisplay)
             {

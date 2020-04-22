@@ -12,14 +12,12 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private UnityEngine.UI.Button _buttonExit;
 
-        [SerializeField]
-        private Game _game;
+
 
 
         public void OnValidate()
         {
-            if (_game == null)
-                _game = FindObjectOfType<Game>();
+
         }
 
         private bool _enabled = false;
@@ -42,9 +40,8 @@ namespace Cirrus.Circuit.UI
         public void Awake()
         {
             _buttonExit.onClick.AddListener(OnExitClick);
-            _buttonPlay.onClick.AddListener(_game.OnStartClicked);
-
-            _game.OnCharacterSelectHandler += OnCharacterSelect;
+            _buttonPlay.onClick.AddListener(Game.Instance.OnStartClicked);
+            Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
         }
 
         public void OnExitClick()

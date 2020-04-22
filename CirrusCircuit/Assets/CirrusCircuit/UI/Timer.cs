@@ -12,10 +12,6 @@ namespace Cirrus.Circuit.UI
 
         private Round _round;
 
-        [SerializeField]
-        private Game _game;
-
-
         public float Time
         {
             set
@@ -29,10 +25,7 @@ namespace Cirrus.Circuit.UI
 
         public bool Enabled
         {
-            get
-            {
-                return _enabled;
-            }
+            get => _enabled;           
 
             set
             {
@@ -43,14 +36,13 @@ namespace Cirrus.Circuit.UI
 
         public void OnValidate()
         {
-            if(_game == null)
-                _game = FindObjectOfType<Game>();
+
         }
 
         public void Awake()
         {
-            _game.OnNewRoundHandler += OnNewRound;
-            _game.OnNewRoundHandler += OnRound;
+            Game.Instance.OnNewRoundHandler += OnNewRound;
+            Game.Instance.OnNewRoundHandler += OnRound;
             //_on
         }
 

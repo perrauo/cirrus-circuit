@@ -1,0 +1,3 @@
+[submodule "CirrusCircuit/Assets/cirrus-unity"]
+	path = CirrusCircuit/Assets/cirrus-unity
+	url = https://github.com/OliPerraul/cirrus-unity.git

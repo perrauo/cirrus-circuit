@@ -65,7 +65,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2d0447e8daf5ea4b8834ad0be798636, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _game: {fileID: 8610181461659773747}
+  Game.Instance: {fileID: 8610181461659773747}
   _colors:
   - {r: 1, g: 0, b: 0.27877426, a: 1}
   - {r: 0.9529412, g: 0.30196083, b: 0.9492811, a: 1}
@@ -98,5 +98,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ffbd11bfe9080447aa30a5f54aaf7ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _game: {fileID: 8610181461659773747}
+  Game.Instance: {fileID: 8610181461659773747}
   _state: 0

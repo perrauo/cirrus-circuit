@@ -8,15 +8,12 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private UnityEngine.UI.Text _text;
 
-        [SerializeField]
-        private Game _game;
-
         private int _number = 0;
 
         public void OnValidate()
         {
-            if (_game == null)
-                _game = FindObjectOfType<Game>();
+            //if (Game.Instance == null)
+            //    Game.Instance = FindObjectOfType<Game>();
         }
 
         public int RoundNumber {
@@ -83,7 +80,7 @@ namespace Cirrus.Circuit.UI
 
         public void Awake()
         {
-            _game.OnNewRoundHandler += OnNewRound;
+            Game.Instance.OnNewRoundHandler += OnNewRound;
             _timesUpTimer = new Circuit.Timer(_timesUpTime, start: false, repeat: false);
             _timesUpTimer.OnTimeLimitHandler += OnTimesUpTimeOut;
 

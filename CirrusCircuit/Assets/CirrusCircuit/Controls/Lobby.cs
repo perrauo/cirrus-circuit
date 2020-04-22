@@ -9,9 +9,6 @@ namespace Cirrus.Circuit.Controls
     public class Lobby : MonoBehaviour
     {
         [SerializeField]
-        private Game _game;
-
-        [SerializeField]
         private Inputs.InputActionAsset _inputActionAsset;
 
         [SerializeField]
@@ -20,7 +17,7 @@ namespace Cirrus.Circuit.Controls
         [SerializeField]
         public Color[] Colors = new Color[4];
 
-        public Controller[] Controllers;
+        public Player[] Controllers;
 
         public int ControllerCount = 0;
 
@@ -41,13 +38,11 @@ namespace Cirrus.Circuit.Controls
 
         public void Awake()
         {
-            Controllers = new Controller[_playerMax];
+            Controllers = new Player[_playerMax];
         }
 
         public void OnValidate()
         {
-            if (_game == null)
-                _game = FindObjectOfType<Game>();
 
         }
 
@@ -70,7 +65,7 @@ namespace Cirrus.Circuit.Controls
                             if (scheme.SupportsDevice(device))
                             {
                                 Controllers[ControllerCount] = 
-                                    new Controller(
+                                    new Player(
                                         ControllerCount, 
                                         Names[ControllerCount], 
                                         Colors[ControllerCount], 
@@ -83,7 +78,7 @@ namespace Cirrus.Circuit.Controls
                     }
                 }
 
-                if (ControllerCount > _playerMax || ControllerCount > _game._selectedLevel.CharacterCount) break;
+                if (ControllerCount > _playerMax || ControllerCount > Game.Instance._selectedLevel.CharacterCount) break;
             }
 
             //Inputs.Users.InputUser.onUnpairedDeviceUsed += OnUnpairedInputDeviceUsed;

@@ -42,7 +42,7 @@ namespace Cirrus.Circuit.UI
                 _candidate.y = Mathf.Round(_anchor.position.y * 100f) / 100f;
                 _candidate.z = Mathf.Round(_anchor.position.z * 100f) / 100f;
                 _candidate = _camera.Camera.WorldToScreenPoint(_candidate);
-                _candidate = Utils.Vectors.Round(_candidate); // Pixel snapping
+                _candidate = Utils.VectorUtils.Round(_candidate); // Pixel snapping
                 _candidate.z = 0;
                 rect.position = _candidate + _offset;
             }

@@ -6,7 +6,7 @@ using Cirrus.Circuit.World.Objects;
 using System;
 
 using System.Threading;
-using Cirrus.Extensions;
+using Cirrus.Utils;
 
 namespace Cirrus.Circuit.World
 {
@@ -26,9 +26,6 @@ namespace Cirrus.Circuit.World
         public OnLevelCompleted OnLevelCompletedHandler;
 
         public Door.OnScoreValueAdded OnScoreValueAddedHandler;
-
-        [SerializeField]
-        private Game _game;
 
         [SerializeField]
         public static int GridSize = 2;
@@ -111,13 +108,10 @@ namespace Cirrus.Circuit.World
 
         public void OnValidate()
         {
-            if (_game == null)
-                _game = FindObjectOfType<Game>();
-
 #if UNITY_EDITOR
 
             if (_objectResources == null)
-                _objectResources = Utils.AssetDatabase.FindObjectOfType<Objects.Resources>();
+                _objectResources = Editor.AssetDatabase.FindObjectOfType<Objects.Resources>();
 
 #endif
 
@@ -157,8 +151,8 @@ namespace Cirrus.Circuit.World
             _randomDropSpawnTimer.OnTimeLimitHandler += OnSpawnTimeout;
 
 
-            _game.OnNewRoundHandler += OnNewRound;
-            //_game.On
+            Game.Instance.OnNewRoundHandler += OnNewRound;
+            //Game.Instance.On
 
             foreach (Door door in _doors)
             {
@@ -202,7 +196,7 @@ namespace Cirrus.Circuit.World
                 if (obj is Objects.Characters.Character)
                     continue;
 
-                foreach (Controls.Controller ctrl in _game._controllers)
+                foreach (Controls.Player ctrl in Game.Instance._controllers)
                 {
                     if (obj.Number == ctrl._assignedNumber)
                     {
@@ -218,9 +212,9 @@ namespace Cirrus.Circuit.World
         public Vector3Int WorldToGrid(Vector3 pos)
         {
             return new Vector3Int(
-                Mathf.RoundToInt(pos.x / GridSize) + _offset.x,
-                Mathf.RoundToInt(pos.y / GridSize) + _offset.y,
-                Mathf.RoundToInt(pos.z / GridSize) + _offset.z);
+                UnityEngine.Mathf.RoundToInt(pos.x / GridSize) + _offset.x,
+                UnityEngine.Mathf.RoundToInt(pos.y / GridSize) + _offset.y,
+                UnityEngine.Mathf.RoundToInt(pos.z / GridSize) + _offset.z);
         }
 
         public Vector3 GridToWorld(Vector3Int pos)

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Cirrus.Extensions;
+using Cirrus.Utils;
 using System;
 
 namespace Cirrus.Circuit
