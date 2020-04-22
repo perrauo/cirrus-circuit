@@ -18,7 +18,7 @@ namespace Cirrus.Circuit.UI
 
 
         [SerializeField]
-        private CameraWrapper _camera;
+        private CameraManager _camera;
 
         [SerializeField]
         private float _smooth = 0.9f;
@@ -36,12 +36,11 @@ namespace Cirrus.Circuit.UI
         {
             if (_camera != null)
             {
-                _camera.Camera.ResetWorldToCameraMatrix(); // Force camera matrix to be updated
-
+                CameraManager.Instance.Camera.ResetWorldToCameraMatrix(); // Force camera matrix to be updated
                 _candidate.x = Mathf.Round(_anchor.position.x * 100f) / 100f;
                 _candidate.y = Mathf.Round(_anchor.position.y * 100f) / 100f;
                 _candidate.z = Mathf.Round(_anchor.position.z * 100f) / 100f;
-                _candidate = _camera.Camera.WorldToScreenPoint(_candidate);
+                _candidate = CameraManager.Instance.Camera.WorldToScreenPoint(_candidate);
                 _candidate = Utils.VectorUtils.Round(_candidate); // Pixel snapping
                 _candidate.z = 0;
                 rect.position = _candidate + _offset;
@@ -55,7 +54,7 @@ namespace Cirrus.Circuit.UI
                 rect = GetComponent<RectTransform>();
 
             if (_camera == null)
-                _camera = FindObjectOfType<CameraWrapper>();
+                _camera = FindObjectOfType<CameraManager>();
 
             if (_anchor != null)
             {

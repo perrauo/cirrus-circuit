@@ -117,9 +117,6 @@ namespace Cirrus.Circuit
         public float _distanceLevelSelect = 35;
 
         [SerializeField]
-        public CameraWrapper _camera;
-
-        [SerializeField]
         private Podium _podium;
 
         [SerializeField]
@@ -174,11 +171,8 @@ namespace Cirrus.Circuit
 
 
 
-        public void OnValidate()
+        public override void OnValidate()
         {
-            if (_camera == null)
-                _camera = FindObjectOfType<CameraWrapper>();
-
             _levels = GetComponentsInChildren<World.Level>(true);
             _selectedLevel = _levels.Length == 0 ? null : _levels[0];
 
@@ -214,16 +208,16 @@ namespace Cirrus.Circuit
             TryChangeState(State.Menu);
         }
 
-        void Start()
+        public override void Start()
         {
-            initialVectorBottomLeft = _camera.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
-            initialVectorTopRight = _camera.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30)); // I used 30 as my camera z is -30
+            initialVectorBottomLeft = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
+            initialVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30)); // I used 30 as my camera z is -30
         }
 
         void Update()
         {
-            UpdatedVectorBottomLeft = _camera.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
-            UpdatedVectorTopRight = _camera.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30));
+            UpdatedVectorBottomLeft = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
+            UpdatedVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30));
 
             if ((initialVectorBottomLeft != UpdatedVectorBottomLeft) || (initialVectorTopRight != UpdatedVectorTopRight))
             {
@@ -435,9 +429,9 @@ namespace Cirrus.Circuit
                 case State.Score:
                 case State.Podium:
                 case State.FinalPodium:
-                    _camera.Camera.orthographicSize =
-                        UnityEngine.Mathf.Lerp(
-                            _camera.Camera.orthographicSize,
+                    CameraManager.Instance.Camera.orthographicSize =
+                        Mathf.Lerp(
+                            CameraManager.Instance.Camera.orthographicSize,
                             _targetSizeCamera,
                             _cameraSizeSpeed);
 

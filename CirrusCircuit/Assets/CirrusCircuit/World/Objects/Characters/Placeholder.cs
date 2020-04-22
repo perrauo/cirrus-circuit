@@ -7,7 +7,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
     public class Placeholder : BaseObject
     {
         [SerializeField]
-        private CameraWrapper _camera;
+        private CameraManager _camera;
 
         //adjust this to change speed
         [SerializeField]
@@ -25,7 +25,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
             base.OnValidate();
 
             if (_camera == null)
-                _camera = FindObjectOfType<CameraWrapper>();
+                _camera = FindObjectOfType<CameraManager>();
         }
 
         public override void Start()

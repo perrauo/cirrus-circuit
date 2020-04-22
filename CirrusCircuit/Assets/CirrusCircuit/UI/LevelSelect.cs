@@ -50,11 +50,7 @@ namespace Cirrus.Circuit.UI
 
         public void OnDestroy()
         {
-            if (Game.Instance.OnLevelSelectedHandler != null)
-            {
-                Game.Instance.OnLevelSelectedHandler -= OnLevelSelected;
-                Game.Instance.OnLevelSelectHandler -= OnLevelSelect;
-            }
+
         }
 
         public IEnumerator PunchScale(bool previous)
