@@ -7,5 +7,9 @@ namespace Cirrus.Circuit.World.Objects
     {
         [SerializeField]
         public Gem[] SimpleGems;
+
+        [SerializeField]
+        public GameObject DebugObject;
+
     }
 }

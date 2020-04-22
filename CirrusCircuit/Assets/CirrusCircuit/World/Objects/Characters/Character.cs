@@ -16,7 +16,7 @@ using UnityInputs = UnityEngine.InputSystem;
 
 namespace Cirrus.Circuit.World.Objects.Characters
 {
-    [System.Serializable]
+    [Serializable]
     public struct Axes
     {
         public Vector2 Left;
@@ -44,18 +44,9 @@ namespace Cirrus.Circuit.World.Objects.Characters
         [SerializeField]
         public Animator Animator;
 
-        //private Vector3 _targetDirection = Vector3.zero;
-
-        //private Vector3 _direction = Vector3.zero;
-
-        //private bool _wasMovingVertical = false;
-
         public override Color Color {
 
-            get
-            {
-                return _color;
-            }
+            get => _color;            
 
             set
             {
@@ -129,20 +120,8 @@ namespace Cirrus.Circuit.World.Objects.Characters
             if (isMovingVertical && isMovingHorizontal)
             {
                 //moving in both directions, prioritize later
-                if (_wasMovingVertical)
-                {
-                    if (base.TryMove(stepHorizontal))
-                    {
-                        _guide.Show(stepHorizontal);
-                    }
-                }
-                else
-                {
-                    if (base.TryMove(stepVertical))
-                    {
-                        _guide.Show(stepVertical);
-                    }
-                }
+                if (_wasMovingVertical && base.TryMove(stepHorizontal)) _guide.Show(stepHorizontal);
+                else if (base.TryMove(stepVertical)) _guide.Show(stepVertical);
             }
             else if (isMovingHorizontal)
             {

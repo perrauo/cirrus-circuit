@@ -82,10 +82,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual UnityEngine.Color Color
         {
-            get
-            {
-                return _color;
-            }
+            get => _color;
 
             set
             {
@@ -118,9 +115,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void OnValidate()
         {
-            if (_level == null)
-                _level = GetComponentInParent<Level>();
-
+            if (_level == null) _level = GetComponentInParent<Level>();
 
             if (Game.Instance.Lobby != null)
             {
@@ -215,17 +210,10 @@ namespace Cirrus.Circuit.World.Objects
         {
             if (_user != null)
             {
-                if (_user.TryMove(step, incoming))
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                return true;
+                if (_user.TryMove(step, incoming)) return true;
             }
 
-            return false;
+            return true;            
 
         }
 
@@ -259,7 +247,7 @@ namespace Cirrus.Circuit.World.Objects
                     return;
 
                 _nextColorIndex = _nextColorIndex + 1;
-                _nextColorIndex = Utils.MathUtils.Wrap(_nextColorIndex, 0, Game.Instance._controllers.Count);
+                _nextColorIndex = MathUtils.Wrap(_nextColorIndex, 0, Game.Instance._controllers.Count);
                 _nextColor = Game.Instance._controllers[_nextColorIndex].Color;
             }
         }
@@ -320,7 +308,7 @@ namespace Cirrus.Circuit.World.Objects
                 case State.RampMoving:
 
                     Object.transform.position = Vector3.Lerp(Object.transform.position, _targetPosition, _stepSpeed);
-                    float scale = UnityEngine.Mathf.Lerp(Object.transform.localScale.x, _targetScale, _scaleSpeed);
+                    float scale = Mathf.Lerp(Object.transform.localScale.x, _targetScale, _scaleSpeed);
                     Object.transform.localScale = new Vector3(scale, scale, scale);
 
                     break;
@@ -583,9 +571,8 @@ namespace Cirrus.Circuit.World.Objects
                         out pushed))
                     {
                         _destination = destination;
-                        _gridPosition = newGridPosition;// _level.GridToWorld(newGridPosition);
+                        _gridPosition = newGridPosition;
                         _targetPosition = _level.GridToWorld(_gridPosition);
-
                         _state = target;
                         result = true;
                     }
@@ -679,8 +666,7 @@ namespace Cirrus.Circuit.World.Objects
                     if (_level.TryMove(this, step, ref offset, out newGridPosition, out pushed, out destination))
                     {
                         //destination.
-                        if(pushed)
-                            pushed.Interact(this);
+                        if(pushed) pushed.Interact(this);                        
 
                         _destination = destination;
                         _gridPosition = newGridPosition;

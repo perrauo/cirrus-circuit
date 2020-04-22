@@ -46,10 +46,8 @@ namespace PlayfulSystems.ProgressBar
 
         public float Value
         {
-            get
-            {
-                return m_value;
-            }
+            get => m_value;
+            
             set
             {
                 if (value == m_value)
@@ -61,18 +59,15 @@ namespace PlayfulSystems.ProgressBar
 
         public void SetValue(float value, float maxValue)
         {
-            if (maxValue != 0f)
-                SetValue(value / maxValue);
-            else
-                SetValue(0f);
+            if (maxValue != 0f) SetValue(value / maxValue); 
+            else SetValue(0f);
+
         }
 
         public void SetValue(int value, int maxValue)
         {
-            if (maxValue != 0)
-                SetValue((float)value / (float)maxValue);
-            else
-                SetValue(0f);
+            if (maxValue != 0) SetValue((float)value / (float)maxValue);
+            else SetValue(0f);
         }
 
         public void SetValue(float percentage)

@@ -26,10 +26,10 @@ namespace Cirrus.Circuit.World.Objects
 
         public bool IsRequired = false;
 
-        public Gem Create(Transform parent, Vector3 position)
-        {
-            return Instantiate(gameObject, position, Quaternion.identity, parent).GetComponent<Gem>();
-        }
+        //public Gem Create(Transform parent, Vector3 position)
+        //{
+        //    return Instantiate(gameObject, position, Quaternion.identity, parent).GetComponent<Gem>();
+        //}
 
         public override void Interact(BaseObject source)
         {

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using Cirrus.Circuit.World.Objects;
+using Cirrus.Utils;
 using System;
 
 using System.Threading;
@@ -12,9 +13,13 @@ namespace Cirrus.Circuit.World
 {
     public class Level : MonoBehaviour
     {
+        private const int FallTrials = 100;
+
         public enum Rule
         {
+            Timeout,
             RequiredGemsCollected,
+
         }
 
         public delegate void OnLevelCompleted(Rule rule);
@@ -119,10 +124,10 @@ namespace Cirrus.Circuit.World
             _name = _name.Replace('.', ' ');
 
             if (_gems != null && _gems.Length == 0)
-                _gems = gameObject.GetComponentsInChildren<Objects.Gem>();
+                _gems = gameObject.GetComponentsInChildren<Gem>();
 
             if (_doors != null && _doors.Length == 0)
-                _doors = gameObject.GetComponentsInChildren<Objects.Door>();
+                _doors = gameObject.GetComponentsInChildren<Door>();
 
             if (_characters != null && _characters.Length == 0)
                 _characters = gameObject.GetComponentsInChildren<Objects.Characters.Character>();
@@ -212,9 +217,9 @@ namespace Cirrus.Circuit.World
         public Vector3Int WorldToGrid(Vector3 pos)
         {
             return new Vector3Int(
-                UnityEngine.Mathf.RoundToInt(pos.x / GridSize) + _offset.x,
-                UnityEngine.Mathf.RoundToInt(pos.y / GridSize) + _offset.y,
-                UnityEngine.Mathf.RoundToInt(pos.z / GridSize) + _offset.z);
+                Mathf.RoundToInt(pos.x / GridSize) + _offset.x,
+                Mathf.RoundToInt(pos.y / GridSize) + _offset.y,
+                Mathf.RoundToInt(pos.z / GridSize) + _offset.z);
         }
 
         public Vector3 GridToWorld(Vector3Int pos)
@@ -285,14 +290,8 @@ namespace Cirrus.Circuit.World
                 {
                     // Only set occupying tile if not visiting
                     // Only set occupying tile if not visiting
-                    if (source._destination == null)
-                    {
-                        Set(source._gridPosition, null);
-                    }
-                    else
-                    {
-                        source._destination._user = null;
-                    }
+                    if (source._destination == null) Set(source._gridPosition, null);
+                    else source._destination._user = null;
 
                     Set(position, source);
                     return true;
@@ -303,14 +302,8 @@ namespace Cirrus.Circuit.World
                     destination = pushed;
 
                     // Only set occupying tile if not visiting
-                    if (source._destination == null)
-                    {
-                        Set(source._gridPosition, null);
-                    }
-                    else
-                    {
-                        source._destination._user = null;
-                    }
+                    if (source._destination == null) Set(source._gridPosition, null);
+                    else source._destination._user = null;
 
                     return true;
                 }
@@ -318,14 +311,8 @@ namespace Cirrus.Circuit.World
             else
             {
                 // Only set occupying tile if not visiting
-                if (source._destination == null)
-                {
-                    Set(source._gridPosition, null);
-                }
-                else
-                {
-                    source._destination._user = null;
-                }
+                if (source._destination == null) Set(source._gridPosition, null);
+                else source._destination._user = null;
 
                 Set(position, source);
                 return true;
@@ -357,29 +344,38 @@ namespace Cirrus.Circuit.World
             return false;
         }
 
-
+        bool once = false;
         public bool TryFallThrough(BaseObject source, Vector3Int step, ref Vector3 offset, out Vector3Int position, out BaseObject destination)
         {
-            destination = null;
-            
-
+            destination = null;            
             Vector3Int direction = step;//.SetXYZ(step.x, 0, step.z);
-
             position = source._gridPosition + step;
+
+            //bool once = false;
 
             if(!IsWithinBoundsY(position.y))
             {
-                position = new Vector3Int(
-                    UnityEngine.Random.Range(_offset.x, _dimension.x - _offset.x - 2),
-                    _dimension.y-1,
-                    UnityEngine.Random.Range(_offset.x, _dimension.z - _offset.z - 2));
+                for (int k = 0; k < FallTrials; k++)
+                {
+                    position = new Vector3Int(
+                        UnityEngine.Random.Range(_offset.x, _dimension.x - _offset.x),
+                        _dimension.y - 1,
+                        UnityEngine.Random.Range(_offset.x, _dimension.z - _offset.z));
 
-                return InnerTryMove(source, position, direction, ref offset, out BaseObject pushedl, out destination);
+                    for (int i = 0; i < _dimension.y; i++)
+                    {                                          
+                        //Spawn(_objectResources.DebugObject, position.Copy().SetY(position.y - i));
+                     
+                        if (TryGet(position.Copy().SetY(position.y - i), out BaseObject target))
+                        {
+                            if (target is Gem) continue;
+                            if (target is Objects.Characters.Character) continue;
+                            if (target is Door) continue;
 
-                //position = new Vector3Int(
-                //   Utils.Math.Mod(position.x, _dimension.x),
-                //   Utils.Math.Mod(position.y, _dimension.y),
-                //   Utils.Math.Mod(position.z, _dimension.z));
+                            return InnerTryMove(source, position, direction, ref offset, out BaseObject pushed, out destination);
+                        }
+                    }                    
+                }           
             }
 
             return false;
@@ -390,20 +386,48 @@ namespace Cirrus.Circuit.World
             // TODO
         }
 
+        public void Rain(BaseObject template)
+        {
+            Vector3Int position = new Vector3Int(
+                UnityEngine.Random.Range(_offset.x, _dimension.x - _offset.x - 1),
+                _dimension.y - 1,
+                UnityEngine.Random.Range(_offset.x, _dimension.z - _offset.z - 1));
+
+            Spawn(template, position);
+        }
+
+
+        public BaseObject Spawn(BaseObject template, Vector3Int pos)
+        {
+
+            BaseObject obj = template.Create(GridToWorld(pos), transform);
+
+            obj.Register(this);
+
+            obj.TryChangeState(BaseObject.State.Idle);
+
+            return obj;
+        }
+
+
+        public GameObject Spawn(GameObject template, Vector3Int pos)
+        {
+
+            GameObject obj = template.Create(GridToWorld(pos), transform);
+
+            return obj;
+        }
+
+
         public void OnRainTimeout()
         {
             Vector3Int position = new Vector3Int(
-                UnityEngine.Random.Range(_offset.x, _dimension.x - _offset.x - 2),
+                UnityEngine.Random.Range(_offset.x, _dimension.x - _offset.x - 1),
                 _dimension.y - 1,
-                UnityEngine.Random.Range(_offset.x, _dimension.z - _offset.z - 2));
+                UnityEngine.Random.Range(_offset.x, _dimension.z - _offset.z - 1));
 
-            Gem gem = 
-                _objectResources.SimpleGems[UnityEngine.Random.Range(0,_objectResources.SimpleGems.Length)]              
-                .Create(transform, GridToWorld(position));
-
-            gem.Register(this);
-
-            gem.TryChangeState(BaseObject.State.Idle);
+            Rain(
+                _objectResources.SimpleGems[UnityEngine.Random.Range(0, _objectResources.SimpleGems.Length)]);
         }
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
@@ -419,24 +443,11 @@ namespace Cirrus.Circuit.World
         }
 
 
-        //public void OnRound(Round round)
-        //{
-        //    foreach (BaseObject obj in _objects)
-        //    {
-        //        if (obj == null)
-        //            continue;
-
-        //        obj.TryChangeState(BaseObject.State.Disabled);
-        //        //OnRoun obj.OnRoundEnd;
-        //    }
-        //}
-
         public void OnBeginRound(int number)
         {
             foreach (BaseObject obj in _objects)
             {
-                if (obj == null)
-                    continue;
+                if (obj == null) continue;
 
                 obj.TryChangeState(BaseObject.State.Idle);
             }
