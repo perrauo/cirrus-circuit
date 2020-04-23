@@ -55,7 +55,7 @@ namespace Cirrus.Circuit.UI
 
         public void OnHostClicked()
         {
-            if (NetworkManagerWrapper.Instance.TryServerHost())
+            if (NetworkManagerWrapper.Instance.TryServerHost(_joinInput.text))
             {
                 Game.Instance.StartOnline();
             }

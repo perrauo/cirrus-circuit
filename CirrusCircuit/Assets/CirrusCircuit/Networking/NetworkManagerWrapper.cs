@@ -2,7 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Net;
 using Mirror;
+using System;
+using System.Net.Sockets;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -16,6 +19,9 @@ namespace Cirrus.Circuit.Networking
     {
         [SerializeField]
         private CustomNetworkManager _net;
+
+        [SerializeField]
+        private TelepathyTransport _transport;
 
         [SerializeField]
         private NetworkPlayerClient _playerClient;
@@ -33,21 +39,17 @@ namespace Cirrus.Circuit.Networking
             //_net.client
         }
 
-        public void DoStart()
+        public bool TryServerHost(string port)
         {
-            //_manager.
-        }
+            if (ushort.TryParse(port, out ushort res))
+            {
+                _transport.port = res;
+                _net.StartServer();
+                _isServer = true;
+                return true;
+            }
 
-        public void DoStop()
-        {
-
-        }
-
-        public bool TryServerHost()
-        {
-            _net.StartServer();
-            _isServer = true;
-            return true;
+            return false;
         }
 
         public void OnClientConnected(NetworkConnection conn)
@@ -60,10 +62,9 @@ namespace Cirrus.Circuit.Networking
         public bool TryClientJoin(string hostAddress)
         {
             _isServer = false;
-            if (StringUtils.IsValidIpAddress(hostAddress))
-            {                
-                _net.StartClient(new System.Uri(hostAddress));
-                
+            if (NetworkUtils.TryParseAddress(hostAddress, out IPAddress adrs, out  ushort port))
+            {
+                _net.StartClient(NetworkUtils.ToUri(adrs, port));
                 return true;
             }
 

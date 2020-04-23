@@ -55,7 +55,6 @@ namespace Cirrus.Circuit
         [SerializeField]
         public Clock _clock;
 
-
         public Clock Clock => _clock;        
 
         [SerializeField]
@@ -69,7 +68,6 @@ namespace Cirrus.Circuit
         public UI.CharacterSelect _characterSelect;
 
         public UI.StartMenu _startMenu;
-
 
         [SerializeField]
         public World.Level[] _levels;
@@ -140,14 +138,9 @@ namespace Cirrus.Circuit
             _levels = GetComponentsInChildren<World.Level>(true);
             _selectedLevel = _levels.Length == 0 ? null : _levels[0];
 
-            if (_transitionEffect == null)
-                _transitionEffect = FindObjectOfType<Transitions.Transition>();
-
-            if (_characterSelect == null)
-                _characterSelect = FindObjectOfType<UI.CharacterSelect>();
-
-            if (_startMenu == null)
-                _startMenu = FindObjectOfType<UI.StartMenu>();
+            if (_transitionEffect == null) _transitionEffect = FindObjectOfType<Transitions.Transition>();
+            if (_characterSelect == null) _characterSelect = FindObjectOfType<UI.CharacterSelect>();
+            if (_startMenu == null) _startMenu = FindObjectOfType<UI.StartMenu>();
         }
 
 
@@ -187,7 +180,7 @@ namespace Cirrus.Circuit
             UpdatedVectorBottomLeft = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
             UpdatedVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30));
 
-            if ((initialVectorBottomLeft != UpdatedVectorBottomLeft) || (initialVectorTopRight != UpdatedVectorTopRight))
+            if (initialVectorBottomLeft != UpdatedVectorBottomLeft || initialVectorTopRight != UpdatedVectorTopRight)
             {
                 OnScreenResizedHandler?.Invoke();
             }
