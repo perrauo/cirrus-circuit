@@ -75,14 +75,14 @@ namespace Cirrus.Circuit
             transform.position = Vector3.Lerp(transform.position, TargetPosition, _positionSpeed);
 
             for(int i = 0; i < _characters.Count; i++) {
-                _characters[i].Object.transform.position =
+                _characters[i].Transform.transform.position =
                 Vector3.Lerp(
-                    _characters[i].Object.transform.position,
+                    _characters[i].Transform.transform.position,
                     _platforms[i]._characterAnchor.transform.position,
                     _timer.Time/_timeTransitionFrom);
 
-                _characters[i].Object.transform.rotation = Quaternion.Lerp(
-                    _characters[i].Object.transform.rotation, 
+                _characters[i].Transform.transform.rotation = Quaternion.Lerp(
+                    _characters[i].Transform.transform.rotation, 
                     _platforms[i]._visual.Parent.transform.rotation,
                     _timer.Time / _timeTransitionFrom);
             }

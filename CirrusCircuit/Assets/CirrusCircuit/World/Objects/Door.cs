@@ -151,8 +151,8 @@ namespace Cirrus.Circuit.World.Objects
             switch (incoming.Id)
             {
                 case ObjectId.Gem:
-                    iTween.Init(Object);
-                    iTween.Stop(Object);
+                    iTween.Init(Transform.gameObject);
+                    iTween.Stop(Transform.gameObject);
                     
                     //_visual.Parent.transform.localScale = new Vector3(1, 1, 1);
                     //StartCoroutine(PunchScale());

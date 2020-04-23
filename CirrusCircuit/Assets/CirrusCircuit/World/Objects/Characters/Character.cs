@@ -172,7 +172,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 case State.RampIdle:
                     
                     if (_direction != Vector3.zero)
-                        Object.transform.rotation = Quaternion.LookRotation(_direction, Object.transform.up);
+                        Transform.transform.rotation = Quaternion.LookRotation(_direction, Transform.transform.up);
                     break;
 
             }

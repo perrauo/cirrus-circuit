@@ -84,7 +84,7 @@ namespace Cirrus.Circuit
 
         public void FixedUpdate()
         {
-            _character.Object.transform.position = _characterAnchor.transform.position;        
+            _character.Transform.transform.position = _characterAnchor.transform.position;        
         }
 
         public void OnTransitionToTimeOut()

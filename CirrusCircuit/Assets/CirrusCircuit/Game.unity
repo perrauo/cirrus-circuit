@@ -2112,7 +2112,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3113816541090f428821bcd1649c82f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _manager: {fileID: 955854284}
+  _net: {fileID: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -3311,6 +3311,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Level.Medium.Custom
+      objectReference: {fileID: 0}
+    - target: {fileID: 4361856477803033397, guid: 9c1f8282644cf3c419221945876b74e9,
+        type: 3}
+      propertyPath: sceneId
+      value: 2659727760
+      objectReference: {fileID: 0}
+    - target: {fileID: 4448266336999149283, guid: 9c1f8282644cf3c419221945876b74e9,
+        type: 3}
+      propertyPath: sceneId
+      value: 924408989
+      objectReference: {fileID: 0}
+    - target: {fileID: 6032602203520174093, guid: 9c1f8282644cf3c419221945876b74e9,
+        type: 3}
+      propertyPath: sceneId
+      value: 4069071701
+      objectReference: {fileID: 0}
+    - target: {fileID: 8353697935272121764, guid: 9c1f8282644cf3c419221945876b74e9,
+        type: 3}
+      propertyPath: sceneId
+      value: 2814201804
       objectReference: {fileID: 0}
     - target: {fileID: 9109013906679241467, guid: 9c1f8282644cf3c419221945876b74e9,
         type: 3}
@@ -4613,6 +4633,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _randomizeSeed: 0
+  _isOnline: 0
   _transitionEffect: {fileID: 561710196}
   _clock: {fileID: 6238744520646324635}
   Lobby: {fileID: 1438632338796918504}

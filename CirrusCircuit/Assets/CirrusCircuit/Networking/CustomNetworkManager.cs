@@ -13,7 +13,7 @@ namespace Cirrus.Circuit.Networking
     public class CustomNetworkManager : BaseSingleton<CustomNetworkManager>
     {
         [SerializeField]
-        private Mirror.NetworkManager _manager;
+        private Mirror.NetworkManager _net;
 
         public override void Awake()
         {
@@ -32,9 +32,8 @@ namespace Cirrus.Circuit.Networking
 
         public bool TryServerHost()
         {
-
-
-            return false;
+            _net.StartServer();
+            return true;
         }
 
         // 25.1.149.130:4040
@@ -43,7 +42,7 @@ namespace Cirrus.Circuit.Networking
         {
             if (Utils.StringUtils.IsValidIpAddress(hostAddress))
             {
-
+                _net.StartClient(new System.Uri(hostAddress));
                 return true;
             }
 

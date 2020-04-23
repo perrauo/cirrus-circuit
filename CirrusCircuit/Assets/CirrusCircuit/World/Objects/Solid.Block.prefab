@@ -1,5 +1,40 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &380696812736090026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7782920105222043963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c828eaddb44da53459118299ab503ee1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _net: {fileID: 2545227430839181398}
+  _visual: {fileID: 8797730653149646002}
+  _fallbackColors: []
+  _transform: {fileID: 1137915838277110330}
+  _stepSize: 1
+  _stepSpeed: 0.2
+  _fallSpeed: 0.6
+  _fallDistance: 100
+  _scaleSpeed: 0.6
+  _destination: {fileID: 0}
+  _user: {fileID: 0}
+  _direction: {x: 0, y: 0, z: 0}
+  _targetPosition: {x: 0, y: 0, z: 0}
+  _gridPosition: {x: 0, y: 0, z: 0}
+  _targetScale: 1
+  Number: 5
+  _color: {r: 1, g: 1, b: 1, a: 1}
+  _nextColor: {r: 1, g: 1, b: 1, a: 1}
+  _nextColorTime: 2
+  _nextColorIndex: 0
+  _nextColorSpeed: 0.05
+  _level: {fileID: 0}
+  _state: 0
 --- !u!114 &8797730653149646002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19,7 +54,7 @@ MonoBehaviour:
   _texts: []
   _outlines: []
   _barcolors: []
---- !u!114 &380696812736090026
+--- !u!114 &716298400596760416
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -28,32 +63,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 7782920105222043963}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c828eaddb44da53459118299ab503ee1, type: 3}
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Game.Instance: {fileID: 0}
-  _level: {fileID: 0}
-  _visual: {fileID: 8797730653149646002}
-  _fallbackColors: []
-  _object: {fileID: 7782920105222043963}
-  _stepSize: 1
-  _stepSpeed: 0.2
-  _fallSpeed: 0.6
-  _fallDistance: 100
-  _scaleSpeed: 0.6
-  _destination: {fileID: 0}
-  _user: {fileID: 0}
-  _direction: {x: 0, y: 0, z: 0}
-  _targetPosition: {x: 0, y: 0, z: 0}
-  _gridPosition: {x: 0, y: 0, z: 0}
-  _targetScale: 1
-  Number: 5
-  _color: {r: 1, g: 1, b: 1, a: 1}
-  _nextColor: {r: 0, g: 0, b: 0, a: 0}
-  _nextColorTime: 2
-  _nextColorIndex: 0
-  _nextColorSpeed: 0.05
-  _state: 0
+  sceneId: 0
+  serverOnly: 0
+  m_AssetId: 
+--- !u!114 &4257342903014092273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7782920105222043963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f74aedd71d9a4f55b3ce499326d45fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  clientAuthority: 0
+  localPositionSensitivity: 0.01
+  localRotationSensitivity: 0.01
+  localScaleSensitivity: 0.01
 --- !u!1001 &1624148582309748932
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -61,11 +94,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 8829410553811671551, guid: 06d9e1aa028280e4c97369fef81e3fdc,
-        type: 3}
-      propertyPath: m_Name
-      value: Solid.Block
-      objectReference: {fileID: 0}
     - target: {fileID: 1819615786462522110, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -126,6 +154,16 @@ PrefabInstance:
       propertyPath: Number
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 3879943829750087826, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: _netIdentity
+      value: 
+      objectReference: {fileID: 716298400596760416}
+    - target: {fileID: 3879943829750087826, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: _netTransform
+      value: 
+      objectReference: {fileID: 4257342903014092273}
     - target: {fileID: 8284362496991488768, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
       propertyPath: _meshRenderers.Array.size
@@ -136,6 +174,11 @@ PrefabInstance:
       propertyPath: _meshRenderers.Array.data[0]
       value: 
       objectReference: {fileID: 8986346725817190568}
+    - target: {fileID: 8829410553811671551, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: m_Name
+      value: Solid.Block
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 06d9e1aa028280e4c97369fef81e3fdc, type: 3}
 --- !u!1 &7782920105222043963 stripped
@@ -150,6 +193,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1624148582309748932}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2545227430839181398 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3879943829750087826, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+    type: 3}
+  m_PrefabInstance: {fileID: 1624148582309748932}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7782920105222043963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ce3841d92a9bf1478d5227270de4b23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2079546035174219691
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -157,11 +212,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1137915838277110330}
     m_Modifications:
-    - target: {fileID: 5694801824408563516, guid: 62a03573524149449b1dc31028a3a445,
-        type: 3}
-      propertyPath: m_Name
-      value: default
-      objectReference: {fileID: 0}
     - target: {fileID: 929660425015139954, guid: 62a03573524149449b1dc31028a3a445,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -216,6 +266,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5694801824408563516, guid: 62a03573524149449b1dc31028a3a445,
+        type: 3}
+      propertyPath: m_Name
+      value: default
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 62a03573524149449b1dc31028a3a445, type: 3}

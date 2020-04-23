@@ -40,9 +40,8 @@ namespace Cirrus.Circuit.World.Objects
         //public Collider _collider;
 
         [SerializeField]
-        public GameObject _object;
-
-        public GameObject Object => _object;        
+        public Transform _transform;
+        public Transform Transform => _transform;        
 
         [SerializeField]
         public int _stepSize = 1;
@@ -131,8 +130,8 @@ namespace Cirrus.Circuit.World.Objects
                 _nextColorTimer.OnTimeLimitHandler += OnNextColorTimeOut;
             }
 
-            _direction = Object.transform.forward.ToVector3Int();
-            _targetPosition = Object.transform.position;
+            _direction = Transform.transform.forward.ToVector3Int();
+            _targetPosition = Transform.transform.position;
             _targetScale = 1f;
 
             FSMAwake();
@@ -304,9 +303,9 @@ namespace Cirrus.Circuit.World.Objects
                 case State.Moving:
                 case State.RampMoving:
 
-                    Object.transform.position = Vector3.Lerp(Object.transform.position, _targetPosition, _stepSpeed);
-                    float scale = Mathf.Lerp(Object.transform.localScale.x, _targetScale, _scaleSpeed);
-                    Object.transform.localScale = new Vector3(scale, scale, scale);
+                    Transform.transform.position = Vector3.Lerp(Transform.transform.position, _targetPosition, _stepSpeed);
+                    float scale = Mathf.Lerp(Transform.transform.localScale.x, _targetScale, _scaleSpeed);
+                    Transform.transform.localScale = new Vector3(scale, scale, scale);
 
                     break;
             }
@@ -331,7 +330,7 @@ namespace Cirrus.Circuit.World.Objects
                 case State.Moving:
                 case State.RampMoving:
 
-                    if (VectorUtils.IsCloseEnough(Object.transform.position, _targetPosition))
+                    if (VectorUtils.IsCloseEnough(Transform.transform.position, _targetPosition))
                     {
                         if (_destination == null)
                         {
@@ -582,7 +581,7 @@ namespace Cirrus.Circuit.World.Objects
                         _destination = destination;
                         _gridPosition = newGridPosition;// _level.GridToWorld(newGridPosition);
                         _targetPosition = _level.GridToWorld(_gridPosition);
-                        Object.transform.position = _targetPosition; 
+                        Transform.transform.position = _targetPosition; 
 
                         _state = target;
                         result = true;
