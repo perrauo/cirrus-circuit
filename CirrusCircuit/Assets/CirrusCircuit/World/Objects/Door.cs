@@ -17,7 +17,7 @@ namespace Cirrus.Circuit.World.Objects
         public OnScoreValueAdded OnScoreValueAddedHandler;
 
         [SerializeField]
-        private PlayfulSystems.ProgressBar.ProgressBarPro _progressBar;
+        private Cirrus.UI.ProgressBars.BaseProgressBar _progressBar;
 
         [SerializeField]
         private int _comboRequired = 2;

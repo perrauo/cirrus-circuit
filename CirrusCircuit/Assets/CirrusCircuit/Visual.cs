@@ -29,7 +29,7 @@ namespace Cirrus.Circuit
         private UnityEngine.UI.Outline[] _outlines;
 
         [SerializeField]
-        private PlayfulSystems.ProgressBar.BarViewColor[] _barcolors;
+        private Cirrus.UI.ProgressBars.BarViewColor[] _barcolors;
 
         private Color _color;
 
