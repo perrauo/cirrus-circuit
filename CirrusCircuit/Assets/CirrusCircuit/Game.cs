@@ -236,9 +236,7 @@ namespace Cirrus.Circuit
         {
             for (int i = 0; i < _levels.Length; i++)
             {
-                if (_levels[i] == null)
-                    continue;
-
+                if (_levels[i] == null) continue;            
                 _levels[i].TargetPosition = Vector3.zero + Vector3.right * (i - _currentLevelIndex) * _distanceLevelSelect;
             }
 
@@ -820,12 +818,9 @@ namespace Cirrus.Circuit
                     //Lobby.Characters.Clear();
                     //Lobby.Characters.AddRange(_selectedLevel.Characters);
 
-                    foreach (Player ctrl in Lobby.Players)
+                    foreach (Player player in Lobby.Players)
                     {
-                        if (ctrl == null)
-                        {
-                            continue;
-                        }
+                        if (player == null) continue;                        
 
                         //ctrl.Character = null;
                     }
@@ -957,14 +952,7 @@ namespace Cirrus.Circuit
                     }
                     else
                     {
-                        foreach (Player ctrl in Lobby.Players)
-                        {
-                            if (ctrl == null)
-                            {
-                                continue;
-                            }
-                        }
-
+                        foreach (Player other in Lobby.Players) if (other == null) continue;      
                         TryChangeState(State.LevelSelection);
                     }
 
@@ -978,6 +966,16 @@ namespace Cirrus.Circuit
 
                 case State.Score:
                     break;
+            }
+        }
+
+        public void PlayerJoin(Player player)
+        {
+            _players.Add(player);
+            OnPlayerJoinHandler?.Invoke(player);
+            if (IsOnline)
+            {
+
             }
         }
 
@@ -998,8 +996,7 @@ namespace Cirrus.Circuit
 
                     if (!_players.Contains(player))
                     {
-                        _players.Add(player);
-                        OnPlayerJoinHandler?.Invoke(player);
+                        PlayerJoin(player);
                     }
                     else
                     {
@@ -1010,7 +1007,6 @@ namespace Cirrus.Circuit
 
 
                 case State.WaitingNextRound:
-
                     break;
 
 

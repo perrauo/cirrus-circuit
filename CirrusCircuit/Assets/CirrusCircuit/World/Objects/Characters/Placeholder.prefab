@@ -194,7 +194,7 @@ MonoBehaviour:
   _net: {fileID: 0}
   _visual: {fileID: 2289089172541776485}
   _fallbackColors: []
-  _transform: {fileID: 0}
+  _transform: {fileID: 8382784628870387941}
   _stepSize: 1
   _stepSpeed: 0.2
   _fallSpeed: 0.6
@@ -208,7 +208,7 @@ MonoBehaviour:
   _targetScale: 1
   Number: 0
   _color: {r: 1, g: 0, b: 0, a: 1}
-  _nextColor: {r: 0, g: 0, b: 0, a: 0}
+  _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorTime: 2
   _nextColorIndex: 0
   _nextColorSpeed: 0.05

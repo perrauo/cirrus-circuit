@@ -32,6 +32,69 @@ Transform:
   m_Father: {fileID: 8145941767884507197}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3136173913771782394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1352485151783467836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 097fa209f8d04b540898c2c0897484c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _net: {fileID: 6743283170821907025}
+  _visual: {fileID: 4590825821992199521}
+  _fallbackColors: []
+  _transform: {fileID: 2260829504269684254}
+  _stepSize: 1
+  _stepSpeed: 0.6
+  _fallSpeed: 0.6
+  _fallDistance: 100
+  _scaleSpeed: 0.6
+  _destination: {fileID: 0}
+  _user: {fileID: 0}
+  _direction: {x: 0, y: 0, z: 0}
+  _targetPosition: {x: 0, y: 0, z: 0}
+  _gridPosition: {x: 0, y: 0, z: 0}
+  _targetScale: 1
+  Number: 0
+  _color: {r: 1, g: 0, b: 0, a: 1}
+  _nextColor: {r: 1, g: 0, b: 0, a: 1}
+  _nextColorTime: 2
+  _nextColorIndex: 0
+  _nextColorSpeed: 0.05
+  _level: {fileID: 0}
+  _state: 0
+  _guide: {fileID: 7203719092928459714}
+  _moveDelay: 0.05
+  _rotationSpeed: 0.6
+  Axes:
+    Left: {x: 0, y: 0}
+    Right: {x: 0, y: 0}
+  Animator: {fileID: 0}
+--- !u!114 &4590825821992199521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1352485151783467836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c207cb311c8305440a7b4d8450d9c1d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Parent: {fileID: 8506653363148755848}
+  _meshRenderers:
+  - {fileID: 1051238937280606043}
+  - {fileID: 177337543698073546}
+  _spriteRenderers: []
+  _images: []
+  _texts: []
+  _outlines: []
+  _barcolors: []
 --- !u!1 &1701506182556975812
 GameObject:
   m_ObjectHideFlags: 0
@@ -210,69 +273,6 @@ MonoBehaviour:
   _templateSpriteRenderer: {fileID: 5486973138460962616}
   _poolSize: 10
   _alpha: 0.2
---- !u!114 &3136173913771782394
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1352485151783467836}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 097fa209f8d04b540898c2c0897484c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _net: {fileID: 6743283170821907025}
-  _visual: {fileID: 4590825821992199521}
-  _fallbackColors: []
-  _transform: {fileID: 2260829504269684254}
-  _stepSize: 1
-  _stepSpeed: 0.6
-  _fallSpeed: 0.6
-  _fallDistance: 100
-  _scaleSpeed: 0.6
-  _destination: {fileID: 0}
-  _user: {fileID: 0}
-  _direction: {x: 0, y: 0, z: 0}
-  _targetPosition: {x: 0, y: 0, z: 0}
-  _gridPosition: {x: 0, y: 0, z: 0}
-  _targetScale: 1
-  Number: 0
-  _color: {r: 1, g: 0, b: 0, a: 1}
-  _nextColor: {r: 1, g: 0, b: 0, a: 1}
-  _nextColorTime: 2
-  _nextColorIndex: 0
-  _nextColorSpeed: 0.05
-  _level: {fileID: 0}
-  _state: 0
-  _guide: {fileID: 7203719092928459714}
-  _moveDelay: 0.05
-  _rotationSpeed: 0.6
-  Axes:
-    Left: {x: 0, y: 0}
-    Right: {x: 0, y: 0}
-  Animator: {fileID: 0}
---- !u!114 &4590825821992199521
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1352485151783467836}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c207cb311c8305440a7b4d8450d9c1d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Parent: {fileID: 8506653363148755848}
-  _meshRenderers:
-  - {fileID: 1051238937280606043}
-  - {fileID: 177337543698073546}
-  _spriteRenderers: []
-  _images: []
-  _texts: []
-  _outlines: []
-  _barcolors: []
 --- !u!1 &7951409919068717743
 GameObject:
   m_ObjectHideFlags: 0

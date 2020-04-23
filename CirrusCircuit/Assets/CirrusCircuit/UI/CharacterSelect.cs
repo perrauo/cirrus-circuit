@@ -27,7 +27,7 @@ namespace Cirrus.Circuit.UI
         public void Awake()
         {
             Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
-            Game.Instance.OnPlayerJoinHandler += OnControllerJoin;
+            Game.Instance.OnPlayerJoinHandler += OnPlayerJoin;
             Game.Instance.OnLevelSelectHandler += OnLevelSelect;
             Game.Instance.OnLevelSelectHandler += OnMenu;
         }
@@ -36,7 +36,7 @@ namespace Cirrus.Circuit.UI
 
         public bool Enabled
         {
-            get => _enabled;            
+            get => _enabled;
 
             set
             {
@@ -116,10 +116,10 @@ namespace Cirrus.Circuit.UI
         }
 
 
-        public void OnControllerJoin(Controls.Player controller)
+        public void OnPlayerJoin(Controls.Player player)
         {
-            controller._characterSlot = slots[controller.Number];
-            slots[controller.Number].TryChangeState(CharacterSelectSlot.State.Selecting);
+            player._characterSlot = slots[player.Number];
+            slots[player.Number].TryChangeState(CharacterSelectSlot.State.Selecting);
         }
     }
 }

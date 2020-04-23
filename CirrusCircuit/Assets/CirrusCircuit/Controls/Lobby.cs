@@ -74,7 +74,7 @@ namespace Cirrus.Circuit.Controls
                                 }
                             }
                         }
-                    }
+                    }                                        
 
                     if (
                         PlayerCount > _playerMax ||
@@ -89,6 +89,7 @@ namespace Cirrus.Circuit.Controls
             }
         }
 
+        // TODO
         public void OnUnpairedInputDeviceUsed(Inputs.InputControl control)
         {
             if (control.device is Inputs.Gamepad)

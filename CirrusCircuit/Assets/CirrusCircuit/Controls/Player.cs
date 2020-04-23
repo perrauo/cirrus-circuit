@@ -46,7 +46,7 @@ namespace Cirrus.Circuit.Controls
 
         public World.Objects.Characters.CharacterAsset _characterResource;
 
-        public UI.CharacterSelectSlot _characterSlot;      
+        public UI.CharacterSelectSlot _characterSlot;
 
         public UI.Player PlayerDisplay = null;
 
@@ -56,7 +56,7 @@ namespace Cirrus.Circuit.Controls
 
         public string _name;
 
-        public string Name => _name;        
+        public string Name => _name;
 
         public int _number = 0;
 
@@ -81,7 +81,7 @@ namespace Cirrus.Circuit.Controls
             // bind to whatever devices are available locally).
             _scheme = scheme;
             _actionMap = new ActionMap();
-            _actionMap.bindingMask = new Inputs.InputBinding { groups = _scheme.bindingGroup };            
+            _actionMap.bindingMask = new Inputs.InputBinding { groups = _scheme.bindingGroup };
             Enable();
         }
 
@@ -117,7 +117,7 @@ namespace Cirrus.Circuit.Controls
         // Cancel
         public void OnAction0(UnityInput.InputAction.CallbackContext context)
         {
-            if(!context.performed)
+            if (!context.performed)
                 Game.Instance.HandleAction0(this);
         }
 
@@ -125,7 +125,7 @@ namespace Cirrus.Circuit.Controls
         public void OnAction1(UnityInput.InputAction.CallbackContext context)
         {
             //context.
-            if(!context.performed)
+            if (!context.performed)
                 Game.Instance.HandleAction1(this);
         }
     }

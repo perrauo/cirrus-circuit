@@ -33,7 +33,7 @@ namespace Cirrus.Circuit.UI
 
         public bool Enabled
         {
-            get => _enabled;            
+            get => _enabled;
 
             set
             {
@@ -55,7 +55,7 @@ namespace Cirrus.Circuit.UI
 
         public void OnHostClicked()
         {
-            if (CustomNetworkManager.Instance.TryServerHost())
+            if (NetworkManagerWrapper.Instance.TryServerHost())
             {
                 Game.Instance.StartOnline();
             }
@@ -72,7 +72,7 @@ namespace Cirrus.Circuit.UI
             // TODO erro
             if (_joinInput == null) return;
             if (string.IsNullOrEmpty(_joinInput.text)) return;
-            if (CustomNetworkManager.Instance.TryClientJoin(_joinInput.text))
+            if (NetworkManagerWrapper.Instance.TryClientJoin(_joinInput.text))
             {
 
             }

@@ -1,55 +1,48 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Mirror;
 
 namespace Cirrus.Circuit.Networking
 {
-    // TODO
-    public class ClientConnectionError
+    public class CustomNetworkManager : NetworkManager
     {
-        public string Message = "Unknown error";   
-    }
+        public Events.Event<NetworkConnection> OnClientConnectHandler;
+        public Events.Event<NetworkConnection> OnClientDisconnectHandler;
+        public Events.Event<NetworkConnection, int> OnClientErrorHandler;
+        public Events.Event OnStartClientHandler;
+        public Events.Event OnStopClientHandler;
 
-    public class CustomNetworkManager : BaseSingleton<CustomNetworkManager>
-    {
-        [SerializeField]
-        private Mirror.NetworkManager _net;
-
-        public override void Awake()
+        public override void OnClientConnect(NetworkConnection conn)
         {
-            base.Awake();
+            base.OnClientConnect(conn);
+            OnClientConnectHandler?.Invoke(conn);
         }
 
-        public void DoStart()
+        public override void OnClientDisconnect(NetworkConnection conn)
         {
-            //_manager.
+            base.OnClientDisconnect(conn);
+            OnClientDisconnectHandler?.Invoke(conn);
         }
 
-        public void DoStop()
+        public override void OnClientError(NetworkConnection conn, int errorCode)
         {
-
+            base.OnClientError(conn, errorCode);
+            OnClientErrorHandler?.Invoke(conn, errorCode);
         }
 
-        public bool TryServerHost()
+        public override void OnStartClient()
         {
-            _net.StartServer();
-            return true;
+            base.OnStartClient();
+            OnStartClientHandler?.Invoke();
         }
 
-        // 25.1.149.130:4040
-
-        public bool TryClientJoin(string hostAddress)
+        public override void OnStopClient()
         {
-            if (Utils.StringUtils.IsValidIpAddress(hostAddress))
-            {
-                _net.StartClient(new System.Uri(hostAddress));
-                return true;
-            }
-
-            return false;
-            //_manager.Start
+            base.OnStopClient();
+            OnStopClientHandler?.Invoke();
         }
-
-
     }
 }
