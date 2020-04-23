@@ -64,23 +64,9 @@ namespace Cirrus.Circuit
 
         public OnControllerJoin OnControllerJoinHandler;
 
-        //public OnLevelSelect OnLevelSelectHandler;
-
-        private static Game _instance;
-
-        public static Game Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = FindObjectOfType<Game>(); ;
-                }
-
-                return _instance;
-
-            }
-        }
+        [SerializeField]
+        private bool _online = false;
+        
 
         [SerializeField]
         private Transitions.Transition _transitionEffect;
@@ -144,7 +130,7 @@ namespace Cirrus.Circuit
 
         /// Controllers in player in game
         [SerializeField]
-        public List<Player> _controllers;
+        public List<Player> _players;
 
         [SerializeField]
         public float _podiumTransitionSpeed = 0.2f;
@@ -196,7 +182,7 @@ namespace Cirrus.Circuit
 
             _transitionTimer.OnTimeLimitHandler += OnTransitionTimeOut;
 
-            _controllers = new List<Player>();
+            _players = new List<Player>();
 
             Layers = new Layers();
             DontDestroyOnLoad(this.gameObject);
@@ -232,10 +218,18 @@ namespace Cirrus.Circuit
             FSMFixedUpdate();
         }
 
-        public void OnStartClicked()
+        public void StartLocal()
         {
+            _online = false;
             TryChangeState(State.Transition, State.CharacterSelection);
         }
+
+        public void StartOnline()
+        {
+            _online = true;
+            TryChangeState(State.Transition, State.CharacterSelection);
+        }
+
 
         public void OnCharacterSelectReady(int playerCount)
         {
@@ -357,20 +351,20 @@ namespace Cirrus.Circuit
 
         public bool TryJoin(Player controller)
         {
-            if (_controllers.Count >= _selectedLevel.CharacterCount)
+            if (_players.Count >= _selectedLevel.CharacterCount)
                 return false;
 
-            _controllers.Add(controller);
+            _players.Add(controller);
 
             return false;
         }
 
         public bool TryLeave(Player controller)
         {
-            if (_controllers.Count >= _selectedLevel.CharacterCount)
+            if (_players.Count >= _selectedLevel.CharacterCount)
                 return false;
 
-            _controllers.Remove(controller);
+            _players.Remove(controller);
 
             return false;
         }
@@ -446,7 +440,7 @@ namespace Cirrus.Circuit
 
                 case State.Round:
 
-                    foreach (Player ctrl in _controllers)
+                    foreach (Player ctrl in _players)
                     {
                         ctrl._character.TryMove(ctrl.AxisLeft);
                     }
@@ -700,7 +694,7 @@ namespace Cirrus.Circuit
                 case State.Begin:
                     _podium.Clear();
 
-                    foreach (var c in _controllers)
+                    foreach (var c in _players)
                     {
                         if (c == null)
                             continue;
@@ -798,22 +792,22 @@ namespace Cirrus.Circuit
                     {
                         Placeholder placeholder = placeholders.RemoveRandom();
  
-                        _controllers[i]._character = _controllers[i]
+                        _players[i]._character = _players[i]
                             ._characterResource.Create(
                                 _currentLevel.GridToWorld(placeholder._gridPosition), 
                                 _currentLevel.transform);
 
-                        _controllers[i]._character.Number = _controllers[i].Number;
+                        _players[i]._character.Number = _players[i].Number;
 
-                        _controllers[i]._character.Color = _controllers[i].Color;
+                        _players[i]._character.Color = _players[i].Color;
 
-                        _controllers[i]._character._level = _currentLevel;                        
+                        _players[i]._character._level = _currentLevel;                        
 
-                        _controllers[i]._character.TryChangeState(Character.State.Disabled);
+                        _players[i]._character.TryChangeState(Character.State.Disabled);
 
-                        _controllers[i].Score = 0;
+                        _players[i].Score = 0;
 
-                        _controllers[i]._assignedNumber = placeholder.Number;
+                        _players[i]._assignedNumber = placeholder.Number;
 
                         i++;
 
@@ -974,10 +968,10 @@ namespace Cirrus.Circuit
 
                 case State.WaitingNextRound:
 
-                    if (_controllers.Contains(controller))
+                    if (_players.Contains(controller))
                     {
                         HUD.Leave(controller);
-                        _controllers.Remove(controller);
+                        _players.Remove(controller);
                     }
                     else
                     {
@@ -1020,9 +1014,9 @@ namespace Cirrus.Circuit
 
                 case State.CharacterSelection:
 
-                    if (!_controllers.Contains(controller))
+                    if (!_players.Contains(controller))
                     {
-                        _controllers.Add(controller);
+                        _players.Add(controller);
                         OnControllerJoinHandler?.Invoke(controller);
                     }
                     else

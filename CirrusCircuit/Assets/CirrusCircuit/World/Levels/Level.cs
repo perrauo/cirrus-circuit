@@ -201,7 +201,7 @@ namespace Cirrus.Circuit.World
                 if (obj is Objects.Characters.Character)
                     continue;
 
-                foreach (Controls.Player ctrl in Game.Instance._controllers)
+                foreach (Controls.Player ctrl in Game.Instance._players)
                 {
                     if (obj.Number == ctrl._assignedNumber)
                     {

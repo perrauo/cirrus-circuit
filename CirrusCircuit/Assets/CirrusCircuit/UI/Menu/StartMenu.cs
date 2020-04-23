@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Cirrus.Circuit.Networking;
+
 namespace Cirrus.Circuit.UI
 {
     public class StartMenu : MonoBehaviour
@@ -44,7 +46,7 @@ namespace Cirrus.Circuit.UI
         public void Awake()
         {
             _exitButton.onClick.AddListener(OnExitClick);
-            _playButton.onClick.AddListener(Game.Instance.OnStartClicked);
+            _playButton.onClick.AddListener(() => Game.Instance.StartLocal());
             _joinButton.onClick.AddListener(OnJoinClicked);
             _hostButton.onClick.AddListener(OnHostClicked);
 
@@ -55,7 +57,7 @@ namespace Cirrus.Circuit.UI
         {
             if (CustomNetworkManager.Instance.TryServerHost())
             {
-
+                Game.Instance.StartOnline();
             }
             else
             {

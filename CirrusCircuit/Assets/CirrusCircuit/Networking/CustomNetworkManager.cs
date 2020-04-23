@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Cirrus.Circuit
+namespace Cirrus.Circuit.Networking
 {
     // TODO
     public class ClientConnectionError
