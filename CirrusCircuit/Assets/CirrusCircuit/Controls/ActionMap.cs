@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/Controls/ActionMap.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/CirrusCircuit/Controls/ActionMap.inputactions'
 
 using System.Collections;
 using System.Collections.Generic;

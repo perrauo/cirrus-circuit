@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-namespace Cirrus.Circuit.World.Objects
+namespace Cirrus.Circuit.Networking
 {
     public class ObjectNetworkController : MonoBehaviour
     {        
@@ -11,9 +11,9 @@ namespace Cirrus.Circuit.World.Objects
         [SerializeField]
         public NetworkIdentity _netIdentity;
 
-        [Editor.GetComponent(typeof(NetworkTransform), Editor.GetComponentAttributeMode.Self)]
+        [Editor.GetComponent(typeof(NetworkTransformChild), Editor.GetComponentAttributeMode.Self)]
         [SerializeField]
-        public NetworkTransform _netTransform;
+        public NetworkTransformChild _netTransform;
 
     }
 }

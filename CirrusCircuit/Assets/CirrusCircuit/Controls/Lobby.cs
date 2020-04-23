@@ -19,26 +19,22 @@ namespace Cirrus.Circuit.Controls
 
         public Player[] Players;
 
-        public int ControllerCount = 0;
+        public int PlayerCount = 0;
 
         private const int _playerMax = 4;
 
         public Color GetColor(int number)
         {
             Color color = Color.white;
-            if (number < _playerMax)
-            {
-                color = Colors[number];
-            }
-
+            if (number < _playerMax) color = Colors[number];
             return color;
         }
-
-
 
         public void Awake()
         {
             Players = new Player[_playerMax];
+
+            Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
         }
 
         public void OnValidate()
@@ -47,43 +43,51 @@ namespace Cirrus.Circuit.Controls
         }
 
         // Update is called once per frame
-        public void Start()
+        public void OnCharacterSelect(bool enable)
         {
-            var devices = Inputs.InputDevice.all;                     
-
-            // TODO: do not assume one player per device?
-            foreach(var device in devices)
+            if (enable)
             {
-                if (device != null)
+                var devices = Inputs.InputDevice.all;
+
+                // TODO: do not assume one player per device?
+                foreach (var device in devices)
                 {
-                    if (device is Inputs.Keyboard ||
-                        device is Inputs.Gamepad)
+                    if (device != null)
                     {
-                        //InputActionAsset actions;
-                        foreach (Inputs.InputControlScheme scheme in _inputActionAsset.controlSchemes)
+                        if (device is Inputs.Keyboard ||
+                            device is Inputs.Gamepad)
                         {
-                            if (scheme.SupportsDevice(device))
+                            //InputActionAsset actions;
+                            foreach (Inputs.InputControlScheme scheme in _inputActionAsset.controlSchemes)
                             {
-                                Players[ControllerCount] = 
-                                    new Player(
-                                        ControllerCount, 
-                                        Names[ControllerCount], 
-                                        Colors[ControllerCount], 
-                                        device, 
-                                        scheme);
+                                if (scheme.SupportsDevice(device))
+                                {
+                                    Players[PlayerCount] =
+                                        new Player(
+                                            PlayerCount,
+                                            Names[PlayerCount],
+                                            Colors[PlayerCount],
+                                            device,
+                                            scheme);
 
-                                ControllerCount++;
+                                    PlayerCount++;
+                                }
                             }
-                        }                        
+                        }
                     }
+
+                    if (
+                        PlayerCount > _playerMax ||
+                        PlayerCount > Game.Instance._selectedLevel.CharacterCount)
+                        break;
                 }
-
-                if (ControllerCount > _playerMax || ControllerCount > Game.Instance._selectedLevel.CharacterCount) break;
             }
-
-            //Inputs.Users.InputUser.onUnpairedDeviceUsed += OnUnpairedInputDeviceUsed;
+            else
+            {
+                PlayerCount = 0;
+                Players = new Player[0];
+            }
         }
-        
 
         public void OnUnpairedInputDeviceUsed(Inputs.InputControl control)
         {
@@ -100,7 +104,7 @@ namespace Cirrus.Circuit.Controls
                 //    }
                 //}
             }
-            else if(control.device is Inputs.Keyboard)
+            else if (control.device is Inputs.Keyboard)
             {
 
             }

@@ -25,19 +25,16 @@ namespace Cirrus.Circuit.World.Objects
             Door,
         }
 
-        public virtual ObjectId Id { get { return ObjectId.Default; } }
+        public virtual ObjectId Id => ObjectId.Default;
 
         [SerializeField]
-        protected ObjectNetworkController _net;
+        protected Networking.ObjectNetworkController _net;
 
         [SerializeField]
         protected Visual _visual;
 
         [SerializeField]
         private Color[] _fallbackColors;
-
-        //[SerializeField]
-        //public Collider _collider;
 
         [SerializeField]
         public Transform _transform;
