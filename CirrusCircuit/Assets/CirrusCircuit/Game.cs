@@ -244,8 +244,8 @@ namespace Cirrus.Circuit
 
         private void OnScoreValueAdded(World.Objects.Gem gem, int player, float value)
         {
-            Lobby.Controllers[player].Score += value;
-            HUD.OnScoreChanged(player, Lobby.Controllers[player].Score);
+            Lobby.Players[player].Score += value;
+            HUD.OnScoreChanged(player, Lobby.Players[player].Score);
         }
 
         public void OnLevelCompleted(World.Level.Rule rule)
@@ -844,7 +844,7 @@ namespace Cirrus.Circuit
                     //Lobby.Characters.Clear();
                     //Lobby.Characters.AddRange(_selectedLevel.Characters);
 
-                    foreach (Player ctrl in Lobby.Controllers)
+                    foreach (Player ctrl in Lobby.Players)
                     {
                         if (ctrl == null)
                         {
@@ -981,7 +981,7 @@ namespace Cirrus.Circuit
                     }
                     else
                     {
-                        foreach (Player ctrl in Lobby.Controllers)
+                        foreach (Player ctrl in Lobby.Players)
                         {
                             if (ctrl == null)
                             {
