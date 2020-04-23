@@ -65,8 +65,8 @@ namespace Cirrus.Circuit
         public OnControllerJoin OnControllerJoinHandler;
 
         [SerializeField]
-        private bool _online = false;
-        
+        private bool _isOnline = false;
+        public bool IsOnline => _isOnline;        
 
         [SerializeField]
         private Transitions.Transition _transitionEffect;
@@ -220,13 +220,13 @@ namespace Cirrus.Circuit
 
         public void StartLocal()
         {
-            _online = false;
+            _isOnline = false;
             TryChangeState(State.Transition, State.CharacterSelection);
         }
 
         public void StartOnline()
         {
-            _online = true;
+            _isOnline = true;
             TryChangeState(State.Transition, State.CharacterSelection);
         }
 
