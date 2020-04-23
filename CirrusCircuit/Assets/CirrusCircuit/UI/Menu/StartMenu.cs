@@ -7,12 +7,19 @@ namespace Cirrus.Circuit.UI
     public class StartMenu : MonoBehaviour
     {
         [SerializeField]
-        private UnityEngine.UI.Button _buttonPlay;
+        private UnityEngine.UI.Button _playButton;
 
         [SerializeField]
-        private UnityEngine.UI.Button _buttonExit;
+        private UnityEngine.UI.Button _exitButton;
 
+        [SerializeField]
+        private UnityEngine.UI.Button _hostButton;
 
+        [SerializeField]
+        private UnityEngine.UI.Button _joinButton;
+
+        [SerializeField]
+        private UnityEngine.UI.InputField _joinInput;
 
 
         public void OnValidate()
@@ -24,10 +31,7 @@ namespace Cirrus.Circuit.UI
 
         public bool Enabled
         {
-            get
-            {
-                return _enabled;
-            }
+            get => _enabled;            
 
             set
             {
@@ -39,8 +43,8 @@ namespace Cirrus.Circuit.UI
 
         public void Awake()
         {
-            _buttonExit.onClick.AddListener(OnExitClick);
-            _buttonPlay.onClick.AddListener(Game.Instance.OnStartClicked);
+            _exitButton.onClick.AddListener(OnExitClick);
+            _playButton.onClick.AddListener(Game.Instance.OnStartClicked);
             Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
         }
 
