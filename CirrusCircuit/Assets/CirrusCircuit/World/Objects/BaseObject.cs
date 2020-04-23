@@ -28,6 +28,9 @@ namespace Cirrus.Circuit.World.Objects
         public virtual ObjectId Id { get { return ObjectId.Default; } }
 
         [SerializeField]
+        protected ObjectNetworkController _net;
+
+        [SerializeField]
         protected Visual _visual;
 
         [SerializeField]
@@ -39,13 +42,7 @@ namespace Cirrus.Circuit.World.Objects
         [SerializeField]
         public GameObject _object;
 
-        public GameObject Object
-        {
-            get
-            {
-                return _object;
-            }
-        }        
+        public GameObject Object => _object;        
 
         [SerializeField]
         public int _stepSize = 1;
