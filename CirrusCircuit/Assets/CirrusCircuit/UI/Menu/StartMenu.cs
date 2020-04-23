@@ -45,8 +45,43 @@ namespace Cirrus.Circuit.UI
         {
             _exitButton.onClick.AddListener(OnExitClick);
             _playButton.onClick.AddListener(Game.Instance.OnStartClicked);
+            _joinButton.onClick.AddListener(OnJoinClicked);
+            _hostButton.onClick.AddListener(OnHostClicked);
+
             Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
         }
+
+        public void OnHostClicked()
+        {
+            if (CustomNetworkManager.Instance.TryServerHost())
+            {
+
+            }
+            else
+            {
+                // TODO erro
+                Debug.Log("Unable to host");
+            }
+        }
+
+
+        public void OnJoinClicked()
+        {
+            // TODO erro
+            if (_joinInput == null) return;
+            if (string.IsNullOrEmpty(_joinInput.text)) return;
+            if (CustomNetworkManager.Instance.TryClientJoin(_joinInput.text))
+            {
+
+            }
+            else
+            {
+                // TODO log ero
+                Debug.Log("Unable to connect");
+            }
+
+        }
+
 
         public void OnExitClick()
         {

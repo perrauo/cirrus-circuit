@@ -21,19 +21,19 @@ namespace Cirrus.Circuit
             {
                 if (Input.GetKeyDown(KeyCode.Alpha1))
                 {
-                    _lobby.Controllers[0].Score += 10f;
+                    _lobby.Players[0].Score += 10f;
                 }
                 else if (Input.GetKeyDown(KeyCode.Alpha2))
                 {
-                    _lobby.Controllers[1].Score += 10f;
+                    _lobby.Players[1].Score += 10f;
                 }
                 else if (Input.GetKeyDown(KeyCode.Alpha3))
                 {
-                    _lobby.Controllers[2].Score += 10f;
+                    _lobby.Players[2].Score += 10f;
                 }
                 else if (Input.GetKeyDown(KeyCode.Alpha4))
                 {
-                    _lobby.Controllers[3].Score += 10f;
+                    _lobby.Players[3].Score += 10f;
                 }
             }
         }

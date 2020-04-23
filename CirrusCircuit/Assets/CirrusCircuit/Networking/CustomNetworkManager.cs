@@ -4,6 +4,12 @@ using UnityEngine;
 
 namespace Cirrus.Circuit
 {
+    // TODO
+    public class ClientConnectionError
+    {
+        public string Message = "Unknown error";   
+    }
+
     public class CustomNetworkManager : BaseSingleton<CustomNetworkManager>
     {
         [SerializeField]
@@ -23,6 +29,28 @@ namespace Cirrus.Circuit
         {
 
         }
+
+        public bool TryServerHost()
+        {
+
+
+            return false;
+        }
+
+        // 25.1.149.130:4040
+
+        public bool TryClientJoin(string hostAddress)
+        {
+            if (Utils.StringUtils.IsValidIpAddress(hostAddress))
+            {
+
+                return true;
+            }
+
+            return false;
+            //_manager.Start
+        }
+
 
     }
 }

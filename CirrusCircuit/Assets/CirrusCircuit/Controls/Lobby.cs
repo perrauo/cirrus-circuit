@@ -17,7 +17,7 @@ namespace Cirrus.Circuit.Controls
         [SerializeField]
         public Color[] Colors = new Color[4];
 
-        public Player[] Controllers;
+        public Player[] Players;
 
         public int ControllerCount = 0;
 
@@ -38,7 +38,7 @@ namespace Cirrus.Circuit.Controls
 
         public void Awake()
         {
-            Controllers = new Player[_playerMax];
+            Players = new Player[_playerMax];
         }
 
         public void OnValidate()
@@ -64,7 +64,7 @@ namespace Cirrus.Circuit.Controls
                         {
                             if (scheme.SupportsDevice(device))
                             {
-                                Controllers[ControllerCount] = 
+                                Players[ControllerCount] = 
                                     new Player(
                                         ControllerCount, 
                                         Names[ControllerCount], 
