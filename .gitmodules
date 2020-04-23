@@ -1,3 +1,6 @@
 [submodule "CirrusCircuit/Assets/cirrus-unity"]
 	path = CirrusCircuit/Assets/External/cirrus-unity
 	url = https://github.com/OliPerraul/cirrus-unity.git
+[submodule "CirrusCircuit/Assets/External/Mirror"]
+	path = CirrusCircuit/Assets/External/Mirror
+	url = https://github.com/vis2k/Mirror.git
