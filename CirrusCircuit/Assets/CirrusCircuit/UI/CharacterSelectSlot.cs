@@ -5,10 +5,11 @@ using Cirrus.Circuit.World.Objects.Characters;
 using Cirrus.Utils;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using Mirror;
 
 namespace Cirrus.Circuit.UI
 {
-    public class CharacterSelectSlot : MonoBehaviour
+    public class CharacterSelectSlot : NetworkBehaviour
     {
         [SerializeField]
         private World.Objects.Characters.Resources _characterResources;

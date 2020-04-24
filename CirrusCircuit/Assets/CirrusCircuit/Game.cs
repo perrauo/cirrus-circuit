@@ -197,6 +197,8 @@ namespace Cirrus.Circuit
         public void StartLocal()
         {
             _isOnline = false;
+            // If client then no objects are shown
+            // just start as host
             TryChangeState(State.Transition, State.CharacterSelection);
         }
 
