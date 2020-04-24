@@ -59,8 +59,10 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private float _selectPunchScaleTime = 1f;
 
+        [SerializeField]
         private Vector3 _startPosition;
 
+        [SerializeField]
         private Vector3 _targetPosition;
 
         [SerializeField]
@@ -79,6 +81,7 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private float _disabledArrowAlpha = 0.35f;
 
+        [System.Serializable]
         public enum State
         {
             Ready,

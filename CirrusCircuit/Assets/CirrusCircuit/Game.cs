@@ -825,7 +825,7 @@ namespace Cirrus.Circuit
         private bool _wasMovingVertical = false;
 
         // TODO: Simulate LeftStick continuous axis with WASD
-        public void FSMHandleAxesLeft(Player controller, Vector2 axis)
+        public void FSMHandleAxesLeft(Player player, Vector2 axis)
         {
             bool isMovingHorizontal = Mathf.Abs(axis.x) > 0.5f;
             bool isMovingVertical = Mathf.Abs(axis.y) > 0.5f;
@@ -862,12 +862,12 @@ namespace Cirrus.Circuit
             switch (_state)
             {
                 case State.CharacterSelection:
-                    if (controller._characterSlot == null)
+                    if (player._characterSlot == null)
                         break;
                  
                     if (Mathf.Abs(step.z) > 0)
                     {
-                        controller._characterSlot.Scroll(step.z > 0);
+                        player._characterSlot.Scroll(step.z > 0);
                     }                    
 
                     break;
