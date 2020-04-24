@@ -145,8 +145,6 @@ namespace Cirrus.Circuit.Networking
             _handler.OnClientError(conn, errorCode);
         }
 
-
-
         public override void OnStartClient()
         {
             base.OnStartClient();
