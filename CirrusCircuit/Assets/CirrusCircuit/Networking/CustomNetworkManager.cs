@@ -203,7 +203,8 @@ namespace Cirrus.Circuit.Networking
 
             _handler = new NetworkManagerServerHandler(this);
             Transport.port = res;
-            StartServer();
+            //StartServer();
+            StartHost();
             return true;            
         }
 
