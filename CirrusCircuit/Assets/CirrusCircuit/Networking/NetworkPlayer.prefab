@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4492442352427800}
-  - component: {fileID: 114118589361100106}
-  - component: {fileID: 9212444238994348711}
+  - component: {fileID: 8564512452796666091}
+  - component: {fileID: 2789112581897929988}
   m_Layer: 0
   m_Name: NetworkPlayer
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114118589361100106
+--- !u!114 &8564512452796666091
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,7 +47,7 @@ MonoBehaviour:
   sceneId: 0
   serverOnly: 0
   m_AssetId: 
---- !u!114 &9212444238994348711
+--- !u!114 &2789112581897929988
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
