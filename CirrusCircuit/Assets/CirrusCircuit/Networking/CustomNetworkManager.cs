@@ -87,20 +87,20 @@ namespace Cirrus.Circuit.Networking
 
     public class NetworkManagerServerHandler : NetworkManagerHandler
     {
-        private List<NetworkControlPlayer> _players = new List<NetworkControlPlayer>();
+        private List<ControlPlayer> _players = new List<ControlPlayer>();
 
         public NetworkManagerServerHandler(CustomNetworkManager net) : base(net)
         {
             NetworkServer.RegisterHandler<CreateNetworkPlayerMessage>(OnNetworkPlayerCreateMessage);
         }
 
-        private bool TryCreatePlayer(NetworkConnection conn, out NetworkControlPlayer player)
+        private bool TryCreatePlayer(NetworkConnection conn, out ControlPlayer player)
         {
             player = null;
 
-            if (_net.playerPrefab.GetComponent<NetworkControlPlayer>() == null) return false;
+            if (_net.playerPrefab.GetComponent<ControlPlayer>() == null) return false;
 
-            player = _net.playerPrefab.gameObject.Create(_net.transform).GetComponent<NetworkControlPlayer>();
+            player = _net.playerPrefab.gameObject.Create(_net.transform).GetComponent<ControlPlayer>();
 
             if (NetworkServer.AddPlayerForConnection(conn, player.gameObject)) return true;
 
@@ -110,7 +110,7 @@ namespace Cirrus.Circuit.Networking
         public void OnNetworkPlayerCreateMessage(NetworkConnection conn, CreateNetworkPlayerMessage message)
         {
             Debug.Log("On network player created");
-            if (TryCreatePlayer(conn, out NetworkControlPlayer player))
+            if (TryCreatePlayer(conn, out ControlPlayer player))
             {
                 _players.Add(player);
             }
