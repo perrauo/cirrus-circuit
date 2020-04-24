@@ -186,8 +186,10 @@ namespace Cirrus.Circuit.UI
             _bound = (_height * _images.Count)/2;
         }
 
-        private void Start()
+        public override void OnStartServer()
         {
+            base.OnStartServer();
+
             _startPosition = _rect.localPosition - Vector3.up * _offset;
 
             TryChangeState(State.Closed);
