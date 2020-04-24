@@ -425,9 +425,8 @@ GameObject:
   - component: {fileID: 8210292095693553544}
   - component: {fileID: 8218123720737751944}
   - component: {fileID: 665928394}
-  - component: {fileID: 4012222695333882712}
   m_Layer: 5
-  m_Name: CharacterSelection
+  m_Name: CharacterSelectSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -522,21 +521,6 @@ MonoBehaviour:
   _disabledArrowAlpha: 0.35
   _state: 0
   _camera: {fileID: 0}
---- !u!114 &4012222695333882712
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7534066891031683546}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sceneId: 0
-  serverOnly: 0
-  m_AssetId: 
 --- !u!1 &7797736948241485050
 GameObject:
   m_ObjectHideFlags: 0

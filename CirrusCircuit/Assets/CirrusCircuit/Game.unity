@@ -592,8 +592,7 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4012222695333882712, guid: bb41d15f8a991064d9f7080d0fc8e3f4,
-        type: 3}
+    - target: {fileID: 0}
       propertyPath: sceneId
       value: 160919610
       objectReference: {fileID: 0}
@@ -767,7 +766,8 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: bb41d15f8a991064d9f7080d0fc8e3f4, type: 3}
 --- !u!224 &213006541 stripped
 RectTransform:
@@ -1176,8 +1176,7 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4012222695333882712, guid: bb41d15f8a991064d9f7080d0fc8e3f4,
-        type: 3}
+    - target: {fileID: 0}
       propertyPath: sceneId
       value: 1615100536
       objectReference: {fileID: 0}
@@ -1351,7 +1350,8 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: bb41d15f8a991064d9f7080d0fc8e3f4, type: 3}
 --- !u!224 &583501192 stripped
 RectTransform:
@@ -1486,8 +1486,7 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4012222695333882712, guid: bb41d15f8a991064d9f7080d0fc8e3f4,
-        type: 3}
+    - target: {fileID: 0}
       propertyPath: sceneId
       value: 3798046454
       objectReference: {fileID: 0}
@@ -1661,7 +1660,8 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: bb41d15f8a991064d9f7080d0fc8e3f4, type: 3}
 --- !u!224 &665928392 stripped
 RectTransform:
@@ -2299,8 +2299,7 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4012222695333882712, guid: bb41d15f8a991064d9f7080d0fc8e3f4,
-        type: 3}
+    - target: {fileID: 0}
       propertyPath: sceneId
       value: 3722186403
       objectReference: {fileID: 0}
