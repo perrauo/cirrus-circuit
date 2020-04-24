@@ -115,8 +115,7 @@ namespace Cirrus.Circuit.Networking
 
     public class CustomNetworkManager : NetworkManager
     {
-
-        private TelepathyTransport _transport;
+        private TelepathyTransport Transport => (TelepathyTransport) transport;
         private NetworkManagerHandler _handler;
 
         public bool IsServer => _handler is NetworkManagerServerHandler;
@@ -168,7 +167,7 @@ namespace Cirrus.Circuit.Networking
             if (ushort.TryParse(port, out ushort res))
             {
                 _handler = new NetworkManagerServerHandler(this);
-                _transport.port = res;
+                Transport.port = res;
                 StartServer();
                 return true;
             }
