@@ -181,7 +181,7 @@ namespace Cirrus.Circuit.Networking
             {
                 _handler = new NetworkManagerServerHandler(this);
                 Transport.port = port;
-                StartClient(NetworkUtils.ToUri(adrs, port, TelepathyTransport.Scheme));
+                StartClient(NetworkUtils.ToUri(adrs, TelepathyTransport.Scheme));
                 return true;
             }
 
