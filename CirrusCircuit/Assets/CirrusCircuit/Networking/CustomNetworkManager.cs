@@ -48,6 +48,11 @@ namespace Cirrus.Circuit.Networking
         {
 
         }
+
+        public virtual bool TryPlayerJoin(Player player)
+        {
+            return false;
+        }
     }
 
     public class NetworkManagerClientHandler : NetworkManagerHandler
@@ -74,18 +79,12 @@ namespace Cirrus.Circuit.Networking
             _conn = conn;
         }
 
-
-
-        public bool TryClientPlayerJoin(Player player)
+        public override bool TryPlayerJoin(Player player)
         {
-            //player.
-
             _conn.Send(new CreateClientPlayerMessage());
             return true;
         }
     }
-
-
 
 
     public class NetworkManagerServerHandler : NetworkManagerHandler
@@ -108,11 +107,18 @@ namespace Cirrus.Circuit.Networking
 
             player = template.gameObject.Create(_net.transform).GetComponent<NetworkBehaviour>();
 
-            if (NetworkServer.AddPlayerForConnection(conn, player.gameObject)) return true;
+            if (NetworkServer.AddPlayerForConnection(conn, player.gameObject)) return true;            
 
             return false;
         }
 
+        public override bool TryPlayerJoin(Player player)
+        {
+            return TryCreatePlayer(
+                NetworkServer.localConnection, 
+                _net.ClientPlayerTemplate, 
+                out NetworkBehaviour clientPlayer);            
+        }
 
         public void OnClientPlayerCreateMessage(NetworkConnection conn, CreateClientPlayerMessage message)
         {
@@ -201,6 +207,11 @@ namespace Cirrus.Circuit.Networking
             return true;            
         }
 
+        public bool TryPlayerJoin(Player player)
+        {
+            return _handler.TryPlayerJoin(player);
+        }
+        
         // 25.1.149.130:4040
 
         public bool TryClientJoin(string hostAddress)
