@@ -592,6 +592,11 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4012222695333882712, guid: bb41d15f8a991064d9f7080d0fc8e3f4,
+        type: 3}
+      propertyPath: sceneId
+      value: 160919610
+      objectReference: {fileID: 0}
     - target: {fileID: 4728611917814075870, guid: bb41d15f8a991064d9f7080d0fc8e3f4,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -1171,6 +1176,11 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4012222695333882712, guid: bb41d15f8a991064d9f7080d0fc8e3f4,
+        type: 3}
+      propertyPath: sceneId
+      value: 1615100536
+      objectReference: {fileID: 0}
     - target: {fileID: 4728611917814075870, guid: bb41d15f8a991064d9f7080d0fc8e3f4,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -1475,6 +1485,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4012222695333882712, guid: bb41d15f8a991064d9f7080d0fc8e3f4,
+        type: 3}
+      propertyPath: sceneId
+      value: 3798046454
       objectReference: {fileID: 0}
     - target: {fileID: 4728611917814075870, guid: bb41d15f8a991064d9f7080d0fc8e3f4,
         type: 3}
@@ -2036,7 +2051,8 @@ MonoBehaviour:
     type: 3}
   autoCreatePlayer: 0
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -2282,6 +2298,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4012222695333882712, guid: bb41d15f8a991064d9f7080d0fc8e3f4,
+        type: 3}
+      propertyPath: sceneId
+      value: 3722186403
       objectReference: {fileID: 0}
     - target: {fileID: 4728611917814075870, guid: bb41d15f8a991064d9f7080d0fc8e3f4,
         type: 3}
