@@ -107,7 +107,7 @@ namespace Cirrus.Circuit.Networking
 
         public void OnNetworkPlayerCreateMessage(NetworkConnection conn, CreateNetworkPlayerMessage message)
         {
-            
+            Debug.Log("On network player created");
         }
 
     }
