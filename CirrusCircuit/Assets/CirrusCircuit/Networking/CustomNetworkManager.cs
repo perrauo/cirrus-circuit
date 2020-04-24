@@ -183,7 +183,8 @@ namespace Cirrus.Circuit.Networking
             if (NetworkUtils.TryParseAddress(hostAddress, out IPAddress adrs, out ushort port))
             {
                 _handler = new NetworkManagerServerHandler(this);
-                StartClient(NetworkUtils.ToUri(adrs, port));
+                Transport.port = port;
+                StartClient(NetworkUtils.ToUri(adrs, port, TelepathyTransport.Scheme));
                 return true;
             }
 
