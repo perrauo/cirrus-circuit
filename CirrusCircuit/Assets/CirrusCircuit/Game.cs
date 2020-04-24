@@ -958,7 +958,7 @@ namespace Cirrus.Circuit
         {
             if (IsOnline)
             { 
-                if (CustomNetworkManager.Instance.Client.TryPlayerJoin(player))
+                if (CustomNetworkManager.Instance.TryPlayerJoin(player))
                 {
                     _players.Add(player);
                     OnPlayerJoinHandler?.Invoke(player);
