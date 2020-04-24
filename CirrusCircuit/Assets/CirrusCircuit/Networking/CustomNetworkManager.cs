@@ -87,6 +87,8 @@ namespace Cirrus.Circuit.Networking
 
     public class NetworkManagerServerHandler : NetworkManagerHandler
     {
+        private List<NetworkPlayer> _players = new List<NetworkPlayer>();
+
         public NetworkManagerServerHandler(CustomNetworkManager net) : base(net)
         {
             NetworkServer.RegisterHandler<CreateNetworkPlayerMessage>(OnNetworkPlayerCreateMessage);
@@ -108,8 +110,11 @@ namespace Cirrus.Circuit.Networking
         public void OnNetworkPlayerCreateMessage(NetworkConnection conn, CreateNetworkPlayerMessage message)
         {
             Debug.Log("On network player created");
+            if (TryCreatePlayer(conn, out NetworkPlayer player))
+            {
+                _players.Add(player);
+            }
         }
-
     }
 
 
