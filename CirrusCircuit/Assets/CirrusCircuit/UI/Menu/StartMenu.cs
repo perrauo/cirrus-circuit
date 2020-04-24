@@ -74,14 +74,13 @@ namespace Cirrus.Circuit.UI
             if (string.IsNullOrEmpty(_joinInput.text)) return;
             if (CustomNetworkManager.Instance.TryClientJoin(_joinInput.text))
             {
-
+                Game.Instance.StartOnline();
             }
             else
             {
                 // TODO log ero
                 Debug.Log("Unable to connect");
             }
-
         }
 
 
