@@ -82,8 +82,7 @@ namespace Cirrus.Circuit.UI
                 Debug.Log("Unable to join");
             }
         }
-
-
+        
         public void OnExitClick()
         {
 

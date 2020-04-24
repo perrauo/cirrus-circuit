@@ -98,7 +98,7 @@ namespace Cirrus.Circuit.Networking
         {
             player = null;
 
-            if (_net.playerPrefab.GetComponent<NetworkPlayer>()) return false;
+            if (_net.playerPrefab.GetComponent<NetworkPlayer>() == null) return false;
 
             player = _net.playerPrefab.gameObject.Create(_net.transform).GetComponent<NetworkPlayer>();
 
