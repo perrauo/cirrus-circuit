@@ -39,9 +39,7 @@ namespace Cirrus.Circuit.Controls
         private Inputs.InputDevice _device;
 
         private Inputs.InputControlScheme _scheme;
-
-        // TODO: Rework ? replace by mult action map
-
+        
         public World.Objects.Characters.Character _character;
 
         public World.Objects.Characters.CharacterAsset _characterResource;

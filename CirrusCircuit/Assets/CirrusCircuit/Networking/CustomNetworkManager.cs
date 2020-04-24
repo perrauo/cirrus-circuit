@@ -1,48 +1,197 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Cirrus.Circuit.Controls;
+using Cirrus.Utils;
+using Mirror;
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using Mirror;
 
 namespace Cirrus.Circuit.Networking
 {
-    public class CustomNetworkManager : NetworkManager
+    public class NetworkManagerHandler
     {
-        public Events.Event<NetworkConnection> OnClientConnectHandler;
-        public Events.Event<NetworkConnection> OnClientDisconnectHandler;
-        public Events.Event<NetworkConnection, int> OnClientErrorHandler;
-        public Events.Event OnStartClientHandler;
-        public Events.Event OnStopClientHandler;
+        protected CustomNetworkManager _net;
+
+        public NetworkManagerHandler(CustomNetworkManager net)
+        {
+            _net = net;
+        }
+
+        public virtual void OnClientConnect(NetworkConnection conn)
+        {
+
+        }
+
+        public virtual void OnClientDisconnect(NetworkConnection conn)
+        {
+
+        }
+
+        public virtual void OnClientError(NetworkConnection conn, int errorCode)
+        {
+
+        }
+
+        public virtual void OnStartClient()
+        {
+
+        }
+
+        public virtual void OnStopClient()
+        {
+
+        }
+    }
+
+    public class NetworkManagerClientHandler : NetworkManagerHandler
+    {
+        public NetworkConnection _conn;
+
+        public NetworkManagerClientHandler(CustomNetworkManager net) : base(net)
+        {
+        }
 
         public override void OnClientConnect(NetworkConnection conn)
         {
             base.OnClientConnect(conn);
-            OnClientConnectHandler?.Invoke(conn);
+
+            _conn = conn;
+        }
+
+
+        public override void OnClientDisconnect(NetworkConnection conn)
+        {
+            base.OnClientConnect(conn);
+
+            _conn = conn;
+        }
+
+
+
+        public bool TryClientPlayerJoin(Player player)
+        {
+            //player.
+
+            _conn.Send(new CreateNetworkPlayerMessage());
+            return true;
+        }
+
+    }
+
+    public class NetworkManagerServerHandler : NetworkManagerHandler
+    {
+        public NetworkManagerServerHandler(CustomNetworkManager net) : base(net)
+        {
+            NetworkServer.RegisterHandler<CreateNetworkPlayerMessage>(OnNetworkPlayerCreateMessage);
+        }
+
+        private bool TryCreatePlayer(NetworkConnection conn, out NetworkPlayer player) // for this connection
+        {
+            player = null;
+
+            if (_net.playerPrefab.GetComponent<NetworkPlayer>()) return false;
+
+            player = _net.playerPrefab.gameObject.Create(_net.transform).GetComponent<NetworkPlayer>();
+
+            if (NetworkServer.AddPlayerForConnection(conn, player.gameObject)) return true;
+
+            return false;
+        }
+
+        public void OnNetworkPlayerCreateMessage(NetworkConnection conn, CreateNetworkPlayerMessage message)
+        {
+            
+        }
+
+    }
+
+
+    public class CustomNetworkManager : NetworkManager
+    {
+
+        private TelepathyTransport _transport;
+        private NetworkManagerHandler _handler;
+
+        public bool IsServer => _handler is NetworkManagerServerHandler;
+        public NetworkManagerClientHandler Client => IsServer ? null : (NetworkManagerClientHandler)_handler;
+        public NetworkManagerServerHandler Server => IsServer ? (NetworkManagerServerHandler)_handler : null;
+
+        public static CustomNetworkManager Instance => (CustomNetworkManager) singleton;
+
+
+        public override void OnClientConnect(NetworkConnection conn)
+        {
+            base.OnClientConnect(conn);
+            _handler.OnClientConnect(conn);
+
         }
 
         public override void OnClientDisconnect(NetworkConnection conn)
         {
             base.OnClientDisconnect(conn);
-            OnClientDisconnectHandler?.Invoke(conn);
+            _handler.OnClientDisconnect(conn);
         }
 
         public override void OnClientError(NetworkConnection conn, int errorCode)
         {
             base.OnClientError(conn, errorCode);
-            OnClientErrorHandler?.Invoke(conn, errorCode);
+            _handler.OnClientError(conn, errorCode);
         }
+
+
 
         public override void OnStartClient()
         {
             base.OnStartClient();
-            OnStartClientHandler?.Invoke();
+            _handler.OnStartClient();
         }
 
         public override void OnStopClient()
         {
             base.OnStopClient();
-            OnStopClientHandler?.Invoke();
+            _handler.OnStopClient();
         }
+
+        public override void Awake()
+        {
+            base.Awake();
+        }
+
+        public bool TryServerHost(string port)
+        {
+            _handler = null;
+            if (ushort.TryParse(port, out ushort res))
+            {
+                _handler = new NetworkManagerServerHandler(this);
+                _transport.port = res;
+                StartServer();
+                return true;
+            }
+
+            return false;
+        }
+
+        // 25.1.149.130:4040
+
+        public bool TryClientJoin(string hostAddress)
+        {
+            _handler = null;
+            if (NetworkUtils.TryParseAddress(hostAddress, out IPAddress adrs, out ushort port))
+            {
+                _handler = new NetworkManagerServerHandler(this);
+                StartClient(NetworkUtils.ToUri(adrs, port));
+                return true;
+            }
+
+            return false;
+        }
+
     }
 }

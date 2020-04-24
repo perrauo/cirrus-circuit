@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Cirrus.Utils;
 using Cirrus.Circuit.World.Objects.Characters;
+using Cirrus.Circuit.Networking;
 
 namespace Cirrus.Circuit
 {
@@ -351,16 +352,6 @@ namespace Cirrus.Circuit
             }
         }
 
-        //IEnumerator OnRound()
-        //{
-        //    yield return new WaitForEndOfFrame();
-
-        //    for (int i = 0; i < _currentLevel.CharacterCount; i++)
-        //    {
-        //        _controllers[i]._character = _currentLevel._characters[i];
-        //    }
-        //}
-
         #endregion
 
 
@@ -669,8 +660,7 @@ namespace Cirrus.Circuit
 
                     foreach (var c in _players)
                     {
-                        if (c == null)
-                            continue;
+                        if (c == null) continue;
 
                         _podium.Add(c, c._characterResource);
                     }
@@ -776,7 +766,7 @@ namespace Cirrus.Circuit
 
                         _players[i]._character._level = _currentLevel;                        
 
-                        _players[i]._character.TryChangeState(Character.State.Disabled);
+                        _players[i]._character.TryChangeState(World.Objects.BaseObject.State.Disabled);
 
                         _players[i].Score = 0;
 
@@ -964,11 +954,18 @@ namespace Cirrus.Circuit
 
         public void PlayerJoin(Player player)
         {
-            _players.Add(player);
-            OnPlayerJoinHandler?.Invoke(player);
-            if (IsOnline)
+            if (IsOnline && !CustomNetworkManager.Instance.IsServer)
             {
-
+                if (CustomNetworkManager.Instance.Client.TryClientPlayerJoin(player))
+                {
+                    _players.Add(player);
+                    OnPlayerJoinHandler?.Invoke(player);
+                }
+            }
+            else
+            {
+                _players.Add(player);
+                OnPlayerJoinHandler?.Invoke(player);
             }
         }
 
