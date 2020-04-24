@@ -164,6 +164,8 @@ namespace Cirrus.Circuit.UI
             if (_imageTemplate == null) DebugUtils.Assert(false, "Portrait template is null");
             else _imageTemplate.gameObject.SetActive(true);
 
+            return;
+
             _images = new List<Image>();
             foreach (var res in _characterResources.Characters)
             {
