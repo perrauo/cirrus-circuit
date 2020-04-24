@@ -163,16 +163,13 @@ namespace Cirrus.Circuit.Networking
 
         public bool TryServerHost(string port)
         {
-            _handler = null;
-            if (ushort.TryParse(port, out ushort res))
-            {
-                _handler = new NetworkManagerServerHandler(this);
-                Transport.port = res;
-                StartServer();
-                return true;
-            }
+            _handler = null;            
+            ushort res = ushort.TryParse(port, out res) ? res: NetworkUtils.DefaultUserPort;
 
-            return false;
+            _handler = new NetworkManagerServerHandler(this);
+            Transport.port = res;
+            StartServer();
+            return true;            
         }
 
         // 25.1.149.130:4040
