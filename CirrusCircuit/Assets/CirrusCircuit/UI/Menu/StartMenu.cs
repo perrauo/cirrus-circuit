@@ -79,7 +79,7 @@ namespace Cirrus.Circuit.UI
             else
             {
                 // TODO log ero
-                Debug.Log("Unable to connect");
+                Debug.Log("Unable to join");
             }
         }
 

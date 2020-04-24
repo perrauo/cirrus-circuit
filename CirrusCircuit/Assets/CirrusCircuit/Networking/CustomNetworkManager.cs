@@ -179,7 +179,7 @@ namespace Cirrus.Circuit.Networking
             _handler = null;
             if (NetworkUtils.TryParseAddress(hostAddress, out IPAddress adrs, out ushort port))
             {
-                _handler = new NetworkManagerServerHandler(this);
+                _handler = new NetworkManagerClientHandler(this);
                 Transport.port = port;
                 StartClient(NetworkUtils.ToUri(adrs, TelepathyTransport.Scheme));
                 return true;
