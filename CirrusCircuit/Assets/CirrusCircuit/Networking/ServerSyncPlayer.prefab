@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4492442352427800}
   - component: {fileID: 8564512452796666091}
-  - component: {fileID: 2789112581897929988}
+  - component: {fileID: 1941899616576446143}
   m_Layer: 0
-  m_Name: NetworkPlayer
+  m_Name: NetworkControlPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,7 +47,7 @@ MonoBehaviour:
   sceneId: 0
   serverOnly: 0
   m_AssetId: 
---- !u!114 &2789112581897929988
+--- !u!114 &1941899616576446143
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -56,7 +56,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1916082411674582}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1757e3c9f16d5f247808f8e8970176dc, type: 3}
+  m_Script: {fileID: 11500000, guid: a41fd44c2d028e34d97547243dfcce54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0

@@ -16,8 +16,13 @@ using System.Net.Sockets;
 
 namespace Cirrus.Circuit.Networking
 {
-    public class CreateNetworkPlayerMessage : MessageBase
+    public class CreateClientPlayerMessage : MessageBase
     {        
+        public string Name;
+    }
+
+    public class CreateNetworkPlayerMessage : MessageBase
+    {
         public string Name;
     }
 }

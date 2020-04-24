@@ -63,6 +63,7 @@ namespace Cirrus.Circuit.Networking
             base.OnClientConnect(conn);
 
             _conn = conn;
+            _conn.Send(new CreateNetworkPlayerMessage());
         }
 
 
@@ -79,40 +80,55 @@ namespace Cirrus.Circuit.Networking
         {
             //player.
 
-            _conn.Send(new CreateNetworkPlayerMessage());
+            _conn.Send(new CreateClientPlayerMessage());
             return true;
         }
-
     }
+
+
+
 
     public class NetworkManagerServerHandler : NetworkManagerHandler
     {
-        private List<ControlPlayer> _players = new List<ControlPlayer>();
+        private List<ClientPlayer> _clientPlayers = new List<ClientPlayer>();
+        private List<NetworkPlayer> _networkPlayers = new List<NetworkPlayer>();
+
 
         public NetworkManagerServerHandler(CustomNetworkManager net) : base(net)
         {
             NetworkServer.RegisterHandler<CreateNetworkPlayerMessage>(OnNetworkPlayerCreateMessage);
+            NetworkServer.RegisterHandler<CreateClientPlayerMessage>(OnClientPlayerCreateMessage);
         }
 
-        private bool TryCreatePlayer(NetworkConnection conn, out ControlPlayer player)
+        private bool TryCreatePlayer(NetworkConnection conn, NetworkBehaviour template, out NetworkBehaviour player) 
         {
             player = null;
 
-            if (_net.playerPrefab.GetComponent<ControlPlayer>() == null) return false;
+            if (_net.playerPrefab.GetComponent<NetworkBehaviour>() == null) return false;
 
-            player = _net.playerPrefab.gameObject.Create(_net.transform).GetComponent<ControlPlayer>();
+            player = template.gameObject.Create(_net.transform).GetComponent<NetworkBehaviour>();
 
             if (NetworkServer.AddPlayerForConnection(conn, player.gameObject)) return true;
 
             return false;
         }
 
+
+        public void OnClientPlayerCreateMessage(NetworkConnection conn, CreateClientPlayerMessage message)
+        {
+            Debug.Log("On network player created");
+            if (TryCreatePlayer(conn, _net.NetworkPlayerTemplate, out NetworkBehaviour player))
+            {
+                _clientPlayers.Add((ClientPlayer)player);
+            }
+        }
+
         public void OnNetworkPlayerCreateMessage(NetworkConnection conn, CreateNetworkPlayerMessage message)
         {
             Debug.Log("On network player created");
-            if (TryCreatePlayer(conn, out ControlPlayer player))
+            if (TryCreatePlayer(conn, _net.NetworkPlayerTemplate, out NetworkBehaviour player))
             {
-                _players.Add(player);
+                _networkPlayers.Add((NetworkPlayer)player);
             }
         }
     }
@@ -129,6 +145,14 @@ namespace Cirrus.Circuit.Networking
 
         public static CustomNetworkManager Instance => (CustomNetworkManager) singleton;
 
+
+        [SerializeField]
+        private ClientPlayer _clientPlayerTemplate;
+        public ClientPlayer ClientPlayerTemplate => _clientPlayerTemplate;
+
+        [SerializeField]
+        private NetworkPlayer _networkPlayerTemplate;
+        public NetworkPlayer NetworkPlayerTemplate => _networkPlayerTemplate;
 
         public override void OnClientConnect(NetworkConnection conn)
         {
