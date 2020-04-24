@@ -159,7 +159,7 @@ namespace Cirrus.Circuit
             _players = new List<Player>();
 
             Layers = new Layers();
-            DontDestroyOnLoad(this.gameObject);
+            //DontDestroyOnLoad(this.gameObject);
 
             _podium.OnPodiumFinishedHandler += OnPodiumFinished;
 
