@@ -105,7 +105,7 @@ namespace Cirrus.Circuit.Networking
 
             // If local connection
             Debug.Log("1 Host client started");
-            if (NetworkServer.localConnection == conn)
+            if (NetworkServer.localConnection.connectionId == conn.connectionId)
             {
                 Debug.Log("2 Host client started");
             }
