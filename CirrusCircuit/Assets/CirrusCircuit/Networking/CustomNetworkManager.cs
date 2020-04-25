@@ -103,11 +103,13 @@ namespace Cirrus.Circuit.Networking
         {
             base.OnClientConnect(conn);
 
-            // If local connection
-            Debug.Log("1 Host client started");
+            // If local connection            
             if (NetworkServer.localConnection.connectionId == conn.connectionId)
             {
-                Debug.Log("2 Host client started");
+                if (TryCreatePlayer(NetworkServer.localConnection, out NetworkBehaviour player))
+                {
+                    _networkPlayers.Add((NetworkClientPlayer)player);
+                }
             }
         }
 
