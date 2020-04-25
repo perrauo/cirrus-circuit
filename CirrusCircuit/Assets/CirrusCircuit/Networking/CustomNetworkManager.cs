@@ -104,10 +104,10 @@ namespace Cirrus.Circuit.Networking
             base.OnClientConnect(conn);
 
             // If local connection
-            Debug.Log("Host client started");
+            Debug.Log("1 Host client started");
             if (NetworkServer.localConnection == conn)
             {
-                Debug.Log("Host client started");
+                Debug.Log("2 Host client started");
             }
         }
 
