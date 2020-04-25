@@ -9,7 +9,6 @@ using Cirrus.Utils;
 using Mirror;
 
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
@@ -21,6 +20,18 @@ namespace Cirrus.Circuit.Networking
 
         public int Id = -1;
 
-        //public override On
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+
+            if (Id >= Lobby.Instance.Players.Length)
+            {
+                Debug.Log("Could not find player control");
+                return;
+            }
+            
+            Player = Lobby.Instance.Players[Id];
+            Debug.Log("Assigned player control " + Id);
+        }
     }
 }

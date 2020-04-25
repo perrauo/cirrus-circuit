@@ -50,11 +50,8 @@ namespace Cirrus.Circuit.UI
 
         public Color Color
         {
-            get
-            {
-                return _color;
-            }
-
+            get => _color;
+           
             set
             {
                 _color = value;
@@ -64,17 +61,12 @@ namespace Cirrus.Circuit.UI
         }
 
 
-        public string PlayerName
+        public string PlayerName 
         {
-            get
-            {
-                return _playerText.text;
-            }
+            get => => _playerText.text;            
 
-            set
-            {
-                _playerText.text  = value;
-            }
+            set => _playerText.text  = value;
+            
         }
 
         private bool _enabled = false;

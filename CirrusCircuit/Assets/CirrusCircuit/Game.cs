@@ -146,9 +146,8 @@ namespace Cirrus.Circuit
         {
             base.Awake();
 
-            if(_randomizeSeed)
-                UnityEngine.Random.InitState(Environment.TickCount);
-
+            if(_randomizeSeed) UnityEngine.Random.InitState(Environment.TickCount);
+ 
             _transitionTimer = new Timer(_transitionTime, start: false, repeat: false);
 
             _transitionTimer.OnTimeLimitHandler += OnTransitionTimeOut;
@@ -677,7 +676,6 @@ namespace Cirrus.Circuit
 
                         level.gameObject.SetActive(false);
                     }
-
 
                     _selectedLevel.gameObject.SetActive(false);
 
