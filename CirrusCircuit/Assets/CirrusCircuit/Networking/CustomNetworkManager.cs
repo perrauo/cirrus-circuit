@@ -90,8 +90,8 @@ namespace Cirrus.Circuit.Networking
 
     public class NetworkManagerServerHandler : NetworkManagerHandler
     {
-        private List<NetworkPlayer> _networkPlayers = new List<NetworkPlayer>();
-        private List<ClientPlayer> _clientPlayers = new List<ClientPlayer>();
+        private List<NetworkClientPlayer> _networkPlayers = new List<NetworkClientPlayer>();
+        private List<ControlPlayer> _clientPlayers = new List<ControlPlayer>();
 
         public NetworkManagerServerHandler(CustomNetworkManager net) : base(net)
         {
@@ -142,7 +142,7 @@ namespace Cirrus.Circuit.Networking
                 _net.ClientPlayerTemplate,
                 out NetworkBehaviour player))
             {
-                var clientPlayer = (ClientPlayer)player;
+                var clientPlayer = (ControlPlayer)player;
                 clientPlayer.Id = id;
                 _clientPlayers.Add(clientPlayer);                
                 clientPlayer.netIdentity.AssignClientAuthority(conn);
@@ -164,7 +164,7 @@ namespace Cirrus.Circuit.Networking
         {         
             if (TryCreatePlayer(conn, out NetworkBehaviour player))
             {
-                _networkPlayers.Add((NetworkPlayer)player);
+                _networkPlayers.Add((NetworkClientPlayer)player);
             }
         }
     }
@@ -181,12 +181,12 @@ namespace Cirrus.Circuit.Networking
         public static CustomNetworkManager Instance => (CustomNetworkManager) singleton;
 
         [SerializeField]
-        private ClientPlayer _clientPlayerTemplate;
-        public ClientPlayer ClientPlayerTemplate => _clientPlayerTemplate;
+        private ControlPlayer _clientPlayerTemplate;
+        public ControlPlayer ClientPlayerTemplate => _clientPlayerTemplate;
 
         [SerializeField]
-        private NetworkPlayer _networkPlayerTemplate;
-        public NetworkPlayer NetworkPlayerTemplate => _networkPlayerTemplate;
+        private NetworkClientPlayer _networkPlayerTemplate;
+        public NetworkClientPlayer NetworkPlayerTemplate => _networkPlayerTemplate;
 
         public override void OnClientConnect(NetworkConnection conn)
         {

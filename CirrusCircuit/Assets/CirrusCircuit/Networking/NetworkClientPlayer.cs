@@ -12,7 +12,7 @@ using Mirror;
 namespace Cirrus.Circuit.Networking
 {
     // Serves to sync the connection
-    public class NetworkPlayer : NetworkBehaviour
+    public class NetworkClientPlayer : NetworkBehaviour
     {
         public override void OnStartLocalPlayer()
         {                        

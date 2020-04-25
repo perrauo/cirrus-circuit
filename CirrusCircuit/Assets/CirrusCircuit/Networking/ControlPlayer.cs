@@ -14,7 +14,7 @@ using Mirror;
 
 namespace Cirrus.Circuit.Networking
 {
-    public class ClientPlayer : NetworkBehaviour
+    public class ControlPlayer : NetworkBehaviour
     {
         [SerializeField]
         //[SyncVar]
