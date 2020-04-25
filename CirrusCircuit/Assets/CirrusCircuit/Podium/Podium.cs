@@ -169,7 +169,7 @@ namespace Cirrus.Circuit
                     float secondMax = -99999999f;
                     Controls.Player winner = null;
                     float max = -99999999f;
-                    foreach (Controls.Player ctrl in Game.Instance._players)
+                    foreach (Controls.Player ctrl in Game.Instance._localPlayers)
                     {
                         if (ctrl.Score > max)
                         {

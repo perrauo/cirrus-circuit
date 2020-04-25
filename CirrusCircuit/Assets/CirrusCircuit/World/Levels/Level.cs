@@ -201,7 +201,7 @@ namespace Cirrus.Circuit.World
                 if (obj is Objects.Characters.Character)
                     continue;
 
-                foreach (Controls.Player ctrl in Game.Instance._players)
+                foreach (Controls.Player ctrl in Game.Instance._localPlayers)
                 {
                     if (obj.ColorId == ctrl._colorId)
                     {

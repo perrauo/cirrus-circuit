@@ -44,7 +44,7 @@ namespace Cirrus.Circuit
 
         public Events.Event<bool> OnCharacterSelectHandler;
 
-        public Events.Event<Player> OnPlayerJoinHandler;
+        public Events.Event<Player> OnLocalPlayerJoinHandler;
 
         [SerializeField]
         private bool _isOnline = false;
@@ -61,7 +61,7 @@ namespace Cirrus.Circuit
         [SerializeField]
         public UI.HUD HUD;
 
-        public Layers Layers;
+        public Layers Layers = new Layers();
 
         public UI.CharacterSelect _characterSelect;
 
@@ -107,7 +107,10 @@ namespace Cirrus.Circuit
 
         /// Controllers in player in game
         [SerializeField]
-        public List<Player> _players;
+        public List<Player> _localPlayers = new List<Player>();
+
+        [SerializeField]
+        public List<int> _connectedPlayers = new List<int>();
 
         [SerializeField]
         public float _podiumTransitionSpeed = 0.2f;
@@ -151,10 +154,7 @@ namespace Cirrus.Circuit
             _transitionTimer = new Timer(_transitionTime, start: false, repeat: false);
 
             _transitionTimer.OnTimeLimitHandler += OnTransitionTimeOut;
-
-            _players = new List<Player>();
-
-            Layers = new Layers();
+            
             //DontDestroyOnLoad(this.gameObject);
 
             _podium.OnPodiumFinishedHandler += OnPodiumFinished;
@@ -212,8 +212,8 @@ namespace Cirrus.Circuit
 
         private void OnScoreValueAdded(World.Objects.Gem gem, int player, float value)
         {
-            Lobby.Instance.Players[player].Score += value;
-            HUD.OnScoreChanged(player, Lobby.Instance.Players[player].Score);
+            PlayerManager.Instance.Players[player].Score += value;
+            HUD.OnScoreChanged(player, PlayerManager.Instance.Players[player].Score);
         }
 
         public void OnLevelCompleted(World.Level.Rule rule)
@@ -321,32 +321,37 @@ namespace Cirrus.Circuit
             TryChangeState(_transition);
         }
 
-        public bool TryJoin(Player controller)
+
+        public void LocalPlayerJoin(Player player)
         {
-            if (_players.Count >= _selectedLevel.CharacterCount)
-                return false;
-
-            _players.Add(controller);
-
-            return false;
-        }
-
-        public bool TryLeave(Player controller)
-        {
-            if (_players.Count >= _selectedLevel.CharacterCount)
-                return false;
-
-            _players.Remove(controller);
-
-            return false;
-        }
-
-        public void Join(Player ctrl)
-        {
-            switch (_state)
+            if (!_connectedPlayers.Contains(player.Id))
             {
-                case State.LevelSelection:
-                    break;
+                if (CustomNetworkManager.Instance.TryPlayerJoin(player.Id))
+                {
+                    _connectedPlayers.Add(player.Id);
+                    _localPlayers.Add(player);
+                    _characterSelect.OnConnectedPlayerJoin(Mirror.NetworkServer.localConnection, player.Id);
+                }
+            }
+            else
+            {
+                //player._characterSlot.HandleAction1(player);
+            }
+        }
+
+        public void RemotePlayerJoin(Mirror.NetworkConnection conn, int playerId)
+        {
+            if (!_connectedPlayers.Contains(playerId))
+            {
+                if (CustomNetworkManager.Instance.TryPlayerJoin(playerId))
+                {
+                    _connectedPlayers.Add(playerId);
+                    _characterSelect.OnConnectedPlayerJoin(conn, playerId);
+                }
+            }
+            else
+            {
+                //player._characterSlot.HandleAction1(player);
             }
         }
 
@@ -402,9 +407,9 @@ namespace Cirrus.Circuit
 
                 case State.Round:
 
-                    foreach (Player ctrl in _players)
+                    foreach (Player player in _localPlayers)
                     {
-                        ctrl._character.TryMove(ctrl.AxisLeft);
+                        player._character.TryMove(player.AxisLeft);
                     }
 
                     break;
@@ -656,7 +661,7 @@ namespace Cirrus.Circuit
                 case State.Begin:
                     _podium.Clear();
 
-                    foreach (var c in _players)
+                    foreach (var c in _localPlayers)
                     {
                         if (c == null) continue;
                         _podium.Add(c, c._characterResource);
@@ -751,22 +756,22 @@ namespace Cirrus.Circuit
                     {
                         Placeholder placeholder = placeholders.RemoveRandom();
  
-                        _players[i]._character = _players[i]
+                        _localPlayers[i]._character = _localPlayers[i]
                             ._characterResource.Create(
                                 _currentLevel.GridToWorld(placeholder._gridPosition), 
                                 _currentLevel.transform);
 
-                        _players[i]._character.ColorId = _players[i].Id;
+                        _localPlayers[i]._character.ColorId = _localPlayers[i].Id;
 
-                        _players[i]._character.Color = _players[i].Color;
+                        _localPlayers[i]._character.Color = _localPlayers[i].Color;
 
-                        _players[i]._character._level = _currentLevel;                        
+                        _localPlayers[i]._character._level = _currentLevel;                        
 
-                        _players[i]._character.TryChangeState(World.Objects.BaseObject.State.Disabled);
+                        _localPlayers[i]._character.TryChangeState(World.Objects.BaseObject.State.Disabled);
 
-                        _players[i].Score = 0;
+                        _localPlayers[i].Score = 0;
 
-                        _players[i]._colorId = placeholder.ColorId;
+                        _localPlayers[i]._colorId = placeholder.ColorId;
 
                         i++;
 
@@ -797,7 +802,7 @@ namespace Cirrus.Circuit
                     //Lobby.Characters.Clear();
                     //Lobby.Characters.AddRange(_selectedLevel.Characters);
 
-                    foreach (Player player in Lobby.Instance.Players)
+                    foreach (Player player in PlayerManager.Instance.Players)
                     {
                         if (player == null) continue;                        
 
@@ -917,14 +922,14 @@ namespace Cirrus.Circuit
 
                 case State.WaitingNextRound:
 
-                    if (_players.Contains(player))
+                    if (_localPlayers.Contains(player))
                     {
                         HUD.Leave(player);
-                        _players.Remove(player);
+                        _localPlayers.Remove(player);
                     }
                     else
                     {
-                        foreach (Player other in Lobby.Instance.Players) if (other == null) continue;      
+                        foreach (Player other in PlayerManager.Instance.Players) if (other == null) continue;      
                         TryChangeState(State.LevelSelection);
                     }
 
@@ -941,23 +946,6 @@ namespace Cirrus.Circuit
             }
         }
 
-        public void PlayerJoin(Player player)
-        {
-            if (
-                IsOnline && 
-                CustomNetworkManager.Instance.TryPlayerJoin(player))
-            {                                 
-                _players.Add(player);
-                OnPlayerJoinHandler?.Invoke(player);                
-            }
-            else
-            {
-                _players.Add(player);
-                OnPlayerJoinHandler?.Invoke(player);
-            }
-        }
-
-
         public void FSMHandleAction1(Player player)
         {
             switch (_state)
@@ -972,8 +960,7 @@ namespace Cirrus.Circuit
 
                 case State.CharacterSelection:
 
-                    if (!_players.Contains(player)) PlayerJoin(player);                                                                
-                    else player._characterSlot.HandleAction1(player);                    
+                    LocalPlayerJoin(player);                                                                                        
 
                     break;
 

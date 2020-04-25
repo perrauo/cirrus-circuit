@@ -27,7 +27,7 @@ namespace Cirrus.Circuit.UI
         public void Awake()
         {
             Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
-            Game.Instance.OnPlayerJoinHandler += OnPlayerJoin;
+            //Game.Instance.OnLocalPlayerJoinHandler += OnPlayerJoin;
             Game.Instance.OnLevelSelectHandler += OnLevelSelect;
             Game.Instance.OnLevelSelectHandler += OnMenu;
         }
@@ -116,10 +116,11 @@ namespace Cirrus.Circuit.UI
         }
 
 
-        public void OnPlayerJoin(Controls.Player player)
+        public void OnConnectedPlayerJoin(Mirror.NetworkConnection conn, int playerId)
         {
-            player._characterSlot = slots[player.Id];
-            slots[player.Id].TryChangeState(CharacterSelectSlot.State.Selecting);
+            slots[playerId].netIdentity.AssignClientAuthority(conn);
+            //player._characterSlot = slots[player.Id];
+            slots[playerId].TryChangeState(CharacterSelectSlot.State.Selecting);
         }
     }
 }

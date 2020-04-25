@@ -130,7 +130,7 @@ namespace Cirrus.Circuit.UI
                 case State.Ready:
                               
                     int playerNumber = (int)args[0];
-                    _color = Lobby.Instance.Colors[playerNumber];
+                    _color = PlayerManager.Instance.Colors[playerNumber];
                     _color.a = _readyAlpha;
                     Color = _color;
 

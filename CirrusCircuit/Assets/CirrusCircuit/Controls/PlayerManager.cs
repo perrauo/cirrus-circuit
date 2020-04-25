@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Cirrus.Circuit.Controls
 {
-    public class Lobby : BaseSingleton<Lobby>
+    public class PlayerManager : BaseSingleton<PlayerManager>
     {
         [SerializeField]
         private Inputs.InputActionAsset _inputActionAsset;
@@ -39,9 +39,9 @@ namespace Cirrus.Circuit.Controls
             Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
         }
 
-        public void OnValidate()
+        public override void OnValidate()
         {
-
+            base.OnValidate();
         }
 
         // Update is called once per frame

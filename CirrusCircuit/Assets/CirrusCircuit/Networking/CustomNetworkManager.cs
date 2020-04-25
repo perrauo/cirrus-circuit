@@ -49,7 +49,7 @@ namespace Cirrus.Circuit.Networking
 
         }
 
-        public virtual bool TryPlayerJoin(Player player)
+        public virtual bool TryPlayerJoin(int playerId)
         {
             return false;
         }
@@ -68,7 +68,7 @@ namespace Cirrus.Circuit.Networking
             base.OnClientConnect(conn);
 
             _conn = conn;
-            _conn.Send(new CreateNetworkPlayerMessage());
+            _conn.Send(new ConnectMessage());
         }
 
         public override void OnClientDisconnect(NetworkConnection conn)
@@ -78,12 +78,12 @@ namespace Cirrus.Circuit.Networking
             _conn = conn;
         }
 
-        public override bool TryPlayerJoin(Player player)
+        public override bool TryPlayerJoin(int playerId)
         {
-            _conn.Send(new CreateClientPlayerMessage {
-                Name = player.Name,
-                Id = player.Id
-            });
+            _conn.Send(new PlayerJoinMessage {                
+                Id = playerId
+            });   
+
             return true;
         }
     }
@@ -95,8 +95,8 @@ namespace Cirrus.Circuit.Networking
 
         public NetworkManagerServerHandler(CustomNetworkManager net) : base(net)
         {
-            NetworkServer.RegisterHandler<CreateNetworkPlayerMessage>(OnNetworkPlayerCreateMessage);
-            NetworkServer.RegisterHandler<CreateClientPlayerMessage>(OnClientPlayerCreateMessage);
+            NetworkServer.RegisterHandler<ConnectMessage>(OnNetworkPlayerCreateMessage);
+            NetworkServer.RegisterHandler<PlayerJoinMessage>(OnPlayerJoinMessage);
         }
 
         private bool TryCreatePlayer(NetworkConnection conn, out NetworkBehaviour player) 
@@ -129,20 +129,13 @@ namespace Cirrus.Circuit.Networking
             return true;
         }
 
-        public override bool TryPlayerJoin(Player player)
+        public override bool TryPlayerJoin(int playerId)
         {            
             Debug.Log("On network player created");
-            return DoCreateClientPlayer(NetworkServer.localConnection, player.Id);            
+            return TryCreateClientPlayer(NetworkServer.localConnection, playerId);            
         }
 
-        public void OnClientPlayerCreateMessage(NetworkConnection conn, CreateClientPlayerMessage message)
-        {
-            Debug.Log("On network player created");
-            DoCreateClientPlayer(conn, message.Id);         
-        }
-
-
-        public bool DoCreateClientPlayer(NetworkConnection conn, int id)
+        public bool TryCreateClientPlayer(NetworkConnection conn, int id)
         {
             if (TryCreateNetworkObject(
                 conn,
@@ -151,7 +144,7 @@ namespace Cirrus.Circuit.Networking
             {
                 var clientPlayer = (ClientPlayer)player;
                 clientPlayer.Id = id;
-                _clientPlayers.Add(clientPlayer);
+                _clientPlayers.Add(clientPlayer);                
                 clientPlayer.netIdentity.AssignClientAuthority(conn);
                 return true;
             }
@@ -159,10 +152,16 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
 
-
-        public void OnNetworkPlayerCreateMessage(NetworkConnection conn, CreateNetworkPlayerMessage message)
+        public void OnPlayerJoinMessage(NetworkConnection conn, PlayerJoinMessage message)
         {
-            Debug.Log("On network player created");
+            if (TryCreateClientPlayer(conn, message.Id))
+            {
+                Game.Instance.RemotePlayerJoin(conn, message.Id);
+            }
+        }
+   
+        public void OnNetworkPlayerCreateMessage(NetworkConnection conn, ConnectMessage message)
+        {         
             if (TryCreatePlayer(conn, out NetworkBehaviour player))
             {
                 _networkPlayers.Add((NetworkPlayer)player);
@@ -224,26 +223,24 @@ namespace Cirrus.Circuit.Networking
             base.Awake();
         }
 
-        public bool TryServerHost(string port)
+        public bool TryInitHost(string port)
         {
             _handler = null;            
-            ushort res = ushort.TryParse(port, out res) ? res: NetworkUtils.DefaultUserPort;
-
+            ushort res = ushort.TryParse(port, out res) ? res: NetworkUtils.DefaultPort;
             _handler = new NetworkManagerServerHandler(this);
             Transport.port = res;
-            //StartServer();
             StartHost();
             return true;            
         }
 
-        public bool TryPlayerJoin(Player player)
+        public bool TryPlayerJoin(int playerId)
         {
-            return _handler.TryPlayerJoin(player);
+            return _handler.TryPlayerJoin(playerId);
         }
                 
         // 25.1.149.130:4040
 
-        public bool TryClientJoin(string hostAddress)
+        public bool TryInitClient(string hostAddress)
         {
             _handler = null;
             if (NetworkUtils.TryParseAddress(hostAddress, out IPAddress adrs, out ushort port))

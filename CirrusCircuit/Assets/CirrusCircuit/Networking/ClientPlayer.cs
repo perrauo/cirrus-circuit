@@ -28,13 +28,13 @@ namespace Cirrus.Circuit.Networking
         {
             base.OnStartAuthority();              
 
-            if (Id >= Lobby.Instance.Players.Length)
+            if (Id >= PlayerManager.Instance.Players.Length)
             {
                 Debug.Log("Could not find player control");
                 return;
             }
             
-            Player = Lobby.Instance.Players[Id];
+            Player = PlayerManager.Instance.Players[Id];
             Debug.Log("Assigned player control " + Id);
         }
     }

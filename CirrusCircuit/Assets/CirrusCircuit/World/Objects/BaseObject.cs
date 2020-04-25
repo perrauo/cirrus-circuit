@@ -111,9 +111,9 @@ namespace Cirrus.Circuit.World.Objects
         {
             if (_level == null) _level = GetComponentInParent<Level>();
 
-            if (Lobby.Instance != null)
+            if (PlayerManager.Instance != null)
             {
-                Color = Lobby.Instance.GetColor(ColorId);
+                Color = PlayerManager.Instance.GetColor(ColorId);
                 _nextColor = Color;
             }
         }
@@ -237,12 +237,12 @@ namespace Cirrus.Circuit.World.Objects
             }
             else
             {
-                if (Game.Instance._players.Count == 0)
+                if (Game.Instance._localPlayers.Count == 0)
                     return;
 
                 _nextColorIndex = _nextColorIndex + 1;
-                _nextColorIndex = MathUtils.Wrap(_nextColorIndex, 0, Game.Instance._players.Count);
-                _nextColor = Game.Instance._players[_nextColorIndex].Color;
+                _nextColorIndex = MathUtils.Wrap(_nextColorIndex, 0, Game.Instance._localPlayers.Count);
+                _nextColor = Game.Instance._localPlayers[_nextColorIndex].Color;
             }
         }
 

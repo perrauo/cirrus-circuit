@@ -16,14 +16,14 @@ using System.Net.Sockets;
 
 namespace Cirrus.Circuit.Networking
 {
-    public class CreateClientPlayerMessage : MessageBase
+    public class PlayerJoinMessage : MessageBase
     {        
         public string Name;
 
         public int Id;
     }
 
-    public class CreateNetworkPlayerMessage : MessageBase
+    public class ConnectMessage : MessageBase
     {
         public string Name;
     }
