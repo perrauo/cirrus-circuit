@@ -20,65 +20,82 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private List<Image> _images;
 
-        [SerializeField]
+        [SerializeField]        
         private RectTransform _rect;
 
         [SerializeField]
         private RectTransform _maskRect;
 
         [SerializeField]
+        [SyncVar]
         private float _offset = -512;
 
         [SerializeField]
+        [SyncVar]
         private float _height = 256;
 
         [SerializeField]
+        [SyncVar]
         private float _bound = 0;
 
         [SerializeField]
         private CharacterSelect _characterSelect;
 
         [SerializeField]
+        [SyncVar]
         private GameObject _selection;
 
         [SerializeField]
+        [SyncVar]
         private Text _statusText;
 
         [SerializeField]
+        [SyncVar]
         private Text _up;
 
         [SerializeField]
+        [SyncVar]
         private Text _down;
 
         [SerializeField]
+        [SyncVar]
         private float _speed = 0.5f;
 
         [SerializeField]
+        [SyncVar]
         private float _selectPunchScale = 0.5f;
 
         [SerializeField]
+        [SyncVar]
         private float _selectPunchScaleTime = 1f;
 
         [SerializeField]
+        [SyncVar]
         private Vector3 _startPosition;
 
         [SerializeField]
+        [SyncVar]
         private Vector3 _targetPosition;
 
         [SerializeField]
+        [SyncVar]
         private Transform _characterSpotlightAnchor;
 
         [SerializeField]
+        [SyncVar]
         private float _characterSpotlightSize = 10f;
 
         [SerializeField]
+        [SyncVar]
         private float _characterSpotlightRotateSpeed = 20f;
 
 
         [SerializeField]
+        [SyncVar]
         private int _selectedIndex = 0;
 
         [SerializeField]
+        [SyncVar]
         private float _disabledArrowAlpha = 0.35f;
 
         [System.Serializable]
@@ -90,11 +107,18 @@ namespace Cirrus.Circuit.UI
         }
 
         [SerializeField]
+        [SyncVar]
         private State _state;
 
         [SerializeField]
         private CameraManager _camera;
 
+
+        [Command]
+        public void CmdTryChangeState(State target)
+        {
+            TryChangeState(target);
+        }
 
         public void TryChangeState(State target)
         {
@@ -266,7 +290,7 @@ namespace Cirrus.Circuit.UI
 
                 case State.Ready:
                     _characterSelect.TryChangeState(CharacterSelect.State.Select);
-                    TryChangeState(State.Selecting);
+                    CmdTryChangeState(State.Selecting);
                     break;
 
                 case State.Closed:
@@ -281,7 +305,7 @@ namespace Cirrus.Circuit.UI
                 case State.Selecting:
                     Controls.Player ctrl = (Controls.Player) args[0];
                     ctrl._characterResource = _characterResources.Characters[_selectedIndex];
-                    TryChangeState(State.Ready);
+                    CmdTryChangeState(State.Ready);
                     break;                    
 
                 case State.Ready:
