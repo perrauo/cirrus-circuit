@@ -15,8 +15,7 @@ namespace Cirrus.Circuit.UI
         [UnityEngine.Serialization.FormerlySerializedAs("slots")]        
         private CharacterSelectSlot[] _slots;
 
-        [SerializeField]
-        [Mirror.SyncVar]
+        [SerializeField]        
         private UnityEngine.UI.Text _readyText;
 
         public int _readyCount = 0;
