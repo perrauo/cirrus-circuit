@@ -111,7 +111,7 @@ namespace Cirrus.Circuit.UI
         [Command]
         public void CmdTryChangeState(State target)
         {
-            TryChangeState(target);
+            RpcTryChangeState(target);
         }
 
         [ClientRpc]
