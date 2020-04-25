@@ -138,7 +138,7 @@ namespace Cirrus.Circuit.Networking
         public void OnClientPlayerCreateMessage(NetworkConnection conn, CreateClientPlayerMessage message)
         {
             Debug.Log("On network player created");
-            DoCreateClientPlayer(conn, message.Id);
+            DoCreateClientPlayer(conn, message.Id);         
         }
 
 
