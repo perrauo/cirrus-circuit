@@ -216,7 +216,7 @@ namespace Cirrus.Circuit.UI
 
             TryChangeState(State.Closed);
 
-            Scroll(true);
+            CmdScroll(true);
         }
 
         public IEnumerator PunchScale(bool previous)
@@ -248,7 +248,8 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-        public void Scroll(bool up)
+        [Command]
+        public void CmdScroll(bool up)
         {            
             _selectedIndex = up ? _selectedIndex - 1 : _selectedIndex + 1;
             _selectedIndex = Mathf.Clamp(_selectedIndex, 0, _characterResources.Characters.Length-1);

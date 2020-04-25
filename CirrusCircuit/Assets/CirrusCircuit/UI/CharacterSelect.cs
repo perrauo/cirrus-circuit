@@ -118,7 +118,7 @@ namespace Cirrus.Circuit.UI
 
         public void OnLocalCharacterScroll(int playerId, bool scroll)
         {
-            _slots[playerId].Scroll(scroll);
+            _slots[playerId].CmdScroll(scroll);
         }
 
 
