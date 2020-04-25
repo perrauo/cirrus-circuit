@@ -91,6 +91,7 @@ namespace Cirrus.Circuit.Networking
     public class NetworkManagerServerHandler : NetworkManagerHandler
     {
         private List<NetworkPlayer> _networkPlayers = new List<NetworkPlayer>();
+        private List<ClientPlayer> _clientPlayers = new List<ClientPlayer>();
 
         public NetworkManagerServerHandler(CustomNetworkManager net) : base(net)
         {
@@ -174,7 +175,7 @@ namespace Cirrus.Circuit.Networking
 
         [SerializeField]
         private ClientPlayer _clientPlayerTemplate;
-        public NetworkPlayer ClientPlayerTemplate => _clientPlayerTemplate;
+        public ClientPlayer ClientPlayerTemplate => _clientPlayerTemplate;
 
         [SerializeField]
         private NetworkPlayer _networkPlayerTemplate;
