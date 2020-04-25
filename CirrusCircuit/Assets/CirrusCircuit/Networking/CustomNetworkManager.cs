@@ -88,10 +88,9 @@ namespace Cirrus.Circuit.Networking
         }
     }
 
-
     public class NetworkManagerServerHandler : NetworkManagerHandler
     {
-        private List<NetworkClientPlayer> _networkPlayers = new List<NetworkClientPlayer>();
+        private List<NetworkPlayer> _networkPlayers = new List<NetworkPlayer>();
 
         public NetworkManagerServerHandler(CustomNetworkManager net) : base(net)
         {
@@ -99,18 +98,36 @@ namespace Cirrus.Circuit.Networking
             NetworkServer.RegisterHandler<CreateClientPlayerMessage>(OnClientPlayerCreateMessage);
         }
 
-        private bool TryCreatePlayer(NetworkConnection conn, NetworkBehaviour template, out NetworkBehaviour player) 
+        private bool TryCreatePlayer(NetworkConnection conn, out NetworkBehaviour player) 
         {
             player = null;
 
-            if (template.gameObject.GetComponent<NetworkBehaviour>() == null) return false;
+            if (_net.NetworkPlayerTemplate.gameObject.GetComponent<NetworkBehaviour>() == null) return false;
 
-            player = template.gameObject.Create().GetComponent<NetworkBehaviour>();
+            player = _net.NetworkPlayerTemplate.gameObject.Create().GetComponent<NetworkBehaviour>();
 
             if (NetworkServer.AddPlayerForConnection(conn, player.gameObject)) return true;            
 
             return false;
         }
+
+        private bool TryCreateNetworkObject(
+            NetworkConnection conn, 
+            NetworkBehaviour template, 
+            out NetworkBehaviour obj, 
+            bool clientAuthority = true)
+        {
+            obj = null;
+
+            obj.netIdentity.AssignClientAuthority(conn);
+
+            if (template.gameObject.GetComponent<NetworkBehaviour>() == null) return false;
+
+            obj = template.gameObject.Create().GetComponent<NetworkBehaviour>();
+
+            return false;
+        }
+
 
         public override bool TryPlayerJoin(Player player)
         {
@@ -124,20 +141,22 @@ namespace Cirrus.Circuit.Networking
         public void OnClientPlayerCreateMessage(NetworkConnection conn, CreateClientPlayerMessage message)
         {
             Debug.Log("On network player created");
-            //if (TryCreatePlayer(conn, _net.ClientPlayerTemplate, out NetworkBehaviour player))
-            //{
-            //    var clientPlayer = (ClientPlayer)player;
-            //    clientPlayer.Id = message.Id;
-            //    _clientPlayers.Add(clientPlayer);
-            //}
+            if (TryCreateNetworkObject(
+                conn,
+                _net.ClientPlayerTemplate, out NetworkBehaviour player))
+            {
+                var clientPlayer = (ClientPlayer)player;
+                clientPlayer.Id = message.Id;
+                _clientPlayers.Add(clientPlayer);
+            }
         }
 
         public void OnNetworkPlayerCreateMessage(NetworkConnection conn, CreateNetworkPlayerMessage message)
         {
             Debug.Log("On network player created");
-            if (TryCreatePlayer(conn, _net.NetworkPlayerTemplate, out NetworkBehaviour player))
+            if (TryCreatePlayer(conn, out NetworkBehaviour player))
             {
-                _networkPlayers.Add((NetworkClientPlayer)player);
+                _networkPlayers.Add((NetworkPlayer)player);
             }
         }
     }
@@ -153,16 +172,18 @@ namespace Cirrus.Circuit.Networking
 
         public static CustomNetworkManager Instance => (CustomNetworkManager) singleton;
 
+        [SerializeField]
+        private ClientPlayer _clientPlayerTemplate;
+        public NetworkPlayer ClientPlayerTemplate => _clientPlayerTemplate;
 
         [SerializeField]
-        private NetworkClientPlayer _networkPlayerTemplate;
-        public NetworkClientPlayer NetworkPlayerTemplate => _networkPlayerTemplate;
+        private NetworkPlayer _networkPlayerTemplate;
+        public NetworkPlayer NetworkPlayerTemplate => _networkPlayerTemplate;
 
         public override void OnClientConnect(NetworkConnection conn)
         {
             base.OnClientConnect(conn);
             _handler.OnClientConnect(conn);
-
         }
 
         public override void OnClientDisconnect(NetworkConnection conn)
@@ -171,8 +192,6 @@ namespace Cirrus.Circuit.Networking
             _handler.OnClientDisconnect(conn);
         }
         
-
-
         public override void OnClientError(NetworkConnection conn, int errorCode)
         {
             base.OnClientError(conn, errorCode);
@@ -213,7 +232,6 @@ namespace Cirrus.Circuit.Networking
             return _handler.TryPlayerJoin(player);
         }
                 
-
         // 25.1.149.130:4040
 
         public bool TryClientJoin(string hostAddress)
