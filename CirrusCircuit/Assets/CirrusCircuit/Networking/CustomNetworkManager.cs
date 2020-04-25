@@ -99,6 +99,17 @@ namespace Cirrus.Circuit.Networking
             NetworkServer.RegisterHandler<PlayerJoinMessage>(OnPlayerJoinMessage);
         }
 
+        public override void OnClientConnect(NetworkConnection conn)
+        {
+            base.OnClientConnect(conn);
+
+            // If local connection
+            if (NetworkServer.localConnection == conn)
+            {
+                Debug.Log("Host client started");
+            }
+        }
+
         private bool TryCreatePlayer(NetworkConnection conn, out NetworkBehaviour player) 
         {
             player = null;
@@ -132,10 +143,10 @@ namespace Cirrus.Circuit.Networking
         public override bool TryPlayerJoin(int playerId)
         {            
             // Debug.Log("On network player created");
-            return TryCreateClientPlayer(NetworkServer.localConnection, playerId);            
+            return TryControlPlayer(NetworkServer.localConnection, playerId);            
         }
 
-        public bool TryCreateClientPlayer(NetworkConnection conn, int id)
+        public bool TryControlPlayer(NetworkConnection conn, int id)
         {
             if (TryCreateNetworkObject(
                 conn,
@@ -154,7 +165,7 @@ namespace Cirrus.Circuit.Networking
 
         public void OnPlayerJoinMessage(NetworkConnection conn, PlayerJoinMessage message)
         {
-            if (TryCreateClientPlayer(conn, message.Id))
+            if (TryControlPlayer(conn, message.Id))
             {
                 Game.Instance.RemotePlayerJoin(conn, message.Id);
             }
