@@ -126,7 +126,7 @@ namespace Cirrus.Circuit.Networking
 
             NetworkServer.Spawn(obj.gameObject);
 
-            obj.netIdentity.AssignClientAuthority(conn);
+            if (obj.netIdentity.AssignClientAuthority(conn)) return true;
 
             return false;
         }
