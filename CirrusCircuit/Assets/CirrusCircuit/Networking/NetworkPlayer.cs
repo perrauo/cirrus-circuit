@@ -15,9 +15,16 @@ namespace Cirrus.Circuit.Networking
     public class NetworkPlayer : NetworkBehaviour
     {
         public override void OnStartLocalPlayer()
-        {
-            //Player = 
+        {                        
             Debug.Log("Called on client");
+        }
+
+        [Command]
+        public void Cmd_CharacterSelectSlot_TryChangeState(UI.CharacterSelectSlot slot, UI.CharacterSelectSlot.State target)
+        {
+            Debug.Log("CMD");
+
+            slot.RpcTryChangeState(target);
         }
 
     }

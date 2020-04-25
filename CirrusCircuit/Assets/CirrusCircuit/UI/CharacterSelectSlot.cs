@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using Mirror;
 
+using Cirrus.Circuit.Networking;
+
 namespace Cirrus.Circuit.UI
 {
     public class CharacterSelectSlot : NetworkBehaviour
@@ -108,11 +110,9 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private CameraManager _camera;
 
-        [Command]
         public void CmdTryChangeState(State target)
         {
-            Debug.Log("CMD CALLED");
-            RpcTryChangeState(target);
+             //Instance.Client. Cmd_CharacterSelectSlot_TryChangeState(this, )
         }
 
         [ClientRpc]
