@@ -833,21 +833,14 @@ namespace Cirrus.Circuit
             if (isMovingVertical && isMovingHorizontal)
             {
                 //moving in both directions, prioritize later
-                if (_wasMovingVertical)
-                {
-                    step = stepHorizontal;
-                }
-                else
-                {
-                    step = stepVertical;
-                }
+                if (_wasMovingVertical) step = stepHorizontal;
+
+                else step = stepVertical;
             }
             else if (isMovingHorizontal)
             {
                 step = stepHorizontal;
                 _wasMovingVertical = false;
-
-
             }
             else if (isMovingVertical)
             {
