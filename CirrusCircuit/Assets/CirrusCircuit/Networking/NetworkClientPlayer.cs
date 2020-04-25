@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
+
 namespace Cirrus.Circuit.Networking
 {
-    // Serves for individual control on player
-    public class ClientPlayer : NetworkBehaviour
+    // Serves to sync the connection
+    public class NetworkClientPlayer : NetworkBehaviour
     {
         public Controls.Player Player;
 
@@ -24,9 +24,5 @@ namespace Cirrus.Circuit.Networking
             Debug.Log("Called on client");
         }
 
-        public void Awake()
-        {
-            
-        }
     }
 }

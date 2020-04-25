@@ -3,17 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Mirror;
 
-
-namespace Cirrus.Circuit.Networking
+namespace Assets.CirrusCircuit.Networking
 {
-    // Serves to sync the connection
-    public class NetworkPlayer : NetworkBehaviour
+    class NetworkPlayer
     {
-
     }
 }
