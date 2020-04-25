@@ -41,20 +41,16 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private CharacterSelect _characterSelect;
 
-        [SerializeField]
-        [SyncVar]
+        [SerializeField]        
         private GameObject _selection;
 
-        [SerializeField]
-        [SyncVar]
+        [SerializeField]        
         private Text _statusText;
 
-        [SerializeField]
-        [SyncVar]
+        [SerializeField]        
         private Text _up;
 
-        [SerializeField]
-        [SyncVar]
+        [SerializeField]        
         private Text _down;
 
         [SerializeField]
@@ -78,7 +74,6 @@ namespace Cirrus.Circuit.UI
         private Vector3 _targetPosition;
 
         [SerializeField]
-        [SyncVar]
         private Transform _characterSpotlightAnchor;
 
         [SerializeField]
