@@ -118,13 +118,13 @@ namespace Cirrus.Circuit.UI
         [ClientRpc]
         public void RpcTryChangeState(State target)
         {
-            Debug.Log("RPC CALLED");
+            // Debug.Log("RPC CALLED");
             TryChangeState(target);
         }
 
         private void TryChangeState(State target)
         {
-            Debug.Log("REGULAR CALLED");
+            // Debug.Log("REGULAR CALLED");
 
             switch (target)
             {

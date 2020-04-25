@@ -131,7 +131,7 @@ namespace Cirrus.Circuit.Networking
 
         public override bool TryPlayerJoin(int playerId)
         {            
-            Debug.Log("On network player created");
+            // Debug.Log("On network player created");
             return TryCreateClientPlayer(NetworkServer.localConnection, playerId);            
         }
 

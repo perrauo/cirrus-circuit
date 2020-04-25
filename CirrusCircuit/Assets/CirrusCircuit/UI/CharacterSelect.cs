@@ -124,7 +124,7 @@ namespace Cirrus.Circuit.UI
             if (CustomNetworkManager.Instance.IsServer)
             {
                 // Assigned authority
-                Debug.Log("Assigned authority");
+                // Debug.Log("Assigned authority");
                 _slots[playerId].netIdentity.AssignClientAuthority(conn);                
             }
                 //player._characterSlot = slots[player.Id];
