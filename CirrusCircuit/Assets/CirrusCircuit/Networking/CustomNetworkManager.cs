@@ -150,6 +150,8 @@ namespace Cirrus.Circuit.Networking
             {
                 var clientPlayer = (ClientPlayer)player;
                 clientPlayer.Id = message.Id;
+                Debug.Log(clientPlayer.Id);
+
                 _clientPlayers.Add(clientPlayer);
             }
         }
