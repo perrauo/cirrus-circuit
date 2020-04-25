@@ -115,7 +115,7 @@ namespace Cirrus.Circuit.UI
             TryChangeState(target);
         }
 
-        public void TryChangeState(State target)
+        private void TryChangeState(State target)
         {
             switch (target)
             {

@@ -86,10 +86,7 @@ namespace Cirrus.Circuit.UI
                         return false;
                     }
 
-                    if (_readyCount < 2)
-                    {
-                        return false;
-                    }
+                    if (_readyCount < 2) return false;       
 
                     _readyText.text = "Ready?";
                     _state = target;
@@ -128,10 +125,10 @@ namespace Cirrus.Circuit.UI
             {
                 // Assigned authority
                 Debug.Log("Assigned authority");
-                _slots[playerId].netIdentity.AssignClientAuthority(conn);
+                _slots[playerId].netIdentity.AssignClientAuthority(conn);                
             }
                 //player._characterSlot = slots[player.Id];
-            _slots[playerId].TryChangeState(CharacterSelectSlot.State.Selecting);
+            _slots[playerId].CmdTryChangeState(CharacterSelectSlot.State.Selecting);
         }
     }
 }
