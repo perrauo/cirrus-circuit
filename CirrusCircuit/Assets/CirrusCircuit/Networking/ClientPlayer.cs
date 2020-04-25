@@ -22,9 +22,9 @@ namespace Cirrus.Circuit.Networking
         [SerializeField]
         public int Id = -1;
 
-        public override void OnStartClient()
+        public override void OnStartAuthority()
         {
-            base.OnStartClient();
+            base.OnStartAuthority();              
 
             if (Id >= Lobby.Instance.Players.Length)
             {
