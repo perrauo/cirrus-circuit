@@ -111,6 +111,7 @@ namespace Cirrus.Circuit.UI
         [Command]
         public void CmdTryChangeState(State target)
         {
+            Debug.Log("CMD CALLED");
             RpcTryChangeState(target);
         }
 
