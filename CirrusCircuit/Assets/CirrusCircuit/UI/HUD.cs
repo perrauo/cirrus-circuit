@@ -41,11 +41,11 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-        public void Join(Controls.Player controller)
+        public void Join(Controls.Player player)
         {
             if (_availablePlayerDisplays.Count != 0)
             {
-                _availablePlayerDisplays[0].TryChangeState(Player.State.Ready, controller.Number);
+                _availablePlayerDisplays[0].TryChangeState(Player.State.Ready, player.Id);
                 _availablePlayerDisplays.RemoveAt(0);
                 //_playerDisplays[index]?.TryChangeState(state);
             }            

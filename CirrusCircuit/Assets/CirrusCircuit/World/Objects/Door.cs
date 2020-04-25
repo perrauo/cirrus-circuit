@@ -198,7 +198,7 @@ namespace Cirrus.Circuit.World.Objects
         public void OnGemEntered(Gem gem)
         {
             if (_previousGem != null &&
-                gem.Number == Number &&
+                gem.ColorId == ColorId &&
                 gem.Type == _previousGem.Type)
             {
                 _multiplierTimer.Start();
@@ -215,13 +215,13 @@ namespace Cirrus.Circuit.World.Objects
             iTween.Stop(_textValue.gameObject);
             _textValue.gameObject.transform.localScale = new Vector3(1, 1, 1);
 
-            Value = gem.Number == Number ? gem.Value * _multiplier : -gem.Value;
+            Value = gem.ColorId == ColorId ? gem.Value * _multiplier : -gem.Value;
 
             _valueTimer.Start();
 
             StartCoroutine(PunchValue());
 
-            OnScoreValueAddedHandler?.Invoke(gem, Number, Value);
+            OnScoreValueAddedHandler?.Invoke(gem, ColorId, Value);
 
             _previousGem = gem;
 

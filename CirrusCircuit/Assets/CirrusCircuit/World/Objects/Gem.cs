@@ -35,9 +35,9 @@ namespace Cirrus.Circuit.World.Objects
         {
             base.Interact(source);
 
-            if (Number >= 4)
+            if (ColorId >= 4)
             {
-                Number = source.Number;
+                ColorId = source.ColorId;
                 Color = source.Color;
             }
         }
@@ -46,7 +46,7 @@ namespace Cirrus.Circuit.World.Objects
         {
             base.Awake();
 
-            if(Number >= 4)
+            if(ColorId >= 4)
                 _visual.MakeUnique();
         }
 

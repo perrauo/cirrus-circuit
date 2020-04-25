@@ -118,8 +118,8 @@ namespace Cirrus.Circuit.UI
 
         public void OnPlayerJoin(Controls.Player player)
         {
-            player._characterSlot = slots[player.Number];
-            slots[player.Number].TryChangeState(CharacterSelectSlot.State.Selecting);
+            player._characterSlot = slots[player.Id];
+            slots[player.Id].TryChangeState(CharacterSelectSlot.State.Selecting);
         }
     }
 }

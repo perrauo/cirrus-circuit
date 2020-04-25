@@ -68,7 +68,7 @@ namespace Cirrus.Circuit.World.Objects
         public float _targetScale = 1;
 
         [SerializeField]
-        public int Number;
+        public int ColorId;
 
         [SerializeField]
         protected UnityEngine.Color _color;
@@ -112,7 +112,7 @@ namespace Cirrus.Circuit.World.Objects
 
             if (Game.Instance.Lobby != null)
             {
-                Color = Game.Instance.Lobby.GetColor(Number);
+                Color = Game.Instance.Lobby.GetColor(ColorId);
                 _nextColor = Color;
             }
         }
@@ -120,9 +120,9 @@ namespace Cirrus.Circuit.World.Objects
         // TODO: will not be called on disabled level
         protected virtual void Awake()
         {
-            if (Number < 4)
+            if (ColorId < 4)
             {
-                _nextColorIndex = Number;
+                _nextColorIndex = ColorId;
                 _nextColorTimer = new Timer(_nextColorTime, start: false, repeat: true);
                 _nextColorTimer.OnTimeLimitHandler += OnNextColorTimeOut;
             }
@@ -286,7 +286,7 @@ namespace Cirrus.Circuit.World.Objects
                 case State.LevelSelect:
                     //Color = 
                     //Color = Fixed
-                    if (Number < 4)
+                    if (ColorId < 4)
                     {
                         Color = Color.Lerp(_color, _nextColor, _nextColorSpeed);
                     }
@@ -534,7 +534,7 @@ namespace Cirrus.Circuit.World.Objects
 
                 case State.LevelSelect:
 
-                    if (Number < 4)
+                    if (ColorId < 4)
                     {
                         OnNextColorTimeOut();
                         _nextColorTimer.Start();

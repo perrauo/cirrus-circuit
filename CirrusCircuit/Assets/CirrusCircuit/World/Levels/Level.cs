@@ -203,9 +203,9 @@ namespace Cirrus.Circuit.World
 
                 foreach (Controls.Player ctrl in Game.Instance._players)
                 {
-                    if (obj.Number == ctrl._assignedNumber)
+                    if (obj.ColorId == ctrl._colorId)
                     {
-                        obj.Number = ctrl.Number;
+                        obj.ColorId = ctrl.Id;
                         obj.Color = ctrl.Color;
                         break;
                     }

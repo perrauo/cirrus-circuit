@@ -19,6 +19,8 @@ namespace Cirrus.Circuit.Networking
     public class CreateClientPlayerMessage : MessageBase
     {        
         public string Name;
+
+        public int Id;
     }
 
     public class CreateNetworkPlayerMessage : MessageBase

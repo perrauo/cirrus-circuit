@@ -59,9 +59,6 @@ namespace Cirrus.Circuit
         public Clock Clock => _clock;        
 
         [SerializeField]
-        public Lobby Lobby;
-
-        [SerializeField]
         public UI.HUD HUD;
 
         public Layers Layers;
@@ -216,8 +213,8 @@ namespace Cirrus.Circuit
 
         private void OnScoreValueAdded(World.Objects.Gem gem, int player, float value)
         {
-            Lobby.Players[player].Score += value;
-            HUD.OnScoreChanged(player, Lobby.Players[player].Score);
+            Lobby.Instance.Players[player].Score += value;
+            HUD.OnScoreChanged(player, Lobby.Instance.Players[player].Score);
         }
 
         public void OnLevelCompleted(World.Level.Rule rule)
@@ -762,7 +759,7 @@ namespace Cirrus.Circuit
                                 _currentLevel.GridToWorld(placeholder._gridPosition), 
                                 _currentLevel.transform);
 
-                        _players[i]._character.Number = _players[i].Number;
+                        _players[i]._character.ColorId = _players[i].Id;
 
                         _players[i]._character.Color = _players[i].Color;
 
@@ -772,7 +769,7 @@ namespace Cirrus.Circuit
 
                         _players[i].Score = 0;
 
-                        _players[i]._assignedNumber = placeholder.Number;
+                        _players[i]._colorId = placeholder.ColorId;
 
                         i++;
 
@@ -803,7 +800,7 @@ namespace Cirrus.Circuit
                     //Lobby.Characters.Clear();
                     //Lobby.Characters.AddRange(_selectedLevel.Characters);
 
-                    foreach (Player player in Lobby.Players)
+                    foreach (Player player in Lobby.Instance.Players)
                     {
                         if (player == null) continue;                        
 
@@ -937,7 +934,7 @@ namespace Cirrus.Circuit
                     }
                     else
                     {
-                        foreach (Player other in Lobby.Players) if (other == null) continue;      
+                        foreach (Player other in Lobby.Instance.Players) if (other == null) continue;      
                         TryChangeState(State.LevelSelection);
                     }
 

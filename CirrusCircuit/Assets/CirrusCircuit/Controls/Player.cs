@@ -56,11 +56,11 @@ namespace Cirrus.Circuit.Controls
 
         public string Name => _name;
 
-        public int _number = 0;
+        public int _id = 0;
 
-        public int Number => _number;
+        public int Id => _id;
 
-        public int _assignedNumber = 0;
+        public int _colorId = 0;
 
         public Vector2 AxisLeft => _actionMap.Player.AxesLeft.ReadValue<Vector2>();
 
@@ -68,7 +68,7 @@ namespace Cirrus.Circuit.Controls
         {
             _name = name;
             _color = color;
-            _number = number;
+            _id = number;
             _device = device;
             //_user = Inputs.Users.InputUser.CreateUserWithoutPairedDevices();
             //Inputs.Users.InputUser.PerformPairingWithDevice(_device, _user);

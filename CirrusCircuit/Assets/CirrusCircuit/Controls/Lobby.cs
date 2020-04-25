@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Cirrus.Circuit.Controls
 {
-    public class Lobby : MonoBehaviour
+    public class Lobby : BaseSingleton<Lobby>
     {
         [SerializeField]
         private Inputs.InputActionAsset _inputActionAsset;
@@ -30,8 +30,10 @@ namespace Cirrus.Circuit.Controls
             return color;
         }
 
-        public void Awake()
+        public override void Awake()
         {
+            base.Awake();
+
             Players = new Player[_playerMax];
 
             Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
