@@ -335,10 +335,6 @@ namespace Cirrus.Circuit
                     _characterSelect.OnConnectedPlayerJoin(Mirror.NetworkServer.localConnection, player.Id);
                 }
             }
-            else
-            {
-                //player._characterSlot.HandleAction1(player);
-            }
         }
 
         public void RemotePlayerJoin(Mirror.NetworkConnection conn, int playerId)
@@ -362,7 +358,7 @@ namespace Cirrus.Circuit
 
         #region FSM
 
-        [System.Serializable]
+        [Serializable]
         public enum State
         {
             Menu,
@@ -936,8 +932,7 @@ namespace Cirrus.Circuit
                     break;
 
                 case State.Round:
-                    if (player._character)
-                        player._character?.TryAction0();
+                    if (player._character) player._character?.TryAction0();
 
                     break;
 
@@ -968,8 +963,7 @@ namespace Cirrus.Circuit
                     break;
 
                 case State.Round:
-                    if (player._character)
-                        player._character?.TryAction1();
+                    if (player._character) player._character?.TryAction1();
                     break;
 
                 case State.Score:
