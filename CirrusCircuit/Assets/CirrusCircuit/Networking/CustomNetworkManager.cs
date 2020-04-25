@@ -124,11 +124,12 @@ namespace Cirrus.Circuit.Networking
 
             obj = template.gameObject.Create().GetComponent<NetworkBehaviour>();
 
+            NetworkServer.Spawn(obj.gameObject);
+
             obj.netIdentity.AssignClientAuthority(conn);
 
             return false;
         }
-
 
         public override bool TryPlayerJoin(Player player)
         {
