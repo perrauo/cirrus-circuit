@@ -660,7 +660,6 @@ namespace Cirrus.Circuit
                     foreach (var c in _players)
                     {
                         if (c == null) continue;
-
                         _podium.Add(c, c._characterResource);
                     }
 
@@ -953,13 +952,12 @@ namespace Cirrus.Circuit
 
         public void PlayerJoin(Player player)
         {
-            if (IsOnline)
-            { 
-                if (CustomNetworkManager.Instance.TryPlayerJoin(player))
-                {
-                    _players.Add(player);
-                    OnPlayerJoinHandler?.Invoke(player);
-                }
+            if (
+                IsOnline && 
+                CustomNetworkManager.Instance.TryPlayerJoin(player))
+            {                                 
+                _players.Add(player);
+                OnPlayerJoinHandler?.Invoke(player);                
             }
             else
             {
@@ -983,14 +981,8 @@ namespace Cirrus.Circuit
 
                 case State.CharacterSelection:
 
-                    if (!_players.Contains(player))
-                    {
-                        PlayerJoin(player);
-                    }
-                    else
-                    {
-                        player._characterSlot.HandleAction1(player);
-                    }
+                    if (!_players.Contains(player)) PlayerJoin(player);                                                                
+                    else player._characterSlot.HandleAction1(player);                    
 
                     break;
 
