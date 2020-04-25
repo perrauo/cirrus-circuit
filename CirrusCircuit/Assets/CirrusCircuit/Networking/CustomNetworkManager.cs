@@ -107,7 +107,7 @@ namespace Cirrus.Circuit.Networking
 
             if (_net.playerPrefab.GetComponent<NetworkBehaviour>() == null) return false;
 
-            player = template.gameObject.Create(_net.transform).GetComponent<NetworkBehaviour>();
+            player = template.gameObject.Create().GetComponent<NetworkBehaviour>();
 
             if (NetworkServer.AddPlayerForConnection(conn, player.gameObject)) return true;            
 
