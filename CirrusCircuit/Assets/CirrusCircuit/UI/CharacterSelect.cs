@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Cirrus.Circuit.Controls;
+using Cirrus.Circuit.Networking;
 
 namespace Cirrus.Circuit.UI
 {
@@ -118,8 +119,11 @@ namespace Cirrus.Circuit.UI
 
         public void OnConnectedPlayerJoin(Mirror.NetworkConnection conn, int playerId)
         {
-            slots[playerId].netIdentity.AssignClientAuthority(conn);
-            //player._characterSlot = slots[player.Id];
+            if (CustomNetworkManager.Instance.IsServer)
+            {
+                slots[playerId].netIdentity.AssignClientAuthority(conn);
+            }
+                //player._characterSlot = slots[player.Id];
             slots[playerId].TryChangeState(CharacterSelectSlot.State.Selecting);
         }
     }

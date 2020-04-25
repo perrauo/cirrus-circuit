@@ -966,10 +966,8 @@ namespace Cirrus.Circuit
 
                     break;
 
-
                 case State.WaitingNextRound:
                     break;
-
 
                 case State.Round:
                     if (player._character)
