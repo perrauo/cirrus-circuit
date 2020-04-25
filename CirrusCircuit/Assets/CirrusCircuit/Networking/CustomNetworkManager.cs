@@ -133,11 +133,16 @@ namespace Cirrus.Circuit.Networking
 
         public override bool TryPlayerJoin(Player player)
         {
+            //return false;
+
+            Debug.Log("On network player created");
+            if (TryCreatePlayer(NetworkServer.localConnection, out NetworkBehaviour clientPlayer))
+            {
+                _networkPlayers.Add((NetworkPlayer)clientPlayer);
+                return true;
+            }
+
             return false;
-            //return TryCreatePlayer(
-            //    NetworkServer.localConnection, 
-            //    _net.ClientPlayerTemplate, 
-            //    out NetworkBehaviour clientPlayer);            
         }
 
         public void OnClientPlayerCreateMessage(NetworkConnection conn, CreateClientPlayerMessage message)
