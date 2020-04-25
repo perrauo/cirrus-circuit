@@ -126,9 +126,7 @@ namespace Cirrus.Circuit.Networking
 
             NetworkServer.Spawn(obj.gameObject);            
 
-            if (obj.netIdentity.AssignClientAuthority(conn)) return true;
-
-            return false;
+            return true;
         }
 
         public override bool TryPlayerJoin(Player player)
@@ -154,6 +152,7 @@ namespace Cirrus.Circuit.Networking
                 var clientPlayer = (ClientPlayer)player;
                 clientPlayer.Id = message.Id;
                 _clientPlayers.Add(clientPlayer);
+                clientPlayer.netIdentity.AssignClientAuthority(conn);
             }
         }
 
