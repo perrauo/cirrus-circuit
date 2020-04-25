@@ -105,7 +105,7 @@ namespace Cirrus.Circuit.Networking
         {
             player = null;
 
-            if (_net.playerPrefab.GetComponent<NetworkBehaviour>() == null) return false;
+            if (template.gameObject.GetComponent<NetworkBehaviour>() == null) return false;
 
             player = template.gameObject.Create().GetComponent<NetworkBehaviour>();
 
@@ -125,7 +125,7 @@ namespace Cirrus.Circuit.Networking
         public void OnClientPlayerCreateMessage(NetworkConnection conn, CreateClientPlayerMessage message)
         {
             Debug.Log("On network player created");
-            if (TryCreatePlayer(conn, _net.NetworkPlayerTemplate, out NetworkBehaviour player))
+            if (TryCreatePlayer(conn, _net.ClientPlayerTemplate, out NetworkBehaviour player))
             {
                 var clientPlayer = (ClientPlayer)player;
                 clientPlayer.Id = message.Id;
