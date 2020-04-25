@@ -109,7 +109,7 @@ namespace Cirrus.Circuit.UI
         private CameraManager _camera;
 
 
-        [ClientRpc]
+        //[ClientRpc]
         public void RpcTryChangeState(State target)
         {
             TryChangeState(target);
@@ -248,7 +248,7 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-        [ClientRpc]
+        //[ClientRpc]
         public void RpcScroll(bool up)
         {            
             _selectedIndex = up ? _selectedIndex - 1 : _selectedIndex + 1;
