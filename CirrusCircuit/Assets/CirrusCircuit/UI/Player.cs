@@ -63,7 +63,7 @@ namespace Cirrus.Circuit.UI
 
         public string PlayerName 
         {
-            get => => _playerText.text;            
+            get => _playerText.text;            
 
             set => _playerText.text  = value;
             
