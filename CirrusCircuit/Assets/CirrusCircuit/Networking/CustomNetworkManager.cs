@@ -132,29 +132,33 @@ namespace Cirrus.Circuit.Networking
         public override bool TryPlayerJoin(Player player)
         {            
             Debug.Log("On network player created");
-            if (TryCreatePlayer(NetworkServer.localConnection, out NetworkBehaviour clientPlayer))
-            {
-                _networkPlayers.Add((NetworkPlayer)clientPlayer);
-                return true;
-            }
-
-            return false;
+            return DoCreateClientPlayer(NetworkServer.localConnection, player.Id);            
         }
 
         public void OnClientPlayerCreateMessage(NetworkConnection conn, CreateClientPlayerMessage message)
         {
             Debug.Log("On network player created");
+            DoCreateClientPlayer(conn, message.Id);
+        }
+
+
+        public bool DoCreateClientPlayer(NetworkConnection conn, int id)
+        {
             if (TryCreateNetworkObject(
                 conn,
                 _net.ClientPlayerTemplate,
                 out NetworkBehaviour player))
             {
                 var clientPlayer = (ClientPlayer)player;
-                clientPlayer.Id = message.Id;
+                clientPlayer.Id = id;
                 _clientPlayers.Add(clientPlayer);
                 clientPlayer.netIdentity.AssignClientAuthority(conn);
+                return true;
             }
+
+            return false;
         }
+
 
         public void OnNetworkPlayerCreateMessage(NetworkConnection conn, CreateNetworkPlayerMessage message)
         {
