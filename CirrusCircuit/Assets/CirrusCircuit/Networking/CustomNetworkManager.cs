@@ -124,7 +124,7 @@ namespace Cirrus.Circuit.Networking
 
             obj = template.gameObject.Create().GetComponent<NetworkBehaviour>();
 
-            NetworkServer.Spawn(obj.gameObject);
+            NetworkServer.Spawn(obj.gameObject);            
 
             if (obj.netIdentity.AssignClientAuthority(conn)) return true;
 
@@ -132,9 +132,7 @@ namespace Cirrus.Circuit.Networking
         }
 
         public override bool TryPlayerJoin(Player player)
-        {
-            //return false;
-
+        {            
             Debug.Log("On network player created");
             if (TryCreatePlayer(NetworkServer.localConnection, out NetworkBehaviour clientPlayer))
             {
@@ -155,8 +153,6 @@ namespace Cirrus.Circuit.Networking
             {
                 var clientPlayer = (ClientPlayer)player;
                 clientPlayer.Id = message.Id;
-                Debug.Log(clientPlayer.Id);
-
                 _clientPlayers.Add(clientPlayer);
             }
         }
