@@ -17,9 +17,11 @@ namespace Cirrus.Circuit.Networking
     public class ClientPlayer : NetworkBehaviour
     {
         [SerializeField]
+        [SyncVar]
         public Player Player;
 
         [SerializeField]
+        [SyncVar]
         public int Id = -1;
 
         public override void OnStartAuthority()
