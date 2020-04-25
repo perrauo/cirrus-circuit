@@ -112,7 +112,7 @@ namespace Cirrus.Circuit.UI
 
         public void CmdTryChangeState(State target)
         {
-             //Instance.Client. Cmd_CharacterSelectSlot_TryChangeState(this, )
+            NetworkClientPlayer.Instance.Cmd_CharacterSelectSlot_TryChangeState(gameObject, target);
         }
 
         [ClientRpc]

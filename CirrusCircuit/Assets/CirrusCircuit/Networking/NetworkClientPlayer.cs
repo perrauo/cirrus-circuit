@@ -14,18 +14,20 @@ namespace Cirrus.Circuit.Networking
     // Serves to sync the connection
     public class NetworkClientPlayer : NetworkBehaviour
     {
+        public static NetworkClientPlayer Instance;
+
         public override void OnStartLocalPlayer()
         {
             base.OnStartLocalPlayer();
 
-            Debug.Log("Called on client");
+            Instance = this;            
         }
 
         [Command]
         public void Cmd_CharacterSelectSlot_TryChangeState(GameObject slot, UI.CharacterSelectSlot.State target)
         {
-            //Debug.Log("CMD");
-
+            Debug.Log("CMD");
+            Debug.Log(slot.GetComponent<UI.CharacterSelectSlot>());
             //slot.RpcTryChangeState(target);
         }
 
