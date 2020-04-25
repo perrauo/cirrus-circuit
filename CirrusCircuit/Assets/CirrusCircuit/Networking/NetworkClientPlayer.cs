@@ -15,7 +15,9 @@ namespace Cirrus.Circuit.Networking
     public class NetworkClientPlayer : NetworkBehaviour
     {
         public override void OnStartLocalPlayer()
-        {                        
+        {
+            base.OnStartLocalPlayer();
+
             Debug.Log("Called on client");
         }
 
