@@ -128,7 +128,7 @@ namespace Cirrus.Circuit.UI
                 _slots[playerId].netIdentity.AssignClientAuthority(conn);                
             }
                 //player._characterSlot = slots[player.Id];
-            _slots[playerId].CmdTryChangeState(CharacterSelectSlot.State.Selecting);
+            _slots[playerId].TryChangeState(CharacterSelectSlot.State.Selecting);
         }
     }
 }
