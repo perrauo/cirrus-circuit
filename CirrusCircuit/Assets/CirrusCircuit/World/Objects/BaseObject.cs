@@ -6,6 +6,7 @@ using UnityEngine;
 using Cirrus.Resources;
 using Cirrus.Utils;
 using System;
+using Cirrus.Circuit.Controls;
 //using Cirrus.DH.Conditions;
 //using Cirrus.DH.Objects.Actions;
 
@@ -110,9 +111,9 @@ namespace Cirrus.Circuit.World.Objects
         {
             if (_level == null) _level = GetComponentInParent<Level>();
 
-            if (Game.Instance.Lobby != null)
+            if (Lobby.Instance != null)
             {
-                Color = Game.Instance.Lobby.GetColor(ColorId);
+                Color = Lobby.Instance.GetColor(ColorId);
                 _nextColor = Color;
             }
         }

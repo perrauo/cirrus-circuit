@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using Cirrus.Circuit.Controls;
 
 namespace Cirrus.Circuit.UI
 {
@@ -137,7 +138,7 @@ namespace Cirrus.Circuit.UI
                 case State.Ready:
                               
                     int playerNumber = (int)args[0];
-                    _color = Game.Instance.Lobby.Colors[playerNumber];
+                    _color = Lobby.Instance.Colors[playerNumber];
                     _color.a = _readyAlpha;
                     Color = _color;
 
