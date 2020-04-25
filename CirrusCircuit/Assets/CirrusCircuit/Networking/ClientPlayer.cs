@@ -21,6 +21,7 @@ namespace Cirrus.Circuit.Networking
         public override void OnStartLocalPlayer()
         {
             //Player = 
+            Debug.Log("Called on client");
         }
 
         public void Awake()
