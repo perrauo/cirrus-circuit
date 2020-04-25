@@ -17,7 +17,7 @@ namespace Cirrus.Circuit.Networking
     public class ClientPlayer : NetworkBehaviour
     {
         [SerializeField]
-        [SyncVar]
+        //[SyncVar]
         public Player Player;
 
         [SerializeField]
