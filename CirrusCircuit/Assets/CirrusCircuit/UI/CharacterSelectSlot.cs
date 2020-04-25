@@ -108,9 +108,8 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private CameraManager _camera;
 
-
-        //[ClientRpc]
-        public void RpcTryChangeState(State target)
+        [Command]
+        public void CmdTryChangeState(State target)
         {
             TryChangeState(target);
         }
@@ -216,7 +215,7 @@ namespace Cirrus.Circuit.UI
 
             TryChangeState(State.Closed);
 
-            RpcScroll(true);
+            CmdScroll(true);
         }
 
         public IEnumerator PunchScale(bool previous)
@@ -248,8 +247,8 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-        //[ClientRpc]
-        public void RpcScroll(bool up)
+        [Command]
+        public void CmdScroll(bool up)
         {            
             _selectedIndex = up ? _selectedIndex - 1 : _selectedIndex + 1;
             _selectedIndex = Mathf.Clamp(_selectedIndex, 0, _characterResources.Characters.Length-1);
@@ -286,7 +285,7 @@ namespace Cirrus.Circuit.UI
 
                 case State.Ready:
                     _characterSelect.TryChangeState(CharacterSelect.State.Select);
-                    RpcTryChangeState(State.Selecting);
+                    CmdTryChangeState(State.Selecting);
                     break;
 
                 case State.Closed:
@@ -301,7 +300,7 @@ namespace Cirrus.Circuit.UI
                 case State.Selecting:
                     Controls.Player ctrl = (Controls.Player) args[0];
                     ctrl._characterResource = _characterResources.Characters[_selectedIndex];
-                    RpcTryChangeState(State.Ready);
+                    CmdTryChangeState(State.Ready);
                     break;                    
 
                 case State.Ready:
