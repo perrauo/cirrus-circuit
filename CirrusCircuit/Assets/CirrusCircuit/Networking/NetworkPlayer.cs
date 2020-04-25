@@ -20,11 +20,11 @@ namespace Cirrus.Circuit.Networking
         }
 
         [Command]
-        public void Cmd_CharacterSelectSlot_TryChangeState(UI.CharacterSelectSlot slot, UI.CharacterSelectSlot.State target)
+        public void Cmd_CharacterSelectSlot_TryChangeState(GameObject slot, UI.CharacterSelectSlot.State target)
         {
             Debug.Log("CMD");
 
-            slot.RpcTryChangeState(target);
+            //slot.RpcTryChangeState(target);
         }
 
     }
