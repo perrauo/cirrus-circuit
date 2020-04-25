@@ -14,7 +14,7 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private World.Objects.Characters.Resources _characterResources;
 
-        [SerializeField]
+        [SerializeField]        
         private Image _imageTemplate;
 
         [SerializeField]
@@ -113,6 +113,13 @@ namespace Cirrus.Circuit.UI
         {
             TryChangeState(target);
         }
+
+        [ClientRpc]
+        public void RpcTryChangeState(State target)
+        {
+            TryChangeState(target);
+        }
+
 
         public void TryChangeState(State target)
         {
@@ -247,11 +254,11 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-        [Command]
-        public void CmdScroll(bool up)
-        {            
+        [ClientRpc]
+        public void RpcScroll(bool up)
+        {
             _selectedIndex = up ? _selectedIndex - 1 : _selectedIndex + 1;
-            _selectedIndex = Mathf.Clamp(_selectedIndex, 0, _characterResources.Characters.Length-1);
+            _selectedIndex = Mathf.Clamp(_selectedIndex, 0, _characterResources.Characters.Length - 1);
             _offset = up ? _offset - _height : _offset + _height;
             _offset = Mathf.Clamp(_offset, -_bound, _bound - _height);
             _targetPosition = _startPosition + Vector3.up * _offset;
@@ -263,7 +270,7 @@ namespace Cirrus.Circuit.UI
             }
             else if (_selectedIndex == _characterResources.Characters.Length - 1)
             {
-                if (up) StartCoroutine(PunchScale(true));      
+                if (up) StartCoroutine(PunchScale(true));
                 _down.color = _down.color.SetA(_disabledArrowAlpha);
             }
             else
@@ -274,6 +281,12 @@ namespace Cirrus.Circuit.UI
                 if (up) StartCoroutine(PunchScale(true));
                 else StartCoroutine(PunchScale(false));
             }
+        }
+
+        [Command]
+        public void CmdScroll(bool up)
+        {
+            RpcScroll(up);
         }
 
         public void HandleAction0()

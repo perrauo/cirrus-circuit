@@ -518,6 +518,8 @@ MonoBehaviour:
   _speed: 0.25
   _selectPunchScale: 0.5
   _selectPunchScaleTime: 1
+  _startPosition: {x: 0, y: 0, z: 0}
+  _targetPosition: {x: 0, y: 0, z: 0}
   _characterSpotlightAnchor: {fileID: 8410811057465128657}
   _characterSpotlightSize: 50
   _characterSpotlightRotateSpeed: 20
