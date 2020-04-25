@@ -68,7 +68,7 @@ namespace Cirrus.Circuit.Networking
             base.OnClientConnect(conn);
 
             _conn = conn;
-            _conn.Send(new ConnectMessage());
+            _conn.Send(new ClientConnectedMessage());
         }
 
         public override void OnClientDisconnect(NetworkConnection conn)
@@ -95,7 +95,7 @@ namespace Cirrus.Circuit.Networking
 
         public NetworkManagerServerHandler(CustomNetworkManager net) : base(net)
         {
-            NetworkServer.RegisterHandler<ConnectMessage>(OnNetworkPlayerCreateMessage);
+            NetworkServer.RegisterHandler<ClientConnectedMessage>(OnClientConnected);
             NetworkServer.RegisterHandler<PlayerJoinMessage>(OnPlayerJoinMessage);
         }
 
@@ -160,7 +160,7 @@ namespace Cirrus.Circuit.Networking
             }
         }
    
-        public void OnNetworkPlayerCreateMessage(NetworkConnection conn, ConnectMessage message)
+        public void OnClientConnected(NetworkConnection conn, ClientConnectedMessage message)
         {         
             if (TryCreatePlayer(conn, out NetworkBehaviour player))
             {
@@ -223,6 +223,11 @@ namespace Cirrus.Circuit.Networking
             base.Awake();
         }
 
+        public bool TryPlayerJoin(int playerId)
+        {
+            return _handler.TryPlayerJoin(playerId);
+        }
+
         public bool TryInitHost(string port)
         {
             _handler = null;            
@@ -231,11 +236,6 @@ namespace Cirrus.Circuit.Networking
             Transport.port = res;
             StartHost();
             return true;            
-        }
-
-        public bool TryPlayerJoin(int playerId)
-        {
-            return _handler.TryPlayerJoin(playerId);
         }
                 
         // 25.1.149.130:4040

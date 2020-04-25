@@ -856,12 +856,10 @@ namespace Cirrus.Circuit
             switch (_state)
             {
                 case State.CharacterSelection:
-                    if (player._characterSlot == null)
-                        break;
 
                     if (Mathf.Abs(step.z) > 0)
                     {
-                        player._characterSlot.Scroll(step.z > 0);
+                        _characterSelect.OnLocalCharacterScroll(player.Id, step.z > 0);
                     }
 
                     break;

@@ -12,7 +12,8 @@ namespace Cirrus.Circuit.UI
         public OnCharacterSelectReady OnCharacterSelectReadyHandler;
 
         [SerializeField]
-        private CharacterSelectSlot[] slots;
+        [UnityEngine.Serialization.FormerlySerializedAs("slots")]
+        private CharacterSelectSlot[] _slots;
 
         [SerializeField]
         private UnityEngine.UI.Text _readyText;
@@ -21,8 +22,7 @@ namespace Cirrus.Circuit.UI
 
         public void OnValidate()
         {
-            if (slots.Length == 0)
-                slots = GetComponentsInChildren<CharacterSelectSlot>();
+            if (_slots.Length == 0) _slots = GetComponentsInChildren<CharacterSelectSlot>();
         }
 
         public void Awake()
@@ -116,15 +116,20 @@ namespace Cirrus.Circuit.UI
 
         }
 
+        public void OnLocalCharacterScroll(int playerId, bool scroll)
+        {
+            _slots[playerId].Scroll(scroll);
+        }
+
 
         public void OnConnectedPlayerJoin(Mirror.NetworkConnection conn, int playerId)
         {
             if (CustomNetworkManager.Instance.IsServer)
             {
-                slots[playerId].netIdentity.AssignClientAuthority(conn);
+                _slots[playerId].netIdentity.AssignClientAuthority(conn);
             }
                 //player._characterSlot = slots[player.Id];
-            slots[playerId].TryChangeState(CharacterSelectSlot.State.Selecting);
+            _slots[playerId].TryChangeState(CharacterSelectSlot.State.Selecting);
         }
     }
 }

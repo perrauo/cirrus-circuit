@@ -23,7 +23,7 @@ namespace Cirrus.Circuit.Networking
         public int Id;
     }
 
-    public class ConnectMessage : MessageBase
+    public class ClientConnectedMessage : MessageBase
     {
         public string Name;
     }
