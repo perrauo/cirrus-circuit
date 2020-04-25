@@ -18,7 +18,7 @@ namespace Cirrus.Circuit
         public int Moveable = LayerMask.NameToLayer("Moveable");
         public int Solid = LayerMask.NameToLayer("Solid");
     }
-   
+
     public class Game : BaseSingleton<Game>
     {
         #region Game
@@ -48,7 +48,7 @@ namespace Cirrus.Circuit
 
         [SerializeField]
         private bool _isOnline = false;
-        public bool IsOnline => _isOnline;        
+        public bool IsOnline => _isOnline;
 
         [SerializeField]
         private Transitions.Transition _transitionEffect;
@@ -56,12 +56,12 @@ namespace Cirrus.Circuit
         [SerializeField]
         public Clock _clock;
 
-        public Clock Clock => _clock;        
+        public Clock Clock => _clock;
 
         [SerializeField]
         public UI.HUD HUD;
 
-        public Layers Layers = new Layers();
+        public Layers Layers;
 
         public UI.CharacterSelect _characterSelect;
 
@@ -117,7 +117,7 @@ namespace Cirrus.Circuit
 
         [SerializeField]
         private float _intermissionTime = 2f;
-        
+
         [SerializeField]
         private float _transitionTime = 5f;
 
@@ -149,12 +149,14 @@ namespace Cirrus.Circuit
         {
             base.Awake();
 
-            if(_randomizeSeed) UnityEngine.Random.InitState(Environment.TickCount);
- 
+            Layers = new Layers();
+
+            if (_randomizeSeed) UnityEngine.Random.InitState(Environment.TickCount);
+
             _transitionTimer = new Timer(_transitionTime, start: false, repeat: false);
 
             _transitionTimer.OnTimeLimitHandler += OnTransitionTimeOut;
-            
+
             //DontDestroyOnLoad(this.gameObject);
 
             _podium.OnPodiumFinishedHandler += OnPodiumFinished;
@@ -173,7 +175,7 @@ namespace Cirrus.Circuit
         }
 
         public void Update()
-        {            
+        {
             UpdatedVectorBottomLeft = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
             UpdatedVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30));
 
@@ -221,14 +223,14 @@ namespace Cirrus.Circuit
             _round.Terminate();
 
             //OnRoundEnd();
-            
+
         }
 
         public void OnLevelSelected(int step)
         {
             for (int i = 0; i < _levels.Length; i++)
             {
-                if (_levels[i] == null) continue;            
+                if (_levels[i] == null) continue;
                 _levels[i].TargetPosition = Vector3.zero + Vector3.right * (i - _currentLevelIndex) * _distanceLevelSelect;
             }
 
@@ -236,7 +238,7 @@ namespace Cirrus.Circuit
 
             _targetSizeCamera = _selectedLevel.CameraSize;
 
-            OnLevelSelectedHandler?.Invoke(_selectedLevel, step);            
+            OnLevelSelectedHandler?.Invoke(_selectedLevel, step);
         }
 
         // TODO: Simulate LeftStick continuous axis with WASD
@@ -313,9 +315,9 @@ namespace Cirrus.Circuit
                     _podium.gameObject.SetActive(false);
                     break;
 
-                //case State.Round:
-                //    _podium.gameObject.SetActive(false);
-                //    break;
+                    //case State.Round:
+                    //    _podium.gameObject.SetActive(false);
+                    //    break;
             }
 
             TryChangeState(_transition);
@@ -653,10 +655,10 @@ namespace Cirrus.Circuit
                     _state = target;
                     return true;
 
-                case State.CharacterSelection:                    
+                case State.CharacterSelection:
                     OnCharacterSelectHandler?.Invoke(true);
                     _state = target;
-                    return true;               
+                    return true;
 
                 case State.Begin:
                     _podium.Clear();
@@ -690,22 +692,22 @@ namespace Cirrus.Circuit
 
                 case State.Transition:
 
-                    _transition = (State) args[0];
+                    _transition = (State)args[0];
                     _transitionTimer.Start();
 
                     _transitionEffect.Perform();
-                                      
+
                     _state = target;
                     return true;
 
-                
+
                 case State.Podium:
                     _podium.gameObject.SetActive(true);
                     OnPodiumHandler?.Invoke();
                     _state = target;
                     return true;
 
-                case State.FinalPodium:                    
+                case State.FinalPodium:
                     _podium.gameObject.SetActive(true);
                     OnFinalPodiumHandler?.Invoke();
                     _state = target;
@@ -755,17 +757,17 @@ namespace Cirrus.Circuit
                     while (!placeholders.IsEmpty())
                     {
                         Placeholder placeholder = placeholders.RemoveRandom();
- 
+
                         _localPlayers[i]._character = _localPlayers[i]
                             ._characterResource.Create(
-                                _currentLevel.GridToWorld(placeholder._gridPosition), 
+                                _currentLevel.GridToWorld(placeholder._gridPosition),
                                 _currentLevel.transform);
 
                         _localPlayers[i]._character.ColorId = _localPlayers[i].Id;
 
                         _localPlayers[i]._character.Color = _localPlayers[i].Color;
 
-                        _localPlayers[i]._character._level = _currentLevel;                        
+                        _localPlayers[i]._character._level = _currentLevel;
 
                         _localPlayers[i]._character.TryChangeState(World.Objects.BaseObject.State.Disabled);
 
@@ -804,7 +806,7 @@ namespace Cirrus.Circuit
 
                     foreach (Player player in PlayerManager.Instance.Players)
                     {
-                        if (player == null) continue;                        
+                        if (player == null) continue;
 
                         //ctrl.Character = null;
                     }
@@ -856,11 +858,11 @@ namespace Cirrus.Circuit
                 case State.CharacterSelection:
                     if (player._characterSlot == null)
                         break;
-                 
+
                     if (Mathf.Abs(step.z) > 0)
                     {
                         player._characterSlot.Scroll(step.z > 0);
-                    }                    
+                    }
 
                     break;
 
@@ -929,7 +931,7 @@ namespace Cirrus.Circuit
                     }
                     else
                     {
-                        foreach (Player other in PlayerManager.Instance.Players) if (other == null) continue;      
+                        foreach (Player other in PlayerManager.Instance.Players) if (other == null) continue;
                         TryChangeState(State.LevelSelection);
                     }
 
@@ -960,7 +962,7 @@ namespace Cirrus.Circuit
 
                 case State.CharacterSelection:
 
-                    LocalPlayerJoin(player);                                                                                        
+                    LocalPlayerJoin(player);
 
                     break;
 
@@ -970,8 +972,8 @@ namespace Cirrus.Circuit
 
 
                 case State.Round:
-                    if(player._character)
-                    player._character?.TryAction1();
+                    if (player._character)
+                        player._character?.TryAction1();
                     break;
 
                 case State.Score:
