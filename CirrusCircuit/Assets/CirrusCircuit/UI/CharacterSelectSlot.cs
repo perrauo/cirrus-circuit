@@ -219,13 +219,11 @@ namespace Cirrus.Circuit.UI
 
         public virtual void Start()
         {
-            //base.Start();
-
             _startPosition = _rect.localPosition - Vector3.up * _offset;
 
             TryChangeState(State.Closed);
 
-            CmdScroll(true);
+            Scroll(true);
         }
 
         public IEnumerator PunchScale(bool previous)
@@ -256,9 +254,8 @@ namespace Cirrus.Circuit.UI
                         _selectPunchScaleTime);
             }
         }
-
-        [ClientRpc]
-        public void RpcScroll(bool up)
+        
+        public void Scroll(bool up)
         {
             _selectedIndex = up ? _selectedIndex - 1 : _selectedIndex + 1;
             _selectedIndex = Mathf.Clamp(_selectedIndex, 0, _characterResources.Characters.Length - 1);
@@ -284,6 +281,12 @@ namespace Cirrus.Circuit.UI
                 if (up) StartCoroutine(PunchScale(true));
                 else StartCoroutine(PunchScale(false));
             }
+        }
+
+        [ClientRpc]
+        public void RpcScroll(bool up)
+        {
+            Scroll(up);
         }
 
         public void CmdScroll(bool up)
