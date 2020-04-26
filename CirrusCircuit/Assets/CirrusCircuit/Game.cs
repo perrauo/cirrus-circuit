@@ -22,6 +22,8 @@ namespace Cirrus.Circuit
     {
         #region Game
 
+        public const int PlayerMax = 4;
+
         [SerializeField]
         private bool _randomizeSeed = false;
 

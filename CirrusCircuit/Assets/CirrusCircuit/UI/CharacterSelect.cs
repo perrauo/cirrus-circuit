@@ -19,6 +19,8 @@ namespace Cirrus.Circuit.UI
         private UnityEngine.UI.Text _readyText;
 
         public int _readyCount = 0;
+        public int _openCount = 0;
+
 
         public override void OnValidate()
         {
@@ -90,12 +92,11 @@ namespace Cirrus.Circuit.UI
                         return false;
                     }
 
-                    if (_readyCount < 2) return false;       
+                    if (_readyCount == 1 || _readyCount != _openCount) return false;       
 
                     _readyText.text = "Ready?";
                     _state = target;
                     return true;
-
 
                 case State.Select:
                     _readyText.text = "";
