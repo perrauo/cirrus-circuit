@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Cirrus.Circuit.Networking;
+
 namespace Cirrus.Circuit
 {
     public delegate  void OnPodiumFinished();
 
 
-    public class Podium : MonoBehaviour
+    public class Podium : BaseNetworkSingleton<Podium>
     {
         public OnPodiumFinished OnPodiumFinishedHandler;
 
@@ -53,14 +55,18 @@ namespace Cirrus.Circuit
 
         private int _platformFinishedCount = 0;
 
-        public void OnValidate()
+        public override void OnValidate()
         {
+            base.OnValidate();
+
             if (_announcement == null)
                 _announcement = FindObjectOfType<UI.Announcement>();
         }
 
-        public void Awake()
+        public override void Awake()
         {
+            base.Awake();
+
             _timer = new Timer(_timeTransition, start: false, repeat: false);
             _finalTimer = new Timer(_timeFinal, start: false, repeat: false);
 
@@ -88,13 +94,8 @@ namespace Cirrus.Circuit
             }
         }
 
-        public bool IsEmpty {
+        public bool IsEmpty => _platforms.Count == 0;
 
-            get
-            {
-                return _platforms.Count == 0;
-            }
-        }
 
         public void OnRound(Round round)
         {

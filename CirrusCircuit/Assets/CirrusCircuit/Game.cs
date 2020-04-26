@@ -18,7 +18,7 @@ namespace Cirrus.Circuit
         public int Solid = LayerMask.NameToLayer("Solid");
     }
 
-    public class Game : BaseSingleton<Game>
+    public class Game : BaseNetworkSingleton<Game>
     {
         #region Game
 
@@ -75,9 +75,6 @@ namespace Cirrus.Circuit
         public int _currentLevelIndex = 0;
 
         public float _distanceLevelSelect = 35;
-
-        [SerializeField]
-        private Podium _podium;
 
         [SerializeField]
         public float _targetSizeCamera = 10f;
@@ -156,7 +153,7 @@ namespace Cirrus.Circuit
 
             //DontDestroyOnLoad(this.gameObject);
 
-            _podium.OnPodiumFinishedHandler += OnPodiumFinished;
+            Podium.Instance.OnPodiumFinishedHandler += OnPodiumFinished;
 
             _characterSelect.OnCharacterSelectReadyHandler += OnCharacterSelectReady;
 
@@ -308,7 +305,7 @@ namespace Cirrus.Circuit
 
                 case State.Round:
                 case State.LevelSelection:
-                    _podium.gameObject.SetActive(false);
+                    Podium.Instance.gameObject.SetActive(false);
                     break;
 
                     //case State.Round:
@@ -628,15 +625,15 @@ namespace Cirrus.Circuit
                     return true;
 
                 case State.Begin:
-                    _podium.Clear();
+                    Podium.Instance.Clear();
 
                     foreach (var c in _localPlayers)
                     {
                         if (c == null) continue;
-                        _podium.Add(c, c._characterResource);
+                        Podium.Instance.Add(c, c._characterResource);
                     }
 
-                    _podium.gameObject.SetActive(false);
+                    Podium.Instance.gameObject.SetActive(false);
 
                     OnLevelSelectHandler.Invoke(false);
 
@@ -669,13 +666,13 @@ namespace Cirrus.Circuit
 
 
                 case State.Podium:
-                    _podium.gameObject.SetActive(true);
+                    Podium.Instance.gameObject.SetActive(true);
                     OnPodiumHandler?.Invoke();
                     _state = target;
                     return true;
 
                 case State.FinalPodium:
-                    _podium.gameObject.SetActive(true);
+                    Podium.Instance.gameObject.SetActive(true);
                     OnFinalPodiumHandler?.Invoke();
                     _state = target;
                     return true;
