@@ -198,7 +198,7 @@ namespace Cirrus.Circuit.Networking
                 _players.Add(conn.connectionId, connectionPlayers);
             }
 
-            int serverPlayerId = ++_connectedPlayerCount;
+            int serverPlayerId = _connectedPlayerCount++;            
 
             if (_connections.TryGetValue(conn.connectionId, out ClientConnectionPlayer clientConnection))
             {
