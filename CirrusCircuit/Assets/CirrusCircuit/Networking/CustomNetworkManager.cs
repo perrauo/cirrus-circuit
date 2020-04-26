@@ -164,25 +164,6 @@ namespace Cirrus.Circuit.Networking
             return true;
         }
 
-        //public bool TryCreateControlPlayer(NetworkConnection conn, int id)
-        //{
-        //    if (TryCreateNetworkObject(
-        //        conn,
-        //        _net.ClientPlayerTemplate,
-        //        out NetworkBehaviour player))
-        //    {
-        //        NetworkServer.SendToClientOfPlayer()
-
-        //        var playerObject = (ConnectedPlayer)player;
-        //        playerObject.ServerId = id;
-        //        //_connectedPlayers.Add(playerObject);                
-        //        playerObject.netIdentity.AssignClientAuthority(conn);
-        //        return true;
-        //    }
-
-        //    return false;
-        //}
-
         public bool DoTryPlayerJoin(NetworkConnection conn, int localPlayerId)
         {
             if (_playerCount == 4) return false;
@@ -190,11 +171,13 @@ namespace Cirrus.Circuit.Networking
             List<int> connectionPlayers = null;
             if (_players.TryGetValue(conn.connectionId, out connectionPlayers))
             {
+                if (connectionPlayers == null) return false;
                 if (connectionPlayers.Contains(localPlayerId)) return false;
             }
             else
             {
                 connectionPlayers = new List<int>();
+                connectionPlayers.Add(localPlayerId);
                 _players.Add(conn.connectionId, connectionPlayers);
             }
 
