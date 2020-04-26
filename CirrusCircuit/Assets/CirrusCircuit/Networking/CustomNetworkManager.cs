@@ -110,7 +110,7 @@ namespace Cirrus.Circuit.Networking
     {
         private Dictionary<int, ClientConnectionPlayer> _connections = new Dictionary<int, ClientConnectionPlayer>();
         private Dictionary<int, List<int>> _players = new Dictionary<int, List<int>>();
-        private int _connectedPlayerCount = 0;
+        private int _playerCount = 0;
 
 
         public NetworkManagerServerHandler(CustomNetworkManager net) : base(net)
@@ -185,7 +185,7 @@ namespace Cirrus.Circuit.Networking
 
         public bool DoTryPlayerJoin(NetworkConnection conn, int localPlayerId)
         {
-            if (_connectedPlayerCount == 4) return false;
+            if (_playerCount == 4) return false;
 
             List<int> connectionPlayers = null;
             if (_players.TryGetValue(conn.connectionId, out connectionPlayers))
@@ -198,7 +198,7 @@ namespace Cirrus.Circuit.Networking
                 _players.Add(conn.connectionId, connectionPlayers);
             }
 
-            int serverPlayerId = _connectedPlayerCount++;            
+            int serverPlayerId = _playerCount++;            
 
             if (_connections.TryGetValue(conn.connectionId, out ClientConnectionPlayer clientConnection))
             {
