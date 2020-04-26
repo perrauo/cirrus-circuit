@@ -2061,13 +2061,14 @@ MonoBehaviour:
   transport: {fileID: 955854283}
   networkAddress: localhost
   maxConnections: 4
+  disconnectInactiveConnections: 0
+  disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
   playerPrefab: {fileID: 1916082411674582, guid: a42582d65f825b9429c43243c85c563e,
     type: 3}
   autoCreatePlayer: 0
   playerSpawnMethod: 0
   spawnPrefabs:
-  - {fileID: 1916082411674582, guid: a42582d65f825b9429c43243c85c563e, type: 3}
   - {fileID: 1916082411674582, guid: aad65b14963db5746bbe781df48f9fb4, type: 3}
   - {fileID: 1856815560307044162, guid: 14d06cb89d599074e8dda8a406c42812, type: 3}
   - {fileID: 1856815560307044162, guid: cc6551abb66a7454fadebb4e5a23f28a, type: 3}
@@ -2083,9 +2084,7 @@ MonoBehaviour:
   - {fileID: 7782920105222043963, guid: b77bbe5bc420b9c4098c018ddca2a5d1, type: 3}
   - {fileID: 7782920105222043963, guid: 6e982b9ae8e22bb4fbe1a6df7406dcf7, type: 3}
   - {fileID: 7534066891031683546, guid: bb41d15f8a991064d9f7080d0fc8e3f4, type: 3}
-  _clientPlayerTemplate: {fileID: 5008718378882693831, guid: a42582d65f825b9429c43243c85c563e,
-    type: 3}
-  _networkPlayerTemplate: {fileID: 1941899616576446143, guid: aad65b14963db5746bbe781df48f9fb4,
+  _networkClientTemplate: {fileID: 1941899616576446143, guid: aad65b14963db5746bbe781df48f9fb4,
     type: 3}
 --- !u!1 &963194225
 GameObject:
@@ -2676,7 +2675,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ac17a1ae67f9c14588db86462fd3cb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slots:
+  _slots:
   - {fileID: 665928394}
   - {fileID: 213006544}
   - {fileID: 583501195}
@@ -5308,7 +5307,7 @@ MonoBehaviour:
   - {r: 0, g: 0.70026994, b: 1, a: 1}
   - {r: 1, g: 0.89918447, b: 0, a: 1}
   - {r: 0, g: 0.6415094, b: 0.16255747, a: 1}
-  PlayerCount: 0
+  LocalPlayerCount: 0
 --- !u!1001 &2038501937039870137
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5535,7 +5534,6 @@ MonoBehaviour:
   _isOnline: 0
   _transitionEffect: {fileID: 561710196}
   _clock: {fileID: 6238744520646324635}
-  Lobby: {fileID: 1438632338796918504}
   HUD: {fileID: 271282011}
   _characterSelect: {fileID: 1146985682}
   _startMenu: {fileID: 1575180885}
@@ -5553,6 +5551,7 @@ MonoBehaviour:
   _countDown: 3
   _roundAmount: 3
   _roundIndex: 0
+  _connectedPlayers: 
   _podiumTransitionSpeed: 0.01
   _intermissionTime: 2
   _transitionTime: 0.5
