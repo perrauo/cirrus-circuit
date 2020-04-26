@@ -909,11 +909,15 @@ namespace Cirrus.Circuit
                     {
                         player._characterSlot.HandleAction1(player);
                     }
-                    else if(TryPlayerJoin(player))
+                    else if (TryPlayerJoin(player))
                     {
                         Debug.Log("Local player added");
                         _localPlayers.Add(player);
-                    }                    
+                    }
+                    else
+                    {
+                        Debug.Log("Local player already added");
+                    }
 
                     break;
 
