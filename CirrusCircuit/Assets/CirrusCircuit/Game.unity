@@ -235,7 +235,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &120813557
 GameObject:
@@ -918,7 +918,7 @@ RectTransform:
   - {fileID: 1575180884}
   - {fileID: 561710195}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1021,24 +1021,6 @@ MonoBehaviour:
   _levelName: {fileID: 1786372427}
   _previous: {fileID: 663827754}
   _next: {fileID: 208772033}
---- !u!4 &439786718 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5916538679130842025, guid: b769e27c925a60646a83a65eea004cd6,
-    type: 3}
-  m_PrefabInstance: {fileID: 1575943471}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &439786719 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3267260838187469434, guid: b769e27c925a60646a83a65eea004cd6,
-    type: 3}
-  m_PrefabInstance: {fileID: 1575943471}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3b9262a1e1980344bdfc60654cf09d7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &534535098 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6197929875617018816, guid: f0d3c4913dba715459db4814ceb2eac1,
@@ -2061,8 +2043,6 @@ MonoBehaviour:
   transport: {fileID: 955854283}
   networkAddress: localhost
   maxConnections: 4
-  disconnectInactiveConnections: 0
-  disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
   playerPrefab: {fileID: 1916082411674582, guid: a42582d65f825b9429c43243c85c563e,
     type: 3}
@@ -2605,6 +2585,7 @@ MonoBehaviour:
   - {fileID: 1064021407}
   _readyText: {fileID: 1206066547}
   _readyCount: 0
+  _openCount: 0
 --- !u!224 &1146985683
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3515,7 +3496,7 @@ PrefabInstance:
     - target: {fileID: 3053538426482241657, guid: 9c1f8282644cf3c419221945876b74e9,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3053538426482241657, guid: 9c1f8282644cf3c419221945876b74e9,
         type: 3}
@@ -4460,7 +4441,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e944cef1b36f0149bed96673df503f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playButton: {fileID: 0}
   _exitButton: {fileID: 120813559}
   _hostButton: {fileID: 1950843298}
   _joinButton: {fileID: 1521816069}
@@ -4470,7 +4450,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 3260204704173325153}
+    m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3590222537608319144, guid: b769e27c925a60646a83a65eea004cd6,
         type: 3}
@@ -4485,7 +4465,7 @@ PrefabInstance:
     - target: {fileID: 5916538679130842025, guid: b769e27c925a60646a83a65eea004cd6,
         type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5916538679130842025, guid: b769e27c925a60646a83a65eea004cd6,
         type: 3}
@@ -4501,6 +4481,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5916538679130842025, guid: b769e27c925a60646a83a65eea004cd6,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5916538679130842025, guid: b769e27c925a60646a83a65eea004cd6,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5916538679130842025, guid: b769e27c925a60646a83a65eea004cd6,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b769e27c925a60646a83a65eea004cd6, type: 3}
@@ -5272,10 +5267,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 439786718}
   - {fileID: 1495141627}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6238744520646324635
 MonoBehaviour:
@@ -5334,8 +5328,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6225b9b59c0a3de4ab4818b680f44701, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   _randomizeSeed: 0
-  _isOnline: 0
   _transitionEffect: {fileID: 561710196}
   _clock: {fileID: 6238744520646324635}
   HUD: {fileID: 271282011}
@@ -5347,7 +5342,6 @@ MonoBehaviour:
   _currentLevel: {fileID: 0}
   _currentLevelIndex: 0
   _distanceLevelSelect: 35
-  _podium: {fileID: 439786719}
   _targetSizeCamera: 10
   _cameraSizeSpeed: 0.8
   _roundTime: 30
