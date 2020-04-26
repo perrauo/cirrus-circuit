@@ -741,7 +741,6 @@ namespace Cirrus.Circuit
 
                     _selectedLevel.gameObject.SetActive(false);
 
-
                     _currentLevel.OnScoreValueAddedHandler += OnScoreValueAdded;
 
                     _currentLevel.OnLevelCompletedHandler += OnLevelCompleted;

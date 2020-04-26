@@ -168,8 +168,16 @@ namespace Cirrus.Circuit.UI
                     .Rotate(Vector3.up * Time.deltaTime * _characterSpotlightRotateSpeed);
         }
 
-        public void CmdTryChangeState(State target)
+        public override void OnStartAuthority()
         {
+            base.OnStartAuthority();
+
+            //player._characterSlot = slots[player.Id];
+            CmdTryChangeState(State.Selecting);
+        }
+
+        public void CmdTryChangeState(State target)
+        {           
             if (!hasAuthority) return;
 
             NetworkClientPlayer.Instance.Cmd_CharacterSelectSlot_TryChangeState(gameObject, target);
@@ -248,7 +256,6 @@ namespace Cirrus.Circuit.UI
 
             if (previous)
             {
-
                 iTween.PunchScale(
                     _up.gameObject,
                     new Vector3(_selectPunchScale,
@@ -328,8 +335,8 @@ namespace Cirrus.Circuit.UI
             switch (_state)
             {
                 case State.Selecting:
-                    Controls.Player ctrl = (Controls.Player) args[0];
-                    ctrl._characterResource = _characterResources.Characters[_selectedIndex];
+                    Controls.Player player = (Controls.Player) args[0];
+                    player._characterResource = _characterResources.Characters[_selectedIndex];
                     CmdTryChangeState(State.Ready);
                     break;                    
 

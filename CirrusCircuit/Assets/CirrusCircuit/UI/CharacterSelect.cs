@@ -127,8 +127,6 @@ namespace Cirrus.Circuit.UI
                 // Debug.Log("Assigned authority");
                 _slots[playerId].netIdentity.AssignClientAuthority(conn);                
             }
-                //player._characterSlot = slots[player.Id];
-            _slots[playerId].CmdTryChangeState(CharacterSelectSlot.State.Selecting);
         }
     }
 }
