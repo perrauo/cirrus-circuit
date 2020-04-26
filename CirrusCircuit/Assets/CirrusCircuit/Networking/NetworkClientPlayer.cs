@@ -26,7 +26,7 @@ namespace Cirrus.Circuit.Networking
 
         [Command]
         public void Cmd_CharacterSelectSlot_TryChangeState(GameObject obj, CharacterSelectSlot.State target)
-        {
+        {            
             CharacterSelectSlot slot;
             if ((slot = obj.GetComponent<CharacterSelectSlot>()) != null) slot.RpcTryChangeState(target);          
         }
