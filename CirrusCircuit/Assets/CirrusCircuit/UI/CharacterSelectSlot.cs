@@ -209,7 +209,12 @@ namespace Cirrus.Circuit.UI
             switch (target)
             {
                 case State.Closed:
-                    if (_state != State.Closed) _characterSelect._openCount = _characterSelect._openCount == 0 ? 0 : _characterSelect._openCount - 1;
+                    if (_state != State.Closed)
+                        _characterSelect._openCount = 
+                            _characterSelect._openCount == 0 ? 
+                            0 : 
+                            _characterSelect._openCount - 1;
+
                     _up.gameObject.SetActive(false);
                     _down.gameObject.SetActive(false);
                     _maskRect.gameObject.SetActive(false);
@@ -217,8 +222,15 @@ namespace Cirrus.Circuit.UI
                     break;
 
                 case State.Selecting:
-                    if (_state == State.Closed) _characterSelect._openCount = _characterSelect._openCount >= Game.PlayerMax ? Game.PlayerMax : _characterSelect._openCount - 1;
-                    if (_state == State.Ready) _characterSelect._readyCount--;                
+                    if (_state == State.Closed)
+                        _characterSelect._openCount = 
+                            _characterSelect._openCount >= Game.PlayerMax ? 
+                            Game.PlayerMax : 
+                            _characterSelect._openCount + 1;
+
+                    if (_state == State.Ready)
+                        _characterSelect._readyCount--;
+
                     if (_characterSpotlightAnchor.transform.childCount != 0)
                         Destroy(_characterSpotlightAnchor.GetChild(0).gameObject);
 
@@ -355,6 +367,7 @@ namespace Cirrus.Circuit.UI
                     break;                    
 
                 case State.Ready:
+                    // Try to change the state of the select screen, not the slot
                     _characterSelect.TryChangeState(CharacterSelect.State.Ready);
                     break;
 

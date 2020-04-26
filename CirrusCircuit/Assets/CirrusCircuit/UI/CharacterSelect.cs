@@ -18,7 +18,10 @@ namespace Cirrus.Circuit.UI
         [SerializeField]        
         private UnityEngine.UI.Text _readyText;
 
+        [SerializeField]
         public int _readyCount = 0;
+
+        [SerializeField]
         public int _openCount = 0;
 
 
