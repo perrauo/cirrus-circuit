@@ -16,14 +16,15 @@ using System.Net.Sockets;
 
 namespace Cirrus.Circuit.Networking
 {
-    public enum ClientServerMessageId
+    public enum ServerMessageId
     {
-        ServerId     
+        ServerId,
+        Failure
     }
 
-    public class ServerPlayerMessage : MessageBase
+    public class ServerMessage : MessageBase
     {
-        public ClientServerMessageId Id = ClientServerMessageId.ServerId;
+        public ServerMessageId Id = ServerMessageId.ServerId;
        
         public int LocalPlayerId;
 

@@ -89,9 +89,13 @@ namespace Cirrus.Circuit.Networking
             _conn.Send(new ClientPlayerMessage {
                 LocalPlayerId = localId,
                 Id = ClientPlayerMessageId.Join
-            });   
+            });
 
-            return true;
+            bool res = ClientConnectionPlayer.Instance.PlayerConnectionResponseTask.Task.Result;
+
+            ClientConnectionPlayer.Instance.PlayerConnectionResponseTask.SetCanceled();
+
+            return res;
         }
 
         public override bool TryPlayerLeave(int localId)
@@ -163,15 +167,25 @@ namespace Cirrus.Circuit.Networking
             return true;
         }
 
+
         public bool DoTryPlayerJoin(NetworkConnection conn, int localPlayerId)
         {
-            if (_playerCount == 4) return false;
+            var response = new ServerMessage()
+            {
+                Id = ServerMessageId.ServerId
+            };
+
+            if (_playerCount == 4) response.Id = ServerMessageId.Failure;
 
             List<int> connectionPlayers = null;
             if (_players.TryGetValue(conn.connectionId, out connectionPlayers))
             {
-                if (connectionPlayers == null) return false;
-                else if (connectionPlayers.Contains(localPlayerId)) return false;               
+                if (
+                    connectionPlayers == null ||
+                    connectionPlayers.Contains(localPlayerId))
+                {
+                    response.Id = ServerMessageId.Failure;
+                }
             }
             else
             {
@@ -181,22 +195,18 @@ namespace Cirrus.Circuit.Networking
  
             if (_connections.TryGetValue(conn.connectionId, out ClientConnectionPlayer clientConnection))
             {
-                connectionPlayers.Add(localPlayerId);
-
-                int serverPlayerId = _playerCount++;                
-
-                UI.CharacterSelect.Instance.AssignAuthority(conn, serverPlayerId);
-
-                clientConnection.TargetOnServerPlayerMessage(new ServerPlayerMessage
+                if (response.Id != ServerMessageId.Failure)
                 {
-                    LocalPlayerId = localPlayerId,
-                    ServerPlayerId = serverPlayerId
-                });
+                    connectionPlayers.Add(localPlayerId);
+                    response.ServerPlayerId = _playerCount++;
+                    response.LocalPlayerId = localPlayerId;
+                    UI.CharacterSelect.Instance.AssignAuthority(conn, response.ServerPlayerId);
+                }
 
-                return true;
+                clientConnection.TargetReceive(response);                
             }                 
 
-            return false;
+            return response.Id != ServerMessageId.Failure;
         }
 
         public override bool TryPlayerJoin(int localPlayerId)

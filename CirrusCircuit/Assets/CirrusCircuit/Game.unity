@@ -4462,6 +4462,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4703252539940480126, guid: b769e27c925a60646a83a65eea004cd6,
+        type: 3}
+      propertyPath: sceneId
+      value: 2661764778
+      objectReference: {fileID: 0}
     - target: {fileID: 5916538679130842025, guid: b769e27c925a60646a83a65eea004cd6,
         type: 3}
       propertyPath: m_RootOrder
@@ -5328,8 +5333,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6225b9b59c0a3de4ab4818b680f44701, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
   _randomizeSeed: 0
   _transitionEffect: {fileID: 561710196}
   _clock: {fileID: 6238744520646324635}

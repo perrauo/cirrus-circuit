@@ -71,7 +71,6 @@ namespace Cirrus.Circuit
 
         public World.Level _currentLevel;
 
-
         public int _currentLevelIndex = 0;
 
         public float _distanceLevelSelect = 35;
@@ -81,8 +80,7 @@ namespace Cirrus.Circuit
 
         [SerializeField]
         public float _cameraSizeSpeed = 0.8f;
-
-
+    
         [SerializeField]
         public float _roundTime = 60f;
 
@@ -100,11 +98,8 @@ namespace Cirrus.Circuit
         public int _roundIndex;
 
         /// Controllers in player in game
-        [SerializeField]
+        //[SerializeField]
         public List<Player> _localPlayers = new List<Player>();
-
-        [SerializeField]
-        public List<int> _connectedPlayers = new List<int>();
 
         [SerializeField]
         public float _podiumTransitionSpeed = 0.2f;
@@ -186,19 +181,10 @@ namespace Cirrus.Circuit
             FSMFixedUpdate();
         }
 
-        //public void StartLocal()
-        //{
-        //    _isOnline = false;
-        //    // If client then no objects are shown
-        //    // just start as host
-        //    TryChangeState(State.Transition, State.CharacterSelection);
-        //}
-
         public void DoStart()
         {
             TryChangeState(State.Transition, State.CharacterSelection);
         }
-
 
         public void OnCharacterSelectReady(int playerCount)
         {
@@ -323,7 +309,6 @@ namespace Cirrus.Circuit
 
         #endregion
 
-
         #region FSM
 
         [Serializable]
@@ -413,7 +398,7 @@ namespace Cirrus.Circuit
         }
 
 
-        protected bool TryTransition(State transition, out State destination, params object[] args)
+        private bool TryTransition(State transition, out State destination, params object[] args)
         {
             switch (_state)
             {
@@ -595,7 +580,6 @@ namespace Cirrus.Circuit
             return false;
         }
 
-
         public IEnumerator NewRoundCoroutine()
         {
             yield return new WaitForEndOfFrame();
@@ -611,7 +595,7 @@ namespace Cirrus.Circuit
             yield return null;
         }
 
-        protected bool TryFinishChangeState(State target, params object[] args)
+        private bool TryFinishChangeState(State target, params object[] args)
         {
             switch (target)
             {
@@ -627,10 +611,10 @@ namespace Cirrus.Circuit
                 case State.Begin:
                     Podium.Instance.Clear();
 
-                    foreach (var c in _localPlayers)
+                    foreach (var player in _localPlayers)
                     {
-                        if (c == null) continue;
-                        Podium.Instance.Add(c, c._characterResource);
+                        if (player == null) continue;
+                        Podium.Instance.Add(player, player._characterResource);
                     }
 
                     Podium.Instance.gameObject.SetActive(false);
@@ -783,10 +767,9 @@ namespace Cirrus.Circuit
                 default:
                     return false;
             }
-
         }
 
-        private bool _wasMovingVertical = false;
+        private bool[] _wasMovingVertical = new bool[PlayerMax];
 
         // TODO: Simulate LeftStick continuous axis with WASD
         public void FSMHandleAxesLeft(Player player, Vector2 axis)
@@ -801,19 +784,19 @@ namespace Cirrus.Circuit
             if (isMovingVertical && isMovingHorizontal)
             {
                 //moving in both directions, prioritize later
-                if (_wasMovingVertical) step = stepHorizontal;
+                if (_wasMovingVertical[player.LocalId]) step = stepHorizontal;
 
                 else step = stepVertical;
             }
             else if (isMovingHorizontal)
             {
                 step = stepHorizontal;
-                _wasMovingVertical = false;
+                _wasMovingVertical[player.LocalId] = false;
             }
             else if (isMovingVertical)
             {
                 step = stepVertical;
-                _wasMovingVertical = true;
+                _wasMovingVertical[player.LocalId] = true;
             }
 
             switch (_state)
@@ -926,9 +909,10 @@ namespace Cirrus.Circuit
                     {
                         player._characterSlot.HandleAction1(player);
                     }
-                    else
+                    else if(TryPlayerJoin(player))
                     {
-                        TryPlayerJoin(player);
+                        Debug.Log("Local player added");
+                        _localPlayers.Add(player);
                     }                    
 
                     break;
