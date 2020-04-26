@@ -110,6 +110,64 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private CameraManager _camera;
 
+        private void OnValidate()
+        {
+            if (_characterSelect == null)
+                _characterSelect = GetComponentInParent<CharacterSelect>();
+            if (_camera == null) _camera = FindObjectOfType<CameraManager>();
+            if (_rect == null) _rect = _selection.GetComponent<RectTransform>();
+
+
+#if UNITY_EDITOR
+            if (_characterResources == null)
+                Editor.AssetDatabase.FindObjectOfType<World.Objects.Characters.Resources>();
+#endif      
+        }
+
+        public void Awake()
+        {
+            if (_imageTemplate == null) DebugUtils.Assert(false, "Portrait template is null");
+            else _imageTemplate.gameObject.SetActive(true);
+
+            _images = new List<Image>();
+            foreach (var res in _characterResources.Characters)
+            {
+                if (res == null) continue;
+
+                var portrait = _imageTemplate.gameObject.Create(_imageTemplate.transform.parent)?.GetComponent<Image>();
+                if (portrait != null)
+                {
+                    portrait.sprite = res.Portrait;
+                    _images.Add(portrait);
+                }
+            }
+
+            if (_imageTemplate != null)
+            {
+                _imageTemplate.gameObject.SetActive(false);
+                _height = _imageTemplate.transform.parent.GetComponent<RectTransform>().rect.height / _images.Count;
+            }
+            _bound = (_height * _images.Count) / 2;
+        }
+
+        public virtual void Start()
+        {
+            _startPosition = _rect.localPosition - Vector3.up * _offset;
+
+            TryChangeState(State.Closed);
+
+            Scroll(true);
+        }
+
+        public void FixedUpdate()
+        {
+            _rect.localPosition = Vector3.Lerp(_rect.localPosition, _targetPosition, _speed);
+
+            if (_characterSpotlightAnchor.childCount != 0)
+                _characterSpotlightAnchor.GetChild(0)
+                    .Rotate(Vector3.up * Time.deltaTime * _characterSpotlightRotateSpeed);
+        }
+
         public void CmdTryChangeState(State target)
         {
             NetworkClientPlayer.Instance.Cmd_CharacterSelectSlot_TryChangeState(gameObject, target);
@@ -175,57 +233,7 @@ namespace Cirrus.Circuit.UI
 
             _state = target;
         }
-
-        private void OnValidate()
-        {
-            if (_characterSelect == null)
-                _characterSelect = GetComponentInParent<CharacterSelect>();
-            if (_camera == null) _camera = FindObjectOfType<CameraManager>();
-            if (_rect == null) _rect = _selection.GetComponent<RectTransform>();
-
-
-#if UNITY_EDITOR
-            if (_characterResources == null)            
-                Editor.AssetDatabase.FindObjectOfType<World.Objects.Characters.Resources>();
-#endif
-      
-        }
-
-        public void Awake()
-        {
-            if (_imageTemplate == null) DebugUtils.Assert(false, "Portrait template is null");
-            else _imageTemplate.gameObject.SetActive(true);            
-
-            _images = new List<Image>();
-            foreach (var res in _characterResources.Characters)
-            {
-                if (res == null) continue;
-
-                var portrait = _imageTemplate.gameObject.Create(_imageTemplate.transform.parent)?.GetComponent<Image>();
-                if (portrait != null)
-                {
-                    portrait.sprite = res.Portrait;
-                    _images.Add(portrait);                    
-                }
-            }
-
-            if (_imageTemplate != null)
-            {
-                _imageTemplate.gameObject.SetActive(false);
-                _height = _imageTemplate.transform.parent.GetComponent<RectTransform>().rect.height / _images.Count;
-            }
-            _bound = (_height * _images.Count)/2;
-        }
-
-        public virtual void Start()
-        {
-            _startPosition = _rect.localPosition - Vector3.up * _offset;
-
-            TryChangeState(State.Closed);
-
-            Scroll(true);
-        }
-
+        
         public IEnumerator PunchScale(bool previous)
         {
             iTween.Stop(_up.gameObject);
@@ -255,7 +263,7 @@ namespace Cirrus.Circuit.UI
             }
         }
         
-        public void Scroll(bool up)
+        private void Scroll(bool up)
         {
             _selectedIndex = up ? _selectedIndex - 1 : _selectedIndex + 1;
             _selectedIndex = Mathf.Clamp(_selectedIndex, 0, _characterResources.Characters.Length - 1);
@@ -328,16 +336,6 @@ namespace Cirrus.Circuit.UI
                 case State.Closed:
                     break;
             }            
-        }      
-
-        public void FixedUpdate()
-        {
-            _rect.localPosition = Vector3.Lerp(_rect.localPosition, _targetPosition, _speed);
-
-            if(_characterSpotlightAnchor.childCount != 0)
-                _characterSpotlightAnchor.GetChild(0)
-                    .Rotate(Vector3.up * Time.deltaTime * _characterSpotlightRotateSpeed);
-
-        }
+        }              
     }
 }
