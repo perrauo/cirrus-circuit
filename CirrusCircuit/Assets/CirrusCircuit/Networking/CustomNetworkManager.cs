@@ -172,19 +172,20 @@ namespace Cirrus.Circuit.Networking
             if (_players.TryGetValue(conn.connectionId, out connectionPlayers))
             {
                 if (connectionPlayers == null) return false;
-                if (connectionPlayers.Contains(localPlayerId)) return false;
+                else if (connectionPlayers.Contains(localPlayerId)) return false;               
             }
             else
             {
                 connectionPlayers = new List<int>();
                 connectionPlayers.Add(localPlayerId);
-                _players.Add(conn.connectionId, connectionPlayers);
             }
-
-            int serverPlayerId = _playerCount++;            
-
+ 
             if (_connections.TryGetValue(conn.connectionId, out ClientConnectionPlayer clientConnection))
             {
+                int serverPlayerId = _playerCount++;
+
+                _players.Add(conn.connectionId, connectionPlayers);
+
                 UI.CharacterSelect.Instance.AssignAuthority(conn, serverPlayerId);
 
                 clientConnection.TargetOnServerPlayerMessage(new ServerPlayerMessage
