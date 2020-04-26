@@ -46,10 +46,6 @@ namespace Cirrus.Circuit
         public Events.Event<Player> OnLocalPlayerJoinHandler;
 
         [SerializeField]
-        private bool _isOnline = false;
-        public bool IsOnline => _isOnline;
-
-        [SerializeField]
         private Transitions.Transition _transitionEffect;
 
         [SerializeField]
@@ -191,17 +187,16 @@ namespace Cirrus.Circuit
             FSMFixedUpdate();
         }
 
-        public void StartLocal()
-        {
-            _isOnline = false;
-            // If client then no objects are shown
-            // just start as host
-            TryChangeState(State.Transition, State.CharacterSelection);
-        }
+        //public void StartLocal()
+        //{
+        //    _isOnline = false;
+        //    // If client then no objects are shown
+        //    // just start as host
+        //    TryChangeState(State.Transition, State.CharacterSelection);
+        //}
 
-        public void StartOnline()
+        public void DoStart()
         {
-            _isOnline = true;
             TryChangeState(State.Transition, State.CharacterSelection);
         }
 

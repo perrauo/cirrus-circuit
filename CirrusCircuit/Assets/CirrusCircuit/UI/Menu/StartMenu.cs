@@ -8,8 +8,8 @@ namespace Cirrus.Circuit.UI
 {
     public class StartMenu : MonoBehaviour
     {
-        [SerializeField]
-        private UnityEngine.UI.Button _playButton;
+        //[SerializeField]
+        //private UnityEngine.UI.Button _playButton;
 
         [SerializeField]
         private UnityEngine.UI.Button _exitButton;
@@ -46,7 +46,7 @@ namespace Cirrus.Circuit.UI
         public void Awake()
         {
             _exitButton.onClick.AddListener(OnExitClick);
-            _playButton.onClick.AddListener(() => Game.Instance.StartLocal());
+            //_playButton.onClick.AddListener(() => Game.Instance.StartLocal());
             _joinButton.onClick.AddListener(OnJoinClicked);
             _hostButton.onClick.AddListener(OnHostClicked);
 
@@ -57,7 +57,7 @@ namespace Cirrus.Circuit.UI
         {
             if (CustomNetworkManager.Instance.TryInitHost(_joinInput.text))
             {
-                Game.Instance.StartOnline();
+                Game.Instance.DoStart();
             }
             else
             {
@@ -74,7 +74,7 @@ namespace Cirrus.Circuit.UI
             if (string.IsNullOrEmpty(_joinInput.text)) return;
             if (CustomNetworkManager.Instance.TryInitClient(_joinInput.text))
             {
-                Game.Instance.StartOnline();
+                Game.Instance.DoStart();
             }
             else
             {
