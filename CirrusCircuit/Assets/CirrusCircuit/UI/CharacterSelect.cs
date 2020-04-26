@@ -7,7 +7,7 @@ namespace Cirrus.Circuit.UI
 {
     public delegate void OnCharacterSelectReady(int numPlayers);
 
-    public class CharacterSelect : MonoBehaviour
+    public class CharacterSelect : BaseSingleton<CharacterSelect>
     {
         public OnCharacterSelectReady OnCharacterSelectReadyHandler;
 
@@ -20,13 +20,17 @@ namespace Cirrus.Circuit.UI
 
         public int _readyCount = 0;
 
-        public void OnValidate()
+        public override void OnValidate()
         {
+            base.OnValidate();
+
             if (_slots.Length == 0) _slots = GetComponentsInChildren<CharacterSelectSlot>();
         }
 
-        public void Awake()
+        public override void Awake()
         {
+            base.Awake();
+
             Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
             //Game.Instance.OnLocalPlayerJoinHandler += OnPlayerJoin;
             Game.Instance.OnLevelSelectHandler += OnLevelSelect;
@@ -119,14 +123,9 @@ namespace Cirrus.Circuit.UI
         }
 
 
-        public void OnConnectedPlayerJoin(Mirror.NetworkConnection conn, int playerId)
+        public void AssignAuthority(Mirror.NetworkConnection conn, int playerId)
         {
-            if (CustomNetworkManager.Instance.IsServer)
-            {
-                // Assigned authority
-                // Debug.Log("Assigned authority");
-                _slots[playerId].netIdentity.AssignClientAuthority(conn);                
-            }
+            _slots[playerId].netIdentity.AssignClientAuthority(conn);                    
         }
     }
 }

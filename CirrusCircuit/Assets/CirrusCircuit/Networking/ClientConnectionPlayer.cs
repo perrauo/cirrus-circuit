@@ -1,27 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using Cirrus.Circuit.UI;
 using Mirror;
-using Cirrus.Circuit.UI;
+using UnityEngine;
 
 
 namespace Cirrus.Circuit.Networking
 {
     // Serves to sync the connection
-    public class NetworkClientPlayer : NetworkBehaviour
+    public class ClientConnectionPlayer : NetworkBehaviour
     {
-        public static NetworkClientPlayer Instance;
+        public static ClientConnectionPlayer Instance;
 
         public override void OnStartLocalPlayer()
         {
             base.OnStartLocalPlayer();
 
-            Instance = this;            
+            Instance = this;  
+                        
         }
 
         [Command]

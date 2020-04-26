@@ -56,9 +56,13 @@ namespace Cirrus.Circuit.Controls
 
         public string Name => _name;
 
-        public int _id = 0;
+        public int _serverId = 0;
 
-        public int Id => _id;
+        public int _localId = 0;
+
+        public int LocalId => _localId;
+
+        public int ServerId => _serverId;    
 
         public int _colorId = 0;
 
@@ -68,7 +72,7 @@ namespace Cirrus.Circuit.Controls
         {
             _name = name;
             _color = color;
-            _id = number;
+            _localId = number;
             _device = device;
             //_user = Inputs.Users.InputUser.CreateUserWithoutPairedDevices();
             //Inputs.Users.InputUser.PerformPairingWithDevice(_device, _user);

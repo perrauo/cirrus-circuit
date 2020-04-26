@@ -1,12 +1,11 @@
-using System;
 using Cirrus.Circuit.Controls;
-using UnityEngine;
-
+using Cirrus.Circuit.Networking;
+using Cirrus.Circuit.World.Objects.Characters;
+using Cirrus.Utils;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Cirrus.Utils;
-using Cirrus.Circuit.World.Objects.Characters;
-using Cirrus.Circuit.Networking;
+using UnityEngine;
 
 namespace Cirrus.Circuit
 {
@@ -214,8 +213,8 @@ namespace Cirrus.Circuit
 
         private void OnScoreValueAdded(World.Objects.Gem gem, int player, float value)
         {
-            PlayerManager.Instance.Players[player].Score += value;
-            HUD.OnScoreChanged(player, PlayerManager.Instance.Players[player].Score);
+            LocalPlayerManager.Instance.Players[player].Score += value;
+            HUD.OnScoreChanged(player, LocalPlayerManager.Instance.Players[player].Score);
         }
 
         public void OnLevelCompleted(World.Level.Rule rule)
@@ -323,34 +322,9 @@ namespace Cirrus.Circuit
             TryChangeState(_transition);
         }
 
-
-        public void LocalPlayerJoin(Player player)
+        public bool TryPlayerJoin(Player player)
         {
-            if (!_connectedPlayers.Contains(player.Id))
-            {
-                if (CustomNetworkManager.Instance.TryPlayerJoin(player.Id))
-                {
-                    _connectedPlayers.Add(player.Id);
-                    _localPlayers.Add(player);
-                    _characterSelect.OnConnectedPlayerJoin(Mirror.NetworkServer.localConnection, player.Id);
-                }
-            }
-        }
-
-        public void RemotePlayerJoin(Mirror.NetworkConnection conn, int playerId)
-        {
-            if (!_connectedPlayers.Contains(playerId))
-            {
-                if (CustomNetworkManager.Instance.TryPlayerJoin(playerId))
-                {
-                    _connectedPlayers.Add(playerId);
-                    _characterSelect.OnConnectedPlayerJoin(conn, playerId);
-                }
-            }
-            else
-            {
-                //player._characterSlot.HandleAction1(player);
-            }
+            return CustomNetworkManager.Instance.TryPlayerJoin(player);                                       
         }
 
         #endregion
@@ -758,7 +732,7 @@ namespace Cirrus.Circuit
                                 _currentLevel.GridToWorld(placeholder._gridPosition),
                                 _currentLevel.transform);
 
-                        _localPlayers[i]._character.ColorId = _localPlayers[i].Id;
+                        _localPlayers[i]._character.ColorId = _localPlayers[i].ServerId;
 
                         _localPlayers[i]._character.Color = _localPlayers[i].Color;
 
@@ -799,7 +773,7 @@ namespace Cirrus.Circuit
                     //Lobby.Characters.Clear();
                     //Lobby.Characters.AddRange(_selectedLevel.Characters);
 
-                    foreach (Player player in PlayerManager.Instance.Players)
+                    foreach (Player player in LocalPlayerManager.Instance.Players)
                     {
                         if (player == null) continue;
 
@@ -854,7 +828,7 @@ namespace Cirrus.Circuit
 
                     if (Mathf.Abs(step.z) > 0)
                     {
-                        _characterSelect.OnLocalCharacterScroll(player.Id, step.z > 0);
+                        _characterSelect.OnLocalCharacterScroll(player.ServerId, step.z > 0);
                     }
 
                     break;
@@ -924,7 +898,7 @@ namespace Cirrus.Circuit
                     }
                     else
                     {
-                        foreach (Player other in PlayerManager.Instance.Players) if (other == null) continue;
+                        foreach (Player other in LocalPlayerManager.Instance.Players) if (other == null) continue;
                         TryChangeState(State.LevelSelection);
                     }
 
@@ -954,7 +928,7 @@ namespace Cirrus.Circuit
 
                 case State.CharacterSelection:
 
-                    LocalPlayerJoin(player);
+                    TryPlayerJoin(player);
 
                     break;
 

@@ -180,7 +180,7 @@ namespace Cirrus.Circuit.UI
         {           
             if (!hasAuthority) return;
 
-            NetworkClientPlayer.Instance.CmdTryChangeState_CharacterSelectSlot(gameObject, target);
+            ClientConnectionPlayer.Instance.CmdTryChangeState_CharacterSelectSlot(gameObject, target);
         }
 
         [ClientRpc]
@@ -310,7 +310,7 @@ namespace Cirrus.Circuit.UI
         {            
             if (!hasAuthority) return;
 
-            NetworkClientPlayer.Instance.CmdScroll_CharacterSelectSlot(gameObject, up);
+            ClientConnectionPlayer.Instance.CmdScroll_CharacterSelectSlot(gameObject, up);
         }
 
         public void HandleAction0()

@@ -205,7 +205,7 @@ namespace Cirrus.Circuit.World
                 {
                     if (obj.ColorId == ctrl._colorId)
                     {
-                        obj.ColorId = ctrl.Id;
+                        obj.ColorId = ctrl.ServerId;
                         obj.Color = ctrl.Color;
                         break;
                     }

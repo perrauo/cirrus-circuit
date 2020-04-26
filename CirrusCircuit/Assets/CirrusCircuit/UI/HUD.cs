@@ -45,7 +45,7 @@ namespace Cirrus.Circuit.UI
         {
             if (_availablePlayerDisplays.Count != 0)
             {
-                _availablePlayerDisplays[0].TryChangeState(Player.State.Ready, player.Id);
+                _availablePlayerDisplays[0].TryChangeState(Player.State.Ready, player.ServerId);
                 _availablePlayerDisplays.RemoveAt(0);
                 //_playerDisplays[index]?.TryChangeState(state);
             }            

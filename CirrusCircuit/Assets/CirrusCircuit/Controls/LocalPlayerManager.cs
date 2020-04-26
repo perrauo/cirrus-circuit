@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Cirrus.Circuit.Controls
 {
-    public class PlayerManager : BaseSingleton<PlayerManager>
+    public class LocalPlayerManager : BaseSingleton<LocalPlayerManager>
     {
         [SerializeField]
         private Inputs.InputActionAsset _inputActionAsset;
@@ -19,7 +19,7 @@ namespace Cirrus.Circuit.Controls
 
         public Player[] Players;
 
-        public int PlayerCount = 0;
+        public int LocalPlayerCount = 0;
 
         private const int _playerMax = 4;
 
@@ -64,29 +64,29 @@ namespace Cirrus.Circuit.Controls
                             {
                                 if (scheme.SupportsDevice(device))
                                 {
-                                    Players[PlayerCount] =
+                                    Players[LocalPlayerCount] =
                                         new Player(
-                                            PlayerCount,
-                                            Names[PlayerCount],
-                                            Colors[PlayerCount],
+                                            LocalPlayerCount,
+                                            Names[LocalPlayerCount],
+                                            Colors[LocalPlayerCount],
                                             device,
                                             scheme);
 
-                                    PlayerCount++;
+                                    LocalPlayerCount++;
                                 }
                             }
                         }
                     }                                        
 
                     if (
-                        PlayerCount > _playerMax ||
-                        PlayerCount > Game.Instance._selectedLevel.CharacterCount)
+                        LocalPlayerCount > _playerMax ||
+                        LocalPlayerCount > Game.Instance._selectedLevel.CharacterCount)
                         break;
                 }
             }
             else
             {
-                PlayerCount = 0;
+                LocalPlayerCount = 0;
                 Players = new Player[0];
             }
         }

@@ -6,12 +6,12 @@ namespace Cirrus.Circuit
     public class DebugTool : MonoBehaviour
     {
         [SerializeField]
-        private Controls.PlayerManager _lobby;
+        private Controls.LocalPlayerManager _lobby;
 
         public void OnValidate()
         {
             if (_lobby == null)
-                _lobby = FindObjectOfType<Controls.PlayerManager>();
+                _lobby = FindObjectOfType<Controls.LocalPlayerManager>();
 
         }
 

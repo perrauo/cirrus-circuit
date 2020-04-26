@@ -16,11 +16,33 @@ using System.Net.Sockets;
 
 namespace Cirrus.Circuit.Networking
 {
-    public class PlayerJoinMessage : MessageBase
-    {        
+    public enum ClientServerMessageId
+    {
+        ServerId     
+    }
+
+    public class ServerPlayerMessage : MessageBase
+    {
+        public ClientServerMessageId Id = ClientServerMessageId.ServerId;
+       
+        public int LocalPlayerId;
+
+        public int ServerPlayerId;
+    }
+
+    public enum ClientPlayerMessageId
+    {   
+        Join,
+        Leave
+    }
+
+    public class ClientPlayerMessage : MessageBase
+    {
+        public ClientPlayerMessageId Id = ClientPlayerMessageId.Join;
+
         public string Name;
 
-        public int Id;
+        public int LocalPlayerId;
     }
 
     public class ClientConnectedMessage : MessageBase

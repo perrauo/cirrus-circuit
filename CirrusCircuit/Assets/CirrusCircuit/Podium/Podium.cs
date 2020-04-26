@@ -148,7 +148,7 @@ namespace Cirrus.Circuit
             character.transform.rotation = platform._visual.Parent.transform.rotation;
             platform.Character = character;
 
-            character.ColorId = ctrl.Id;
+            character.ColorId = ctrl.ServerId;
             character.Color = ctrl.Color;
 
         }
