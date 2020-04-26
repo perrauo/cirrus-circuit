@@ -923,7 +923,14 @@ namespace Cirrus.Circuit
 
                 case State.CharacterSelection:
 
-                    TryPlayerJoin(player);
+                    if (player._characterSlot != null)
+                    {
+                        player._characterSlot.HandleAction1(player);
+                    }
+                    else
+                    {
+                        TryPlayerJoin(player);
+                    }                    
 
                     break;
 

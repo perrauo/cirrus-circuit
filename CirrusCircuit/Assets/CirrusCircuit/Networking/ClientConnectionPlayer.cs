@@ -36,6 +36,7 @@ namespace Cirrus.Circuit.Networking
 
             Debug.Log("Assigned server id with success: " + msg.ServerPlayerId);
             LocalPlayerManager.Instance.Players[msg.LocalPlayerId]._serverId = msg.ServerPlayerId;
+            LocalPlayerManager.Instance.Players[msg.LocalPlayerId]._characterSlot = CharacterSelect.Instance._slots[msg.ServerPlayerId];
         }
 
         [Command]

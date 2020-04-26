@@ -13,7 +13,7 @@ namespace Cirrus.Circuit.UI
 
         [SerializeField]
         [UnityEngine.Serialization.FormerlySerializedAs("slots")]        
-        private CharacterSelectSlot[] _slots;
+        public CharacterSelectSlot[] _slots;
 
         [SerializeField]        
         private UnityEngine.UI.Text _readyText;
