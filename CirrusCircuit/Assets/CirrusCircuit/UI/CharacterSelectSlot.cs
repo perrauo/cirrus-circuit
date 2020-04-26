@@ -168,6 +168,18 @@ namespace Cirrus.Circuit.UI
                     .Rotate(Vector3.up * Time.deltaTime * _characterSpotlightRotateSpeed);
         }
 
+        //public override void OnStartLocalPlayer()
+        //{
+        //    base.OnStartLocalPlayer();
+        //}
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+
+            TryChangeState(_state);
+        }
+
         public override void OnStartAuthority()
         {
             base.OnStartAuthority();

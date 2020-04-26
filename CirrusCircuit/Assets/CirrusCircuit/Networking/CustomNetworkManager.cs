@@ -116,8 +116,7 @@ namespace Cirrus.Circuit.Networking
         public NetworkManagerServerHandler(CustomNetworkManager net) : base(net)
         {
             NetworkServer.RegisterHandler<ClientConnectedMessage>(OnClientConnectedMessage);
-            NetworkServer.RegisterHandler<ClientPlayerMessage>(OnPlayerJoinMessage);
-            
+            NetworkServer.RegisterHandler<ClientPlayerMessage>(OnPlayerJoinMessage);          
         }
 
         public override void OnClientConnect(NetworkConnection conn)
@@ -210,8 +209,7 @@ namespace Cirrus.Circuit.Networking
         {
             // Debug.Log("On network player created");
             return DoTryPlayerJoin(NetworkServer.localConnection, localPlayerId);
-        }
-
+        }   
 
         public void OnPlayerJoinMessage(NetworkConnection conn, ClientPlayerMessage message)
         {
