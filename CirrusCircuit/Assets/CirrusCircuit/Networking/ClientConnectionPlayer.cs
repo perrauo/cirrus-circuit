@@ -1,4 +1,5 @@
-﻿using Cirrus.Circuit.UI;
+﻿using Cirrus.Circuit.Controls;
+using Cirrus.Circuit.UI;
 using Mirror;
 using UnityEngine;
 
@@ -12,10 +13,29 @@ namespace Cirrus.Circuit.Networking
 
         public override void OnStartLocalPlayer()
         {
-            base.OnStartLocalPlayer();
+            base.OnStartLocalPlayer();           
+            Instance = this;                          
+        }
 
-            Instance = this;  
-                        
+        [TargetRpc]
+        public void TargetOnServerPlayerMessage(ServerPlayerMessage msg)
+        {
+            Debug.Log("Player joined");
+
+            if (msg.LocalPlayerId < 0)
+            {
+                Debug.Log("invalid local player id connected");
+                return;
+            }
+
+            if (msg.ServerPlayerId < 0)
+            {
+                Debug.Log("invalid server player id received");
+                return;
+            }
+
+            Debug.Log("Assigned server id with success: " + msg.ServerPlayerId);
+            LocalPlayerManager.Instance.Players[msg.LocalPlayerId]._serverId = msg.ServerPlayerId;
         }
 
         [Command]

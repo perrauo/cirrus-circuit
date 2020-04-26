@@ -66,27 +66,7 @@ namespace Cirrus.Circuit.Networking
 
         public NetworkManagerClientHandler(CustomNetworkManager net) : base(net)
         {
-            NetworkServer.RegisterHandler<ServerPlayerMessage>(OnServerPlayerMessage);
-        }
 
-        public void OnServerPlayerMessage(NetworkConnection conn, ServerPlayerMessage msg)
-        {
-            Debug.Log("Player joined");
-
-            if (msg.LocalPlayerId < 0)
-            {
-                Debug.Log("invalid local player id connected");
-                return;
-            }
-
-            if (msg.ServerPlayerId < 0)
-            {
-                Debug.Log("invalid server player id received");
-                return;
-            }
-
-            Debug.Log("Assigned server id with success: " + msg.ServerPlayerId);
-            LocalPlayerManager.Instance.Players[msg.LocalPlayerId]._serverId = msg.ServerPlayerId;
         }
 
         public override void OnClientConnect(NetworkConnection conn)
@@ -224,7 +204,7 @@ namespace Cirrus.Circuit.Networking
             {
                 UI.CharacterSelect.Instance.AssignAuthority(conn, serverPlayerId);
 
-                clientConnection.connectionToClient.Send(new ServerPlayerMessage
+                clientConnection.TargetOnServerPlayerMessage(new ServerPlayerMessage
                 {
                     LocalPlayerId = localPlayerId,
                     ServerPlayerId = serverPlayerId
