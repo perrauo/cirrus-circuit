@@ -29,13 +29,7 @@ namespace Cirrus.Circuit
 
         private Timer _intermissionTimer;
 
-        public float Time
-        {
-            get
-            {
-                return _roundTime -_timer.Time;
-            }
-        }
+        public float Time => _roundTime - _timer.Time;        
 
         private float _countDownTime = 1f;
 
@@ -43,16 +37,9 @@ namespace Cirrus.Circuit
 
         private float _roundTime;
 
-
         private int _number = 0;
 
-
-        public int Number
-        {
-            get {
-                return _number;
-            }
-        }
+        public int Number => _number;        
 
         public Round(int countDown, float time, float countDownTime, float intermissionTime, int number)
         {

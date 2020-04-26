@@ -23,10 +23,6 @@ namespace Cirrus.Circuit.World
         }
 
         public delegate void OnLevelCompleted(Rule rule);
-        //{
-        
-        //}
-
 
         public OnLevelCompleted OnLevelCompletedHandler;
 
@@ -43,38 +39,20 @@ namespace Cirrus.Circuit.World
 
         Mutex _mutex;
 
-        private BaseObject[,,] _objects;
+        [SerializeField]
+        private BaseObject[] _objects;
 
- 
         [SerializeField]
         private string _name;
 
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-        }
+        public string Name => _name;        
 
         [SerializeField]
         public Objects.Characters.Character[] _characters;
 
-        public Objects.Characters.Character[] Characters
-        {
-            get
-            {
-                return _characters;
-            }
-        }
+        public Objects.Characters.Character[] Characters => _characters;
 
-        public int CharacterCount
-        {
-            get
-            {
-                return _characters.Length;
-            }
-        }
+        public int CharacterCount => _characters.Length;        
 
         [SerializeField]
         public Gem[] _gems;
@@ -145,7 +123,7 @@ namespace Cirrus.Circuit.World
         public void Awake()
         {
             _mutex = new Mutex(false);
-            _objects = new BaseObject[_dimension.x, _dimension.y, _dimension.z];
+            _objects = new BaseObject[_dimension.x * _dimension.y * _dimension.z];
 
 
             _randomDropRainTimer = new Timer(_randomDropRainTime, start: false, repeat: true);
@@ -266,15 +244,24 @@ namespace Cirrus.Circuit.World
                 return false;
 
             _mutex.WaitOne();
-            obj = _objects[pos.x, pos.y, pos.z];
+
+            int i = pos.x + _dimension.x * pos.y + _dimension.x * _dimension.y * pos.z;
+
+            obj = _objects[i];
             _mutex.ReleaseMutex();
             return obj != null;            
         }
 
-        public void Set(Vector3Int position, BaseObject obj)
+        // https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid
+        public void Set(Vector3Int pos, BaseObject obj)
         {
             _mutex.WaitOne();
-            _objects[position.x, position.y, position.z] = obj;
+
+            int i = pos.x + _dimension.x * pos.y + _dimension.x * _dimension.y * pos.z;
+
+            _objects[i] = obj;
+
+
             _mutex.ReleaseMutex();
         }
 
@@ -432,9 +419,12 @@ namespace Cirrus.Circuit.World
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
         {
-            Vector3Int gridPos = WorldToGrid(obj.transform.position);
-            _objects[gridPos.x, gridPos.y, gridPos.z] = obj;
-            return (GridToWorld(gridPos), gridPos);
+            Vector3Int pos = WorldToGrid(obj.transform.position);
+
+            int i = pos.x + _dimension.x * pos.y + _dimension.x * _dimension.y * pos.z;
+
+            _objects[i] = obj;
+            return (GridToWorld(pos), pos);
         }
 
         public void UnregisterObject(BaseObject obj)

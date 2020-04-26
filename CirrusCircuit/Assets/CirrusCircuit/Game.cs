@@ -18,7 +18,7 @@ namespace Cirrus.Circuit
         public int Solid = LayerMask.NameToLayer("Solid");
     }
 
-    public class Game : BaseNetworkSingleton<Game>
+    public class Game : BaseSingleton<Game>
     {
         #region Game
 

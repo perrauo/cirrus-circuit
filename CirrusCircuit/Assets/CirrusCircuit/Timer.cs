@@ -9,7 +9,7 @@ namespace Cirrus.Circuit
 {
     public delegate void OnTimeLimit();
 
-    // A timer cannot be created in Start(), or Wake() because it needs the Clock, instead to create duiring init use OnEnable
+    // A timer cannot be created in Start(), or Wake() because it needs the Clock, instead to create duiring init use OnEnable    
     public class Timer
     {
         bool _repeat = false;

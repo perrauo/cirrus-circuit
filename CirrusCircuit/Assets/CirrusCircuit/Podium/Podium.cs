@@ -4,13 +4,31 @@ using UnityEngine;
 
 using Cirrus.Circuit.Networking;
 
+using Mirror;
+
 namespace Cirrus.Circuit
 {
     public delegate  void OnPodiumFinished();
 
 
-    public class Podium : BaseNetworkSingleton<Podium>
+    public class Podium : NetworkBehaviour
     {
+
+        protected static Podium _instance;
+
+        public static Podium Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = FindObjectOfType<Podium>();
+                }
+
+                return _instance;
+            }
+        }    
+
         public OnPodiumFinished OnPodiumFinishedHandler;
 
         [SerializeField]
@@ -55,17 +73,17 @@ namespace Cirrus.Circuit
 
         private int _platformFinishedCount = 0;
 
-        public override void OnValidate()
+        public virtual void OnValidate()
         {
-            base.OnValidate();
+            //base.OnValidate();
 
             if (_announcement == null)
                 _announcement = FindObjectOfType<UI.Announcement>();
         }
 
-        public override void Awake()
+        public virtual void Awake()
         {
-            base.Awake();
+            //base.Awake();
 
             _timer = new Timer(_timeTransition, start: false, repeat: false);
             _finalTimer = new Timer(_timeFinal, start: false, repeat: false);
