@@ -177,14 +177,14 @@ namespace Cirrus.Circuit.Networking
             else
             {
                 connectionPlayers = new List<int>();
-                connectionPlayers.Add(localPlayerId);
+                _players.Add(conn.connectionId, connectionPlayers);
             }
  
             if (_connections.TryGetValue(conn.connectionId, out ClientConnectionPlayer clientConnection))
             {
-                int serverPlayerId = _playerCount++;
+                connectionPlayers.Add(localPlayerId);
 
-                _players.Add(conn.connectionId, connectionPlayers);
+                int serverPlayerId = _playerCount++;                
 
                 UI.CharacterSelect.Instance.AssignAuthority(conn, serverPlayerId);
 
