@@ -286,10 +286,9 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-        [Command]
         public void CmdScroll(bool up)
         {
-            RpcScroll(up);
+            NetworkClientPlayer.Instance.Cmd_CharacterSelectSlot_Scroll(gameObject, up);
         }
 
         public void HandleAction0()

@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using Cirrus.Circuit.UI;
 
 
 namespace Cirrus.Circuit.Networking
@@ -24,10 +25,17 @@ namespace Cirrus.Circuit.Networking
         }
 
         [Command]
-        public void Cmd_CharacterSelectSlot_TryChangeState(GameObject slotObj, UI.CharacterSelectSlot.State target)
+        public void Cmd_CharacterSelectSlot_TryChangeState(GameObject obj, CharacterSelectSlot.State target)
         {
-            UI.CharacterSelectSlot slot;
-            if ((slot = slotObj.GetComponent<UI.CharacterSelectSlot>()) != null) slot.RpcTryChangeState(target);          
+            CharacterSelectSlot slot;
+            if ((slot = obj.GetComponent<CharacterSelectSlot>()) != null) slot.RpcTryChangeState(target);          
+        }
+
+        [Command]
+        public void Cmd_CharacterSelectSlot_Scroll(GameObject obj, bool scroll)
+        {
+            CharacterSelectSlot slot;
+            if ((slot = obj.GetComponent<CharacterSelectSlot>()) != null) slot.RpcScroll(scroll);
         }
     }
 }
