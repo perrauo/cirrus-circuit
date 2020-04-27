@@ -118,9 +118,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 564df8f876e8952419dca6ce525ca8cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Game.Instance: {fileID: 0}
   _offset: {x: 2, y: 2, z: 2}
   _dimension: {x: 20, y: 20, z: 20}
+  _objects: []
   _name: Level
   _characters:
   - {fileID: 0}

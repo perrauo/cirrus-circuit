@@ -20,7 +20,7 @@ namespace Cirrus.Circuit
 
     public class Game : BaseSingleton<Game>
     {
-        #region Game
+        #region Core
 
         public const int PlayerMax = 4;
 

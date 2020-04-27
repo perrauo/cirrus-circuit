@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
 using Cirrus.Circuit.World.Objects;
 using Cirrus.Utils;
 using System;
-
 using System.Threading;
 using Cirrus.Utils;
+using Mirror;
+
 
 namespace Cirrus.Circuit.World
 {
-    public class Level : MonoBehaviour
+    public class LevelSession : NetworkBehaviour
     {
         private const int FallTrials = 100;
 
@@ -387,7 +387,7 @@ namespace Cirrus.Circuit.World
 
             BaseObject obj = template.Create(GridToWorld(pos), transform);
 
-            obj.Register(this);
+            //obj.Register(this);
 
             obj.TryChangeState(BaseObject.State.Idle);
 
