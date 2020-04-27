@@ -36,7 +36,8 @@ namespace Cirrus.Circuit.Networking
 
         [TargetRpc]
         public void TargetReceive(ServerMessage msg)
-        {            
+        {
+            Debug.Log("Received");
             _serverResponseEvent.Set();
             _serverResponse = msg;
         }
