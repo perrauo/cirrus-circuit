@@ -109,7 +109,7 @@ namespace Cirrus.Circuit
 
         public Round _round;
 
-        public List<Player> _localPlayers;
+        public List<Player> _localPlayers = new List<Player>();
 
         public override void OnValidate()
         {
