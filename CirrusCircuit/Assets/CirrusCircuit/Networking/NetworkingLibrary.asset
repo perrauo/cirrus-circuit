@@ -20,3 +20,5 @@ MonoBehaviour:
     type: 3}
   LevelSession: {fileID: 8112736306419752256, guid: a4dbdcd3ab40be64885d1da07e21589d,
     type: 3}
+  Others:
+  - {fileID: 665928394, guid: bb41d15f8a991064d9f7080d0fc8e3f4, type: 3}

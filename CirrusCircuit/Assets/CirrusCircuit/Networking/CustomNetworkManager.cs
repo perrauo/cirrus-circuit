@@ -94,14 +94,37 @@ namespace Cirrus.Circuit.Networking
                         //Debug.Log(val);                        
 
                         if (val is MonoBehaviour)
+                        {
                             if (!spawnPrefabs.Contains(((MonoBehaviour)val).gameObject))
+                            {
                                 spawnPrefabs.Add(((MonoBehaviour)val).gameObject);
+                            }
+                        }
                         else if (val is NetworkBehaviour)
-                                if (!spawnPrefabs.Contains(((NetworkBehaviour)val).gameObject))
-                                    spawnPrefabs.Add(((NetworkBehaviour)val).gameObject);
+                        {
+                            if (!spawnPrefabs.Contains(((NetworkBehaviour)val).gameObject))
+                            {
+                                spawnPrefabs.Add(((NetworkBehaviour)val).gameObject);
+                            }
+                        }
                         else if (val is GameObject)
-                             if (!spawnPrefabs.Contains(val))
+                        {
+                            if (!spawnPrefabs.Contains(val))
+                            {
                                 spawnPrefabs.Add((GameObject)val);
+                            }
+                        }
+                        else if (val is NetworkBehaviour[])
+                        {
+                            foreach (var obj in (NetworkBehaviour[])val)
+                            {
+                                if (!spawnPrefabs.Contains(obj.gameObject))
+                                {
+                                    spawnPrefabs.Add((GameObject)obj.gameObject);
+                                }
+                            }
+                        }
+
                     }
 
                 }
