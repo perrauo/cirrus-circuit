@@ -302,7 +302,7 @@ namespace Cirrus.Circuit
             TryChangeState(_transition);
         }
 
-        public bool TryPlayerJoin(Player player)
+        public bool RequestPlayerJoin(Player player)
         {
             return CustomNetworkManager.Instance.TryPlayerJoin(player);                                       
         }
@@ -906,19 +906,9 @@ namespace Cirrus.Circuit
 
                 case State.CharacterSelection:
 
-                    if (player._characterSlot != null)
-                    {
-                        player._characterSlot.HandleAction1(player);
-                    }
-                    else if (TryPlayerJoin(player))
-                    {
-                        Debug.Log("Local player added");
-                        _localPlayers.Add(player);
-                    }
-                    else
-                    {
-                        Debug.Log("Local player could not be added");
-                    }
+                    if (player._characterSlot != null) player._characterSlot.HandleAction1(player);
+
+                    else RequestPlayerJoin(player);
 
                     break;
 

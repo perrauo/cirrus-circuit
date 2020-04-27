@@ -107,22 +107,25 @@ namespace Cirrus.Circuit.Networking
                     Debug.Log("Local player ID: " + response.LocalPlayerId);
                 }
 
-                clientConnection.TargetReceive(response);
+                clientConnection.TargetReceiveResponse(response);
             }
 
             return response.Id < ServerMessageId.Failure;
         }
 
-        public override bool TryPlayerJoin(int localPlayerId)
+        public override bool RequestPlayerJoin(int localPlayerId)
         {
             // Debug.Log("On network player created");
             return DoTryPlayerJoin(NetworkServer.localConnection, localPlayerId);
         }
 
-        public override bool TryPlayerLeave(int localPlayerId)
+
+
+        public override bool RequestPlayerLeave(int localPlayerId)
         {
-            // Debug.Log("On network player created");
-            return DoTryPlayerJoin(NetworkServer.localConnection, localPlayerId);
+            return false;
+            //// Debug.Log("On network player created");
+            //return DoTryPlayerJoin(NetworkServer.localConnection, localPlayerId);
         }
 
         public void OnPlayerJoinMessage(NetworkConnection conn, ClientPlayerMessage message)

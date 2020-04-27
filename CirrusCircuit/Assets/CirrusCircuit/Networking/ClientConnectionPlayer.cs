@@ -19,27 +19,36 @@ namespace Cirrus.Circuit.Networking
             Instance = this;
         }        
 
-        private AutoResetEvent _serverResponseEvent = new AutoResetEvent(false);
-        private ServerMessage _serverResponse = null;
-        private Mutex _mutex = new Mutex(false);
-
-        public ServerMessage WaitResponse(int millisecondsTimeout)
-        {
-            _mutex.WaitOne();
-            if(!_serverResponseEvent.WaitOne(millisecondsTimeout)) return new ServerMessage() { Id = ServerMessageId.Timeout };
-            if (_serverResponse == null) return new ServerMessage() { Id = ServerMessageId.NullResponse };
-            var response = _serverResponse;
-            _serverResponse = null;
-            _mutex.ReleaseMutex();
-            return response;
-        }
 
         [TargetRpc]
-        public void TargetReceive(ServerMessage msg)
+        public void TargetReceiveResponse(ServerMessage response)
         {
-            Debug.Log("Received");
-            _serverResponseEvent.Set();
-            _serverResponse = msg;
+            switch (response.Id)
+            {
+                case ServerMessageId.ServerId:
+
+                    if (response.LocalPlayerId < 0)
+                    {
+                        Debug.Log("invalid local player id connected");
+                        return;
+                    }
+
+
+                    if (response.ServerPlayerId < 0)
+                    {
+                        Debug.Log("invalid server player id received");
+                        return;
+                    }
+
+                    Debug.Log("Assigned server id with success: " + response.ServerPlayerId);
+                    Game.Instance._localPlayers.Add(LocalPlayerManager.Instance.Players[response.LocalPlayerId]);
+                    LocalPlayerManager.Instance.Players[response.LocalPlayerId]._serverId = response.ServerPlayerId;
+                    LocalPlayerManager.Instance.Players[response.LocalPlayerId]._characterSlot = CharacterSelect.Instance._slots[response.ServerPlayerId];
+                    return;
+
+                default: return;
+            }
+
         }
 
         [Command]

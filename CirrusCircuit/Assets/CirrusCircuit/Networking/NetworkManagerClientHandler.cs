@@ -35,50 +35,16 @@ namespace Cirrus.Circuit.Networking
             _conn = conn;
         }
 
-        public override bool TryPlayerJoin(int localId)
+        public override bool RequestPlayerJoin(int localId)
         {
-            _conn.Send(new ClientPlayerMessage
+            return _conn.Send(new ClientPlayerMessage
             {
                 LocalPlayerId = localId,
                 Id = ClientPlayerMessageId.Join
-            });
-
-            var response = ClientConnectionPlayer.Instance.WaitResponse(ServerResponseTimeout);
-
-            switch (response.Id)
-            {
-                case ServerMessageId.ServerId:
-
-                    if (response.LocalPlayerId < 0)
-                    {
-                        Debug.Log("invalid local player id connected");
-                        return false;
-                    }
-
-                    if (response.LocalPlayerId != localId)
-                    {
-                        Debug.Log("local player id conflict");
-                        return false;
-                    }
-
-                    if (response.ServerPlayerId < 0)
-                    {
-                        Debug.Log("invalid server player id received");
-                        return false;
-                    }
-
-                    Debug.Log("Assigned server id with success: " + response.ServerPlayerId);
-                    LocalPlayerManager.Instance.Players[response.LocalPlayerId]._serverId = response.ServerPlayerId;
-                    LocalPlayerManager.Instance.Players[response.LocalPlayerId]._characterSlot = CharacterSelect.Instance._slots[response.ServerPlayerId];
-                    return true;
-
-                default: return false;
-            }
-
-            //return false;
+            });            
         }
 
-        public override bool TryPlayerLeave(int localId)
+        public override bool RequestPlayerLeave(int localId)
         {
             _conn.Send(new ClientPlayerMessage
             {
