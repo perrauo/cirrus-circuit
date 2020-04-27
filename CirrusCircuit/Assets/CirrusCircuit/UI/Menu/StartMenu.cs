@@ -55,7 +55,7 @@ namespace Cirrus.Circuit.UI
 
         public void OnHostClicked()
         {
-            if (CustomNetworkManager.Instance.TryInitHost(_joinInput.text))
+            if (CustomNetworkManager.Instance.TryInitHost(_joinInput.text, out GameSession session))
             {
                 Game.Instance.DoStart();
             }

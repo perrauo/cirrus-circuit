@@ -53,7 +53,7 @@ namespace Cirrus.Circuit.Networking
         [SerializeField]
         public Character[] _characters;
 
-        public World.Objects.Characters.Character[] Characters => _characters;
+        public Character[] Characters => _characters;
 
         public int CharacterCount => _characters.Length;        
 

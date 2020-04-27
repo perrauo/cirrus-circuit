@@ -68,8 +68,8 @@ namespace Cirrus.Circuit.Networking
         private NetworkManagerHandler _handler;
 
         public bool IsServer => _handler is NetworkManagerServerHandler;
-        public NetworkManagerClientHandler Client => IsServer ? null : (NetworkManagerClientHandler)_handler;
-        public NetworkManagerServerHandler Server => IsServer ? (NetworkManagerServerHandler)_handler : null;
+        public NetworkManagerClientHandler ClientHandler => IsServer ? null : (NetworkManagerClientHandler)_handler;
+        public NetworkManagerServerHandler ServerHandler => IsServer ? (NetworkManagerServerHandler)_handler : null;
 
         public static CustomNetworkManager Instance => (CustomNetworkManager) singleton;
 
@@ -123,13 +123,27 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
 
-        public bool TryInitHost(string port)
+        public bool TryInitHost(string port, out GameSession session)
         {
-            _handler = null;            
-            ushort res = ushort.TryParse(port, out res) ? res: NetworkUtils.DefaultPort;
-            _handler = new NetworkManagerServerHandler(this);
-            Transport.port = res;
+            session = null;
+            _handler = null;
+            
+            _handler = new NetworkManagerServerHandler(this);            
+            
+            Transport.port = ushort.TryParse(port, out ushort res) ? res : NetworkUtils.DefaultPort;
+
             StartHost();
+
+            if (!ServerHandler.TryCreateNetworkObject(
+                NetworkServer.localConnection,
+                NetworkingLibrary.Instance.GameSession.gameObject,
+                out NetworkIdentity obj))
+            {
+                StopHost();
+                return false;
+            }
+
+
             return true;            
         }
                 

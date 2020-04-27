@@ -36,60 +36,50 @@ namespace Cirrus.Circuit.Controls
 
             Players = new Player[_playerMax];
 
-            Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
+            var devices = Inputs.InputDevice.all;
+
+            // TODO: do not assume one player per device?
+            // TODO detect when devices connected
+            foreach (var device in devices)
+            {
+                if (device != null)
+                {
+                    if (device is Inputs.Keyboard ||
+                        device is Inputs.Gamepad)
+                    {
+                        //InputActionAsset actions;
+                        foreach (Inputs.InputControlScheme scheme in _inputActionAsset.controlSchemes)
+                        {
+                            if (scheme.SupportsDevice(device))
+                            {
+                                Players[LocalPlayerCount] =
+                                    new Player(
+                                        LocalPlayerCount,
+                                        Names[LocalPlayerCount],
+                                        Colors[LocalPlayerCount],
+                                        device,
+                                        scheme);
+
+                                LocalPlayerCount++;
+                            }
+                        }
+                    }
+                }
+
+                if (LocalPlayerCount > _playerMax) break;
+            }
         }
+
+
 
         public override void OnValidate()
         {
             base.OnValidate();
         }
 
-        // Update is called once per frame
-        public void OnCharacterSelect(bool enable)
-        {
-            if (enable)
-            {
-                var devices = Inputs.InputDevice.all;
+        
+                
 
-                // TODO: do not assume one player per device?
-                foreach (var device in devices)
-                {
-                    if (device != null)
-                    {
-                        if (device is Inputs.Keyboard ||
-                            device is Inputs.Gamepad)
-                        {
-                            //InputActionAsset actions;
-                            foreach (Inputs.InputControlScheme scheme in _inputActionAsset.controlSchemes)
-                            {
-                                if (scheme.SupportsDevice(device))
-                                {
-                                    Players[LocalPlayerCount] =
-                                        new Player(
-                                            LocalPlayerCount,
-                                            Names[LocalPlayerCount],
-                                            Colors[LocalPlayerCount],
-                                            device,
-                                            scheme);
-
-                                    LocalPlayerCount++;
-                                }
-                            }
-                        }
-                    }                                        
-
-                    if (
-                        LocalPlayerCount > _playerMax ||
-                        LocalPlayerCount > Game.Instance._selectedLevel.CharacterCount)
-                        break;
-                }
-            }
-            else
-            {
-                LocalPlayerCount = 0;
-                Players = new Player[0];
-            }
-        }
 
         // TODO
         public void OnUnpairedInputDeviceUsed(Inputs.InputControl control)

@@ -51,20 +51,20 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
 
-        private bool TryCreateNetworkObject(
+        public bool TryCreateNetworkObject(
             NetworkConnection conn,
-            NetworkBehaviour template,
-            out NetworkBehaviour obj,
+            GameObject template,
+            out NetworkIdentity obj,
             bool clientAuthority = true)
         {
             obj = null;
 
-            if (template.gameObject.GetComponent<NetworkBehaviour>() == null) return false;
+            if (template.GetComponent<NetworkIdentity>() == null) return false;
 
-            obj = template.gameObject.Create().GetComponent<NetworkBehaviour>();
+            obj = template.gameObject.Create().GetComponent<NetworkIdentity>();
 
-            NetworkServer.Spawn(obj.gameObject);
-
+            NetworkServer.Spawn(obj.gameObject, clientAuthority ? conn : null);
+            
             return true;
         }
 
