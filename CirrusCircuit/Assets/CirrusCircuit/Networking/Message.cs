@@ -27,10 +27,13 @@ namespace Cirrus.Circuit.Networking
 
     public class ServerMessage
     {
+        [SerializeField]
         public ServerMessageId Id = ServerMessageId.ServerId;
 
+        [SerializeField]
         public int LocalPlayerId = -1;
 
+        [SerializeField]
         public int ServerPlayerId = -1;
     }
 
