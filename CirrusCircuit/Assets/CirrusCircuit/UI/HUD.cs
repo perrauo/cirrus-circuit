@@ -6,7 +6,7 @@ using Cirrus.Circuit.Controls;
 
 namespace Cirrus.Circuit.UI
 {
-    public class HUD : MonoBehaviour
+    public class HUD : BaseSingleton<HUD>
     {
 
         [SerializeField]
@@ -15,15 +15,18 @@ namespace Cirrus.Circuit.UI
         private List<Player> _availablePlayerDisplays;
 
 
-        public void Awake()
+        public override void Awake()
         {
+            base.Awake();
+
             _availablePlayerDisplays = new List<Player>();
             //Game.Instance.OnLevelSelectHandler += OnLevelSelect;
         }
 
-        public void OnValidate()
+        public override void OnValidate()
         {
 
+            base.OnValidate();
             //if (_characterSelect == null)
             //    _characterSelect = FindObjectOfType<CharacterSelect>();            
         }

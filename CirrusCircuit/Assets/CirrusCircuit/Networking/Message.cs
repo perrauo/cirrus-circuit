@@ -25,7 +25,7 @@ namespace Cirrus.Circuit.Networking
         ServerId = 200
     }
 
-    public class ServerMessage
+    public class ServerResponseMessage
     {
         [SerializeField]
         public ServerMessageId Id = ServerMessageId.ServerId;

@@ -71,7 +71,7 @@ namespace Cirrus.Circuit.Networking
 
         public bool DoTryPlayerJoin(NetworkConnection conn, int localPlayerId)
         {
-            var response = new ServerMessage()
+            var response = new ServerResponseMessage()
             {
                 Id = ServerMessageId.ServerId
             };

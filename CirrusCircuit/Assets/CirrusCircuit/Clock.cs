@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Cirrus.Circuit
 {
-    public class Clock : MonoBehaviour
+    public class Clock : BaseSingleton<Clock>
     {
         public delegate void OnTick();
         public OnTick OnTickedHandler;

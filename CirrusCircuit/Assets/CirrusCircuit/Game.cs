@@ -47,17 +47,6 @@ namespace Cirrus.Circuit
 
         public Events.Event<Player> OnLocalPlayerJoinHandler;
 
-        [SerializeField]
-        private Transitions.Transition _transitionEffect;
-
-        [SerializeField]
-        public Clock _clock;
-
-        public Clock Clock => _clock;
-
-        [SerializeField]
-        public UI.HUD HUD;
-
         public Layers Layers;
 
         public UI.CharacterSelect _characterSelect;
@@ -127,8 +116,6 @@ namespace Cirrus.Circuit
 
             _levels = GetComponentsInChildren<World.Level>(true);
             _selectedLevel = _levels.Length == 0 ? null : _levels[0];
-
-            if (_transitionEffect == null) _transitionEffect = FindObjectOfType<Transitions.Transition>();
             if (_characterSelect == null) _characterSelect = FindObjectOfType<UI.CharacterSelect>();
             if (_startMenu == null) _startMenu = FindObjectOfType<UI.StartMenu>();
         }
@@ -144,9 +131,7 @@ namespace Cirrus.Circuit
 
             _transitionTimer = new Timer(_transitionTime, start: false, repeat: false);
 
-            _transitionTimer.OnTimeLimitHandler += OnTransitionTimeOut;
-
-            //DontDestroyOnLoad(this.gameObject);
+            _transitionTimer.OnTimeLimitHandler += OnTransitionTimeOut;            
 
             Podium.Instance.OnPodiumFinishedHandler += OnPodiumFinished;
 
@@ -168,7 +153,9 @@ namespace Cirrus.Circuit
             UpdatedVectorBottomLeft = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
             UpdatedVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30));
 
-            if (initialVectorBottomLeft != UpdatedVectorBottomLeft || initialVectorTopRight != UpdatedVectorTopRight)
+            if (
+                initialVectorBottomLeft != UpdatedVectorBottomLeft || 
+                initialVectorTopRight != UpdatedVectorTopRight)
             {
                 OnScreenResizedHandler?.Invoke();
             }
@@ -194,15 +181,12 @@ namespace Cirrus.Circuit
         private void OnScoreValueAdded(World.Objects.Gem gem, int player, float value)
         {
             LocalPlayerManager.Instance.Players[player].Score += value;
-            HUD.OnScoreChanged(player, LocalPlayerManager.Instance.Players[player].Score);
+            UI.HUD.Instance.OnScoreChanged(player, LocalPlayerManager.Instance.Players[player].Score);
         }
 
         public void OnLevelCompleted(World.Level.Rule rule)
         {
             _round.Terminate();
-
-            //OnRoundEnd();
-
         }
 
         public void OnLevelSelected(int step)
@@ -243,7 +227,7 @@ namespace Cirrus.Circuit
 
         public void OnWaiting()
         {
-            HUD.OnWaiting();
+            UI.HUD.Instance.OnWaiting();
         }
 
         public void OnRoundEnd()
@@ -264,10 +248,7 @@ namespace Cirrus.Circuit
 
         private void OnPodiumFinished()
         {
-            if (_state == State.FinalPodium)
-            {
-                TryChangeState(State.Transition, State.LevelSelection);
-            }
+            if (_state == State.FinalPodium) TryChangeState(State.Transition, State.LevelSelection);            
             else
             {
                 if (_currentLevel != null)
@@ -302,10 +283,6 @@ namespace Cirrus.Circuit
             TryChangeState(_transition);
         }
 
-        public bool RequestPlayerJoin(Player player)
-        {
-            return CustomNetworkManager.Instance.RequestPlayerJoin(player);                                       
-        }
 
         #endregion
 
@@ -639,12 +616,9 @@ namespace Cirrus.Circuit
 
 
                 case State.Transition:
-
                     _transition = (State)args[0];
                     _transitionTimer.Start();
-
-                    _transitionEffect.Perform();
-
+                    Transitions.Transition.Instance.Perform();
                     _state = target;
                     return true;
 
@@ -763,9 +737,7 @@ namespace Cirrus.Circuit
                     OnWaiting();
                     return true;
 
-
-                default:
-                    return false;
+                default: return false;
             }
         }
 
@@ -785,7 +757,6 @@ namespace Cirrus.Circuit
             {
                 //moving in both directions, prioritize later
                 if (_wasMovingVertical[player.LocalId]) step = stepHorizontal;
-
                 else step = stepVertical;
             }
             else if (isMovingHorizontal)
@@ -871,7 +842,7 @@ namespace Cirrus.Circuit
 
                     if (_localPlayers.Contains(player))
                     {
-                        HUD.Leave(player);
+                        UI.HUD.Instance.Leave(player);
                         _localPlayers.Remove(player);
                     }
                     else
@@ -908,7 +879,7 @@ namespace Cirrus.Circuit
 
                     if (player._characterSlot != null) player._characterSlot.HandleAction1(player);
 
-                    else RequestPlayerJoin(player);
+                    else CustomNetworkManager.Instance.RequestPlayerJoin(player);
 
                     break;
 

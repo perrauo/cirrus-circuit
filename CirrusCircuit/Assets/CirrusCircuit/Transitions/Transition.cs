@@ -3,9 +3,8 @@ using System.Collections;
 
 namespace Cirrus.Circuit.Transitions
 {
-    public class Transition : MonoBehaviour
-    {
-
+    public class Transition : BaseSingleton<Transition>
+    {    
 
         [SerializeField]
         private UnityEngine.UI.Image _image;

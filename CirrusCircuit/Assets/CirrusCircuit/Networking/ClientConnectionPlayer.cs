@@ -1,8 +1,6 @@
 ﻿using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.UI;
 using Mirror;
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 
 
@@ -21,7 +19,7 @@ namespace Cirrus.Circuit.Networking
 
 
         [TargetRpc]
-        public void TargetReceiveResponse(ServerMessage response)
+        public void TargetReceiveResponse(ServerResponseMessage response)
         {
             switch (response.Id)
             {
