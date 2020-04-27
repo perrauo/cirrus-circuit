@@ -304,7 +304,7 @@ namespace Cirrus.Circuit
 
         public bool RequestPlayerJoin(Player player)
         {
-            return CustomNetworkManager.Instance.TryPlayerJoin(player);                                       
+            return CustomNetworkManager.Instance.RequestPlayerJoin(player);                                       
         }
 
         #endregion
