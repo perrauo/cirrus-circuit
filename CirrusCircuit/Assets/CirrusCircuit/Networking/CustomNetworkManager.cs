@@ -75,6 +75,7 @@ namespace Cirrus.Circuit.Networking
 
         public static CustomNetworkManager Instance => (CustomNetworkManager)singleton;
 
+        #region Editor
 
         public void UpdatePrefabList()
         {
@@ -144,6 +145,7 @@ namespace Cirrus.Circuit.Networking
 #endif
         }
 
+        #endregion
 
         public override void OnClientConnect(NetworkConnection conn)
         {
@@ -238,6 +240,8 @@ namespace Cirrus.Circuit.Networking
     }
 
 
+
+    #region Editor
 #if UNITY_EDITOR
     [CustomEditor(typeof(CustomNetworkManager))]
     public class CustomNetworkManagerEditor : Mirror.NetworkManagerEditor
@@ -265,6 +269,8 @@ namespace Cirrus.Circuit.Networking
     }
 
 #endif
+
+    #endregion
 
 }
 

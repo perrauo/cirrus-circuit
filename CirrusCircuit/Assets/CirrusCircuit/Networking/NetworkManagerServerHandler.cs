@@ -102,7 +102,8 @@ namespace Cirrus.Circuit.Networking
                 if (TryCreateNetworkObject(
                     conn, 
                     NetworkingLibrary.Instance.PlayerSession.gameObject, 
-                    out NetworkIdentity sessionObj))
+                    out NetworkIdentity sessionObj,
+                    false))
                 {                    
                     PlayerSession session;
                     if ((session = sessionObj.GetComponent<PlayerSession>()) != null)
