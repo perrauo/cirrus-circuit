@@ -25,11 +25,69 @@ using UnityEngine;
 using Cirrus.Circuit.Networking;
 using Mirror;
 using Cirrus.Circuit.Controls;
+using Cirrus.Circuit.UI;
 
 namespace Cirrus.Circuit.Networking
 {
     public class PlayerSession : NetworkBehaviour
     {
+        [SerializeField]
+        private float _score = 0;
+
+        [SerializeField]
+        private int _characterResourceId = -1;
+
+        [SerializeField]
+        public Color _color;
+
+        public Color Color => _color;
+
+        [SerializeField]
+        public string _name;
+
+        public string Name => _name;
+
+        [SerializeField]
+        public int _serverId = 0;
+
+        [SerializeField]
+        public int _localId = 0;
+
+        public int LocalId => _localId;
+
+        public int ServerId => _serverId;
+
+        [SerializeField]
+        public int _colorId = 0;
+
+        public float Score
+        {
+            get => _score;
+            set => _score = value < 0 ? 0 : value;
+        }
+
+        public override void OnStartAuthority()
+        {
+            base.OnStartAuthority();
+
+            if (_localId < 0)
+            {
+                Debug.Log("invalid local player id connected");
+                return;
+            }
+
+            if (_serverId < 0)
+            {
+                Debug.Log("invalid server player id received");
+                return;
+            }
+
+            Debug.Log("Assigned server id with success: " + _serverId);
+            Game.Instance._localPlayers.Add(PlayerManager.Instance.LocalPlayers[_localId]);
+            PlayerManager.Instance.LocalPlayers[_localId]._session = this;
+            PlayerManager.Instance.LocalPlayers[_localId]._characterSlot = CharacterSelect.Instance._slots[_serverId];
+
+        }
 
     }
 }

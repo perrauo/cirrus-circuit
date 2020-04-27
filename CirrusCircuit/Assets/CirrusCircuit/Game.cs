@@ -22,8 +22,6 @@ namespace Cirrus.Circuit
     {
         #region Core
 
-        public const int PlayerMax = 4;
-
         [SerializeField]
         private bool _randomizeSeed = false;
 
@@ -181,11 +179,11 @@ namespace Cirrus.Circuit
             TryChangeState(State.Transition, State.LevelSelection);
         }
 
-        private void OnScoreValueAdded(World.Objects.Gem gem, int player, float value)
-        {
-            LocalPlayerManager.Instance.Players[player].Score += value;
-            UI.HUD.Instance.OnScoreChanged(player, LocalPlayerManager.Instance.Players[player].Score);
-        }
+        //private void OnScoreValueAdded(World.Objects.Gem gem, int player, float value)
+        //{
+        //    LocalPlayerManager.Instance.Players[player].Score += value;
+        //    UI.HUD.Instance.OnScoreChanged(player, LocalPlayerManager.Instance.Players[player].Score);
+        //}
 
         public void OnLevelCompleted(World.Level.Rule rule)
         {
@@ -599,7 +597,7 @@ namespace Cirrus.Circuit
                     foreach (var player in _localPlayers)
                     {
                         if (player == null) continue;
-                        Podium.Instance.Add(player, player._characterResource);
+                        //Podium.Instance.Add(player, player._characterResource);
                     }
 
                     Podium.Instance.gameObject.SetActive(false);
@@ -675,7 +673,7 @@ namespace Cirrus.Circuit
 
                     _selectedLevel.gameObject.SetActive(false);
 
-                    _currentLevel.OnScoreValueAddedHandler += OnScoreValueAdded;
+                    //_currentLevel.OnScoreValueAddedHandler += OnScoreValueAdded;
 
                     _currentLevel.OnLevelCompletedHandler += OnLevelCompleted;
 
@@ -687,22 +685,22 @@ namespace Cirrus.Circuit
                     {
                         Placeholder placeholder = placeholders.RemoveRandom();
 
-                        _localPlayers[i]._character = _localPlayers[i]
-                            ._characterResource.Create(
-                                _currentLevel.GridToWorld(placeholder._gridPosition),
-                                _currentLevel.transform);
+                        //_localPlayers[i]._character = _localPlayers[i]
+                        //    ._characterResource.Create(
+                        //        _currentLevel.GridToWorld(placeholder._gridPosition),
+                        //        _currentLevel.transform);
 
-                        _localPlayers[i]._character.ColorId = _localPlayers[i].ServerId;
+                        //_localPlayers[i]._character.ColorId = _localPlayers[i].ServerId;
 
-                        _localPlayers[i]._character.Color = _localPlayers[i].Color;
+                        //_localPlayers[i]._character.Color = _localPlayers[i].Color;
 
                         _localPlayers[i]._character._level = _currentLevel;
 
                         _localPlayers[i]._character.TryChangeState(World.Objects.BaseObject.State.Disabled);
 
-                        _localPlayers[i].Score = 0;
+                        //_localPlayers[i].Score = 0;
 
-                        _localPlayers[i]._colorId = placeholder.ColorId;
+                        //_localPlayers[i]._colorId = placeholder.ColorId;
 
                         i++;
 
@@ -733,7 +731,7 @@ namespace Cirrus.Circuit
                     //Lobby.Characters.Clear();
                     //Lobby.Characters.AddRange(_selectedLevel.Characters);
 
-                    foreach (Player player in LocalPlayerManager.Instance.Players)
+                    foreach (Player player in PlayerManager.Instance.LocalPlayers)
                     {
                         if (player == null) continue;
 
@@ -749,7 +747,7 @@ namespace Cirrus.Circuit
             }
         }
 
-        private bool[] _wasMovingVertical = new bool[PlayerMax];
+        private bool[] _wasMovingVertical = new bool[PlayerManager.PlayerMax];
 
         // TODO: Simulate LeftStick continuous axis with WASD
         public void FSMHandleAxesLeft(Player player, Vector2 axis)
@@ -763,19 +761,19 @@ namespace Cirrus.Circuit
 
             if (isMovingVertical && isMovingHorizontal)
             {
-                //moving in both directions, prioritize later
-                if (_wasMovingVertical[player.LocalId]) step = stepHorizontal;
-                else step = stepVertical;
+                ////moving in both directions, prioritize later
+                //if (_wasMovingVertical[player.LocalId]) step = stepHorizontal;
+                //else step = stepVertical;
             }
             else if (isMovingHorizontal)
             {
                 step = stepHorizontal;
-                _wasMovingVertical[player.LocalId] = false;
+                //_wasMovingVertical[player.LocalId] = false;
             }
             else if (isMovingVertical)
             {
                 step = stepVertical;
-                _wasMovingVertical[player.LocalId] = true;
+                //_wasMovingVertical[player.LocalId] = true;
             }
 
             switch (_state)
@@ -855,7 +853,7 @@ namespace Cirrus.Circuit
                     }
                     else
                     {
-                        foreach (Player other in LocalPlayerManager.Instance.Players) if (other == null) continue;
+                        foreach (Player other in PlayerManager.Instance.LocalPlayers) if (other == null) continue;
                         TryChangeState(State.LevelSelection);
                     }
 

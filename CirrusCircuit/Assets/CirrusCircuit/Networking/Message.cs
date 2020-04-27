@@ -34,7 +34,7 @@ namespace Cirrus.Circuit.Networking
         public int LocalPlayerId = -1;
 
         [SerializeField]
-        public int ServerPlayerId = -1;
+        public GameObject Session;
     }
 
     public enum ClientPlayerMessageId

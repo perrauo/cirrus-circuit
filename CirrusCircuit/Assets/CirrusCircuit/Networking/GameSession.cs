@@ -39,6 +39,13 @@ namespace Cirrus.Circuit.Networking
 
         private List<PlayerSession> _playerSessions;
 
+
+        private void OnScoreValueAdded(World.Objects.Gem gem, int serverPlayerId, float value)
+        {
+            _playerSessions[serverPlayerId].Score += value;
+            UI.HUD.Instance.OnScoreChanged(serverPlayerId, _playerSessions[serverPlayerId].Score);            
+        }
+
         //#region FSM
 
         //[Serializable]

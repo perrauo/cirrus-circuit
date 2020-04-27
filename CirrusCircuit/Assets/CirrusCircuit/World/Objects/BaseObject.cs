@@ -108,9 +108,9 @@ namespace Cirrus.Circuit.World.Objects
         {
             if (_level == null) _level = GetComponentInParent<Level>();
 
-            if (LocalPlayerManager.Instance != null)
+            if (PlayerManager.Instance != null)
             {
-                Color = LocalPlayerManager.Instance.GetColor(ColorId);
+                Color = PlayerManager.Instance.GetColor(ColorId);
                 _nextColor = Color;
             }
         }

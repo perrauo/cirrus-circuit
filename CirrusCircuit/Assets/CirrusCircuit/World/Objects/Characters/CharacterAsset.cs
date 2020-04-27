@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 namespace Cirrus.Circuit.World.Objects.Characters
 {
@@ -12,6 +13,19 @@ namespace Cirrus.Circuit.World.Objects.Characters
         [SerializeField]
         private Character CharacterTemplate;
 
+        public int _id = -1;
+
+        public int Id => _id;
+
+        public void OnValidate()
+        {
+            if (_id < 0)
+            {
+                if (CharacterLibrary.Instance == null) return;
+                _id = Array.IndexOf(CharacterLibrary.Instance.Characters, this);
+            }
+        }
+    
         public string Name
         {
             get

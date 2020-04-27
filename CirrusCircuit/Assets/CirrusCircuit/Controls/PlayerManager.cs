@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Cirrus.Circuit.Controls
 {
-    public class LocalPlayerManager : BaseSingleton<LocalPlayerManager>
+    public class PlayerManager : BaseSingleton<PlayerManager>
     {
         [SerializeField]
         private Inputs.InputActionAsset _inputActionAsset;
@@ -14,19 +14,28 @@ namespace Cirrus.Circuit.Controls
         [SerializeField]
         public string[] Names = { "Red", "Blue", "Yellow", "Green" };
 
+        public const string DefaultName = "Unknown";
+
         [SerializeField]
         public Color[] Colors = new Color[4];
 
-        public Player[] Players;
+        public Player[] LocalPlayers;
 
         public int LocalPlayerCount = 0;
+        
+        public const int PlayerMax = 4;
 
-        private const int _playerMax = 4;
+        public string GetName(int id)
+        {
+            string name = DefaultName;
+            if (id < PlayerMax) name = Names[id];
+            return name;
+        }
 
-        public Color GetColor(int number)
+        public Color GetColor(int id)
         {
             Color color = Color.white;
-            if (number < _playerMax) color = Colors[number];
+            if (id < PlayerMax) color = Colors[id];
             return color;
         }
 
@@ -34,7 +43,7 @@ namespace Cirrus.Circuit.Controls
         {
             base.Awake();
 
-            Players = new Player[_playerMax];
+            LocalPlayers = new Player[PlayerMax];
 
             var devices = Inputs.InputDevice.all;
 
@@ -52,21 +61,17 @@ namespace Cirrus.Circuit.Controls
                         {
                             if (scheme.SupportsDevice(device))
                             {
-                                Players[LocalPlayerCount] =
+                                LocalPlayers[LocalPlayerCount] =
                                     new Player(
-                                        LocalPlayerCount,
-                                        Names[LocalPlayerCount],
-                                        Colors[LocalPlayerCount],
+                                        LocalPlayerCount++,
                                         device,
                                         scheme);
-
-                                LocalPlayerCount++;
                             }
                         }
                     }
                 }
 
-                if (LocalPlayerCount > _playerMax) break;
+                if (LocalPlayerCount > PlayerMax) break;
             }
         }
 

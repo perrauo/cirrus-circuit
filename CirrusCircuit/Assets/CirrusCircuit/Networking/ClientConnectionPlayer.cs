@@ -24,24 +24,6 @@ namespace Cirrus.Circuit.Networking
             switch (response.Id)
             {
                 case ServerMessageId.ServerId:
-
-                    if (response.LocalPlayerId < 0)
-                    {
-                        Debug.Log("invalid local player id connected");
-                        return;
-                    }
-
-
-                    if (response.ServerPlayerId < 0)
-                    {
-                        Debug.Log("invalid server player id received");
-                        return;
-                    }
-
-                    Debug.Log("Assigned server id with success: " + response.ServerPlayerId);
-                    Game.Instance._localPlayers.Add(LocalPlayerManager.Instance.Players[response.LocalPlayerId]);
-                    LocalPlayerManager.Instance.Players[response.LocalPlayerId]._serverId = response.ServerPlayerId;
-                    LocalPlayerManager.Instance.Players[response.LocalPlayerId]._characterSlot = CharacterSelect.Instance._slots[response.ServerPlayerId];
                     return;
 
                 default: return;

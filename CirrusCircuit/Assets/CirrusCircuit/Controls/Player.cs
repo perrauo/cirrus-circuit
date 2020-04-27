@@ -18,17 +18,11 @@ using Inputs = UnityEngine.InputSystem;
 
 
 namespace Cirrus.Circuit.Controls
-{
+{    
     //[System.Serializable]
     public class Player : ActionMap.IPlayerActions
     {
-        private float _score = 0;
-
-        public float Score
-        {
-            get => _score;
-            set => _score = value < 0 ? 0 : value;
-        }
+        public Networking.PlayerSession _session;
 
         public delegate void OnReady(Player ctrl);
 
@@ -40,39 +34,22 @@ namespace Cirrus.Circuit.Controls
 
         private Inputs.InputControlScheme _scheme;
         
-        public World.Objects.Characters.Character _character;
-
-        public World.Objects.Characters.CharacterAsset _characterResource;
+        public World.Objects.Characters.Character _character;        
 
         public UI.CharacterSelectSlot _characterSlot;
 
         public UI.Player PlayerDisplay = null;
 
-        public Color _color;
-
-        public Color Color => _color;
-
-        public string _name;
-
-        public string Name => _name;
-
-        public int _serverId = 0;
+        public Vector2 AxisLeft => _actionMap.Player.AxesLeft.ReadValue<Vector2>();
 
         public int _localId = 0;
 
         public int LocalId => _localId;
 
-        public int ServerId => _serverId;    
-
-        public int _colorId = 0;
-
-        public Vector2 AxisLeft => _actionMap.Player.AxesLeft.ReadValue<Vector2>();
-
-        public Player(int number, string name, Color color, Inputs.InputDevice device, Inputs.InputControlScheme scheme)
+        public Player(int localId, Inputs.InputDevice device, Inputs.InputControlScheme scheme)
         {
-            _name = name;
-            _color = color;
-            _localId = number;
+
+            _localId = localId;
             _device = device;
             //_user = Inputs.Users.InputUser.CreateUserWithoutPairedDevices();
             //Inputs.Users.InputUser.PerformPairingWithDevice(_device, _user);
