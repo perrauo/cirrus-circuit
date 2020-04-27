@@ -3786,6 +3786,16 @@ PrefabInstance:
       propertyPath: sceneId
       value: 4105741673
       objectReference: {fileID: 0}
+    - target: {fileID: 5405258961728813535, guid: 9c1f8282644cf3c419221945876b74e9,
+        type: 3}
+      propertyPath: sceneId
+      value: 3167892779
+      objectReference: {fileID: 0}
+    - target: {fileID: 5405258961728813535, guid: 9c1f8282644cf3c419221945876b74e9,
+        type: 3}
+      propertyPath: m_AssetId
+      value: 9c1f8282644cf3c419221945876b74e9
+      objectReference: {fileID: 0}
     - target: {fileID: 5472469765253945563, guid: 9c1f8282644cf3c419221945876b74e9,
         type: 3}
       propertyPath: sceneId
@@ -5307,7 +5317,7 @@ GameObject:
   - component: {fileID: 6238744520646324635}
   - component: {fileID: 8324118307607406200}
   m_Layer: 0
-  m_Name: Core
+  m_Name: Game
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
