@@ -20,6 +20,8 @@ namespace Cirrus.Circuit.Networking
     {        
         Failure = 400,
         Timeout = 401,
+        NullResponse = 402,
+        Unknown = 404,
         ServerId = 200
     }
 

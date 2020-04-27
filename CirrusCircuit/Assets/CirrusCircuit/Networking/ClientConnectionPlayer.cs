@@ -27,8 +27,8 @@ namespace Cirrus.Circuit.Networking
         public ServerMessage WaitResponse(int millisecondsTimeout)
         {
             _mutex.WaitOne();
-            _serverResponseEvent.WaitOne(millisecondsTimeout);
-            if (_serverResponse == null) new ServerMessage() { Id = ServerMessageId.Timeout };
+            if(!_serverResponseEvent.WaitOne(millisecondsTimeout)) return new ServerMessage() { Id = ServerMessageId.Timeout };
+            if (_serverResponse == null) return new ServerMessage() { Id = ServerMessageId.NullResponse };
             var response = _serverResponse;
             _serverResponse = null;
             _mutex.ReleaseMutex();
