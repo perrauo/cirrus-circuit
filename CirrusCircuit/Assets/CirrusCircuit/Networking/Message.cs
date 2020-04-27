@@ -28,10 +28,10 @@ namespace Cirrus.Circuit.Networking
     public class ServerMessage : MessageBase
     {
         public ServerMessageId Id = ServerMessageId.ServerId;
-       
-        public int LocalPlayerId;
 
-        public int ServerPlayerId;
+        public int LocalPlayerId = -1;
+
+        public int ServerPlayerId = -1;
     }
 
     public enum ClientPlayerMessageId
@@ -46,11 +46,11 @@ namespace Cirrus.Circuit.Networking
 
         public string Name;
 
-        public int LocalPlayerId;
+        public int LocalPlayerId = -1;
     }
 
     public class ClientConnectedMessage : MessageBase
     {
-        public string Name;
+        //public string Name;
     }
 }

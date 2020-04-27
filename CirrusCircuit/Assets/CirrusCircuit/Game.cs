@@ -917,7 +917,7 @@ namespace Cirrus.Circuit
                     }
                     else
                     {
-                        Debug.Log("Local player already added");
+                        Debug.Log("Local player could not be added");
                     }
 
                     break;
