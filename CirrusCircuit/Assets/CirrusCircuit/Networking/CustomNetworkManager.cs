@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using Cirrus.Circuit.UI;
+using System.Reflection;
+using UnityEditor;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -60,18 +62,65 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
     }
-    
-    
+
+
     public class CustomNetworkManager : NetworkManager
     {
-        private TelepathyTransport Transport => (TelepathyTransport) transport;
+        private TelepathyTransport Transport => (TelepathyTransport)transport;
         private NetworkManagerHandler _handler;
 
         public bool IsServer => _handler is NetworkManagerServerHandler;
         public NetworkManagerClientHandler ClientHandler => IsServer ? null : (NetworkManagerClientHandler)_handler;
         public NetworkManagerServerHandler ServerHandler => IsServer ? (NetworkManagerServerHandler)_handler : null;
 
-        public static CustomNetworkManager Instance => (CustomNetworkManager) singleton;
+        public static CustomNetworkManager Instance => (CustomNetworkManager)singleton;
+
+
+        public void UpdatePrefabList()
+        {
+            if (NetworkingLibrary.Instance != null)
+            {
+                spawnPrefabs.Clear();
+
+                //Debug.Log("1");
+
+                foreach (FieldInfo field in typeof(NetworkingLibrary).GetFields())
+                {
+                    //Debug.Log("2");
+
+                    var val = field.GetValue(NetworkingLibrary.Instance);
+                    if (val != null)
+                    {
+                        //Debug.Log(val);                        
+
+                        if (val is MonoBehaviour)
+                            if (!spawnPrefabs.Contains(((MonoBehaviour)val).gameObject))
+                                spawnPrefabs.Add(((MonoBehaviour)val).gameObject);
+                        else if (val is NetworkBehaviour)
+                                if (!spawnPrefabs.Contains(((NetworkBehaviour)val).gameObject))
+                                    spawnPrefabs.Add(((NetworkBehaviour)val).gameObject);
+                        else if (val is GameObject)
+                             if (!spawnPrefabs.Contains(val))
+                                spawnPrefabs.Add((GameObject)val);
+                    }
+
+                }
+            }
+        }
+
+        public override void OnValidate()
+        {
+            base.OnValidate();
+
+
+#if UNITY_EDITOR
+            if (spawnPrefabs.Count == 0)
+            {
+                UpdatePrefabList();
+            }
+#endif
+        }
+
 
         public override void OnClientConnect(NetworkConnection conn)
         {
@@ -84,7 +133,7 @@ namespace Cirrus.Circuit.Networking
             base.OnClientDisconnect(conn);
             _handler.OnClientDisconnect(conn);
         }
-        
+
         public override void OnClientError(NetworkConnection conn, int errorCode)
         {
             base.OnClientError(conn, errorCode);
@@ -127,9 +176,9 @@ namespace Cirrus.Circuit.Networking
         {
             session = null;
             _handler = null;
-            
-            _handler = new NetworkManagerServerHandler(this);            
-            
+
+            _handler = new NetworkManagerServerHandler(this);
+
             Transport.port = ushort.TryParse(port, out ushort res) ? res : NetworkUtils.DefaultPort;
 
             StartHost();
@@ -144,9 +193,9 @@ namespace Cirrus.Circuit.Networking
             }
 
 
-            return true;            
+            return true;
         }
-                
+
         // 25.1.149.130:4040
 
         public bool TryInitClient(string hostAddress)
@@ -164,4 +213,37 @@ namespace Cirrus.Circuit.Networking
         }
 
     }
+
+
+#if UNITY_EDITOR
+    [CustomEditor(typeof(CustomNetworkManager))]
+    public class CustomNetworkManagerEditor : Mirror.NetworkManagerEditor
+    {
+        private CustomNetworkManager _man;
+
+        public virtual void OnEnable()
+        {
+            _man = serializedObject.targetObject as CustomNetworkManager;
+
+        }
+
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+
+            //Called whenever the inspector is drawn for this object.
+            //DrawDefaultInspector();
+
+            if (GUILayout.Button("Update prefab list"))
+            {
+                _man.UpdatePrefabList();
+            }
+        }
+    }
+
+#endif
+
 }
+
+
+
