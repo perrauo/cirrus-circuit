@@ -17,13 +17,11 @@ namespace Cirrus.Circuit.Networking
         {
             base.OnStartLocalPlayer();
             Instance = this;
-        }
+        }        
 
-        //public TaskCompletionSource<ServerMessage> ServerResponseTaskSource = new TaskCompletionSource<ServerMessage>();
-
-        public AutoResetEvent _serverResponseEvent = new AutoResetEvent(false);
-        public ServerMessage _serverResponse = null;
-        public Mutex _mutex = new Mutex(false);
+        private AutoResetEvent _serverResponseEvent = new AutoResetEvent(false);
+        private ServerMessage _serverResponse = null;
+        private Mutex _mutex = new Mutex(false);
 
         // TODO lock
         public ServerMessage WaitResponse(int millisecondsTimeout)
