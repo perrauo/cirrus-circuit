@@ -2051,8 +2051,6 @@ MonoBehaviour:
   spawnPrefabs:
   - {fileID: 1916082411674582, guid: aad65b14963db5746bbe781df48f9fb4, type: 3}
   - {fileID: 7534066891031683546, guid: bb41d15f8a991064d9f7080d0fc8e3f4, type: 3}
-  _networkClientTemplate: {fileID: 1941899616576446143, guid: aad65b14963db5746bbe781df48f9fb4,
-    type: 3}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -5316,6 +5314,7 @@ GameObject:
   - component: {fileID: 1438632338796918504}
   - component: {fileID: 6238744520646324635}
   - component: {fileID: 8324118307607406200}
+  - component: {fileID: 8324118307607406201}
   m_Layer: 0
   m_Name: Game
   m_TagString: Untagged
@@ -5336,6 +5335,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _lobby: {fileID: 1438632338796918504}
+--- !u!114 &8324118307607406201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8324118307607406199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 379418cb4e1fddd4bae8d00b93f3c5ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _libraries:
+  - {fileID: 11400000, guid: 08341c0eafb5d4643990705b7b9ac20c, type: 2}
+  - {fileID: 11400000, guid: 382fd4ff43ab12244b3d12b13822f241, type: 2}
+  - {fileID: 11400000, guid: b771788f9e6b54b4dacf3a0429765de7, type: 2}
+  - {fileID: 11400000, guid: 595b452cadb8b494ba67e882381ea603, type: 2}
+  - {fileID: 11400000, guid: 5b5543423aea2f845848e1600153025d, type: 2}
 --- !u!114 &8610181462412150752
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5362,10 +5379,10 @@ MonoBehaviour:
   _countDownTime: 1
   _countDown: 3
   _roundAmount: 3
-  _roundIndex: 0
   _podiumTransitionSpeed: 0.01
   _intermissionTime: 2
   _transitionTime: 0.5
+  _roundIndex: 0
   _state: 0
 --- !u!1001 &8802615577050479312
 PrefabInstance:

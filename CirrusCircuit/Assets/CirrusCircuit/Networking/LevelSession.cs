@@ -8,8 +8,11 @@ using System.Threading;
 using Cirrus.Utils;
 using Mirror;
 
+using Cirrus.Circuit.World.Objects;
+using Cirrus.Circuit.World;
+using Cirrus.Circuit.World.Objects.Characters;
 
-namespace Cirrus.Circuit.World
+namespace Cirrus.Circuit.Networking
 {
     public class LevelSession : NetworkBehaviour
     {
@@ -48,9 +51,9 @@ namespace Cirrus.Circuit.World
         public string Name => _name;        
 
         [SerializeField]
-        public Objects.Characters.Character[] _characters;
+        public Character[] _characters;
 
-        public Objects.Characters.Character[] Characters => _characters;
+        public World.Objects.Characters.Character[] Characters => _characters;
 
         public int CharacterCount => _characters.Length;        
 
@@ -61,7 +64,7 @@ namespace Cirrus.Circuit.World
         public Door[] _doors;
 
         [SerializeField]
-        public Objects.Characters.Placeholder[] _characterPlaceholders;
+        public Placeholder[] _characterPlaceholders;
 
         [SerializeField]
         public float DistanceLevelSelection = 35;
@@ -84,17 +87,9 @@ namespace Cirrus.Circuit.World
         [SerializeField]
         private float _randomDropSpawnTime = 2f;
 
-        [SerializeField]
-        private Objects.Resources _objectResources;        
 
         public void OnValidate()
         {
-#if UNITY_EDITOR
-
-            if (_objectResources == null)
-                _objectResources = Editor.AssetDatabase.FindObjectOfType<Objects.Resources>();
-
-#endif
 
             _name = gameObject.name.Substring(gameObject.name.IndexOf('.') + 1);
             _name = _name.Replace('.', ' ');
@@ -106,10 +101,10 @@ namespace Cirrus.Circuit.World
                 _doors = gameObject.GetComponentsInChildren<Door>();
 
             if (_characters != null && _characters.Length == 0)
-                _characters = gameObject.GetComponentsInChildren<Objects.Characters.Character>();
+                _characters = gameObject.GetComponentsInChildren<Character>();
 
             if (_characterPlaceholders != null && _characterPlaceholders.Length == 0)
-                _characterPlaceholders = gameObject.GetComponentsInChildren<Objects.Characters.Placeholder>();
+                _characterPlaceholders = gameObject.GetComponentsInChildren<Placeholder>();
 
         }
 
@@ -174,7 +169,7 @@ namespace Cirrus.Circuit.World
                     _requiredGems += gem.IsRequired ? 1 : 0;
                 }
 
-                if (obj is Objects.Characters.Character)
+                if (obj is Character)
                     continue;
 
                 foreach (Controls.Player players in Game.Instance._localPlayers)
@@ -354,7 +349,7 @@ namespace Cirrus.Circuit.World
                         if (TryGet(position.Copy().SetY(position.y - i), out BaseObject target))
                         {
                             if (target is Gem) continue;
-                            if (target is Objects.Characters.Character) continue;
+                            if (target is Character) continue;
                             if (target is Door) continue;
 
                             return InnerTryMove(source, position, direction, ref offset, out BaseObject pushed, out destination);
@@ -412,7 +407,7 @@ namespace Cirrus.Circuit.World
                 UnityEngine.Random.Range(_offset.x, _dimension.z - _offset.z - 1));
 
             Rain(
-                _objectResources.SimpleGems[UnityEngine.Random.Range(0, _objectResources.SimpleGems.Length)]);
+                ObjectLibrary.Instance.SimpleGems[UnityEngine.Random.Range(0, ObjectLibrary.Instance.SimpleGems.Length)]);
         }
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)

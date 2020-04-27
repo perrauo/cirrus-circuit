@@ -9,7 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d66c1a65e999824c893e2befa9cad93, type: 3}
-  m_Name: Resources
+  m_Script: {fileID: 11500000, guid: bc0183174c6226943b73008cec7dde18, type: 3}
+  m_Name: Library
   m_EditorClassIdentifier: 
-  PlayerMaterial: {fileID: 2100000, guid: 1da48c6b6b329524fa6d97fe56d60f11, type: 2}

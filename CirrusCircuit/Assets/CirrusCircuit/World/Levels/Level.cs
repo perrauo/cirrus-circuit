@@ -84,18 +84,8 @@ namespace Cirrus.Circuit.World
         [SerializeField]
         private float _randomDropSpawnTime = 2f;
 
-        [SerializeField]
-        private Objects.Resources _objectResources;        
-
         public void OnValidate()
         {
-#if UNITY_EDITOR
-
-            if (_objectResources == null)
-                _objectResources = Editor.AssetDatabase.FindObjectOfType<Objects.Resources>();
-
-#endif
-
             _name = gameObject.name.Substring(gameObject.name.IndexOf('.') + 1);
             _name = _name.Replace('.', ' ');
 
@@ -412,7 +402,7 @@ namespace Cirrus.Circuit.World
                 UnityEngine.Random.Range(_offset.x, _dimension.z - _offset.z - 1));
 
             Rain(
-                _objectResources.SimpleGems[UnityEngine.Random.Range(0, _objectResources.SimpleGems.Length)]);
+                ObjectLibrary.Instance.SimpleGems[UnityEngine.Random.Range(0, ObjectLibrary.Instance.SimpleGems.Length)]);
         }
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)

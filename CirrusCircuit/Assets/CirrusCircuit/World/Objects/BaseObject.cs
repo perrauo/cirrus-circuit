@@ -29,9 +29,6 @@ namespace Cirrus.Circuit.World.Objects
         public virtual ObjectId Id => ObjectId.Default;
 
         [SerializeField]
-        protected Networking.ObjectNetworkController _net;
-
-        [SerializeField]
         protected Visual _visual;
 
         [SerializeField]

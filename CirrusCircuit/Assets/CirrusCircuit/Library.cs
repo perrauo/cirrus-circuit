@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace Cirrus.Circuit
 {
-    public class Resources : ScriptableObject
+    public class Library : Resources.BaseAssetLibrary<Library>
     {
 
     }

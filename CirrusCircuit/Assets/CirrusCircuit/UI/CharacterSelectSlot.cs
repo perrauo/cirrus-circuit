@@ -13,9 +13,6 @@ namespace Cirrus.Circuit.UI
 {
     public class CharacterSelectSlot : NetworkBehaviour
     {
-        [SerializeField]
-        private World.Objects.Characters.Resources _characterResources;
-
         [SerializeField]        
         private Image _imageTemplate;
 
@@ -117,11 +114,6 @@ namespace Cirrus.Circuit.UI
             if (_camera == null) _camera = FindObjectOfType<CameraManager>();
             if (_rect == null) _rect = _selection.GetComponent<RectTransform>();
 
-
-#if UNITY_EDITOR
-            if (_characterResources == null)
-                Editor.AssetDatabase.FindObjectOfType<World.Objects.Characters.Resources>();
-#endif      
         }
 
         public void Awake()
@@ -130,7 +122,7 @@ namespace Cirrus.Circuit.UI
             else _imageTemplate.gameObject.SetActive(true);
 
             _images = new List<Image>();
-            foreach (var res in _characterResources.Characters)
+            foreach (var res in CharacterLibrary.Instance.Characters)
             {
                 if (res == null) continue;
 
@@ -248,7 +240,7 @@ namespace Cirrus.Circuit.UI
                         _characterSpotlightAnchor.position);
 
                     // TODO maybe select locked character??
-                    CharacterAsset resource = _characterResources.Characters[_selectedIndex];
+                    CharacterAsset resource = CharacterLibrary.Instance.Characters[_selectedIndex];
                     Character character =
                         resource.Create(
                             position,
@@ -301,7 +293,7 @@ namespace Cirrus.Circuit.UI
         private void Scroll(bool up)
         {
             _selectedIndex = up ? _selectedIndex - 1 : _selectedIndex + 1;
-            _selectedIndex = Mathf.Clamp(_selectedIndex, 0, _characterResources.Characters.Length - 1);
+            _selectedIndex = Mathf.Clamp(_selectedIndex, 0, CharacterLibrary.Instance.Characters.Length - 1);
             _offset = up ? _offset - _height : _offset + _height;
             _offset = Mathf.Clamp(_offset, -_bound, _bound - _height);
             _targetPosition = _startPosition + Vector3.up * _offset;
@@ -311,7 +303,7 @@ namespace Cirrus.Circuit.UI
                 _up.color = _up.color.SetA(_disabledArrowAlpha);
                 if (!up) StartCoroutine(PunchScale(false));
             }
-            else if (_selectedIndex == _characterResources.Characters.Length - 1)
+            else if (_selectedIndex == CharacterLibrary.Instance.Characters.Length - 1)
             {
                 if (up) StartCoroutine(PunchScale(true));
                 _down.color = _down.color.SetA(_disabledArrowAlpha);
@@ -362,7 +354,7 @@ namespace Cirrus.Circuit.UI
             {
                 case State.Selecting:
                     Controls.Player player = (Controls.Player) args[0];
-                    player._characterResource = _characterResources.Characters[_selectedIndex];
+                    player._characterResource = CharacterLibrary.Instance.Characters[_selectedIndex];
                     CmdTryChangeState(State.Ready);
                     break;                    
 

@@ -42,9 +42,9 @@ namespace Cirrus.Circuit.Networking
         {
             player = null;
 
-            if (_net.NetworkClientTemplate.gameObject.GetComponent<NetworkBehaviour>() == null) return false;
+            if (NetworkingLibrary.Instance.ClientConnectionPlayer.gameObject.GetComponent<NetworkBehaviour>() == null) return false;
 
-            player = _net.NetworkClientTemplate.gameObject.Create().GetComponent<NetworkBehaviour>();
+            player = NetworkingLibrary.Instance.ClientConnectionPlayer.gameObject.Create().GetComponent<NetworkBehaviour>();
 
             if (NetworkServer.AddPlayerForConnection(conn, player.gameObject)) return true;
 

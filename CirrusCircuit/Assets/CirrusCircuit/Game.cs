@@ -79,16 +79,9 @@ namespace Cirrus.Circuit
         [SerializeField]
         public int _countDown = 3;
 
-        public Round _round;
 
         [SerializeField]
         private int _roundAmount = 3;
-
-        public int _roundIndex;
-
-        /// Controllers in player in game
-        //[SerializeField]
-        public List<Player> _localPlayers = new List<Player>();
 
         [SerializeField]
         public float _podiumTransitionSpeed = 0.2f;
@@ -105,10 +98,20 @@ namespace Cirrus.Circuit
 
         private float _transitionDistance = 48f;
 
-        Vector3 initialVectorBottomLeft;
-        Vector3 initialVectorTopRight;
-        Vector3 UpdatedVectorBottomLeft;
-        Vector3 UpdatedVectorTopRight;
+        private Vector3 _initialVectorBottomLeft;
+
+        private Vector3 _initialVectorTopRight;
+
+        private Vector3 _updatedVectorBottomLeft;
+
+        private Vector3 _updatedVectorTopRight;
+
+
+        public int _roundIndex;
+
+        public Round _round;
+
+        public List<Player> _localPlayers;
 
         public override void OnValidate()
         {
@@ -144,18 +147,18 @@ namespace Cirrus.Circuit
         {
             base.Start();
 
-            initialVectorBottomLeft = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
-            initialVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30)); // I used 30 as my camera z is -30
+            _initialVectorBottomLeft = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
+            _initialVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30)); // I used 30 as my camera z is -30
         }
 
         public void Update()
         {
-            UpdatedVectorBottomLeft = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
-            UpdatedVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30));
+            _updatedVectorBottomLeft = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
+            _updatedVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30));
 
             if (
-                initialVectorBottomLeft != UpdatedVectorBottomLeft || 
-                initialVectorTopRight != UpdatedVectorTopRight)
+                _initialVectorBottomLeft != _updatedVectorBottomLeft || 
+                _initialVectorTopRight != _updatedVectorTopRight)
             {
                 OnScreenResizedHandler?.Invoke();
             }
@@ -300,7 +303,8 @@ namespace Cirrus.Circuit
             WaitingNextRound,
             Podium,
             FinalPodium,
-            Transition
+            Transition,
+            Session,
         }
 
         [SerializeField]
@@ -316,14 +320,18 @@ namespace Cirrus.Circuit
                 case State.LevelSelection:
                 case State.Round:
                 case State.Score:
-                case State.Podium:
-                case State.FinalPodium:
+                case State.Podium:                
+                case State.FinalPodium:                 
                     CameraManager.Instance.Camera.orthographicSize =
                         Mathf.Lerp(
                             CameraManager.Instance.Camera.orthographicSize,
                             _targetSizeCamera,
                             _cameraSizeSpeed);
 
+                    break;
+
+                case State.Session:
+                    if (GameSession.Instance == null) return;
                     break;
             }
         }

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc4677bb2766aa44bb839d64c97005cb, type: 3}
-  m_Name: Resources
+  m_Name: ObjectLibrary
   m_EditorClassIdentifier: 
   SimpleGems:
   - {fileID: 2893152209011896101, guid: c94a930d4ce87384ca2b0d322542047c, type: 3}
