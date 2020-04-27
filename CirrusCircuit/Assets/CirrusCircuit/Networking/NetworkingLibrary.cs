@@ -22,5 +22,8 @@ namespace Cirrus.Circuit.Networking
 
         [SerializeField]
         public LevelSession LevelSession;
+
+        [SerializeField]
+        public CharacterSelectSlot CharacterSelectSlot;
     }
 }
