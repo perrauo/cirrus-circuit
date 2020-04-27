@@ -98,10 +98,17 @@ namespace Cirrus.Circuit.Networking
 
             switch (response.Id)
             {
-                case ServerMessageId.ServerId:
+                case ServerMessageId.ServerId:                
+
                     if (response.LocalPlayerId < 0)
                     {
                         Debug.Log("invalid local player id connected");
+                        return false;
+                    }
+
+                    if(response.LocalPlayerId != localId)
+                    {
+                        Debug.Log("local player id conflict");
                         return false;
                     }
 
