@@ -31,12 +31,36 @@ namespace Cirrus.Circuit.Networking
 
         }
 
+        #region Character Select Slot
+
         [Command]
         public void CmdTryChangeState_CharacterSelectSlot(GameObject obj, CharacterSelectSlot.State target)
         {            
             CharacterSelectSlot slot;
             if ((slot = obj.GetComponent<CharacterSelectSlot>()) != null) slot.RpcTryChangeState(target);          
         }
+
+        [Command]
+        public void CmdScroll_CharacterSelectSlot(GameObject obj, bool scroll)
+        {
+            CharacterSelectSlot slot;
+            if ((slot = obj.GetComponent<CharacterSelectSlot>()) != null) slot.RpcScroll(scroll);
+        }
+
+        #endregion
+
+        #region Player Session
+
+        [Command]
+        public void CmdSetCharacterId_PlayerSession(GameObject obj, int characterId)
+        {
+            PlayerSession session;
+            if ((session = obj.GetComponent<PlayerSession>()) != null) session._characterId = characterId;
+        }
+
+        #endregion
+
+        #region Game
 
         public void TryChangeState_Game(Game.State transition, params object[] args)
         {
@@ -55,11 +79,6 @@ namespace Cirrus.Circuit.Networking
             Game.Instance.TryChangeState(transition, args);
         }
 
-        [Command]
-        public void CmdScroll_CharacterSelectSlot(GameObject obj, bool scroll)
-        {
-            CharacterSelectSlot slot;
-            if ((slot = obj.GetComponent<CharacterSelectSlot>()) != null) slot.RpcScroll(scroll);
-        }
+        #endregion
     }
 }

@@ -355,7 +355,7 @@ namespace Cirrus.Circuit.UI
                 case State.Selecting:
                     Controls.Player player = (Controls.Player) args[0];
                     Debug.Log("Assigned id: " + CharacterLibrary.Instance.Characters[_selectedIndex].Id);
-                    player._session._characterResourceId = CharacterLibrary.Instance.Characters[_selectedIndex].Id;
+                    player._session._characterId = CharacterLibrary.Instance.Characters[_selectedIndex].Id;
                     CmdTryChangeState(State.Ready);
                     break;                    
 

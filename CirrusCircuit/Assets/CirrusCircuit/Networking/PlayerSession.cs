@@ -31,13 +31,9 @@ namespace Cirrus.Circuit.Networking
 {
     public class PlayerSession : NetworkBehaviour
     {
-        [SerializeField]
         [SyncVar]
+        [SerializeField]        
         private float _score = 0;
-
-        [SerializeField]
-        [SyncVar]
-        public int _colorId = 0;
 
         public float Score
         {
@@ -45,30 +41,43 @@ namespace Cirrus.Circuit.Networking
             set => _score = value < 0 ? 0 : value;
         }
 
-        [SerializeField]
         [SyncVar]
-        public int _characterResourceId = -1;
+        [SerializeField]
+        public int _colorId = 0;
+
+        [SyncVar]
+        [SerializeField]        
+        public int _characterId = -1;
+        public int CharacterId
+        {
+            get => _characterId;
+            set
+            {
+                if (!hasAuthority) return;
+                ClientConnectionPlayer.Instance.CmdSetCharacterId_PlayerSession(gameObject, value);
+            }                                    
+        }
+
 
         [SerializeField]
         [SyncVar]
         public Color _color;
-
         public Color Color => _color;
 
-        [SerializeField]
         [SyncVar]
+        [SerializeField]        
         public string _name;
 
         public string Name => _name;
 
-        [SerializeField]
         [SyncVar]
+        [SerializeField]
         public int _serverId = 0;
 
         public int ServerId => _serverId;
 
-        [SerializeField]
         [SyncVar]
+        [SerializeField]        
         public int _localId = 0;
 
         public int LocalId => _localId;
@@ -93,8 +102,6 @@ namespace Cirrus.Circuit.Networking
             Game.Instance._localPlayers.Add(PlayerManager.Instance.LocalPlayers[_localId]);
             PlayerManager.Instance.LocalPlayers[_localId]._session = this;
             PlayerManager.Instance.LocalPlayers[_localId]._characterSlot = CharacterSelect.Instance._slots[_serverId];
-
-        }
-
+        }       
     }
 }
