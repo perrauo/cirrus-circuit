@@ -17,9 +17,10 @@ using System.Net.Sockets;
 namespace Cirrus.Circuit.Networking
 {
     public enum ServerMessageId
-    {
-        ServerId,
-        Failure
+    {        
+        Failure = 400,
+        Timeout = 401,
+        ServerId = 200
     }
 
     public class ServerMessage : MessageBase

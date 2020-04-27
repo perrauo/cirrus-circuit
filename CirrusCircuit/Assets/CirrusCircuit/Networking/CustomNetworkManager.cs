@@ -12,6 +12,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using Cirrus.Circuit.UI;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -64,6 +65,8 @@ namespace Cirrus.Circuit.Networking
     {
         public NetworkConnection _conn;
 
+        public const int ServerResponseTimeout = 1000;
+
         public NetworkManagerClientHandler(CustomNetworkManager net) : base(net)
         {
 
@@ -74,7 +77,7 @@ namespace Cirrus.Circuit.Networking
             base.OnClientConnect(conn);
 
             _conn = conn;            
-            _conn.Send(new ClientConnectedMessage());
+            _conn.Send(new ClientConnectedMessage());            
         }
 
         public override void OnClientDisconnect(NetworkConnection conn)
@@ -91,11 +94,31 @@ namespace Cirrus.Circuit.Networking
                 Id = ClientPlayerMessageId.Join
             });
 
-            bool res = ClientConnectionPlayer.Instance.PlayerConnectionResponseTask.Task.Result;
+            var response = ClientConnectionPlayer.Instance.WaitResponse(ServerResponseTimeout);
 
-            ClientConnectionPlayer.Instance.PlayerConnectionResponseTask.SetCanceled();
+            switch (response.Id)
+            {
+                case ServerMessageId.ServerId:
+                    if (response.LocalPlayerId < 0)
+                    {
+                        Debug.Log("invalid local player id connected");
+                        return false;
+                    }
 
-            return res;
+                    if (response.ServerPlayerId < 0)
+                    {
+                        Debug.Log("invalid server player id received");
+                        return false;
+                    }
+                    Debug.Log("Assigned server id with success: " + response.ServerPlayerId);
+                    LocalPlayerManager.Instance.Players[response.LocalPlayerId]._serverId = response.ServerPlayerId;
+                    LocalPlayerManager.Instance.Players[response.LocalPlayerId]._characterSlot = CharacterSelect.Instance._slots[response.ServerPlayerId];
+                    return true;
+                    break;
+                default: return false;
+            }
+
+            return false;
         }
 
         public override bool TryPlayerLeave(int localId)
@@ -295,7 +318,7 @@ namespace Cirrus.Circuit.Networking
             return _handler.TryPlayerJoin(playerId);
         }
 
-        public bool TryPlayerJoin(Player player)
+        public bool TryPlayerJoin(Controls.Player player)
         {
             return TryPlayerJoin(player.LocalId);
         }

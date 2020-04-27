@@ -15,37 +15,33 @@ namespace Cirrus.Circuit.Networking
 
         public override void OnStartLocalPlayer()
         {
-            base.OnStartLocalPlayer();           
-            Instance = this;                          
+            base.OnStartLocalPlayer();
+            Instance = this;
         }
 
-        public TaskCompletionSource<bool> PlayerConnectionResponseTask = new TaskCompletionSource<bool>();
+        //public TaskCompletionSource<ServerMessage> ServerResponseTaskSource = new TaskCompletionSource<ServerMessage>();
+
+        public AutoResetEvent _serverResponseEvent = new AutoResetEvent(false);
+        public ServerMessage _serverResponse = null;
+        public Mutex _mutex = new Mutex(false);
+
+        // TODO lock
+        public ServerMessage WaitResponse(int millisecondsTimeout)
+        {
+            _mutex.WaitOne();
+            _serverResponseEvent.WaitOne(millisecondsTimeout);
+            if (_serverResponse == null) new ServerMessage() { Id = ServerMessageId.Timeout };
+            var response = _serverResponse;
+            _serverResponse = null;
+            _mutex.ReleaseMutex();
+            return response;
+        }
 
         [TargetRpc]
         public void TargetReceive(ServerMessage msg)
-        {
-            Debug.Log("Player joined");
-
-            if (msg.LocalPlayerId < 0)
-            {
-                Debug.Log("invalid local player id connected");
-                PlayerConnectionResponseTask.SetResult(false);
-                return;
-            }
-
-            if (msg.ServerPlayerId < 0)
-            {
-                Debug.Log("invalid server player id received");
-                PlayerConnectionResponseTask.SetResult(false);
-                return;
-            }
-
-            Debug.Log("Assigned server id with success: " + msg.ServerPlayerId);
-            LocalPlayerManager.Instance.Players[msg.LocalPlayerId]._serverId = msg.ServerPlayerId;
-            LocalPlayerManager.Instance.Players[msg.LocalPlayerId]._characterSlot = CharacterSelect.Instance._slots[msg.ServerPlayerId];
-
-
-            PlayerConnectionResponseTask.SetResult(true);
+        {            
+            _serverResponseEvent.Set();
+            _serverResponse = msg;
         }
 
         [Command]
