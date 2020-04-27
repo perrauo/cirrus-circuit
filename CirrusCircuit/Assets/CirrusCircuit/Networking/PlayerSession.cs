@@ -32,32 +32,11 @@ namespace Cirrus.Circuit.Networking
     public class PlayerSession : NetworkBehaviour
     {
         [SerializeField]
+        [SyncVar]
         private float _score = 0;
 
         [SerializeField]
-        public int _characterResourceId = -1;
-
-        [SerializeField]
-        public Color _color;
-
-        public Color Color => _color;
-
-        [SerializeField]
-        public string _name;
-
-        public string Name => _name;
-
-        [SerializeField]
-        public int _serverId = 0;
-
-        [SerializeField]
-        public int _localId = 0;
-
-        public int LocalId => _localId;
-
-        public int ServerId => _serverId;
-
-        [SerializeField]
+        [SyncVar]
         public int _colorId = 0;
 
         public float Score
@@ -65,6 +44,34 @@ namespace Cirrus.Circuit.Networking
             get => _score;
             set => _score = value < 0 ? 0 : value;
         }
+
+        [SerializeField]
+        [SyncVar]
+        public int _characterResourceId = -1;
+
+        [SerializeField]
+        [SyncVar]
+        public Color _color;
+
+        public Color Color => _color;
+
+        [SerializeField]
+        [SyncVar]
+        public string _name;
+
+        public string Name => _name;
+
+        [SerializeField]
+        [SyncVar]
+        public int _serverId = 0;
+
+        public int ServerId => _serverId;
+
+        [SerializeField]
+        [SyncVar]
+        public int _localId = 0;
+
+        public int LocalId => _localId;
 
         public override void OnStartAuthority()
         {
