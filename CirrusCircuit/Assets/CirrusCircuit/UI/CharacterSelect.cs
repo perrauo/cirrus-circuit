@@ -127,9 +127,9 @@ namespace Cirrus.Circuit.UI
         //}
 
 
-        public void AssignAuthority(Mirror.NetworkConnection conn, int playerId)
+        public void AssignAuthority(Mirror.NetworkConnection conn, int serverPlayerId)
         {
-            _slots[playerId].netIdentity.AssignClientAuthority(conn);                    
+            _slots[serverPlayerId].netIdentity.AssignClientAuthority(conn);                    
         }
     }
 }
