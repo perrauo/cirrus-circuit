@@ -13,7 +13,7 @@ namespace Cirrus.Circuit.Networking
     {
         public NetworkConnection _conn;
 
-        public const int ServerResponseTimeout = 1000;
+        public const int ServerResponseTimeout = 10000;
 
         public NetworkManagerClientHandler(CustomNetworkManager net) : base(net)
         {
