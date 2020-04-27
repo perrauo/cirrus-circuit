@@ -110,15 +110,16 @@ namespace Cirrus.Circuit.Networking
                         Debug.Log("invalid server player id received");
                         return false;
                     }
+
                     Debug.Log("Assigned server id with success: " + response.ServerPlayerId);
                     LocalPlayerManager.Instance.Players[response.LocalPlayerId]._serverId = response.ServerPlayerId;
                     LocalPlayerManager.Instance.Players[response.LocalPlayerId]._characterSlot = CharacterSelect.Instance._slots[response.ServerPlayerId];
                     return true;
-                    break;
+      
                 default: return false;
             }
 
-            return false;
+            //return false;
         }
 
         public override bool TryPlayerLeave(int localId)
