@@ -169,12 +169,12 @@ namespace Cirrus.Circuit.World
 
                 foreach (Controls.Player players in Game.Instance._localPlayers)
                 {
-                    if (obj.ColorId == players._colorId)
-                    {
-                        obj.ColorId = players.ServerId;
-                        obj.Color = players.Color;
-                        break;
-                    }
+                    //if (obj.ColorId == players._colorId)
+                    //{
+                    //    obj.ColorId = players.ServerId;
+                    //    obj.Color = players.Color;
+                    //    break;
+                    //}
                 }
             }
         }
