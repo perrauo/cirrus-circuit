@@ -216,9 +216,9 @@ namespace Cirrus.Circuit.UI
                 case State.Selecting:
                     if (_state == State.Closed)
                         _characterSelect._openCount = 
-                            _characterSelect._openCount >= Game.PlayerMax ? 
-                            Game.PlayerMax : 
-                            _characterSelect._openCount + 1;
+                            _characterSelect._openCount >= Controls.PlayerManager.Max ?
+                                Controls.PlayerManager.Max : 
+                                _characterSelect._openCount + 1;
 
                     if (_state == State.Ready)
                         _characterSelect._readyCount--;
@@ -354,7 +354,7 @@ namespace Cirrus.Circuit.UI
             {
                 case State.Selecting:
                     Controls.Player player = (Controls.Player) args[0];
-                    player._characterResource = CharacterLibrary.Instance.Characters[_selectedIndex];
+                    player._session._characterResourceId = CharacterLibrary.Instance.Characters[_selectedIndex].Id;
                     CmdTryChangeState(State.Ready);
                     break;                    
 

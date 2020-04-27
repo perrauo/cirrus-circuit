@@ -747,7 +747,7 @@ namespace Cirrus.Circuit
             }
         }
 
-        private bool[] _wasMovingVertical = new bool[PlayerManager.PlayerMax];
+        private bool[] _wasMovingVertical = new bool[PlayerManager.Max];
 
         // TODO: Simulate LeftStick continuous axis with WASD
         public void FSMHandleAxesLeft(Player player, Vector2 axis)

@@ -37,13 +37,13 @@ namespace Cirrus.Circuit.Networking
 
         public Round _round;
 
-        private List<PlayerSession> _playerSessions;
+        public List<PlayerSession> _players = new List<PlayerSession>();
 
 
         private void OnScoreValueAdded(World.Objects.Gem gem, int serverPlayerId, float value)
         {
-            _playerSessions[serverPlayerId].Score += value;
-            UI.HUD.Instance.OnScoreChanged(serverPlayerId, _playerSessions[serverPlayerId].Score);            
+            _players[serverPlayerId].Score += value;
+            UI.HUD.Instance.OnScoreChanged(serverPlayerId, _players[serverPlayerId].Score);            
         }
 
         //#region FSM

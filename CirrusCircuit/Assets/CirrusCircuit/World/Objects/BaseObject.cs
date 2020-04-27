@@ -239,7 +239,7 @@ namespace Cirrus.Circuit.World.Objects
 
                 _nextColorIndex = _nextColorIndex + 1;
                 _nextColorIndex = MathUtils.Wrap(_nextColorIndex, 0, Game.Instance._localPlayers.Count);
-                _nextColor = Game.Instance._localPlayers[_nextColorIndex].Color;
+                //_nextColor = Game.Instance._localPlayers[_nextColorIndex].Color;
             }
         }
 

@@ -35,7 +35,7 @@ namespace Cirrus.Circuit.Networking
         private float _score = 0;
 
         [SerializeField]
-        private int _characterResourceId = -1;
+        public int _characterResourceId = -1;
 
         [SerializeField]
         public Color _color;

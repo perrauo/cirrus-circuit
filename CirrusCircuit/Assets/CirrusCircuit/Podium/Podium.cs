@@ -149,12 +149,12 @@ namespace Cirrus.Circuit
             _characters.Clear();
         }
 
-        public void Add(Controls.Player ctrl, World.Objects.Characters.CharacterAsset characterResource)
+        public void Add(PlayerSession player, World.Objects.Characters.CharacterAsset characterResource)
         {
             Platform platform = _platformTemplate.Create(
                 _platformsParent.transform.position + Vector3.right * _platforms.Count * _platformOffset,
                 _platformsParent.transform,
-                ctrl);
+                player);
 
             _timer.OnTimeLimitHandler += platform.OnTransitionToTimeOut;
             _platforms.Add(platform);
@@ -167,8 +167,8 @@ namespace Cirrus.Circuit
             character.transform.rotation = platform._visual.Parent.transform.rotation;
             platform.Character = character;
 
-            character.ColorId = ctrl.ServerId;
-            character.Color = ctrl.Color;
+            character.ColorId = player.ServerId;
+            character.Color = player.Color;
 
         }
 
@@ -184,11 +184,11 @@ namespace Cirrus.Circuit
             {
                 if (_isFinal)
                 {
-                    Controls.Player second = null;
+                    PlayerSession second = null;
                     float secondMax = -99999999f;
-                    Controls.Player winner = null;
+                    PlayerSession winner = null;
                     float max = -99999999f;
-                    foreach (Controls.Player player in Game.Instance._localPlayers)
+                    foreach (PlayerSession player in GameSession.Instance._players)
                     {
                         if (player.Score > max)
                         {

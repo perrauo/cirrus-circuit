@@ -11,19 +11,25 @@ namespace Cirrus.Circuit.World.Objects.Characters
         public Sprite Portrait;
 
         [SerializeField]
-        private Character CharacterTemplate;
+        [UnityEngine.Serialization.FormerlySerializedAs("CharacterTemplate")]
+        private Character Character;
 
         public int _id = -1;
 
-        public int Id => _id;
+        public int Id {
+
+            get
+            {
+                if(_id < 0) _id = Array.IndexOf(CharacterLibrary.Instance.Characters, this);
+
+                return _id;
+            }
+        }
+        
 
         public void OnValidate()
         {
-            if (_id < 0)
-            {
-                if (CharacterLibrary.Instance == null) return;
-                _id = Array.IndexOf(CharacterLibrary.Instance.Characters, this);
-            }
+            if (_id < 0) _id = Id;
         }
     
         public string Name
@@ -40,7 +46,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
         public Character Create(Vector3 position, Transform parent)
         {
             return Instantiate(
-                CharacterTemplate.gameObject,
+                Character.gameObject,
                 position,
                 Quaternion.identity,
                 parent)
@@ -50,7 +56,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
         public Character Create(Vector3 position, Transform parent, Quaternion rotation)
         {
             return Instantiate(
-                CharacterTemplate.gameObject,
+                Character.gameObject,
                 parent.position,
                 rotation,
                 parent)
