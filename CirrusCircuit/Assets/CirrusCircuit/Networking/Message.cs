@@ -25,7 +25,7 @@ namespace Cirrus.Circuit.Networking
         ServerId = 200
     }
 
-    public class ServerMessage : MessageBase
+    public class ServerMessage
     {
         public ServerMessageId Id = ServerMessageId.ServerId;
 
