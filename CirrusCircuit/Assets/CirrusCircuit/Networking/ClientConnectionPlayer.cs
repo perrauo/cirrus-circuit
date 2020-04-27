@@ -23,7 +23,6 @@ namespace Cirrus.Circuit.Networking
         private ServerMessage _serverResponse = null;
         private Mutex _mutex = new Mutex(false);
 
-        // TODO lock
         public ServerMessage WaitResponse(int millisecondsTimeout)
         {
             _mutex.WaitOne();

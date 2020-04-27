@@ -277,10 +277,6 @@ namespace Cirrus.Circuit.Networking
 
         public static CustomNetworkManager Instance => (CustomNetworkManager) singleton;
 
-        //[SerializeField]
-        //private ConnectedPlayer _clientPlayerTemplate;
-        //public ConnectedPlayer ClientPlayerTemplate => _clientPlayerTemplate;
-
         [SerializeField]
         [UnityEngine.Serialization.FormerlySerializedAs("_networkPlayerTemplate")]
         private ClientConnectionPlayer _networkClientTemplate;

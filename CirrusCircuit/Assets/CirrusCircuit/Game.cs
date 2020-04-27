@@ -805,7 +805,8 @@ namespace Cirrus.Circuit
 
                     if (Mathf.Abs(step.z) > 0)
                     {
-                        _characterSelect.OnLocalCharacterScroll(player.ServerId, step.z > 0);
+                        if (player._characterSlot == null) return;
+                        player._characterSlot.CmdScroll(step.z > 0);                        
                     }
 
                     break;

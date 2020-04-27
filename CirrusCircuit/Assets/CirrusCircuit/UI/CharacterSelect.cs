@@ -121,10 +121,10 @@ namespace Cirrus.Circuit.UI
 
         }
 
-        public void OnLocalCharacterScroll(int playerId, bool scroll)
-        {
-            _slots[playerId].CmdScroll(scroll);
-        }
+        //public void OnLocalCharacterScroll(int playerId, bool scroll)
+        //{
+        //    _slots[playerId].CmdScroll(scroll);
+        //}
 
 
         public void AssignAuthority(Mirror.NetworkConnection conn, int playerId)
