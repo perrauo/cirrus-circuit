@@ -24,6 +24,9 @@ namespace Cirrus.Circuit.Networking
         public LevelSession LevelSession;
 
         [SerializeField]
+        public RoundSession RoundSession;
+
+        [SerializeField]
         public NetworkBehaviour[] Others;        
     }
 }
