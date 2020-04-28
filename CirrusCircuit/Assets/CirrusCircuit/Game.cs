@@ -112,9 +112,8 @@ namespace Cirrus.Circuit
 
             Layers = new Layers();
 
-            if (_randomizeSeed) UnityEngine.Random.InitState(Environment.TickCount);
- 
-                       
+            Transitions.Transition.Instance.OnTransitionTimeoutHandler += OnTransitionTimeOut;
+
             TryChangeState(State.Menu);
         }
 
@@ -192,14 +191,22 @@ namespace Cirrus.Circuit
 
         public void FSMFixedUpdate()
         {
+
             switch (_state)
             {
-                case State.Menu:                                 
+                case State.Menu:
                     break;
 
                 case State.Session:
+                    CameraManager.Instance.Camera.orthographicSize =
+                        Mathf.Lerp(
+                            CameraManager.Instance.Camera.orthographicSize,
+                            GameSession.Instance._targetSizeCamera,
+                            _cameraSizeSpeed);
+
                     if (GameSession.Instance == null) return;
                     GameSession.Instance.FSMFixedUpdate();
+
                     break;
             }
         }
@@ -248,6 +255,7 @@ namespace Cirrus.Circuit
                     {                        
                         case State.Menu:
                         case State.Transition:
+                        case State.Session:
                         //case State.Round:
                             destination = target;
                             return true;
@@ -259,6 +267,7 @@ namespace Cirrus.Circuit
                     {
                         case State.Menu:
                         case State.Transition:
+                        case State.Session:
 
                             destination = target;
                             return true;

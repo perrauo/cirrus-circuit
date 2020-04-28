@@ -43,9 +43,7 @@ namespace Cirrus.Circuit.Transitions
         [SerializeField]
         private RectTransform _canvasRectTransform;
 
-
         private Vector3 _startPosition;
-
 
         private bool _enabled = false;
 
