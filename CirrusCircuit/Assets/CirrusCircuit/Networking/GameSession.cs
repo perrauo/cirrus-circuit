@@ -374,27 +374,25 @@ namespace Cirrus.Circuit.Networking
 
 
         [ClientRpc]
-        public void Rpc_TryChangeState(State transition, State target)
+        public void Rpc_TryChangeState_1(State transition, State target)
         {
-            if (TryTransition(transition, out State destination))
-            {
-                ExitState(destination);
-                TryFinishChangeState(destination, target);
-            }
+            DoTryChangeState(transition, target);
         }
 
         [ClientRpc]
-        public void Rpc_TryChangeState(State transition)
+        public void Rpc_TryChangeState_2(State transition)
+        {
+            DoTryChangeState(transition);
+        }
+
+        public void DoTryChangeState(State transition, params object[] args)
         {
             if (TryTransition(transition, out State destination))
             {
                 ExitState(destination);
                 TryFinishChangeState(destination, destination);
             }
-        }
-
-
-
+        }    
 
         private void ExitState(State destination)
         {

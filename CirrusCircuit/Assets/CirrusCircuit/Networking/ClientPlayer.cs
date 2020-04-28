@@ -110,7 +110,7 @@ namespace Cirrus.Circuit.Networking
             GameSession.State destination)
         {
             GameSession session;
-            if ((session = obj.GetComponent<GameSession>()) != null) session.Rpc_TryChangeState(transition, destination);
+            if ((session = obj.GetComponent<GameSession>()) != null) session.Rpc_TryChangeState_1(transition, destination);
         }
 
         [Command]
@@ -119,7 +119,7 @@ namespace Cirrus.Circuit.Networking
             GameSession.State transition)
         {
             GameSession session;
-            if ((session = obj.GetComponent<GameSession>()) != null) session.Rpc_TryChangeState(transition);
+            if ((session = obj.GetComponent<GameSession>()) != null) session.Rpc_TryChangeState_2(transition);
         }
 
 
