@@ -542,7 +542,7 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
 
-        protected bool TryFinishChangeState(State target, params object[] args)
+        protected bool TryFinishChangeState(State target, object[] args)
         {
             switch (target)
             {            
