@@ -81,12 +81,25 @@ namespace Cirrus.Circuit.UI
 
         public void Awake()
         {
-            GameSession.Instance.OnNewRoundHandler += OnNewRound;
             _timesUpTimer = new Circuit.Timer(_timesUpTime, start: false, repeat: false);
             _timesUpTimer.OnTimeLimitHandler += OnTimesUpTimeOut;
 
             _timer = new Circuit.Timer(_time, start: false, repeat: false);
             _timer.OnTimeLimitHandler += OnTimeOut;
+
+            GameSession.OnStartClientStaticHandler += OnClientStarted;
+        }
+
+        public void OnClientStarted(bool enable)
+        {
+            if (enable)
+            {
+                GameSession.Instance.OnNewRoundHandler += OnNewRound;
+            }
+            else
+            {
+                GameSession.Instance.OnNewRoundHandler -= OnNewRound;
+            }
         }
 
         public void OnNewRound(Round round)

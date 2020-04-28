@@ -20,10 +20,22 @@ namespace Cirrus.Circuit.UI
         }
 
         public void Awake()
-        {
-            GameSession.Instance.OnNewRoundHandler += OnNewRound;
-            //Game.Instance.On
+        {            
+            GameSession.OnStartClientStaticHandler += OnClientStarted;
         }
+
+        public void OnClientStarted(bool enable)
+        {
+            if (enable)
+            {
+                GameSession.Instance.OnNewRoundHandler += OnNewRound;
+            }
+            else
+            {
+                GameSession.Instance.OnNewRoundHandler -= OnNewRound;
+            }
+        }
+
 
         private void OnNewRound(Round round)
         {

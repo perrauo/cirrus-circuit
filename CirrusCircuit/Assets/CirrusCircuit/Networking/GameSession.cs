@@ -19,7 +19,7 @@ namespace Cirrus.Circuit.Networking
 {
     public class GameSession : NetworkBehaviour
     {
-        public static Event<bool> OnStartClientHandler;
+        public static Event<bool> OnStartClientStaticHandler;
 
         protected static GameSession _instance;
 
@@ -36,13 +36,13 @@ namespace Cirrus.Circuit.Networking
         public override void OnStartClient()
         {
             base.OnStartClient();
-            OnStartClientHandler?.Invoke(true);
+            OnStartClientStaticHandler?.Invoke(true);
         }
 
         public override void OnStopClient()
         {
             base.OnStopClient();
-            OnStartClientHandler?.Invoke(true);
+            OnStartClientStaticHandler?.Invoke(true);
             _instance = null;
         }
 

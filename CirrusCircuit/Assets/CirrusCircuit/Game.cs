@@ -96,9 +96,7 @@ namespace Cirrus.Circuit
         public List<Player> LocalPlayers = new List<Player>();
 
         private bool[] _wasMovingVertical = new bool[PlayerManager.Max];
-
-        public Events.Event<bool> OnSessionStartHandler;
-
+        
         public override void OnValidate()
         {
             base.OnValidate();
@@ -281,7 +279,6 @@ namespace Cirrus.Circuit
                     return true;
 
                 case State.Session:
-                    OnSessionStartHandler?.Invoke(true);
                     _state = target;
                     return true;
 

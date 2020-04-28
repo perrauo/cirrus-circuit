@@ -42,9 +42,21 @@ namespace Cirrus.Circuit.UI
 
         public void Awake()
         {
-            GameSession.Instance.OnNewRoundHandler += OnNewRound;
-            GameSession.Instance.OnNewRoundHandler += OnRound;
-            //_on
+            GameSession.OnStartClientStaticHandler += OnClientStarted;
+        }
+
+        public void OnClientStarted(bool enable)
+        {
+            if (enable)
+            {
+                GameSession.Instance.OnNewRoundHandler += OnNewRound;
+                GameSession.Instance.OnNewRoundHandler += OnRound;
+            }
+            else
+            {
+                GameSession.Instance.OnNewRoundHandler -= OnNewRound;
+                GameSession.Instance.OnNewRoundHandler -= OnRound;
+            }
         }
 
         public void Update()

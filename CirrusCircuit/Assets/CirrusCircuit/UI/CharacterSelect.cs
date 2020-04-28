@@ -24,6 +24,19 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         public int _openCount = 0;
 
+        private bool _enabled = false;
+
+        public bool Enabled
+        {
+            get => _enabled;
+
+            set
+            {
+                _enabled = value;
+                transform.GetChild(0).gameObject.SetActive(_enabled);
+            }
+        }
+
 
         public override void OnValidate()
         {
@@ -36,22 +49,20 @@ namespace Cirrus.Circuit.UI
         {
             base.Awake();
 
-            Game.Instance.OnSessionStartHandler += OnSessionStart;
-            //Game.Instance.OnLocalPlayerJoinHandler += OnPlayerJoin;
-            GameSession.Instance.OnLevelSelectHandler += OnLevelSelect;
-            GameSession.Instance.OnLevelSelectHandler += OnMenu;
+            GameSession.OnStartClientStaticHandler += OnClientStarted;                                   
         }
 
-        private bool _enabled = false;
-
-        public bool Enabled
+        public void OnClientStarted(bool enable)
         {
-            get => _enabled;
-
-            set
+            if (enable)
             {
-                _enabled = value;
-                transform.GetChild(0).gameObject.SetActive(_enabled);
+                GameSession.Instance.OnLevelSelectHandler += OnLevelSelect;
+                GameSession.Instance.OnLevelSelectHandler += OnMenu;
+            }
+            else
+            {
+                GameSession.Instance.OnLevelSelectHandler -= OnLevelSelect;
+                GameSession.Instance.OnLevelSelectHandler -= OnMenu;
             }
         }
 

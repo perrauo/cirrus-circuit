@@ -45,8 +45,21 @@ namespace Cirrus.Circuit.UI
 
         public void Awake()
         {
-            GameSession.Instance.OnLevelSelectedHandler += OnLevelSelected;
-            GameSession.Instance.OnLevelSelectHandler += OnLevelSelect;
+            GameSession.OnStartClientStaticHandler += OnClientStarted;
+        }
+
+        public void OnClientStarted(bool enable)
+        {
+            if (enable)
+            {
+                GameSession.Instance.OnLevelSelectedHandler += OnLevelSelected;
+                GameSession.Instance.OnLevelSelectHandler += OnLevelSelect;
+            }
+            else
+            {
+                GameSession.Instance.OnLevelSelectedHandler -= OnLevelSelected;
+                GameSession.Instance.OnLevelSelectHandler -= OnLevelSelect;
+            }
         }
 
         public void OnDestroy()

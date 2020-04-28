@@ -90,8 +90,21 @@ namespace Cirrus.Circuit
 
             _finalTimer.OnTimeLimitHandler += OnFinalTimeout;
 
-            GameSession.Instance.OnPodiumHandler += OnPodium;
-            GameSession.Instance.OnFinalPodiumHandler += OnFinalPodium;
+            GameSession.OnStartClientStaticHandler += OnClientStarted;
+        }
+
+        public void OnClientStarted(bool enable)
+        {
+            if (enable)
+            {
+                GameSession.Instance.OnPodiumHandler += OnPodium;
+                GameSession.Instance.OnFinalPodiumHandler += OnFinalPodium;
+            }
+            else
+            {
+                GameSession.Instance.OnPodiumHandler -= OnPodium;
+                GameSession.Instance.OnFinalPodiumHandler -= OnFinalPodium;
+            }
         }
 
         public void FixedUpdate()
