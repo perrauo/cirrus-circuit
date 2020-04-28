@@ -24,9 +24,9 @@ namespace Cirrus.Circuit.UI
         private UnityEngine.UI.InputField _joinInput;
 
 
-        public void OnValidate()
+        public override void OnValidate()
         {
-
+            base.OnValidate();
         }
 
         private bool _enabled = false;
@@ -43,19 +43,29 @@ namespace Cirrus.Circuit.UI
         }
 
 
-        public void Awake()
+        public override void Awake()
         {
+            base.Awake();
+
             _exitButton.onClick.AddListener(OnExitClick);
             //_playButton.onClick.AddListener(() => Game.Instance.StartLocal());
             _joinButton.onClick.AddListener(OnJoinClicked);
             _hostButton.onClick.AddListener(OnHostClicked);
 
+           
             //GameSession.OnStartClientStaticHandler += OnSessionStart;
+        }
+
+        public override void Start()
+        {
+            base.Start();
+
+            Game.Instance.OnMenuHandler += (x) => Enabled = x;
         }
 
         public void OnHostClicked()
         {
-            if(CustomNetworkManager.Instance.TryStartHost(_joinInput.text)) Game.Instance.StartSession();
+            if(CustomNetworkManager.Instance.TryStartHost(_joinInput.text)) Game.Instance.JoinSession();
 
             else Debug.Log("Unable to host");
         }
@@ -67,7 +77,7 @@ namespace Cirrus.Circuit.UI
             if (_joinInput == null) return;
             if (string.IsNullOrEmpty(_joinInput.text)) return;
 
-            if (CustomNetworkManager.Instance.TryStartClient(_joinInput.text)) Game.Instance.StartSession();
+            if (CustomNetworkManager.Instance.TryStartClient(_joinInput.text)) Game.Instance.JoinSession();
             else Debug.Log("Unable to join");
         }
         

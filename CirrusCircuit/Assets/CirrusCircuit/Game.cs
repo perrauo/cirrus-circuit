@@ -27,6 +27,8 @@ namespace Cirrus.Circuit
 
         public Event<bool> OnCharacterSelectHandler;
 
+        public Event<bool> OnMenuHandler;
+
         public Event<bool> OnLevelSelectHandler;
 
         public Events.Event OnScreenResizedHandler;
@@ -142,7 +144,7 @@ namespace Cirrus.Circuit
             _initialVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30)); // I used 30 as my camera z is -30
 
             Transitions.Transition.Instance.OnTransitionTimeoutHandler += OnTransitionTimeOut;
-            DoTryChangeState(State.Menu);
+            DoTryChangeState(State.Menu, false);            
         }
 
         public void Update()
@@ -165,7 +167,7 @@ namespace Cirrus.Circuit
             FSMFixedUpdate();
         }
 
-        public void StartSession()
+        public void JoinSession()
         {
             DoTryChangeState(State.CharacterSelection);
         }
@@ -191,8 +193,9 @@ namespace Cirrus.Circuit
         {
             for (int i = 0; i < Game.Instance._levels.Length; i++)
             {
-                if (Game.Instance._levels[i] == null) continue;
-                Game.Instance._levels[i].TargetPosition = Vector3.zero + Vector3.right * (i - _currentLevelIndex) * Game.Instance.DistanceLevelSelect;
+                if (Instance._levels[i] == null) continue;
+
+                Instance._levels[i].TargetPosition = Vector3.zero + Vector3.right * (i - _currentLevelIndex) * Game.Instance.DistanceLevelSelect;
             }
 
             GameSession.Instance._selectedLevelIndex = _currentLevelIndex;
@@ -279,6 +282,10 @@ namespace Cirrus.Circuit
         {
             switch (_state)
             {
+                case State.Menu:
+                    OnMenuHandler.Invoke(false);
+                    break;
+
                 case State.LevelSelection:
                     OnLevelSelectHandler.Invoke(false);
                     break;
@@ -296,10 +303,31 @@ namespace Cirrus.Circuit
             switch (_state)
             {
 
+                case State.Menu:
+
+                    switch (transition)
+                    {
+                        case State.Menu:
+                        case State.Round:
+                        case State.CharacterSelection:
+                        case State.BeginRound:
+                        case State.WaitingNextRound:
+                        case State.LevelSelection:
+                        case State.Score:
+                        case State.Podium:
+                        case State.FinalPodium:
+
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
+
                 case State.CharacterSelection:
 
                     switch (transition)
                     {
+                        case State.Menu:
                         case State.Round:
                         case State.CharacterSelection:
                         case State.BeginRound:
@@ -318,6 +346,7 @@ namespace Cirrus.Circuit
 
                     switch (transition)
                     {
+                        case State.Menu:
                         case State.Round:
                         case State.CharacterSelection:
                         case State.BeginRound:
@@ -336,6 +365,7 @@ namespace Cirrus.Circuit
 
                     switch (transition)
                     {
+                        case State.Menu:
                         case State.CharacterSelection:
                         case State.BeginRound:
                         case State.WaitingNextRound:
@@ -352,6 +382,7 @@ namespace Cirrus.Circuit
                 case State.LevelSelection:
                     switch (transition)
                     {
+                        case State.Menu:
                         case State.CharacterSelection:
                         case State.BeginRound:
                         case State.WaitingNextRound:
@@ -369,6 +400,7 @@ namespace Cirrus.Circuit
                 case State.WaitingNextRound:
                     switch (transition)
                     {
+                        case State.Menu:
                         case State.Round:
                         case State.CharacterSelection:
                         case State.BeginRound:
@@ -418,13 +450,17 @@ namespace Cirrus.Circuit
             destination = State.Round;
             return false;
         }
-
-
+    
 
         protected bool TryFinishChangeState(State target, params object[] args)
         {
             switch (target)
             {
+                case State.Menu:
+                    OnMenuHandler?.Invoke(true);
+                    _state = target;
+                    return true;
+
                 case State.CharacterSelection:
                     OnCharacterSelectHandler?.Invoke(true);
                     _state = target;
