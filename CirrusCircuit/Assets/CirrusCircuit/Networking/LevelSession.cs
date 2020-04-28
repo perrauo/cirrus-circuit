@@ -138,7 +138,7 @@ namespace Cirrus.Circuit.Networking
             _randomDropSpawnTimer.OnTimeLimitHandler += OnSpawnTimeout;
 
 
-            Game.Instance.OnNewRoundHandler += OnNewRound;
+            GameSession.Instance.OnNewRoundHandler += OnNewRound;
             //Game.Instance.On
 
             foreach (Door door in _doors)

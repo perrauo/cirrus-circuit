@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cirrus.Events;
 
 namespace Cirrus.Circuit
 {
@@ -27,25 +28,13 @@ namespace Cirrus.Circuit
         private bool _randomizeSeed = false;
         public bool IsSeedRandomized => _randomizeSeed;
 
-        public Events.Event OnScreenResizedHandler;
+        public Events.Event OnScreenResizedHandler;                
 
-        public World.Objects.Door.OnScoreValueAdded OnScoreValueAddedHandler;
+        public Event<World.Level, int> OnLevelSelectedHandler;
 
-        public Events.Event OnPodiumHandler;
+        public Event<bool> OnMenuHandler;
 
-        public Events.Event OnFinalPodiumHandler;
-
-        public Events.Event<Round> OnNewRoundHandler;
-
-        public Events.Event<World.Level, int> OnLevelSelectedHandler;
-
-        public Events.Event<bool> OnMenuHandler;
-
-        public Events.Event<bool> OnLevelSelectHandler;
-
-        public Events.Event<bool> OnCharacterSelectHandler;
-
-        public Events.Event<Player> OnLocalPlayerJoinHandler;
+        public Event<Player> OnLocalPlayerJoinHandler;
 
         public Layers Layers;
 
@@ -108,6 +97,8 @@ namespace Cirrus.Circuit
 
         private bool[] _wasMovingVertical = new bool[PlayerManager.Max];
 
+        public Events.Event<bool> OnSessionStartHandler;
+
         public override void OnValidate()
         {
             base.OnValidate();
@@ -160,7 +151,7 @@ namespace Cirrus.Circuit
 
         public void StartSession()
         {
-            TryChangeState(State.TransitionEffect, State.Session);
+            TryChangeState(State.Transition, State.Session);
         }
 
         // TODO: Simulate LeftStick continuous axis with WASD
@@ -179,16 +170,6 @@ namespace Cirrus.Circuit
             FSMHandleAction1(player);
         }
 
-        public void OnLevelSelect()
-        {
-            OnLevelSelectHandler?.Invoke(true);
-        }
-
-        public void OnWaiting()
-        {
-            //UI.HUD.Instance.OnWaiting();
-        }
-
         private void OnTransitionTimeOut()
         {
             TryChangeState(_transition);
@@ -204,7 +185,7 @@ namespace Cirrus.Circuit
             Unknown,
             Menu,
             Session,
-            TransitionEffect
+            Transition
         }
 
         [SerializeField]
@@ -267,18 +248,18 @@ namespace Cirrus.Circuit
                     switch (target)
                     {                        
                         case State.Menu:
-                        case State.TransitionEffect:
+                        case State.Transition:
                         //case State.Round:
                             destination = target;
                             return true;
                     }
                     break;
 
-                case State.TransitionEffect:
+                case State.Transition:
                     switch (target)
                     {
                         case State.Menu:
-                        case State.TransitionEffect:
+                        case State.Transition:
 
                             destination = target;
                             return true;
@@ -300,10 +281,11 @@ namespace Cirrus.Circuit
                     return true;
 
                 case State.Session:
+                    OnSessionStartHandler?.Invoke(true);
                     _state = target;
                     return true;
 
-                case State.TransitionEffect:
+                case State.Transition:
                     _transition = (State)args[0];                    
                     Transitions.Transition.Instance.Perform();
                     _state = target;

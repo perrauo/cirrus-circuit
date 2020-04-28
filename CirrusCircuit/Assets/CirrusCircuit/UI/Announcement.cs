@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Cirrus.Circuit.Networking;
 
 namespace Cirrus.Circuit.UI
 {
@@ -80,7 +81,7 @@ namespace Cirrus.Circuit.UI
 
         public void Awake()
         {
-            Game.Instance.OnNewRoundHandler += OnNewRound;
+            GameSession.Instance.OnNewRoundHandler += OnNewRound;
             _timesUpTimer = new Circuit.Timer(_timesUpTime, start: false, repeat: false);
             _timesUpTimer.OnTimeLimitHandler += OnTimesUpTimeOut;
 

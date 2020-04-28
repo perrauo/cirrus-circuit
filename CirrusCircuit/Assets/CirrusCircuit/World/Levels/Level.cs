@@ -116,8 +116,7 @@ namespace Cirrus.Circuit.World
 
             _randomDropSpawnTimer = new Timer(_randomDropSpawnTime, start: false, repeat: false);
             _randomDropSpawnTimer.OnTimeLimitHandler += OnSpawnTimeout;
-
-            Game.Instance.OnNewRoundHandler += OnNewRound;
+            
             //Game.Instance.On
 
             foreach (Door door in _doors)

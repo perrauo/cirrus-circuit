@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Cirrus.Circuit.Networking;
 
 namespace Cirrus.Circuit.UI
 {
@@ -44,8 +45,8 @@ namespace Cirrus.Circuit.UI
 
         public void Awake()
         {
-            Game.Instance.OnLevelSelectedHandler += OnLevelSelected;
-            Game.Instance.OnLevelSelectHandler += OnLevelSelect;
+            GameSession.Instance.OnLevelSelectedHandler += OnLevelSelected;
+            GameSession.Instance.OnLevelSelectHandler += OnLevelSelect;
         }
 
         public void OnDestroy()

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using Cirrus.Circuit.Networking;
 
 namespace Cirrus.Circuit.UI
 {
@@ -20,7 +21,7 @@ namespace Cirrus.Circuit.UI
 
         public void Awake()
         {
-            Game.Instance.OnNewRoundHandler += OnNewRound;
+            GameSession.Instance.OnNewRoundHandler += OnNewRound;
             //Game.Instance.On
         }
 

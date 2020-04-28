@@ -50,7 +50,7 @@ namespace Cirrus.Circuit.UI
             _joinButton.onClick.AddListener(OnJoinClicked);
             _hostButton.onClick.AddListener(OnHostClicked);
 
-            Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
+            Game.Instance.OnSessionStartHandler += OnSessionStart;
         }
 
         public void OnHostClicked()
@@ -83,9 +83,9 @@ namespace Cirrus.Circuit.UI
         }
 
 
-        public void OnCharacterSelect(bool enabled)
+        public void OnSessionStart(bool enabled)
         {
-            Enabled = false;
+            Enabled = enabled;
         }
 
     }

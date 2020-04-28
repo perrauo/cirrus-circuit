@@ -36,10 +36,10 @@ namespace Cirrus.Circuit.UI
         {
             base.Awake();
 
-            Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
+            Game.Instance.OnSessionStartHandler += OnSessionStart;
             //Game.Instance.OnLocalPlayerJoinHandler += OnPlayerJoin;
-            Game.Instance.OnLevelSelectHandler += OnLevelSelect;
-            Game.Instance.OnLevelSelectHandler += OnMenu;
+            GameSession.Instance.OnLevelSelectHandler += OnLevelSelect;
+            GameSession.Instance.OnLevelSelectHandler += OnMenu;
         }
 
         private bool _enabled = false;
@@ -55,9 +55,9 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-        public void OnCharacterSelect(bool enabled)
+        public void OnSessionStart(bool enabled)
         {
-            Enabled = true;
+            Enabled = enabled;
         }
 
         public void OnLevelSelect(bool enabled)
