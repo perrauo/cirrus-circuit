@@ -141,7 +141,6 @@ namespace Cirrus.Circuit.Networking
             if (Game.Instance.IsSeedRandomized)
                 Random.InitState(Environment.TickCount);
 
-            Transitions.Transition.Instance.OnTransitionTimeoutHandler += OnTransitionTimeOut;
             UI.CharacterSelect.Instance.OnCharacterSelectReadyHandler += OnCharacterSelected;
         }
 
@@ -152,7 +151,7 @@ namespace Cirrus.Circuit.Networking
 
         public virtual void Start()
         {
-                        
+            Transitions.Transition.Instance.OnTransitionTimeoutHandler += OnTransitionTimeOut;
         }
 
 
