@@ -9,6 +9,8 @@ namespace Cirrus.Circuit.UI
 
     public class CharacterSelect : BaseSingleton<CharacterSelect>
     {
+        // TODO character select session with hooks on count variables
+
         public OnCharacterSelectReady OnCharacterSelectReadyHandler;
 
         [SerializeField]
