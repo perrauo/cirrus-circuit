@@ -109,6 +109,7 @@ namespace Cirrus.Circuit
 
             _initialVectorBottomLeft = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
             _initialVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30)); // I used 30 as my camera z is -30
+
             Transitions.Transition.Instance.OnTransitionTimeoutHandler += OnTransitionTimeOut;
             TryChangeState(State.Menu);
         }

@@ -138,8 +138,7 @@ namespace Cirrus.Circuit.Networking
 
         void Awake()
         {
-            if (Game.Instance.IsSeedRandomized)
-                Random.InitState(Environment.TickCount);
+            if (Game.Instance.IsSeedRandomized) Random.InitState(Environment.TickCount);
 
             UI.CharacterSelect.Instance.OnCharacterSelectReadyHandler += OnCharacterSelected;
         }
@@ -150,7 +149,7 @@ namespace Cirrus.Circuit.Networking
         }
 
         public virtual void Start()
-        {
+        {            
             Transitions.Transition.Instance.OnTransitionTimeoutHandler += OnTransitionTimeOut;
         }
 
@@ -174,7 +173,6 @@ namespace Cirrus.Circuit.Networking
         public override void OnStartClient()
         {
             base.OnStartClient();
-            Debug.Log("Client Started");
             OnStartClientStaticHandler?.Invoke(true);
         }
 
