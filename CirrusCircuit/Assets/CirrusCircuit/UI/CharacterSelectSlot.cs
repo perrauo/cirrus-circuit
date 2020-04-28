@@ -168,7 +168,8 @@ namespace Cirrus.Circuit.UI
 
 
         public void TryChangeState(State target)
-        {           
+        {
+            Debug.Log("CHARA SET STATE");
             ClientPlayer.Instance.Cmd_CharacterSelectSlot_TryChangeState(gameObject, target);
         }
 
