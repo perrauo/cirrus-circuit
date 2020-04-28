@@ -7,7 +7,7 @@ using UnityEngine;
 
 
 
-namespace Cirrus.Circuit
+namespace Cirrus.Circuit.Networking
 {
     public delegate void OnIntermission(int count);
 
