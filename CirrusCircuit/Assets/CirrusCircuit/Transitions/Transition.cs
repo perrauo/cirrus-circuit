@@ -142,6 +142,8 @@ namespace Cirrus.Circuit.Transitions
 
         public void Perform()
         {
+            Debug.Log("Perform transition");
+
             _transitionTimer.Start(_transitionTime);
             StartCoroutine(DoTransition());
         }

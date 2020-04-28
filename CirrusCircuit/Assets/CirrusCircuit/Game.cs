@@ -112,8 +112,6 @@ namespace Cirrus.Circuit
 
             Layers = new Layers();
 
-            Transitions.Transition.Instance.OnTransitionTimeoutHandler += OnTransitionTimeOut;
-
             TryChangeState(State.Menu);
         }
 
@@ -257,6 +255,18 @@ namespace Cirrus.Circuit
                         case State.Transition:
                         case State.Session:
                         //case State.Round:
+                            destination = target;
+                            return true;
+                    }
+                    break;
+
+                case State.Session:
+                    switch (target)
+                    {
+                        case State.Menu:
+                        case State.Transition:
+                        case State.Session:
+                            //case State.Round:
                             destination = target;
                             return true;
                     }
