@@ -19,6 +19,8 @@ namespace Cirrus.Circuit.Networking
 {
     public class GameSession : NetworkBehaviour
     {
+        public static Event<bool> OnStartClientHandler;
+
         protected static GameSession _instance;
 
         public static GameSession Instance
@@ -31,9 +33,16 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-        public void Stop()
+        public override void OnStartClient()
         {
-            ServerUtils.TryDestroyNetworkObject(_instance.gameObject);
+            base.OnStartClient();
+            OnStartClientHandler?.Invoke(true);
+        }
+
+        public override void OnStopClient()
+        {
+            base.OnStopClient();
+            OnStartClientHandler?.Invoke(true);
             _instance = null;
         }
 

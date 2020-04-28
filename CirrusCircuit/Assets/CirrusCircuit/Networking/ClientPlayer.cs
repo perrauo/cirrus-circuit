@@ -7,9 +7,9 @@ using UnityEngine;
 namespace Cirrus.Circuit.Networking
 {
     // Serves to sync the connection
-    public class ClientConnectionPlayer : NetworkBehaviour
+    public class ClientPlayer : NetworkBehaviour
     {
-        public static ClientConnectionPlayer Instance;
+        public static ClientPlayer Instance;
 
         public override void OnStartLocalPlayer()
         {

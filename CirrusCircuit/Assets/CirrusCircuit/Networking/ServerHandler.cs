@@ -12,17 +12,23 @@ using Cirrus.MirrorExt;
 namespace Cirrus.Circuit.Networking
 {
 
-    public class NetworkManagerServerHandler : NetworkManagerHandler
+    public class ServerHandler : NetworkManagerHandler
     {
-        private Dictionary<int, ClientConnectionPlayer> _connections = new Dictionary<int, ClientConnectionPlayer>();
+        private Dictionary<int, ClientPlayer> _connections = new Dictionary<int, ClientPlayer>();
         private Dictionary<int, List<int>> _players = new Dictionary<int, List<int>>();
         private int _playerCount = 0;
 
 
-        public NetworkManagerServerHandler(CustomNetworkManager net) : base(net)
+        public ServerHandler(CustomNetworkManager net) : base(net)
         {
             NetworkServer.RegisterHandler<ClientConnectedMessage>(OnClientConnectedMessage);
             NetworkServer.RegisterHandler<ClientPlayerMessage>(OnPlayerJoinMessage);
+        }
+
+        public override void Stop()
+        {
+            _net.StopHost();
+            ServerUtils.TryDestroyNetworkObject(GameSession.Instance.gameObject);
         }
 
         public override void OnClientConnect(NetworkConnection conn)
@@ -37,7 +43,7 @@ namespace Cirrus.Circuit.Networking
                     NetworkingLibrary.Instance.ClientConnectionPlayer.gameObject,
                     out NetworkBehaviour player))
                 {
-                    _connections.Add(conn.connectionId, (ClientConnectionPlayer)player);
+                    _connections.Add(conn.connectionId, (ClientPlayer)player);
                 }
             }
         }
@@ -59,7 +65,7 @@ namespace Cirrus.Circuit.Networking
                 _players.Add(conn.connectionId, connectionPlayers);
             }
 
-            if (_connections.TryGetValue(conn.connectionId, out ClientConnectionPlayer clientConnection))
+            if (_connections.TryGetValue(conn.connectionId, out ClientPlayer clientConnection))
             {
                 if (ServerUtils.TryCreateNetworkObject(
                     conn, 
@@ -116,7 +122,7 @@ namespace Cirrus.Circuit.Networking
                 NetworkingLibrary.Instance.ClientConnectionPlayer.gameObject, 
                 out NetworkBehaviour client))
             {
-                _connections.Add(conn.connectionId, (ClientConnectionPlayer)client);
+                _connections.Add(conn.connectionId, (ClientPlayer)client);
             }
         }
     }

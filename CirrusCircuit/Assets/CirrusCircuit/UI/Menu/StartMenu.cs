@@ -55,7 +55,7 @@ namespace Cirrus.Circuit.UI
 
         public void OnHostClicked()
         {
-            if(CustomNetworkManager.Instance.TryInitHost(_joinInput.text))
+            if(CustomNetworkManager.Instance.TryStartHost(_joinInput.text))
                 Game.Instance.StartSession();
 
             else
@@ -69,7 +69,7 @@ namespace Cirrus.Circuit.UI
             if (_joinInput == null) return;
             if (string.IsNullOrEmpty(_joinInput.text)) return;
 
-            if (CustomNetworkManager.Instance.TryInitClient(_joinInput.text))
+            if (CustomNetworkManager.Instance.TryStartClient(_joinInput.text))
                 Game.Instance.StartSession();            
             else           
                 // TODO log ero

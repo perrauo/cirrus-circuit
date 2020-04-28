@@ -23,6 +23,11 @@ namespace Cirrus.Circuit.Networking
     {
         protected CustomNetworkManager _net;
 
+        public virtual void Stop()
+        {
+
+        }
+
         public NetworkManagerHandler(CustomNetworkManager net)
         {
             _net = net;
@@ -70,9 +75,9 @@ namespace Cirrus.Circuit.Networking
         private TelepathyTransport Transport => (TelepathyTransport)transport;
         private NetworkManagerHandler _handler;
 
-        public bool IsServer => _handler is NetworkManagerServerHandler;
-        public NetworkManagerClientHandler ClientHandler => IsServer ? null : (NetworkManagerClientHandler)_handler;
-        public NetworkManagerServerHandler ServerHandler => IsServer ? (NetworkManagerServerHandler)_handler : null;
+        public bool IsServer => _handler is ServerHandler;
+        public ClientHandler ClientHandler => IsServer ? null : (ClientHandler)_handler;
+        public ServerHandler ServerHandler => IsServer ? (ServerHandler)_handler : null;
 
         public static CustomNetworkManager Instance => (CustomNetworkManager)singleton;
 
@@ -198,11 +203,15 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
 
-        public bool TryInitHost(string port)
+        public void Stop()
         {
-            
+            _handler.Stop();
+        }
+
+        public bool TryStartHost(string port)
+        {            
             _handler = null;
-            _handler = new NetworkManagerServerHandler(this);
+            _handler = new ServerHandler(this);
             Transport.port = ushort.TryParse(port, out ushort res) ? res : NetworkUtils.DefaultPort;
             StartHost();
 
@@ -211,7 +220,7 @@ namespace Cirrus.Circuit.Networking
                 NetworkingLibrary.Instance.GameSession.gameObject,
                 out NetworkIdentity obj))
             {
-                StopHost();
+                StopHost();                
                 return false;
             }
 
@@ -220,12 +229,12 @@ namespace Cirrus.Circuit.Networking
 
         // 25.1.149.130:4040
 
-        public bool TryInitClient(string hostAddress)
+        public bool TryStartClient(string hostAddress)
         {
             _handler = null;
             if (NetworkUtils.TryParseAddress(hostAddress, out IPAddress adrs, out ushort port))
             {
-                _handler = new NetworkManagerClientHandler(this);
+                _handler = new ClientHandler(this);
                 Transport.port = port;
                 StartClient(NetworkUtils.ToUri(adrs, TelepathyTransport.Scheme));
                 return true;

@@ -12,7 +12,7 @@ namespace Cirrus.Circuit.Networking
     public class NetworkingLibrary : Resources.BaseAssetLibrary<NetworkingLibrary>
     {
         [SerializeField]
-        public ClientConnectionPlayer ClientConnectionPlayer;
+        public ClientPlayer ClientConnectionPlayer;
 
         [SerializeField]
         public GameSession GameSession;
