@@ -334,15 +334,13 @@ namespace Cirrus.Circuit.Networking
         }
 
         [ClientRpc]
-        public bool RPC_TryChangeState(State transition, params object[] args)
+        public void RPC_TryChangeState(State transition, params object[] args)
         {
             if (TryTransition(transition, out State destination))
             {
                 ExitState(destination);
-                return TryFinishChangeState(destination, args);
+                TryFinishChangeState(destination, args);
             }
-
-            return false;
         }
 
 
