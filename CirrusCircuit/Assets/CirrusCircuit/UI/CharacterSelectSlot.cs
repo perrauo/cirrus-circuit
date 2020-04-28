@@ -159,8 +159,7 @@ namespace Cirrus.Circuit.UI
         public override void OnStartClient()
         {
             base.OnStartLocalPlayer();
-            Debug.Log("CHARACTER SELECT CLOSED");
-            TryChangeState(_state);
+            DoTryChangeState(_state);
             Scroll(true);
         }
        
@@ -177,12 +176,8 @@ namespace Cirrus.Circuit.UI
             ClientPlayer.Instance.Cmd_CharacterSelectSlot_TryChangeState(gameObject, target);
         }
 
-        [ClientRpc]
-        public void Rpc_TryChangeState(State target)
+        public void DoTryChangeState(State target)
         {
-
-            Debug.Log("CHARACTER SELECT RPC CLOSED");
-
             switch (target)
             {
                 case State.Closed:
@@ -245,6 +240,12 @@ namespace Cirrus.Circuit.UI
             }
 
             _state = target;
+        }
+
+        [ClientRpc]
+        public void Rpc_TryChangeState(State target)
+        {
+            DoTryChangeState(target);
         }
         
         public IEnumerator PunchScale(bool previous)
