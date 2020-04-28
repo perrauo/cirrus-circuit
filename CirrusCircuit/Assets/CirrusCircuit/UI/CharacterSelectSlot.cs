@@ -146,7 +146,7 @@ namespace Cirrus.Circuit.UI
         {
             _startPosition = _rect.localPosition - Vector3.up * _offset;
 
-            TryChangeState(State.Closed);
+            DoTryChangeState(State.Closed);
 
             Scroll(true);
         }
@@ -169,7 +169,7 @@ namespace Cirrus.Circuit.UI
         {
             base.OnStartClient();
 
-            TryChangeState(_state);
+            DoTryChangeState(_state);
         }
 
         public override void OnStartAuthority()
@@ -177,10 +177,10 @@ namespace Cirrus.Circuit.UI
             base.OnStartAuthority();
 
             //player._characterSlot = slots[player.Id];
-            CmdTryChangeState(State.Selecting);
+            TryChangeState(State.Selecting);
         }
 
-        public void CmdTryChangeState(State target)
+        public void TryChangeState(State target)
         {           
             if (!hasAuthority) return;
 
@@ -191,10 +191,10 @@ namespace Cirrus.Circuit.UI
         public void RpcTryChangeState(State target)
         {
             // Debug.Log("RPC CALLED");
-            TryChangeState(target);
+            DoTryChangeState(target);
         }
 
-        private void TryChangeState(State target)
+        private void DoTryChangeState(State target)
         {
             // Debug.Log("REGULAR CALLED");
 
@@ -340,7 +340,7 @@ namespace Cirrus.Circuit.UI
 
                 case State.Ready:
                     _characterSelect.TryChangeState(CharacterSelect.State.Select);
-                    CmdTryChangeState(State.Selecting);
+                    TryChangeState(State.Selecting);
                     break;
 
                 case State.Closed:
@@ -356,7 +356,7 @@ namespace Cirrus.Circuit.UI
                     Controls.Player player = (Controls.Player) args[0];
                     Debug.Log("Assigned id: " + CharacterLibrary.Instance.Characters[_selectedIndex].Id);
                     player._session._characterId = CharacterLibrary.Instance.Characters[_selectedIndex].Id;
-                    CmdTryChangeState(State.Ready);
+                    TryChangeState(State.Ready);
                     break;                    
 
                 case State.Ready:
