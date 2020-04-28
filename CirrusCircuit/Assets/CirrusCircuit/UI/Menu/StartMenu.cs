@@ -50,7 +50,7 @@ namespace Cirrus.Circuit.UI
             _joinButton.onClick.AddListener(OnJoinClicked);
             _hostButton.onClick.AddListener(OnHostClicked);
 
-            Game.Instance.OnSessionStartHandler += OnSessionStart;
+            GameSession.OnStartClientStaticHandler += OnSessionStart;
         }
 
         public void OnHostClicked()
@@ -81,7 +81,6 @@ namespace Cirrus.Circuit.UI
         {
 
         }
-
 
         public void OnSessionStart(bool enabled)
         {
