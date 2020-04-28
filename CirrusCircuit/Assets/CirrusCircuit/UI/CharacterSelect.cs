@@ -97,11 +97,15 @@ namespace Cirrus.Circuit.UI
                 case State.Ready:
                     if (_state == State.Ready)
                     {
-                        OnCharacterSelectReadyHandler?.Invoke(_readyCount);
+                        OnCharacterSelectReadyHandler?.Invoke(GameSession.Instance.CharacterSelectReadyCount);
                         return false;
                     }
 
-                    if (_readyCount == 1 || _readyCount != _openCount) return false;       
+                    if (GameSession.Instance.CharacterSelectReadyCount == 1 ||
+                        GameSession.Instance.CharacterSelectReadyCount != GameSession.Instance.CharacterSelectOpenCount)
+                    {
+                        return false;
+                    }
 
                     _readyText.text = "Ready?";
                     _state = target;
