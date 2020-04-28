@@ -15,7 +15,7 @@ namespace Cirrus.Circuit.Networking
         {
             get
             {
-                if (_instance != null)
+                if (_instance == null)
                 {
                     foreach (var player in FindObjectsOfType<ClientPlayer>())
                     {
