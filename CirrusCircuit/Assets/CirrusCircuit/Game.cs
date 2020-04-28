@@ -106,6 +106,8 @@ namespace Cirrus.Circuit
 
         public List<Player> LocalPlayers = new List<Player>();
 
+        private bool[] _wasMovingVertical = new bool[PlayerManager.Max];
+
         public override void OnValidate()
         {
             base.OnValidate();
@@ -257,28 +259,28 @@ namespace Cirrus.Circuit
             }
         }
 
-        private bool TryTransition(State transition, out State destination, params object[] args)
+        private bool TryTransition(State target, out State destination, params object[] args)
         {
             switch (_state)
             {
                 case State.Menu:
-                    switch (transition)
+                    switch (target)
                     {                        
                         case State.Menu:
                         case State.TransitionEffect:
                         //case State.Round:
-                            destination = transition;
+                            destination = target;
                             return true;
                     }
                     break;
 
                 case State.TransitionEffect:
-                    switch (transition)
+                    switch (target)
                     {
                         case State.Menu:
                         case State.TransitionEffect:
 
-                            destination = transition;
+                            destination = target;
                             return true;
                     }
                     break;
@@ -311,7 +313,6 @@ namespace Cirrus.Circuit
             }
         }
 
-        private bool[] _wasMovingVertical = new bool[PlayerManager.Max];
 
         // TODO: Simulate LeftStick continuous axis with WASD
         public void FSMHandleAxesLeft(Player player, Vector2 axis)

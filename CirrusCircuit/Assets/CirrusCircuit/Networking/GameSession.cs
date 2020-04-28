@@ -85,7 +85,9 @@ namespace Cirrus.Circuit.Networking
 
         void Awake()
         {
-            if (Game.Instance.IsSeedRandomized) Random.InitState(Environment.TickCount);
+            if (Game.Instance.IsSeedRandomized)
+                Random.InitState(Environment.TickCount);
+
             Transitions.Transition.Instance.OnTransitionTimeoutHandler += OnTransitionTimeOut;                         
         }
 
@@ -156,13 +158,10 @@ namespace Cirrus.Circuit.Networking
         private void OnPodiumFinished()
         {
             if (_state == State.FinalPodium)
-            {
                 TryChangeState(State.Transition, State.LevelSelection);
-            }
-            else
-            {
-                TryChangeState(State.Transition, State.Round);
-            }
+            
+            else TryChangeState(State.Transition, State.Round);
+            
         }
 
         private void OnTransitionTimeOut()
