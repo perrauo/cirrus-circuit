@@ -142,7 +142,7 @@ namespace Cirrus.Circuit
             _initialVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30)); // I used 30 as my camera z is -30
 
             Transitions.Transition.Instance.OnTransitionTimeoutHandler += OnTransitionTimeOut;
-            TryChangeState(State.Menu);
+            DoTryChangeState(State.Menu);
         }
 
         public void Update()
@@ -167,7 +167,7 @@ namespace Cirrus.Circuit
 
         public void StartSession()
         {
-            TryChangeState(State.CharacterSelection);
+            DoTryChangeState(State.CharacterSelection);
         }
 
 
@@ -245,22 +245,13 @@ namespace Cirrus.Circuit
             }
         }
 
-        public void DoTryChangeState(State transition, params object[] args)
-        {
-            if (TryTransition(transition, out State destination))
-            {
-                ExitState(destination);
-                TryFinishChangeState(destination, args);
-            }
-        }
-
         public bool TryChangeState(State transition, bool transitionEffect = true)
         {
             ClientPlayer.Instance.Cmd_Game_TryChangeState_1(transition, transitionEffect);
             return true;
         }
 
-        public void DoTryChangeState(State transition, bool transitionEffect)
+        public void DoTryChangeState(State transition, bool transitionEffect=true)
         {
             if (transitionEffect)
             {
