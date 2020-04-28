@@ -42,14 +42,10 @@ namespace Cirrus.Circuit.Networking
         [SyncVar]
         [SerializeField]
         public int _roundIndex;
-
         
-        // NO Need to sync
         [SerializeField]
         public List<PlayerSession> _players = new List<PlayerSession>();
-
-        [SyncVar]
-        [SerializeField]
+                
         public Events.Event OnScreenResizedHandler;
 
         public Event<Gem, int, float> OnScoreValueAddedHandler;        
@@ -219,17 +215,6 @@ namespace Cirrus.Circuit.Networking
                     break;
             }
         }
-
-        //IEnumerator OnRound()
-        //{
-        //    yield return new WaitForEndOfFrame();
-
-        //    for (int i = 0; i < _currentLevel.CharacterCount; i++)
-        //    {
-        //        _controllers[i]._character = _currentLevel._characters[i];
-        //    }
-        //}
-
 
         [Serializable]
         public enum State

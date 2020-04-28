@@ -198,15 +198,12 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
 
-        public bool TryInitHost(string port, out GameSession session)
+        public bool TryInitHost(string port)
         {
-            session = null;
+            
             _handler = null;
-
             _handler = new NetworkManagerServerHandler(this);
-
             Transport.port = ushort.TryParse(port, out ushort res) ? res : NetworkUtils.DefaultPort;
-
             StartHost();
 
             if (!ServerUtils.TryCreateNetworkObject(

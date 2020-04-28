@@ -55,15 +55,11 @@ namespace Cirrus.Circuit.UI
 
         public void OnHostClicked()
         {
-            if (CustomNetworkManager.Instance.TryInitHost(_joinInput.text, out GameSession session))
-            {
+            if(CustomNetworkManager.Instance.TryInitHost(_joinInput.text))
                 Game.Instance.StartSession();
-            }
+
             else
-            {
-                // TODO erro
                 Debug.Log("Unable to host");
-            }
         }
 
 
@@ -72,15 +68,13 @@ namespace Cirrus.Circuit.UI
             // TODO erro
             if (_joinInput == null) return;
             if (string.IsNullOrEmpty(_joinInput.text)) return;
+
             if (CustomNetworkManager.Instance.TryInitClient(_joinInput.text))
-            {
-                Game.Instance.StartSession();
-            }
-            else
-            {
+                Game.Instance.StartSession();            
+            else           
                 // TODO log ero
                 Debug.Log("Unable to join");
-            }
+            
         }
         
         public void OnExitClick()

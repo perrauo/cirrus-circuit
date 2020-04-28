@@ -23,8 +23,6 @@ namespace Cirrus.Circuit
     {
         #region Game
 
-        private GameSession _session;
-
         [SerializeField]
         private bool _randomizeSeed = false;
         public bool IsSeedRandomized => _randomizeSeed;
