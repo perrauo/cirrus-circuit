@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cirrus.Events;
+using StartMenu = Cirrus.Circuit.UI.StartMenu;
 
 namespace Cirrus.Circuit
 {
@@ -276,10 +277,12 @@ namespace Cirrus.Circuit
             {
                 case State.Menu:
                     _state = target;
+                    StartMenu.Instance.Enabled = true;
                     return true;
 
                 case State.Session:
                     _state = target;
+                    StartMenu.Instance.Enabled = false;
                     return true;
 
                 case State.Transition:
@@ -321,9 +324,8 @@ namespace Cirrus.Circuit
             }
 
             switch (_state)
-            {                                
-                default:
-                    break;
+            {
+                default: break;
             }
         }
 
@@ -331,7 +333,7 @@ namespace Cirrus.Circuit
         {
             switch (_state)
             {
-                
+                default: break;
             }
         }
 

@@ -6,7 +6,7 @@ using Cirrus.Circuit.Networking;
 
 namespace Cirrus.Circuit.UI
 {
-    public class StartMenu : MonoBehaviour
+    public class StartMenu : BaseSingleton<StartMenu>
     {
         //[SerializeField]
         //private UnityEngine.UI.Button _playButton;
@@ -50,7 +50,7 @@ namespace Cirrus.Circuit.UI
             _joinButton.onClick.AddListener(OnJoinClicked);
             _hostButton.onClick.AddListener(OnHostClicked);
 
-            GameSession.OnStartClientStaticHandler += OnSessionStart;
+            //GameSession.OnStartClientStaticHandler += OnSessionStart;
         }
 
         public void OnHostClicked()
@@ -80,11 +80,6 @@ namespace Cirrus.Circuit.UI
         public void OnExitClick()
         {
 
-        }
-
-        public void OnSessionStart(bool enabled)
-        {
-            Enabled = !enabled;
         }
 
     }
