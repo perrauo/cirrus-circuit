@@ -19,7 +19,6 @@ namespace Cirrus.Circuit.World
         {
             Timeout,
             RequiredGemsCollected,
-
         }
 
         public delegate void OnLevelCompleted(Rule rule);
@@ -100,7 +99,6 @@ namespace Cirrus.Circuit.World
 
             if (_characterPlaceholders != null && _characterPlaceholders.Length == 0)
                 _characterPlaceholders = gameObject.GetComponentsInChildren<Objects.Characters.Placeholder>();
-
         }
 
         public void FixedUpdate()
@@ -113,14 +111,11 @@ namespace Cirrus.Circuit.World
             _mutex = new Mutex(false);
             _objects = new BaseObject[_dimension.x * _dimension.y * _dimension.z];
 
-
             _randomDropRainTimer = new Timer(_randomDropRainTime, start: false, repeat: true);
             _randomDropRainTimer.OnTimeLimitHandler += OnRainTimeout;
 
-
             _randomDropSpawnTimer = new Timer(_randomDropSpawnTime, start: false, repeat: false);
             _randomDropSpawnTimer.OnTimeLimitHandler += OnSpawnTimeout;
-
 
             Game.Instance.OnNewRoundHandler += OnNewRound;
             //Game.Instance.On
@@ -178,7 +173,6 @@ namespace Cirrus.Circuit.World
                 }
             }
         }
-
 
         public Vector3Int WorldToGrid(Vector3 pos)
         {

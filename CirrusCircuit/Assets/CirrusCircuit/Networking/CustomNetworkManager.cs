@@ -15,6 +15,7 @@ using Mirror;
 using Cirrus.Circuit.UI;
 using System.Reflection;
 using UnityEditor;
+using Cirrus.MirrorExt;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -208,7 +209,7 @@ namespace Cirrus.Circuit.Networking
 
             StartHost();
 
-            if (!ServerHandler.TryCreateNetworkObject(
+            if (!ServerUtils.TryCreateNetworkObject(
                 NetworkServer.localConnection,
                 NetworkingLibrary.Instance.GameSession.gameObject,
                 out NetworkIdentity obj))
@@ -216,7 +217,6 @@ namespace Cirrus.Circuit.Networking
                 StopHost();
                 return false;
             }
-
 
             return true;
         }

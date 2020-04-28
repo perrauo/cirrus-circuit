@@ -33,12 +33,17 @@ namespace Cirrus.Circuit.Networking
     {
         [SyncVar]
         [SerializeField]        
-        private float _score = 0;
+        public float _score = 0;
 
         public float Score
         {
             get => _score;
-            set => _score = value < 0 ? 0 : value;
+            set
+            {
+                if (!hasAuthority) return;
+                _score = value < 0 ? 0 : value;
+                ClientConnectionPlayer.Instance.CmdSetScore_PlayerSession(gameObject, _score);
+            }
         }
 
         [SyncVar]
@@ -54,7 +59,8 @@ namespace Cirrus.Circuit.Networking
             set
             {
                 if (!hasAuthority) return;
-                ClientConnectionPlayer.Instance.CmdSetCharacterId_PlayerSession(gameObject, value);
+                _characterId = value;
+                ClientConnectionPlayer.Instance.CmdSetCharacterId_PlayerSession(gameObject, _characterId);
             }                                    
         }
 

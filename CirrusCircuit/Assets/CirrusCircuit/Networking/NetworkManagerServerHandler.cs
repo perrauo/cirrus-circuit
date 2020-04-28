@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
+using Cirrus.MirrorExt;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -31,55 +32,16 @@ namespace Cirrus.Circuit.Networking
             // If local connection            
             if (NetworkServer.localConnection.connectionId == conn.connectionId)
             {
-                if (TryCreateClient(NetworkServer.localConnection, out NetworkBehaviour player))
+                if (ServerUtils.TryCreatePlayer(
+                    NetworkServer.localConnection, 
+                    NetworkingLibrary.Instance.ClientConnectionPlayer.gameObject,
+                    out NetworkBehaviour player))
                 {
                     _connections.Add(conn.connectionId, (ClientConnectionPlayer)player);
                 }
             }
         }
-
-        private bool TryCreateClient(NetworkConnection conn, out NetworkBehaviour player)
-        {
-            player = null;
-
-            if (NetworkingLibrary.Instance.ClientConnectionPlayer.gameObject.GetComponent<NetworkBehaviour>() == null) return false;
-
-            player = NetworkingLibrary.Instance.ClientConnectionPlayer.gameObject.Create().GetComponent<NetworkBehaviour>();
-
-            if (NetworkServer.AddPlayerForConnection(conn, player.gameObject)) return true;
-
-            return false;
-        }
-
-        public bool TryCreateNetworkObject(
-            NetworkConnection conn,
-            GameObject template,
-            out NetworkIdentity obj,
-            bool clientAuthority = true)
-        {
-            obj = null;
-
-            if (template.GetComponent<NetworkIdentity>() == null) return false;
-
-            obj = template.gameObject.Create().GetComponent<NetworkIdentity>();
-
-            NetworkServer.Spawn(obj.gameObject, clientAuthority ? conn : null);
-
-            return true;
-        }
-
-        public bool TryDestroyNetworkObject(
-            GameObject obj)            
-        {
-            if (obj.GetComponent<NetworkIdentity>() == null) return false;
-
-            NetworkServer.Destroy(obj.gameObject);
-            GameObject.Destroy(obj);
-           
-            return true;
-        }
-
-
+        
         public bool DoTryPlayerJoin(NetworkConnection conn, int localPlayerId)
         {
             if (_playerCount == PlayerManager.Max) return false;
@@ -99,7 +61,7 @@ namespace Cirrus.Circuit.Networking
 
             if (_connections.TryGetValue(conn.connectionId, out ClientConnectionPlayer clientConnection))
             {
-                if (TryCreateNetworkObject(
+                if (ServerUtils.TryCreateNetworkObject(
                     conn, 
                     NetworkingLibrary.Instance.PlayerSession.gameObject, 
                     out NetworkIdentity sessionObj,
@@ -122,7 +84,7 @@ namespace Cirrus.Circuit.Networking
                         Debug.Log("Local player ID: " + localPlayerId);
                         return true;
                     }
-                    else TryDestroyNetworkObject(sessionObj.gameObject);
+                    else ServerUtils.TryDestroyNetworkObject(sessionObj.gameObject);
                 }
             }
 
@@ -149,7 +111,10 @@ namespace Cirrus.Circuit.Networking
 
         public void OnClientConnectedMessage(NetworkConnection conn, ClientConnectedMessage message)
         {
-            if (TryCreateClient(conn, out NetworkBehaviour client))
+            if (ServerUtils.TryCreatePlayer(
+                conn, 
+                NetworkingLibrary.Instance.ClientConnectionPlayer.gameObject, 
+                out NetworkBehaviour client))
             {
                 _connections.Add(conn.connectionId, (ClientConnectionPlayer)client);
             }

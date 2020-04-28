@@ -8,6 +8,12 @@ using UnityEngine;
 using Cirrus.Circuit.Networking;
 using Mirror;
 using Cirrus.Circuit.Controls;
+using Cirrus.Circuit.World.Objects;
+using Cirrus.Events;
+using Cirrus.Circuit.World.Objects.Characters;
+using Cirrus.MirrorExt;
+
+using Random = UnityEngine.Random;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -15,221 +21,104 @@ namespace Cirrus.Circuit.Networking
     {
         protected static GameSession _instance;
 
-        public static GameSession Instance => _instance;
+        public static GameSession Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    _instance = FindObjectOfType<GameSession>();
+                return _instance;
+            }
+        }
 
-        public int _roundIndex;
+        public void Stop()
+        {
+            ServerUtils.TryDestroyNetworkObject(_instance.gameObject);
+            _instance = null;
+        }
 
         public Round _round;
 
+        [SyncVar]
+        [SerializeField]
+        public int _roundIndex;
+
+        
+        // NO Need to sync
+        [SerializeField]
         public List<PlayerSession> _players = new List<PlayerSession>();
 
-
-        ////////
-
+        [SyncVar]
         [SerializeField]
-        private bool _randomizeSeed = false;
-
         public Events.Event OnScreenResizedHandler;
 
-        public World.Objects.Door.OnScoreValueAdded OnScoreValueAddedHandler;
+        public Event<Gem, int, float> OnScoreValueAddedHandler;        
 
         public Events.Event OnPodiumHandler;
 
         public Events.Event OnFinalPodiumHandler;
 
-        public Events.Event<Round> OnNewRoundHandler;
+        public Event<Round> OnNewRoundHandler;
 
-        public Events.Event<World.Level, int> OnLevelSelectedHandler;
+        public Event<World.Level, int> OnLevelSelectedHandler;
 
-        public Events.Event<bool> OnMenuHandler;
+        public Event<bool> OnMenuHandler;
 
-        public Events.Event<bool> OnLevelSelectHandler;
+        public Event<bool> OnLevelSelectHandler;
 
-        public Events.Event<bool> OnCharacterSelectHandler;
+        public Event<bool> OnCharacterSelectHandler;
 
-        public Events.Event<Player> OnLocalPlayerJoinHandler;
+        public Event<Player> OnLocalPlayerJoinHandler;
 
-        public Layers Layers;
-
-        public UI.CharacterSelect _characterSelect;
-
-        public UI.StartMenu _startMenu;
-
-        [SerializeField]
-        public World.Level[] _levels;
-
-        public World.Level _selectedLevel;
-
-        public World.Level _currentLevel;
+        public int _selectedLevelIndex;
 
         public int _currentLevelIndex = 0;
 
-        public float _distanceLevelSelect = 35;
-
+        [SyncVar]
         [SerializeField]
         public float _targetSizeCamera = 10f;
 
-        [SerializeField]
-        public float _cameraSizeSpeed = 0.8f;
-
-        [SerializeField]
-        public float _roundTime = 60f;
-
-        [SerializeField]
-        public float _countDownTime = 5f;
-
-        [SerializeField]
-        public int _countDown = 3;
-
-        [SerializeField]
-        private int _roundAmount = 3;
-
-        [SerializeField]
-        public float _podiumTransitionSpeed = 0.2f;
-
-        [SerializeField]
-        private float _intermissionTime = 2f;
-
-        [SerializeField]
-        private float _transitionTime = 5f;
-
-        private Timer _transitionTimer = null;
-
         private State _transition;
 
-        private float _transitionDistance = 48f;
-
-        private Vector3 _initialVectorBottomLeft;
-
-        private Vector3 _initialVectorTopRight;
-
-        private Vector3 _updatedVectorBottomLeft;
-
-        private Vector3 _updatedVectorTopRight;
-
-        ////////
-
-        public static void Begin(NetworkConnection conn)
-        {
-            _instance = Instantiate(NetworkingLibrary.Instance.GameSession);
-        }
-
-        public static void End()
-        {
-            if (_instance == null) return;
-
-            NetworkServer.Destroy(_instance.gameObject);
-            Destroy(_instance.gameObject);
-            _instance = null;
-        }
-
-        private void OnScoreValueAdded(World.Objects.Gem gem, int serverPlayerId, float value)
-        {
-            _players[serverPlayerId].Score += value;
-            UI.HUD.Instance.OnScoreChanged(serverPlayerId, _players[serverPlayerId].Score);            
-        }
-
+        ////////   
 
         public virtual void OnValidate()
         {
-            _levels = GetComponentsInChildren<World.Level>(true);
-            _selectedLevel = _levels.Length == 0 ? null : _levels[0];
-
-            if (_transitionEffect == null)
-                _transitionEffect = FindObjectOfType<Transitions.Transition>();
-
-            if (_characterSelect == null)
-                _characterSelect = FindObjectOfType<UI.CharacterSelect>();
-
-            if (_startMenu == null)
-                _startMenu = FindObjectOfType<UI.StartMenu>();
+            
         }
-
 
         void Awake()
         {
-            if (_randomizeSeed)
-                UnityEngine.Random.InitState(Environment.TickCount);
-
-            _transitionTimer = new Timer(_transitionTime, start: false, repeat: false);
-
-            _transitionTimer.OnTimeLimitHandler += OnTransitionTimeOut;
-
-            _controllers = new List<Player>();
-
-            Layers = new Layers();
-            DontDestroyOnLoad(this.gameObject);
-
-            _podium.OnPodiumFinishedHandler += OnPodiumFinished;
-
-            _characterSelect.OnCharacterSelectReadyHandler += OnCharacterSelectReady;
-
-            TryChangeState(State.Menu);
+            if (Game.Instance.IsSeedRandomized) Random.InitState(Environment.TickCount);
+            Transitions.Transition.Instance.OnTransitionTimeoutHandler += OnTransitionTimeOut;                         
         }
 
-        public override void Start()
+        public virtual void Start()
         {
-            initialVectorBottomLeft = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
-            initialVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30)); // I used 30 as my camera z is -30
+                        
         }
-
-        void Update()
-        {
-            UpdatedVectorBottomLeft = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
-            UpdatedVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30));
-
-            if ((initialVectorBottomLeft != UpdatedVectorBottomLeft) || (initialVectorTopRight != UpdatedVectorTopRight))
-            {
-                OnScreenResizedHandler?.Invoke();
-            }
-
-            FSMUpdate();
-        }
-
-        public void FixedUpdate()
-        {
-            FSMFixedUpdate();
-        }
-
-        public void OnStartClicked()
-        {
-            TryChangeState(State.Transition, State.CharacterSelection);
-        }
-
-        public void OnCharacterSelectReady(int playerCount)
-        {
-            TryChangeState(State.Transition, State.LevelSelection);
-        }
-
-        private void OnScoreValueAdded(World.Objects.Gem gem, int player, float value)
-        {
-            Lobby.Controllers[player].Score += value;
-            HUD.OnScoreChanged(player, Lobby.Controllers[player].Score);
-        }
-
+        
         public void OnLevelCompleted(World.Level.Rule rule)
         {
             _round.Terminate();
-
             //OnRoundEnd();
-
         }
 
-        public void OnLevelSelected(int step)
+        public void SelectLevel(int step)
         {
-            for (int i = 0; i < _levels.Length; i++)
+            for (int i = 0; i < Game.Instance._levels.Length; i++)
             {
-                if (_levels[i] == null)
+                if (Game.Instance._levels[i] == null)
                     continue;
 
-                _levels[i].TargetPosition = Vector3.zero + Vector3.right * (i - _currentLevelIndex) * _distanceLevelSelect;
+                Game.Instance._levels[i].TargetPosition = Vector3.zero + Vector3.right * (i - _currentLevelIndex) * Game.Instance.DistanceLevelSelect;
             }
 
-            _selectedLevel = _levels[_currentLevelIndex];
+            _selectedLevelIndex = _currentLevelIndex;
 
-            _targetSizeCamera = _selectedLevel.CameraSize;
+            _targetSizeCamera = Game.Instance._levels[_currentLevelIndex].CameraSize;
 
-            OnLevelSelectedHandler?.Invoke(_selectedLevel, step);
+            //OnLevelSelectedHandler?.Invoke(_selectedLevelIndex, step);
         }
 
         // TODO: Simulate LeftStick continuous axis with WASD
@@ -246,25 +135,19 @@ namespace Cirrus.Circuit.Networking
         public void HandleAction1(Player controller)
         {
             FSMHandleAction1(controller);
-        }
+        }        
 
         public void OnLevelSelect()
         {
-            OnLevelSelectHandler?.Invoke();
-        }
-
-        public void OnWaiting()
-        {
-            HUD.OnWaiting();
-        }
+            //OnLevelSelectHandler?.Invoke();
+        }        
 
         public void OnRoundEnd()
         {
             _roundIndex++;
 
-            if (_roundIndex < _roundAmount)
+            if (_roundIndex < Game.Instance.RoundAmount)
             {
-                _currentLevel.OnRoundEnd();
                 TryChangeState(State.Transition, State.Podium);
             }
             else
@@ -282,12 +165,6 @@ namespace Cirrus.Circuit.Networking
             }
             else
             {
-                if (_currentLevel != null)
-                {
-                    Destroy(_currentLevel.gameObject);
-                    _currentLevel = null;
-                }
-
                 TryChangeState(State.Transition, State.Round);
             }
         }
@@ -298,12 +175,12 @@ namespace Cirrus.Circuit.Networking
             {
                 case State.Podium:
                 case State.FinalPodium:
-                    Destroy(_currentLevel.gameObject);
+                    //Destroy(_currentLevel.gameObject);
                     break;
 
                 case State.Round:
                 case State.LevelSelection:
-                    _podium.gameObject.SetActive(false);
+                    //_podium.gameObject.SetActive(false);
                     break;
 
                     //case State.Round:
@@ -314,22 +191,22 @@ namespace Cirrus.Circuit.Networking
             TryChangeState(_transition);
         }
 
-        public bool TryJoin(Player controller)
+        public bool TryJoin(Player player)
         {
-            if (_controllers.Count >= _selectedLevel.CharacterCount)
-                return false;
+            //if (_controllers.Count >= _selectedLevelIndex.CharacterCount)
+            //    return false;
 
-            _controllers.Add(controller);
+            //_controllers.Add(player);
 
             return false;
         }
 
-        public bool TryLeave(Player controller)
+        public bool TryLeave(Player player)
         {
-            if (_controllers.Count >= _selectedLevel.CharacterCount)
-                return false;
+            //if (_controllers.Count >= _selectedLevelIndex.CharacterCount)
+            //    return false;
 
-            _controllers.Remove(controller);
+            //_controllers.Remove(player);
 
             return false;
         }
@@ -353,12 +230,8 @@ namespace Cirrus.Circuit.Networking
         //    }
         //}
 
-#endregion
 
-
-        #region FSM
-
-        [System.Serializable]
+        [Serializable]
         public enum State
         {
             Menu,
@@ -392,7 +265,7 @@ namespace Cirrus.Circuit.Networking
                         Mathf.Lerp(
                             CameraManager.Instance.Camera.orthographicSize,
                             _targetSizeCamera,
-                            _cameraSizeSpeed);
+                            Game.Instance.CameraSizeSpeed);
 
                     break;
             }
@@ -403,13 +276,7 @@ namespace Cirrus.Circuit.Networking
             switch (_state)
             {
 
-                case State.Round:
-
-                    foreach (Player ctrl in _controllers)
-                    {
-                        ctrl._character.TryMove(ctrl.AxisLeft);
-                    }
-
+                case State.Round:                    
                     break;
 
                 case State.Menu:
@@ -657,57 +524,54 @@ namespace Cirrus.Circuit.Networking
                     return true;
 
                 case State.Begin:
-                    _podium.Clear();
+                    //_podium.Clear();
+                    Podium.Instance.Clear();
 
-                    foreach (var c in _controllers)
+                    foreach (var player in _players)
                     {
-                        if (c == null)
+                        if (player == null)
                             continue;
 
-                        _podium.Add(c, c._characterResource);
+                        Podium.Instance.Add(
+                            player, 
+                            CharacterLibrary.Instance.Characters[player.CharacterId]);
                     }
 
-                    _podium.gameObject.SetActive(false);
+                    Podium.Instance.gameObject.SetActive(false);
 
                     OnLevelSelectHandler.Invoke(false);
 
-                    foreach (World.Level level in _levels)
+                    foreach (World.Level level in Game.Instance._levels)
                     {
-                        if (level == null)
-                            continue;
-
-                        if (level == _selectedLevel)
-                            continue;
-
+                        if (level == null) continue;
+                        if (level == Game.Instance._levels[_selectedLevelIndex]) continue;                            
                         level.gameObject.SetActive(false);
                     }
 
-
-                    _selectedLevel.gameObject.SetActive(false);
+                    Game.Instance._levels[_selectedLevelIndex].gameObject.SetActive(false);                    
 
                     _state = target;
-                    return TryChangeState(State.Round, _roundTime);
+                    return TryChangeState(State.Round, Game.Instance.RoundTime);
 
 
                 case State.Transition:
 
                     _transition = (State)args[0];
-                    _transitionTimer.Start();
 
-                    _transitionEffect.Perform();
+                    Transitions.Transition.Instance.Perform();
 
                     _state = target;
                     return true;
 
 
                 case State.Podium:
-                    _podium.gameObject.SetActive(true);
+                    Podium.Instance.gameObject.SetActive(true);
                     OnPodiumHandler?.Invoke();
                     _state = target;
                     return true;
 
                 case State.FinalPodium:
-                    _podium.gameObject.SetActive(true);
+                    Podium.Instance.gameObject.SetActive(true);
                     OnFinalPodiumHandler?.Invoke();
                     _state = target;
                     return true;
@@ -716,75 +580,72 @@ namespace Cirrus.Circuit.Networking
 
                     _state = target;
 
-                    foreach (World.Level lv in _levels)
+                    foreach (World.Level lv in Game.Instance._levels)
                     {
                         lv.gameObject.SetActive(true);
                         lv.OnLevelSelect();
                     }
 
                     OnLevelSelect();
-                    OnLevelSelected(0);
+                    SelectLevel(0);
 
                     return true;
 
                 case State.Round:
 
-                    // TODO enable
+                    Game.Instance._levels[_selectedLevelIndex].TargetPosition = Vector3.zero;
+                    Game.Instance._levels[_selectedLevelIndex].transform.position = Vector3.zero;
+                    Game.Instance._levels[_selectedLevelIndex].gameObject.SetActive(true);
 
-                    _selectedLevel.TargetPosition = Vector3.zero;
-                    _selectedLevel.transform.position = Vector3.zero;
+                    //_currentLevel =
+                    //    Instantiate(
+                    //        Game.Instance._levels[_selectedLevelIndex].gameObject,
+                    //        Vector3.zero, Quaternion.identity,
+                    //        gameObject.transform).GetComponent<World.Level>();
 
-                    _selectedLevel.gameObject.SetActive(true);
-
-                    _currentLevel =
-                        Instantiate(
-                            _selectedLevel.gameObject,
-                            Vector3.zero, Quaternion.identity,
-                            gameObject.transform).GetComponent<World.Level>();
-
-                    _selectedLevel.gameObject.SetActive(false);
+                    //_selectedLevelIndex.gameObject.SetActive(false);
 
 
-                    _currentLevel.OnScoreValueAddedHandler += OnScoreValueAdded;
+                    //_currentLevel.OnScoreValueAddedHandler += OnScoreValueAdded;
 
-                    _currentLevel.OnLevelCompletedHandler += OnLevelCompleted;
+                    //_currentLevel.OnLevelCompletedHandler += OnLevelCompleted;
 
-                    List<Placeholder> placeholders = new List<Placeholder>();
-                    placeholders.AddRange(_currentLevel._characterPlaceholders);
+                    //List<Placeholder> placeholders = new List<Placeholder>();
+                    //placeholders.AddRange(_currentLevel._characterPlaceholders);
 
                     int i = 0;
-                    while (!placeholders.IsEmpty())
-                    {
-                        Placeholder placeholder = placeholders.RemoveRandom();
+                    //while (!placeholders.IsEmpty())
+                    //{
+                    //    Placeholder placeholder = placeholders.RemoveRandom();
 
-                        _controllers[i]._character = _controllers[i]
-                            ._characterResource.Create(
-                                _currentLevel.GridToWorld(placeholder._gridPosition),
-                                _currentLevel.transform);
+                    //    _controllers[i]._character = _controllers[i]
+                    //        ._characterResource.Create(
+                    //            _currentLevel.GridToWorld(placeholder._gridPosition),
+                    //            _currentLevel.transform);
 
-                        _controllers[i]._character.Number = _controllers[i].Number;
+                    //    _controllers[i]._character.Number = _controllers[i].Number;
 
-                        _controllers[i]._character.Color = _controllers[i].Color;
+                    //    _controllers[i]._character.Color = _controllers[i].Color;
 
-                        _controllers[i]._character._level = _currentLevel;
+                    //    _controllers[i]._character._level = _currentLevel;
 
-                        _controllers[i]._character.TryChangeState(Character.State.Disabled);
+                    //    _controllers[i]._character.TryChangeState(Character.State.Disabled);
 
-                        _controllers[i].Score = 0;
+                    //    _controllers[i].Score = 0;
 
-                        _controllers[i]._assignedNumber = placeholder.Number;
+                    //    _controllers[i]._assignedNumber = placeholder.Number;
 
-                        i++;
+                    //    i++;
 
-                        Destroy(placeholder.gameObject);
-                    }
+                    //    Destroy(placeholder.gameObject);
+                    //}
 
                     _round =
                         new Round(
-                            _countDown,
-                            _roundTime,
-                            _countDownTime,
-                            _intermissionTime,
+                            Game.Instance.CountDown,
+                            Game.Instance.RoundTime,
+                            Game.Instance.CountDownTime,
+                            Game.Instance.IntermissionTime,
                             _roundIndex);
 
                     StartCoroutine(NewRoundCoroutine());
@@ -803,19 +664,10 @@ namespace Cirrus.Circuit.Networking
                     //Lobby.Characters.Clear();
                     //Lobby.Characters.AddRange(_selectedLevel.Characters);
 
-                    foreach (Player ctrl in Lobby.Controllers)
-                    {
-                        if (ctrl == null)
-                        {
-                            continue;
-                        }
-
-                        //ctrl.Character = null;
-                    }
 
                     _state = target;
 
-                    OnWaiting();
+                    //OnWaiting();
                     return true;
 
 
@@ -868,26 +720,26 @@ namespace Cirrus.Circuit.Networking
                     if (controller._characterSlot == null)
                         break;
 
-                    if (UnityEngine.Mathf.Abs(step.z) > 0)
+                    if (Mathf.Abs(step.z) > 0)
                     {
-                        controller._characterSlot.Scroll(step.z > 0);
+                        //controller._characterSlot.Scroll(step.z > 0);
                     }
 
                     break;
 
                 case State.LevelSelection:
 
-                    if (UnityEngine.Mathf.Abs(step.x) > 0)
+                    if (Mathf.Abs(step.x) > 0)
                     {
 
                         int prev = _currentLevelIndex;
 
-                        _currentLevelIndex =
-                            UnityEngine.Mathf.Clamp(_currentLevelIndex + (int)UnityEngine.Mathf.Sign(step.x), 0, _levels.Length - 1);
+                        //_currentLevelIndex =
+                        //    Mathf.Clamp(_currentLevelIndex + (int)UnityEngine.Mathf.Sign(step.x), 0, _levels.Length - 1);
 
                         if (prev != _currentLevelIndex)
                         {
-                            OnLevelSelected((int)UnityEngine.Mathf.Sign(step.x));
+                            SelectLevel((int)Mathf.Sign(step.x));
                         }
                     }
 
@@ -910,7 +762,7 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-        public void FSMHandleAction0(Player controller)
+        public void FSMHandleAction0(Player player)
         {
             switch (_state)
             {
@@ -926,23 +778,23 @@ namespace Cirrus.Circuit.Networking
                     //}
                     //else
                     {
-                        controller._characterSlot.HandleAction0();
+                        player._characterSlot.HandleAction0();
                     }
 
                     break;
 
                 case State.WaitingNextRound:
 
-                    if (_controllers.Contains(controller))
+                    //if (_players.Contains(player))
+                    //{
+                    //    //HUD.Leave(player);
+                    //    //_controllers.Remove(player);
+                    //}
+                    //else
                     {
-                        HUD.Leave(controller);
-                        _controllers.Remove(controller);
-                    }
-                    else
-                    {
-                        foreach (Player ctrl in Lobby.Controllers)
+                        foreach (PlayerSession p in _players)
                         {
-                            if (ctrl == null)
+                            if (p == null)
                             {
                                 continue;
                             }
@@ -954,8 +806,8 @@ namespace Cirrus.Circuit.Networking
                     break;
 
                 case State.Round:
-                    if (controller._character)
-                        controller._character?.TryAction0();
+                    if (player._character)
+                        player._character?.TryAction0();
 
                     break;
 
@@ -965,7 +817,7 @@ namespace Cirrus.Circuit.Networking
         }
 
 
-        public void FSMHandleAction1(Player controller)
+        public void FSMHandleAction1(Player player)
         {
             switch (_state)
             {
@@ -979,15 +831,15 @@ namespace Cirrus.Circuit.Networking
 
                 case State.CharacterSelection:
 
-                    if (!_controllers.Contains(controller))
-                    {
-                        _controllers.Add(controller);
-                        OnControllerJoinHandler?.Invoke(controller);
-                    }
-                    else
-                    {
-                        controller._characterSlot.HandleAction1(controller);
-                    }
+                    //if (!_players.Contains(controller))
+                    //{
+                    //    _controllers.Add(controller);
+                    //    OnControllerJoinHandler?.Invoke(controller);
+                    //}
+                    //else
+                    //{
+                    //    controller._characterSlot.HandleAction1(controller);
+                    //}
 
                     break;
 
@@ -998,8 +850,8 @@ namespace Cirrus.Circuit.Networking
 
 
                 case State.Round:
-                    if (controller._character)
-                        controller._character?.TryAction1();
+                    //if (controller._character)
+                    //    controller._character?.TryAction1();
                     break;
 
                 case State.Score:

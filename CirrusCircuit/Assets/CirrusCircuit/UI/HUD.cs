@@ -8,12 +8,10 @@ namespace Cirrus.Circuit.UI
 {
     public class HUD : BaseSingleton<HUD>
     {
-
         [SerializeField]
         private Player[] _playerDisplays;
 
         private List<Player> _availablePlayerDisplays;
-
 
         public override void Awake()
         {
@@ -29,19 +27,6 @@ namespace Cirrus.Circuit.UI
             base.OnValidate();
             //if (_characterSelect == null)
             //    _characterSelect = FindObjectOfType<CharacterSelect>();            
-        }
-
-        public void OnWaiting()
-        {
-            //_player.Enabled = true;
-
-            _availablePlayerDisplays.Clear();
-            _availablePlayerDisplays.AddRange(_playerDisplays);
-
-            for (int i = 0; i < Game.Instance._selectedLevel.CharacterCount; i++)
-            {
-                _playerDisplays[i].TryChangeState(Player.State.Waiting);
-            }
         }
 
         public void Join(Controls.Player player)

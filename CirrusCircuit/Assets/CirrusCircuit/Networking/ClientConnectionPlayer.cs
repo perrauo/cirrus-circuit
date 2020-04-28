@@ -17,7 +17,6 @@ namespace Cirrus.Circuit.Networking
             Instance = this;
         }        
 
-
         [TargetRpc]
         public void TargetReceiveResponse(ServerResponseMessage response)
         {
@@ -56,6 +55,13 @@ namespace Cirrus.Circuit.Networking
         {
             PlayerSession session;
             if ((session = obj.GetComponent<PlayerSession>()) != null) session._characterId = characterId;
+        }
+
+        [Command]
+        public void CmdSetScore_PlayerSession(GameObject obj, float score)
+        {
+            PlayerSession session;
+            if ((session = obj.GetComponent<PlayerSession>()) != null) session._score = score;
         }
 
         #endregion

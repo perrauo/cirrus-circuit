@@ -11,6 +11,8 @@ using Mirror;
 using Cirrus.Circuit.World.Objects;
 using Cirrus.Circuit.World;
 using Cirrus.Circuit.World.Objects.Characters;
+using Cirrus.Events;
+using Cirrus.MirrorExt;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -18,21 +20,30 @@ namespace Cirrus.Circuit.Networking
     {
         private const int FallTrials = 100;
 
-        public enum Rule
-        {
-            Timeout,
-            RequiredGemsCollected,
-
-        }
-
-        public delegate void OnLevelCompleted(Rule rule);
-
-        public OnLevelCompleted OnLevelCompletedHandler;
+        public Event<Level.Rule> OnLevelCompletedHandler;
 
         public Door.OnScoreValueAdded OnScoreValueAddedHandler;
 
-        [SerializeField]
-        public static int GridSize = 2;
+        private Level _level;
+
+        public static bool TryCreate(Level level, out LevelSession session)
+        {
+            session = null;
+            if (ServerUtils.TryCreateNetworkObject(
+                NetworkServer.localConnection,
+                NetworkingLibrary.Instance.LevelSession.gameObject,
+                out NetworkIdentity obj
+                ))
+            {
+                if ((session = obj.GetComponent<LevelSession>()) != null)
+                {
+                    session._level = level;
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         [SerializeField]
         private Vector3Int _offset = new Vector3Int(2, 2, 2);
@@ -182,23 +193,6 @@ namespace Cirrus.Circuit.Networking
                     //}
                 }
             }
-        }
-
-
-        public Vector3Int WorldToGrid(Vector3 pos)
-        {
-            return new Vector3Int(
-                Mathf.RoundToInt(pos.x / GridSize) + _offset.x,
-                Mathf.RoundToInt(pos.y / GridSize) + _offset.y,
-                Mathf.RoundToInt(pos.z / GridSize) + _offset.z);
-        }
-
-        public Vector3 GridToWorld(Vector3Int pos)
-        {
-            return new Vector3Int(
-                (pos.x - _offset.x) * GridSize,
-                (pos.y - _offset.y) * GridSize,
-                (pos.z - _offset.z) * GridSize);
         }
 
         public bool IsWithinBounds(Vector3Int pos)
@@ -380,7 +374,7 @@ namespace Cirrus.Circuit.Networking
         public BaseObject Spawn(BaseObject template, Vector3Int pos)
         {
 
-            BaseObject obj = template.Create(GridToWorld(pos), transform);
+            BaseObject obj = template.Create(_level.GridToWorld(pos), transform);
 
             //obj.Register(this);
 
@@ -393,7 +387,7 @@ namespace Cirrus.Circuit.Networking
         public GameObject Spawn(GameObject template, Vector3Int pos)
         {
 
-            GameObject obj = template.Create(GridToWorld(pos), transform);
+            GameObject obj = template.Create(_level.GridToWorld(pos), transform);
 
             return obj;
         }
@@ -412,12 +406,12 @@ namespace Cirrus.Circuit.Networking
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
         {
-            Vector3Int pos = WorldToGrid(obj.transform.position);
+            Vector3Int pos = _level.WorldToGrid(obj.transform.position);
 
             int i = pos.x + _dimension.x * pos.y + _dimension.x * _dimension.y * pos.z;
 
             _objects[i] = obj;
-            return (GridToWorld(pos), pos);
+            return (_level.GridToWorld(pos), pos);
         }
 
         public void UnregisterObject(BaseObject obj)
@@ -463,7 +457,7 @@ namespace Cirrus.Circuit.Networking
                 _requiredGemCount++;
                 if (_requiredGemCount >= _requiredGems)
                 {
-                    OnLevelCompletedHandler?.Invoke(Rule.RequiredGemsCollected);
+                    OnLevelCompletedHandler?.Invoke(Level.Rule.RequiredGemsCollected);
                 }
             }
         }

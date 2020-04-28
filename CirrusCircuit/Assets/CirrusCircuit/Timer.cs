@@ -2,40 +2,65 @@
 using System.Collections;
 using System;
 
-// TODO: use in cooldown
-
 
 namespace Cirrus.Circuit
 {
-    public delegate void OnTimeLimit();
-
-    // A timer cannot be created in Start(), or Wake() because it needs the Clock, instead to create duiring init use OnEnable    
+    [System.Serializable]
     public class Timer
     {
+        [SerializeField]
         bool _repeat = false;
+
+        [SerializeField]
         float _limit = -1;
 
+        [SerializeField]
         float _time = 0f;
-        public float Time => _time;
 
-        bool _isactive = false;
-        public bool IsActive => _isactive;        
+        [SerializeField]
+        private bool _isFixedUpdate;
 
-        public OnTimeLimit OnTimeLimitHandler;
+        bool active = false;
+        public bool IsActive => active;
 
-        public Timer(float limit, bool start = true, bool repeat = false)
+        public Events.Event<float> OnTickHandler;
+
+        public Events.Event OnTimeLimitHandler;
+
+        private Events.Event OnClockUpdateHandler
+        {
+            get
+            {
+                return _isFixedUpdate ?
+                    Clock.Instance.OnFixedUpdateHandler :
+                    Clock.Instance.OnUpdateHandler;
+            }
+
+            set
+            {
+                if (_isFixedUpdate)
+                    Clock.Instance.OnFixedUpdateHandler = value;
+                else
+                    Clock.Instance.OnUpdateHandler = value;
+            }
+        }
+
+        public Timer(float limit, bool start = true, bool repeat = false, bool fixedUpdate = false)
         {
             _time = 0;
             _limit = limit;
             _repeat = repeat;
+            _isFixedUpdate = fixedUpdate;
 
             if (start)
             {
                 Start();
             }
-        }        
+        }
 
-        public void Reset(float limit=-1)
+        public float Time => _time;
+
+        public void Reset(float limit = -1)
         {
             if (limit > 0)
             {
@@ -45,44 +70,46 @@ namespace Cirrus.Circuit
             _time = 0;
         }
 
-        public void Start()
+        public void Start(float limit = -1)
         {
-            Reset();
+            Reset(limit);
 
-            if (!_isactive)
+            if (!active)
             {
-                Clock.Instance.OnTickedHandler += OnTicked;
+                OnClockUpdateHandler += OnTicked;
             }
 
-            _isactive = true;
+            active = true;
         }
 
         public void Resume()
         {
-            if (!_isactive)
+            if (!active)
             {
-                Clock.Instance.OnTickedHandler += OnTicked;
+                OnClockUpdateHandler += OnTicked;
             }
 
-            _isactive = true;
+            active = true;
         }
-
 
         public void Stop()
         {
-            if (_isactive)
+            if (active)
             {
-                Clock.Instance.OnTickedHandler -= OnTicked;
+                OnClockUpdateHandler -= OnTicked;
             }
 
-            _isactive = false;
+            active = false;
         }
 
         private void OnTicked()
         {
             _time += UnityEngine.Time.deltaTime;
+            OnTickHandler?.Invoke(_time);
             if (_time >= _limit)
             {
+                _time = _limit;
+
                 OnTimeLimitHandler?.Invoke();
 
                 if (_repeat)
@@ -92,7 +119,7 @@ namespace Cirrus.Circuit
                 else
                 {
                     Stop();
-                }         
+                }
             }
         }
 
@@ -100,5 +127,6 @@ namespace Cirrus.Circuit
         {
             Stop();
         }
+
     }
 }

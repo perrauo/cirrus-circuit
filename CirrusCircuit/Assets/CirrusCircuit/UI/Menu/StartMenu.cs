@@ -57,7 +57,7 @@ namespace Cirrus.Circuit.UI
         {
             if (CustomNetworkManager.Instance.TryInitHost(_joinInput.text, out GameSession session))
             {
-                Game.Instance.DoStart();
+                Game.Instance.StartSession();
             }
             else
             {
@@ -74,7 +74,7 @@ namespace Cirrus.Circuit.UI
             if (string.IsNullOrEmpty(_joinInput.text)) return;
             if (CustomNetworkManager.Instance.TryInitClient(_joinInput.text))
             {
-                Game.Instance.DoStart();
+                Game.Instance.StartSession();
             }
             else
             {

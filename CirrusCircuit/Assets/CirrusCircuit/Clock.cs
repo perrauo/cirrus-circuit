@@ -7,27 +7,18 @@ namespace Cirrus.Circuit
 {
     public class Clock : BaseSingleton<Clock>
     {
-        public delegate void OnTick();
-        public OnTick OnTickedHandler;
+        public Events.Event OnUpdateHandler;
 
-        public static Clock Instance;
+        public Events.Event OnFixedUpdateHandler;
 
-        public void Awake()
+        public void Update()
         {
-            Instance = this;
+            OnUpdateHandler?.Invoke();
         }
 
         public void FixedUpdate()
         {
-            OnTickedHandler?.Invoke();//
+            OnFixedUpdateHandler?.Invoke();
         }
-
-
-        // TODO: in order to move clock to cirrus.
-        //public CreateTimer(float limit, bool start = true, bool repeat = false)
-        //{
-
-        //}
-
     }
 }
