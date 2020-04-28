@@ -37,9 +37,6 @@ namespace Cirrus.Circuit.UI
         [SyncVar]
         private float _bound = 0;
 
-        [SerializeField]
-        private CharacterSelect _characterSelect;
-
         [SerializeField]        
         private GameObject _selection;
 
@@ -109,8 +106,6 @@ namespace Cirrus.Circuit.UI
 
         private void OnValidate()
         {
-            if (_characterSelect == null)
-                _characterSelect = GetComponentInParent<CharacterSelect>();
             if (_camera == null) _camera = FindObjectOfType<CameraManager>();
             if (_rect == null) _rect = _selection.GetComponent<RectTransform>();
 
@@ -192,10 +187,10 @@ namespace Cirrus.Circuit.UI
             {
                 case State.Closed:
                     if (_state != State.Closed)
-                        _characterSelect._openCount =
-                            _characterSelect._openCount == 0 ?
+                        CharacterSelect.Instance._openCount =
+                            CharacterSelect.Instance._openCount == 0 ?
                             0 :
-                            _characterSelect._openCount - 1;
+                            CharacterSelect.Instance._openCount - 1;
 
                     _up.gameObject.SetActive(false);
                     _down.gameObject.SetActive(false);
@@ -205,13 +200,13 @@ namespace Cirrus.Circuit.UI
 
                 case State.Selecting:
                     if (_state == State.Closed)
-                        _characterSelect._openCount =
-                            _characterSelect._openCount >= Controls.PlayerManager.Max ?
+                        CharacterSelect.Instance._openCount =
+                            CharacterSelect.Instance._openCount >= Controls.PlayerManager.Max ?
                                 Controls.PlayerManager.Max :
-                                _characterSelect._openCount + 1;
+                                CharacterSelect.Instance._openCount + 1;
 
                     if (_state == State.Ready)
-                        _characterSelect._readyCount--;
+                        CharacterSelect.Instance._readyCount--;
 
                     if (_characterSpotlightAnchor.transform.childCount != 0)
                         Destroy(_characterSpotlightAnchor.GetChild(0).gameObject);
@@ -223,7 +218,7 @@ namespace Cirrus.Circuit.UI
                     break;
 
                 case State.Ready:
-                    if (_state != State.Ready) _characterSelect._readyCount++;
+                    if (_state != State.Ready) CharacterSelect.Instance._readyCount++;
 
                     Vector3 position =
                     CameraManager.Instance.Camera.ScreenToWorldPoint(
@@ -324,7 +319,7 @@ namespace Cirrus.Circuit.UI
                     break;
 
                 case State.Ready:
-                    _characterSelect.TryChangeState(CharacterSelect.State.Select);
+                    CharacterSelect.Instance.TryChangeState(CharacterSelect.State.Select);
                     TryChangeState(State.Selecting);
                     break;
 
@@ -346,7 +341,7 @@ namespace Cirrus.Circuit.UI
 
                 case State.Ready:
                     // Try to change the state of the select screen, not the slot
-                    _characterSelect.TryChangeState(CharacterSelect.State.Ready);
+                    CharacterSelect.Instance.TryChangeState(CharacterSelect.State.Ready);
                     break;
 
                 case State.Closed:

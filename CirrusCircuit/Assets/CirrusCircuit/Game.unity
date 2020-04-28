@@ -1082,6 +1082,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9334c9a33f53144db535b42fc04f939, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _transitionTime: 0.5
   _image: {fileID: 1492940792}
   _transitionDownTime: 0.5
   _transitionUpTime: 0.5
@@ -2053,6 +2054,7 @@ MonoBehaviour:
   - {fileID: 1916082411674582, guid: b44a75fa512fe18478c604967c760e36, type: 3}
   - {fileID: 1916082411674582, guid: 4ce147c890cf4ff4485ac613facd015f, type: 3}
   - {fileID: 1916082411674582, guid: a4dbdcd3ab40be64885d1da07e21589d, type: 3}
+  - {fileID: 7534066891031683546, guid: bb41d15f8a991064d9f7080d0fc8e3f4, type: 3}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -5349,16 +5351,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6225b9b59c0a3de4ab4818b680f44701, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _state: 0
   _randomizeSeed: 0
-  _characterSelect: {fileID: 1146985682}
-  _startMenu: {fileID: 1575180885}
   _levels:
   - {fileID: 1495141626}
-  _selectedLevel: {fileID: 1495141626}
-  _currentLevel: {fileID: 0}
-  _currentLevelIndex: 0
   _distanceLevelSelect: 35
-  _targetSizeCamera: 10
   _cameraSizeSpeed: 0.8
   _roundTime: 30
   _countDownTime: 1
@@ -5366,9 +5363,7 @@ MonoBehaviour:
   _roundAmount: 3
   _podiumTransitionSpeed: 0.01
   _intermissionTime: 2
-  _transitionTime: 0.5
-  _roundIndex: 0
-  _state: 0
+  _transitionDistance: 48
 --- !u!1001 &8802615577050479312
 PrefabInstance:
   m_ObjectHideFlags: 0
