@@ -362,13 +362,13 @@ namespace Cirrus.Circuit.Networking
 
         public bool TryChangeState(State transition, State destination)
         {
-            ClientPlayer.Instance.Cmd_GameSession_TryChangeState(gameObject, transition, destination);
+            ClientPlayer.Instance.Cmd_GameSession_TryChangeState_1(gameObject, transition, destination);
             return true;
         }
 
         public bool TryChangeState(State transition)
         {
-            ClientPlayer.Instance.Cmd_GameSession_TryChangeState(gameObject, transition);
+            ClientPlayer.Instance.Cmd_GameSession_TryChangeState_2(gameObject, transition);
             return true;
         }
 

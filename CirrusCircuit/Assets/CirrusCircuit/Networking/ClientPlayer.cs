@@ -104,7 +104,7 @@ namespace Cirrus.Circuit.Networking
 
 
         [Command]
-        public void Cmd_GameSession_TryChangeState(
+        public void Cmd_GameSession_TryChangeState_1(
             GameObject obj, 
             GameSession.State transition, 
             GameSession.State destination)
@@ -114,7 +114,7 @@ namespace Cirrus.Circuit.Networking
         }
 
         [Command]
-        public void Cmd_GameSession_TryChangeState(
+        public void Cmd_GameSession_TryChangeState_2(
             GameObject obj,
             GameSession.State transition)
         {
