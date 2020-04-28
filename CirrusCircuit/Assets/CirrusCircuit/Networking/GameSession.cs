@@ -372,7 +372,6 @@ namespace Cirrus.Circuit.Networking
             return true;
         }
 
-
         [ClientRpc]
         public void Rpc_TryChangeState_1(State transition, State target)
         {
@@ -390,7 +389,7 @@ namespace Cirrus.Circuit.Networking
             if (TryTransition(transition, out State destination))
             {
                 ExitState(destination);
-                TryFinishChangeState(destination, destination);
+                TryFinishChangeState(destination, args);
             }
         }    
 
