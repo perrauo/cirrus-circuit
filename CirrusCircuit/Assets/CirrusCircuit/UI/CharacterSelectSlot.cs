@@ -151,11 +151,6 @@ namespace Cirrus.Circuit.UI
                     .Rotate(Vector3.up * Time.deltaTime * _characterSpotlightRotateSpeed);
         }
 
-        //public override void OnStartLocalPlayer()
-        //{
-        //    base.OnStartLocalPlayer();
-        //}
-
         public override void OnStartClient()
         {
             base.OnStartLocalPlayer();
@@ -182,10 +177,10 @@ namespace Cirrus.Circuit.UI
             {
                 case State.Closed:
                     if (_state != State.Closed)
-                        CharacterSelect.Instance._openCount =
-                            CharacterSelect.Instance._openCount == 0 ?
+                        GameSession.Instance.CharacterSelectOpenCount =
+                            GameSession.Instance.CharacterSelectOpenCount == 0 ?
                             0 :
-                            CharacterSelect.Instance._openCount - 1;
+                            GameSession.Instance.CharacterSelectOpenCount - 1;
 
                     _up.gameObject.SetActive(false);
                     _down.gameObject.SetActive(false);
@@ -195,13 +190,13 @@ namespace Cirrus.Circuit.UI
 
                 case State.Selecting:
                     if (_state == State.Closed)
-                        CharacterSelect.Instance._openCount =
-                            CharacterSelect.Instance._openCount >= Controls.PlayerManager.Max ?
+                        GameSession.Instance.CharacterSelectOpenCount =
+                            GameSession.Instance.CharacterSelectOpenCount >= Controls.PlayerManager.Max ?
                                 Controls.PlayerManager.Max :
-                                CharacterSelect.Instance._openCount + 1;
+                                GameSession.Instance.CharacterSelectOpenCount + 1;
 
                     if (_state == State.Ready)
-                        CharacterSelect.Instance._readyCount--;
+                        GameSession.Instance.CharacterSelectReadyCount--;
 
                     if (_characterSpotlightAnchor.transform.childCount != 0)
                         Destroy(_characterSpotlightAnchor.GetChild(0).gameObject);
@@ -213,7 +208,7 @@ namespace Cirrus.Circuit.UI
                     break;
 
                 case State.Ready:
-                    if (_state != State.Ready) CharacterSelect.Instance._readyCount++;
+                    if (_state != State.Ready) GameSession.Instance.CharacterSelectReadyCount++;
 
                     Vector3 position =
                     CameraManager.Instance.Camera.ScreenToWorldPoint(

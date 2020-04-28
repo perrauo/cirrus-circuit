@@ -85,7 +85,23 @@ namespace Cirrus.Circuit.Networking
             GameSession session;
             if ((session = obj.GetComponent<GameSession>()) != null) session.Rpc_SelectLevel(step);
         }
-       
+
+
+        // TODO Character Select session
+        [Command]
+        public void Cmd_GameSession_SetCharacterSelectReadyCount(GameObject obj, int count)
+        {
+            GameSession session;
+            if ((session = obj.GetComponent<GameSession>()) != null) session._characterSelectReadyCount = count;
+        }
+
+        [Command]
+        public void Cmd_GameSession_SetCharacterSelectOpenCount(GameObject obj, int count)
+        {
+            GameSession session;
+            if ((session = obj.GetComponent<GameSession>()) != null) session._characterSelectOpenCount = count;
+        }
+
 
         [Command]
         public void Cmd_GameSession_TryChangeState(

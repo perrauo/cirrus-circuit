@@ -27,6 +27,34 @@ namespace Cirrus.Circuit.Networking
 
         private bool[] _wasMovingVertical = new bool[PlayerManager.Max];
 
+        [SyncVar]
+        [SerializeField]        
+        public int _characterSelectReadyCount = 0;
+
+        public int CharacterSelectReadyCount
+        {
+            get => _characterSelectReadyCount;
+            set
+            {
+                _characterSelectReadyCount = value < 0 ? 0 : value;
+                ClientPlayer.Instance.Cmd_GameSession_SetCharacterSelectReadyCount(gameObject, _characterSelectReadyCount);
+            }
+        }
+
+        [SyncVar]
+        [SerializeField]        
+        public int _characterSelectOpenCount = 0;
+
+        public int CharacterSelectOpenCount
+        {
+            get => _characterSelectOpenCount;
+            set
+            {
+                _characterSelectOpenCount = value < 0 ? 0 : value;
+                ClientPlayer.Instance.Cmd_GameSession_SetCharacterSelectOpenCount(gameObject, _characterSelectOpenCount);
+            }
+        }
+
         public static GameSession Instance
         {
             get
