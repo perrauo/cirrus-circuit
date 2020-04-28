@@ -36,6 +36,7 @@ namespace Cirrus.Circuit.Networking
         public override void OnStartClient()
         {
             base.OnStartClient();
+            Debug.Log("Client Started");
             OnStartClientStaticHandler?.Invoke(true);
         }
 
