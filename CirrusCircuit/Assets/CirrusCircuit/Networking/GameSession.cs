@@ -23,6 +23,8 @@ namespace Cirrus.Circuit.Networking
 
         protected static GameSession _instance;
 
+        public static bool IsNull => _instance == null;
+
         private bool[] _wasMovingVertical = new bool[PlayerManager.Max];
 
         public static GameSession Instance

@@ -90,6 +90,8 @@ namespace Cirrus.Circuit.Controls
         // TODO: Simulate LeftStick continuous axis with WASD
         public void OnAxesLeft(UnityInput.InputAction.CallbackContext context)
         {
+            if (GameSession.IsNull) return;
+
             var axis = Vector2.ClampMagnitude(context.ReadValue<Vector2>(), 1);
             GameSession.Instance.HandleAxesLeft(this, axis);
         }
@@ -97,16 +99,23 @@ namespace Cirrus.Circuit.Controls
         // Cancel
         public void OnAction0(UnityInput.InputAction.CallbackContext context)
         {
-            if (!context.performed)
-                GameSession.Instance.HandleAction0(this);
+            if (context.performed) return;
+            if (GameSession.IsNull) return;
+
+            GameSession.Instance.HandleAction0(this);
         }
 
         // Accept
         public void OnAction1(UnityInput.InputAction.CallbackContext context)
         {
             //context.
-            if (!context.performed)
-                GameSession.Instance.HandleAction1(this);
+            if (context.performed) return;
+
+            //TODO control game menu
+
+            if (GameSession.IsNull) return;
+
+            GameSession.Instance.HandleAction1(this);
         }
     }
 }

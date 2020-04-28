@@ -160,7 +160,7 @@ namespace Cirrus.Circuit.UI
         {
             base.OnStartLocalPlayer();
             Debug.Log("CHARACTER SELECT CLOSED");
-            TryChangeState(State.Closed);
+            TryChangeState(_state);
             Scroll(true);
         }
        
