@@ -9,13 +9,17 @@ namespace Cirrus.Circuit.Networking
     // Serves to sync the connection
     public class ClientPlayer : NetworkBehaviour
     {
-        public static ClientPlayer Instance;
+        public static ClientPlayer _Instance;
 
-        public override void OnStartLocalPlayer()
+        public static ClientPlayer Instance
         {
-            base.OnStartLocalPlayer();
-            Instance = this;
-        }        
+            get
+            {
+                if (_Instance == null)
+                    _Instance = FindObjectOfType<ClientPlayer>();
+                return _Instance;
+            }
+        }
 
         [TargetRpc]
         public void TargetReceiveResponse(ServerResponseMessage response)
@@ -36,7 +40,13 @@ namespace Cirrus.Circuit.Networking
         public void Cmd_CharacterSelectSlot_TryChangeState(GameObject obj, CharacterSelectSlot.State target)
         {            
             CharacterSelectSlot slot;
-            if ((slot = obj.GetComponent<CharacterSelectSlot>()) != null) slot.Rpc_TryChangeState(target);          
+
+            Debug.Log("RPC SELECT OUTER CMD");
+            if ((slot = obj.GetComponent<CharacterSelectSlot>()) != null)
+            {
+                Debug.Log("RPC SELECT INNER CMD");
+                slot.Rpc_TryChangeState(target);
+            }
         }
 
         [Command]
@@ -84,7 +94,7 @@ namespace Cirrus.Circuit.Networking
             object[] args)
         {
             GameSession session;
-            if ((session = obj.GetComponent<GameSession>()) != null) session.RPC_TryChangeState(transition, args);
+            if ((session = obj.GetComponent<GameSession>()) != null) session.Rpc_TryChangeState(transition, args);
         }
 
 

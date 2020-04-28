@@ -95,14 +95,14 @@ namespace Cirrus.Circuit.UI
         [System.Serializable]
         public enum State
         {
+            Closed,
             Ready,
             Selecting,
-            Closed
         }
 
         [SerializeField]
         [SyncVar]
-        private State _state;
+        private State _state = State.Closed;
 
         [SerializeField]
         private CameraManager _camera;
@@ -163,30 +163,30 @@ namespace Cirrus.Circuit.UI
 
         public override void OnStartClient()
         {
-            base.OnStartClient();
-
-            TryChangeState(_state);
+            base.OnStartLocalPlayer();
+            Debug.Log("CHARACTER SELECT CLOSED");
+            TryChangeState(State.Closed);
             Scroll(true);
         }
+       
 
         public override void OnStartAuthority()
         {
             base.OnStartAuthority();
-
-            //player._characterSlot = slots[player.Id];
             TryChangeState(State.Selecting);
         }
 
+
         public void TryChangeState(State target)
         {           
-            if (!hasAuthority) return;
-
             ClientPlayer.Instance.Cmd_CharacterSelectSlot_TryChangeState(gameObject, target);
         }
 
         [ClientRpc]
         public void Rpc_TryChangeState(State target)
         {
+
+            Debug.Log("CHARACTER SELECT RPC CLOSED");
 
             switch (target)
             {
