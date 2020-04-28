@@ -61,6 +61,7 @@ namespace Cirrus.Circuit
 
         [SerializeField]
         public State _state = State.Menu;
+
         [SerializeField]
         public State _nextState = State.Unknown;
 
@@ -110,8 +111,6 @@ namespace Cirrus.Circuit
 
         [SerializeField]
         public float _targetSizeCamera = 10f;
-
-        private State _transition;
 
         private Vector3 _initialVectorBottomLeft;
 
@@ -302,6 +301,27 @@ namespace Cirrus.Circuit
         {
             switch (_state)
             {
+
+
+                case State.Unknown:
+
+                    switch (transition)
+                    {
+                        case State.Menu:
+                        case State.Round:
+                        case State.CharacterSelection:
+                        case State.BeginRound:
+                        case State.WaitingNextRound:
+                        case State.LevelSelection:
+                        case State.Score:
+                        case State.Podium:
+                        case State.FinalPodium:
+
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
 
                 case State.Menu:
 
