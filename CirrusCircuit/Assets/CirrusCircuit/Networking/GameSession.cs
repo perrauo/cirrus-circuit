@@ -141,7 +141,13 @@ namespace Cirrus.Circuit.Networking
             if (Game.Instance.IsSeedRandomized)
                 Random.InitState(Environment.TickCount);
 
-            Transitions.Transition.Instance.OnTransitionTimeoutHandler += OnTransitionTimeOut;                         
+            Transitions.Transition.Instance.OnTransitionTimeoutHandler += OnTransitionTimeOut;
+            UI.CharacterSelect.Instance.OnCharacterSelectReadyHandler += OnCharacterSelected;
+        }
+
+        public void OnCharacterSelected(int playerCount)
+        {
+            TryChangeState(State.Transition, State.LevelSelection);
         }
 
         public virtual void Start()
