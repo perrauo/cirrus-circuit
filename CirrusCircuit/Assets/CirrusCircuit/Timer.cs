@@ -14,16 +14,12 @@ namespace Cirrus.Circuit
     {
         bool _repeat = false;
         float _limit = -1;
-        float _time = 0f;
 
-        bool active = false;
-        public bool IsActive
-        {
-            get
-            {
-                return active;
-            }
-        }
+        float _time = 0f;
+        public float Time => _time;
+
+        bool _isactive = false;
+        public bool IsActive => _isactive;        
 
         public OnTimeLimit OnTimeLimitHandler;
 
@@ -37,10 +33,7 @@ namespace Cirrus.Circuit
             {
                 Start();
             }
-        }
-
-        public float Time => _time;
-        
+        }        
 
         public void Reset(float limit=-1)
         {
@@ -56,33 +49,33 @@ namespace Cirrus.Circuit
         {
             Reset();
 
-            if (!active)
+            if (!_isactive)
             {
                 Clock.Instance.OnTickedHandler += OnTicked;
             }
 
-            active = true;
+            _isactive = true;
         }
 
         public void Resume()
         {
-            if (!active)
+            if (!_isactive)
             {
                 Clock.Instance.OnTickedHandler += OnTicked;
             }
 
-            active = true;
+            _isactive = true;
         }
 
 
         public void Stop()
         {
-            if (active)
+            if (_isactive)
             {
                 Clock.Instance.OnTickedHandler -= OnTicked;
             }
 
-            active = false;
+            _isactive = false;
         }
 
         private void OnTicked()
@@ -106,11 +99,6 @@ namespace Cirrus.Circuit
         ~Timer()
         {
             Stop();
-        }
-
-        public static implicit operator float(Timer v)
-        {
-            throw new NotImplementedException();
         }
     }
 }

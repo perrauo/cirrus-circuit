@@ -234,11 +234,11 @@ namespace Cirrus.Circuit.World.Objects
             }
             else
             {
-                if (Game.Instance._localPlayers.Count == 0)
+                if (Game.Instance.LocalPlayers.Count == 0)
                     return;
 
                 _nextColorIndex = _nextColorIndex + 1;
-                _nextColorIndex = MathUtils.Wrap(_nextColorIndex, 0, Game.Instance._localPlayers.Count);
+                _nextColorIndex = MathUtils.Wrap(_nextColorIndex, 0, Game.Instance.LocalPlayers.Count);
                 //_nextColor = Game.Instance._localPlayers[_nextColorIndex].Color;
             }
         }

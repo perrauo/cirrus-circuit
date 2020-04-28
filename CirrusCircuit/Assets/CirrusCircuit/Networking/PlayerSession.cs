@@ -99,7 +99,7 @@ namespace Cirrus.Circuit.Networking
             }
 
             Debug.Log("Assigned server id with success: " + _serverId);
-            Game.Instance._localPlayers.Add(PlayerManager.Instance.LocalPlayers[_localId]);
+            Game.Instance.LocalPlayers.Add(PlayerManager.Instance.LocalPlayers[_localId]);
             PlayerManager.Instance.LocalPlayers[_localId]._session = this;
             PlayerManager.Instance.LocalPlayers[_localId]._characterSlot = CharacterSelect.Instance._slots[_serverId];
         }       

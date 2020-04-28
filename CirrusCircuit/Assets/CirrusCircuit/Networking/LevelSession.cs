@@ -172,7 +172,7 @@ namespace Cirrus.Circuit.Networking
                 if (obj is Character)
                     continue;
 
-                foreach (Controls.Player players in Game.Instance._localPlayers)
+                foreach (Controls.Player players in Game.Instance.LocalPlayers)
                 {
                     //if (obj.ColorId == players._colorId)
                     //{

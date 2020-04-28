@@ -13,14 +13,105 @@ namespace Cirrus.Circuit.Networking
 {
     public class GameSession : NetworkBehaviour
     {
-
         protected static GameSession _instance;
 
-        public static GameSession Instance => _instance;        
+        public static GameSession Instance => _instance;
+
+        public int _roundIndex;
+
+        public Round _round;
+
+        public List<PlayerSession> _players = new List<PlayerSession>();
+
+
+        ////////
+
+        [SerializeField]
+        private bool _randomizeSeed = false;
+
+        public Events.Event OnScreenResizedHandler;
+
+        public World.Objects.Door.OnScoreValueAdded OnScoreValueAddedHandler;
+
+        public Events.Event OnPodiumHandler;
+
+        public Events.Event OnFinalPodiumHandler;
+
+        public Events.Event<Round> OnNewRoundHandler;
+
+        public Events.Event<World.Level, int> OnLevelSelectedHandler;
+
+        public Events.Event<bool> OnMenuHandler;
+
+        public Events.Event<bool> OnLevelSelectHandler;
+
+        public Events.Event<bool> OnCharacterSelectHandler;
+
+        public Events.Event<Player> OnLocalPlayerJoinHandler;
+
+        public Layers Layers;
+
+        public UI.CharacterSelect _characterSelect;
+
+        public UI.StartMenu _startMenu;
+
+        [SerializeField]
+        public World.Level[] _levels;
+
+        public World.Level _selectedLevel;
+
+        public World.Level _currentLevel;
+
+        public int _currentLevelIndex = 0;
+
+        public float _distanceLevelSelect = 35;
+
+        [SerializeField]
+        public float _targetSizeCamera = 10f;
+
+        [SerializeField]
+        public float _cameraSizeSpeed = 0.8f;
+
+        [SerializeField]
+        public float _roundTime = 60f;
+
+        [SerializeField]
+        public float _countDownTime = 5f;
+
+        [SerializeField]
+        public int _countDown = 3;
+
+        [SerializeField]
+        private int _roundAmount = 3;
+
+        [SerializeField]
+        public float _podiumTransitionSpeed = 0.2f;
+
+        [SerializeField]
+        private float _intermissionTime = 2f;
+
+        [SerializeField]
+        private float _transitionTime = 5f;
+
+        private Timer _transitionTimer = null;
+
+        private State _transition;
+
+        private float _transitionDistance = 48f;
+
+        private Vector3 _initialVectorBottomLeft;
+
+        private Vector3 _initialVectorTopRight;
+
+        private Vector3 _updatedVectorBottomLeft;
+
+        private Vector3 _updatedVectorTopRight;
+
+        ////////
 
         public static void Begin(NetworkConnection conn)
         {
-            //_instance = Instantiate()
+            _instance = Instantiate(NetworkingLibrary.Instance.GameSession);
         }
 
         public static void End()
@@ -32,634 +123,890 @@ namespace Cirrus.Circuit.Networking
             _instance = null;
         }
 
-
-        public int _roundIndex;
-
-        public Round _round;
-
-        public List<PlayerSession> _players = new List<PlayerSession>();
-
-
         private void OnScoreValueAdded(World.Objects.Gem gem, int serverPlayerId, float value)
         {
             _players[serverPlayerId].Score += value;
             UI.HUD.Instance.OnScoreChanged(serverPlayerId, _players[serverPlayerId].Score);            
         }
 
-        //#region FSM
 
-        //[Serializable]
-        //public enum State
-        //{
-        //    Menu,
-        //    CharacterSelection,
-        //    LevelSelection,
-        //    Begin,
-        //    Round,
-        //    Score,
-        //    WaitingNextRound,
-        //    Podium,
-        //    FinalPodium,
-        //    Transition
-        //}
+        public virtual void OnValidate()
+        {
+            _levels = GetComponentsInChildren<World.Level>(true);
+            _selectedLevel = _levels.Length == 0 ? null : _levels[0];
 
-        //[SerializeField]
-        //public State _state = State.LevelSelection;
+            if (_transitionEffect == null)
+                _transitionEffect = FindObjectOfType<Transitions.Transition>();
 
-        //public void FSMFixedUpdate()
-        //{
-        //    switch (_state)
-        //    {
-        //        case State.Menu:
-        //        case State.CharacterSelection:
-        //        case State.Begin:
-        //        case State.LevelSelection:
-        //        case State.Round:
-        //        case State.Score:
-        //        case State.Podium:
-        //        case State.FinalPodium:
-        //            CameraManager.Instance.Camera.orthographicSize =
-        //                Mathf.Lerp(
-        //                    CameraManager.Instance.Camera.orthographicSize,
-        //                    _targetSizeCamera,
-        //                    _cameraSizeSpeed);
+            if (_characterSelect == null)
+                _characterSelect = FindObjectOfType<UI.CharacterSelect>();
 
-        //            break;
-        //    }
-        //}
-
-        //public void FSMUpdate()
-        //{
-        //    switch (_state)
-        //    {
-
-        //        case State.Round:
-
-        //            foreach (Player player in _localPlayers)
-        //            {
-        //                player._character.TryMove(player.AxisLeft);
-        //            }
-
-        //            break;
-
-        //        case State.Menu:
-        //        case State.CharacterSelection:
-        //        case State.Begin:
-        //        case State.LevelSelection:
-        //        case State.Score:
-        //        case State.Podium:
-        //        case State.FinalPodium:
-        //            break;
-        //    }
-        //}
-
-        //public bool TryChangeState(State transition, params object[] args)
-        //{
-        //    if (TryTransition(transition, out State destination))
-        //    {
-        //        ExitState(destination);
-        //        return TryFinishChangeState(destination, args);
-        //    }
-
-        //    return false;
-        //}
-
-        //public virtual void ExitState(State destination)
-        //{
-        //    switch (_state)
-        //    {
-        //        case State.Menu:
-        //            break;
-
-        //    }
-        //}
+            if (_startMenu == null)
+                _startMenu = FindObjectOfType<UI.StartMenu>();
+        }
 
 
-        //private bool TryTransition(State transition, out State destination, params object[] args)
-        //{
-        //    switch (_state)
-        //    {
-        //        case State.Menu:
+        void Awake()
+        {
+            if (_randomizeSeed)
+                UnityEngine.Random.InitState(Environment.TickCount);
 
-        //            switch (transition)
-        //            {
-        //                case State.Round:
-        //                case State.Menu:
-        //                case State.CharacterSelection:
-        //                case State.Transition:
-        //                //case State.Round:
-        //                case State.Begin:
-        //                case State.WaitingNextRound:
-        //                case State.LevelSelection:
-        //                case State.Score:
-        //                case State.Podium:
-        //                case State.FinalPodium:
-        //                    destination = transition;
-        //                    return true;
-        //            }
-        //            break;
+            _transitionTimer = new Timer(_transitionTime, start: false, repeat: false);
 
-        //        case State.CharacterSelection:
+            _transitionTimer.OnTimeLimitHandler += OnTransitionTimeOut;
 
-        //            switch (transition)
-        //            {
-        //                case State.Round:
-        //                case State.Menu:
-        //                case State.CharacterSelection:
-        //                case State.Transition:
-        //                //case State.Round:
-        //                case State.Begin:
-        //                case State.WaitingNextRound:
-        //                case State.LevelSelection:
-        //                case State.Score:
-        //                case State.Podium:
-        //                case State.FinalPodium:
+            _controllers = new List<Player>();
 
-        //                    destination = transition;
-        //                    return true;
-        //            }
-        //            break;
+            Layers = new Layers();
+            DontDestroyOnLoad(this.gameObject);
 
-        //        case State.Begin:
+            _podium.OnPodiumFinishedHandler += OnPodiumFinished;
 
-        //            switch (transition)
-        //            {
-        //                case State.Round:
-        //                case State.Menu:
-        //                case State.CharacterSelection:
-        //                case State.Transition:
-        //                //case State.Round:
-        //                case State.Begin:
-        //                case State.WaitingNextRound:
-        //                case State.LevelSelection:
-        //                case State.Score:
-        //                case State.Podium:
-        //                case State.FinalPodium:
+            _characterSelect.OnCharacterSelectReadyHandler += OnCharacterSelectReady;
 
-        //                    destination = transition;
-        //                    return true;
-        //            }
-        //            break;
+            TryChangeState(State.Menu);
+        }
 
-        //        case State.Transition:
-        //            switch (transition)
-        //            {
-        //                case State.Round:
-        //                case State.Menu:
-        //                case State.CharacterSelection:
-        //                case State.Transition:
-        //                case State.Begin:
-        //                case State.WaitingNextRound:
-        //                case State.LevelSelection:
-        //                case State.Score:
-        //                case State.Podium:
-        //                case State.FinalPodium:
+        public override void Start()
+        {
+            initialVectorBottomLeft = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
+            initialVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30)); // I used 30 as my camera z is -30
+        }
 
-        //                    destination = transition;
-        //                    return true;
-        //            }
-        //            break;
+        void Update()
+        {
+            UpdatedVectorBottomLeft = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
+            UpdatedVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30));
 
-        //        case State.Round:
+            if ((initialVectorBottomLeft != UpdatedVectorBottomLeft) || (initialVectorTopRight != UpdatedVectorTopRight))
+            {
+                OnScreenResizedHandler?.Invoke();
+            }
 
-        //            switch (transition)
-        //            {
-        //                case State.Menu:
-        //                case State.CharacterSelection:
-        //                case State.Begin:
-        //                case State.Transition:
-        //                case State.WaitingNextRound:
-        //                case State.LevelSelection:
-        //                case State.Score:
-        //                case State.Podium:
-        //                case State.FinalPodium:
+            FSMUpdate();
+        }
 
-        //                    destination = transition;
-        //                    return true;
-        //            }
-        //            break;
+        public void FixedUpdate()
+        {
+            FSMFixedUpdate();
+        }
 
-        //        case State.LevelSelection:
-        //            switch (transition)
-        //            {
-        //                case State.Menu:
-        //                case State.CharacterSelection:
-        //                case State.Begin:
-        //                case State.Transition:
-        //                case State.WaitingNextRound:
-        //                case State.LevelSelection:
-        //                case State.Score:
-        //                case State.Podium:
-        //                case State.FinalPodium:
+        public void OnStartClicked()
+        {
+            TryChangeState(State.Transition, State.CharacterSelection);
+        }
 
-        //                    destination = transition;
-        //                    return true;
-        //            }
-        //            break;
+        public void OnCharacterSelectReady(int playerCount)
+        {
+            TryChangeState(State.Transition, State.LevelSelection);
+        }
 
+        private void OnScoreValueAdded(World.Objects.Gem gem, int player, float value)
+        {
+            Lobby.Controllers[player].Score += value;
+            HUD.OnScoreChanged(player, Lobby.Controllers[player].Score);
+        }
 
-        //        case State.WaitingNextRound:
-        //            switch (transition)
-        //            {
-        //                case State.Round:
-        //                case State.Menu:
-        //                case State.CharacterSelection:
-        //                case State.Begin:
-        //                case State.Transition:
-        //                case State.LevelSelection:
-        //                //case State.Round:
-        //                case State.Podium:
-        //                case State.FinalPodium:
+        public void OnLevelCompleted(World.Level.Rule rule)
+        {
+            _round.Terminate();
 
-        //                    destination = transition;
-        //                    return true;
-        //            }
-        //            break;
+            //OnRoundEnd();
 
-        //        case State.Podium:
-        //            switch (transition)
-        //            {
-        //                case State.Menu:
-        //                case State.CharacterSelection:
-        //                case State.Begin:
-        //                case State.Transition:
-        //                case State.WaitingNextRound:
-        //                case State.LevelSelection:
-        //                case State.Round:
-        //                case State.Podium:
-        //                case State.FinalPodium:
+        }
 
-        //                    destination = transition;
-        //                    return true;
-        //            }
-        //            break;
+        public void OnLevelSelected(int step)
+        {
+            for (int i = 0; i < _levels.Length; i++)
+            {
+                if (_levels[i] == null)
+                    continue;
 
-        //        case State.FinalPodium:
-        //            switch (transition)
-        //            {
-        //                case State.Menu:
-        //                case State.CharacterSelection:
-        //                case State.Begin:
-        //                case State.Transition:
-        //                case State.WaitingNextRound:
-        //                case State.LevelSelection:
-        //                case State.Round:
-        //                case State.Podium:
-        //                case State.FinalPodium:
+                _levels[i].TargetPosition = Vector3.zero + Vector3.right * (i - _currentLevelIndex) * _distanceLevelSelect;
+            }
 
-        //                    destination = transition;
-        //                    return true;
-        //            }
-        //            break;
-        //    }
+            _selectedLevel = _levels[_currentLevelIndex];
 
-        //    destination = State.Round;
-        //    return false;
-        //}
+            _targetSizeCamera = _selectedLevel.CameraSize;
 
-        //public IEnumerator NewRoundCoroutine()
+            OnLevelSelectedHandler?.Invoke(_selectedLevel, step);
+        }
+
+        // TODO: Simulate LeftStick continuous axis with WASD
+        public void HandleAxesLeft(Player controller, Vector2 axis)
+        {
+            FSMHandleAxesLeft(controller, axis);
+        }
+
+        public void HandleAction0(Player controller)
+        {
+            FSMHandleAction0(controller);
+        }
+
+        public void HandleAction1(Player controller)
+        {
+            FSMHandleAction1(controller);
+        }
+
+        public void OnLevelSelect()
+        {
+            OnLevelSelectHandler?.Invoke();
+        }
+
+        public void OnWaiting()
+        {
+            HUD.OnWaiting();
+        }
+
+        public void OnRoundEnd()
+        {
+            _roundIndex++;
+
+            if (_roundIndex < _roundAmount)
+            {
+                _currentLevel.OnRoundEnd();
+                TryChangeState(State.Transition, State.Podium);
+            }
+            else
+            {
+                _roundIndex = 0;
+                TryChangeState(State.Transition, State.FinalPodium);
+            }
+        }
+
+        private void OnPodiumFinished()
+        {
+            if (_state == State.FinalPodium)
+            {
+                TryChangeState(State.Transition, State.LevelSelection);
+            }
+            else
+            {
+                if (_currentLevel != null)
+                {
+                    Destroy(_currentLevel.gameObject);
+                    _currentLevel = null;
+                }
+
+                TryChangeState(State.Transition, State.Round);
+            }
+        }
+
+        private void OnTransitionTimeOut()
+        {
+            switch (_transition)
+            {
+                case State.Podium:
+                case State.FinalPodium:
+                    Destroy(_currentLevel.gameObject);
+                    break;
+
+                case State.Round:
+                case State.LevelSelection:
+                    _podium.gameObject.SetActive(false);
+                    break;
+
+                    //case State.Round:
+                    //    _podium.gameObject.SetActive(false);
+                    //    break;
+            }
+
+            TryChangeState(_transition);
+        }
+
+        public bool TryJoin(Player controller)
+        {
+            if (_controllers.Count >= _selectedLevel.CharacterCount)
+                return false;
+
+            _controllers.Add(controller);
+
+            return false;
+        }
+
+        public bool TryLeave(Player controller)
+        {
+            if (_controllers.Count >= _selectedLevel.CharacterCount)
+                return false;
+
+            _controllers.Remove(controller);
+
+            return false;
+        }
+
+        public void Join(Player ctrl)
+        {
+            switch (_state)
+            {
+                case State.LevelSelection:
+                    break;
+            }
+        }
+
+        //IEnumerator OnRound()
         //{
         //    yield return new WaitForEndOfFrame();
 
-        //    OnNewRoundHandler?.Invoke(_round);
-
-        //    //_round.OnRoundBeginHandler += _currentLevel.OnBeginRound;
-
-        //    _round.OnRoundEndHandler += OnRoundEnd;
-
-        //    _round.BeginIntermission();
-
-        //    yield return null;
-        //}
-
-        //private bool TryFinishChangeState(State target, params object[] args)
-        //{
-        //    switch (target)
+        //    for (int i = 0; i < _currentLevel.CharacterCount; i++)
         //    {
-        //        case State.Menu:
-        //            _state = target;
-        //            return true;
-
-        //        case State.CharacterSelection:
-        //            OnCharacterSelectHandler?.Invoke(true);
-        //            _state = target;
-        //            return true;
-
-        //        case State.Begin:
-        //            Podium.Instance.Clear();
-
-        //            foreach (var player in _localPlayers)
-        //            {
-        //                if (player == null) continue;
-        //                Podium.Instance.Add(player, player._characterResource);
-        //            }
-
-        //            Podium.Instance.gameObject.SetActive(false);
-
-        //            OnLevelSelectHandler.Invoke(false);
-
-        //            foreach (World.Level level in _levels)
-        //            {
-        //                if (level == null)
-        //                    continue;
-
-        //                if (level == _selectedLevel)
-        //                    continue;
-
-        //                level.gameObject.SetActive(false);
-        //            }
-
-        //            _selectedLevel.gameObject.SetActive(false);
-
-        //            _state = target;
-        //            return TryChangeState(State.Round, _roundTime);
-
-
-        //        case State.Transition:
-        //            _transition = (State)args[0];
-        //            _transitionTimer.Start();
-        //            Transitions.Transition.Instance.Perform();
-        //            _state = target;
-        //            return true;
-
-
-        //        case State.Podium:
-        //            Podium.Instance.gameObject.SetActive(true);
-        //            OnPodiumHandler?.Invoke();
-        //            _state = target;
-        //            return true;
-
-        //        case State.FinalPodium:
-        //            Podium.Instance.gameObject.SetActive(true);
-        //            OnFinalPodiumHandler?.Invoke();
-        //            _state = target;
-        //            return true;
-
-        //        case State.LevelSelection:
-
-        //            _state = target;
-
-        //            foreach (World.Level lv in _levels)
-        //            {
-        //                lv.gameObject.SetActive(true);
-        //                lv.OnLevelSelect();
-        //            }
-
-        //            OnLevelSelect();
-        //            OnLevelSelected(0);
-
-        //            return true;
-
-        //        case State.Round:
-
-        //            // TODO enable
-
-        //            _selectedLevel.TargetPosition = Vector3.zero;
-        //            _selectedLevel.transform.position = Vector3.zero;
-
-        //            _selectedLevel.gameObject.SetActive(true);
-
-        //            _currentLevel =
-        //                Instantiate(
-        //                    _selectedLevel.gameObject,
-        //                    Vector3.zero, Quaternion.identity,
-        //                    gameObject.transform).GetComponent<World.Level>();
-
-        //            _selectedLevel.gameObject.SetActive(false);
-
-        //            _currentLevel.OnScoreValueAddedHandler += OnScoreValueAdded;
-
-        //            _currentLevel.OnLevelCompletedHandler += OnLevelCompleted;
-
-        //            List<Placeholder> placeholders = new List<Placeholder>();
-        //            placeholders.AddRange(_currentLevel._characterPlaceholders);
-
-        //            int i = 0;
-        //            while (!placeholders.IsEmpty())
-        //            {
-        //                Placeholder placeholder = placeholders.RemoveRandom();
-
-        //                _localPlayers[i]._character = _localPlayers[i]
-        //                    ._characterResource.Create(
-        //                        _currentLevel.GridToWorld(placeholder._gridPosition),
-        //                        _currentLevel.transform);
-
-        //                _localPlayers[i]._character.ColorId = _localPlayers[i].ServerId;
-
-        //                _localPlayers[i]._character.Color = _localPlayers[i].Color;
-
-        //                _localPlayers[i]._character._level = _currentLevel;
-
-        //                _localPlayers[i]._character.TryChangeState(World.Objects.BaseObject.State.Disabled);
-
-        //                _localPlayers[i].Score = 0;
-
-        //                _localPlayers[i]._colorId = placeholder.ColorId;
-
-        //                i++;
-
-        //                Destroy(placeholder.gameObject);
-        //            }
-
-        //            _round =
-        //                new Round(
-        //                    _countDown,
-        //                    _roundTime,
-        //                    _countDownTime,
-        //                    _intermissionTime,
-        //                    _roundIndex);
-
-        //            StartCoroutine(NewRoundCoroutine());
-
-        //            _state = target;
-
-        //            return true;
-
-        //        case State.Score:
-
-        //            _state = target;
-
-        //            return true;
-
-        //        case State.WaitingNextRound:
-        //            //Lobby.Characters.Clear();
-        //            //Lobby.Characters.AddRange(_selectedLevel.Characters);
-
-        //            foreach (Player player in LocalPlayerManager.Instance.Players)
-        //            {
-        //                if (player == null) continue;
-
-        //                //ctrl.Character = null;
-        //            }
-
-        //            _state = target;
-
-        //            OnWaiting();
-        //            return true;
-
-        //        default: return false;
+        //        _controllers[i]._character = _currentLevel._characters[i];
         //    }
         //}
 
-        //private bool[] _wasMovingVertical = new bool[PlayerMax];
-
-        //// TODO: Simulate LeftStick continuous axis with WASD
-        //public void FSMHandleAxesLeft(Player player, Vector2 axis)
-        //{
-        //    bool isMovingHorizontal = Mathf.Abs(axis.x) > 0.5f;
-        //    bool isMovingVertical = Mathf.Abs(axis.y) > 0.5f;
-
-        //    Vector3 stepHorizontal = new Vector3(Mathf.Sign(axis.x), 0, 0);
-        //    Vector3 stepVertical = new Vector3(0, 0, Mathf.Sign(axis.y));
-        //    Vector3 step = Vector3.zero;
-
-        //    if (isMovingVertical && isMovingHorizontal)
-        //    {
-        //        //moving in both directions, prioritize later
-        //        if (_wasMovingVertical[player.LocalId]) step = stepHorizontal;
-        //        else step = stepVertical;
-        //    }
-        //    else if (isMovingHorizontal)
-        //    {
-        //        step = stepHorizontal;
-        //        _wasMovingVertical[player.LocalId] = false;
-        //    }
-        //    else if (isMovingVertical)
-        //    {
-        //        step = stepVertical;
-        //        _wasMovingVertical[player.LocalId] = true;
-        //    }
-
-        //    switch (_state)
-        //    {
-        //        case State.CharacterSelection:
-
-        //            if (Mathf.Abs(step.z) > 0)
-        //            {
-        //                if (player._characterSlot == null) return;
-        //                player._characterSlot.CmdScroll(step.z > 0);
-        //            }
-
-        //            break;
-
-        //        case State.LevelSelection:
-
-        //            if (Mathf.Abs(step.x) > 0)
-        //            {
-
-        //                int prev = _currentLevelIndex;
-
-        //                _currentLevelIndex =
-        //                    Mathf.Clamp(_currentLevelIndex + (int)Mathf.Sign(step.x), 0, _levels.Length - 1);
-
-        //                if (prev != _currentLevelIndex)
-        //                {
-        //                    OnLevelSelected((int)Mathf.Sign(step.x));
-        //                }
-        //            }
-
-        //            break;
-
-        //        case State.WaitingNextRound:
-
-        //            break;
-
-        //        //case State.Round:
-        //        //    if (controller._character)
-        //        //        controller._character?.TryMove(axis);
-        //        //    break;
-
-        //        case State.Score:
-        //            break;
-
-        //        default:
-        //            break;
-        //    }
-        //}
-
-        //public void FSMHandleAction0(Player player)
-        //{
-        //    switch (_state)
-        //    {
-        //        case State.LevelSelection:
-        //            break;
-
-        //        case State.CharacterSelection:
-
-        //            //if (_controllers.Contains(controller))
-        //            //{
-        //            //    _controllers.Remove(controller);
-        //            //    OnControllerJoinHandler?.Invoke(controller);
-        //            //}
-        //            //else
-        //            {
-        //                player._characterSlot.HandleAction0();
-        //            }
-
-        //            break;
-
-        //        case State.WaitingNextRound:
-
-        //            if (_localPlayers.Contains(player))
-        //            {
-        //                UI.HUD.Instance.Leave(player);
-        //                _localPlayers.Remove(player);
-        //            }
-        //            else
-        //            {
-        //                foreach (Player other in LocalPlayerManager.Instance.Players) if (other == null) continue;
-        //                TryChangeState(State.LevelSelection);
-        //            }
-
-        //            break;
-
-        //        case State.Round:
-        //            if (player._character) player._character?.TryAction0();
-
-        //            break;
-
-        //        case State.Score:
-        //            break;
-        //    }
-        //}
-
-        //public void FSMHandleAction1(Player player)
-        //{
-        //    switch (_state)
-        //    {
-        //        case State.Podium:
-
-        //            break;
-
-        //        case State.LevelSelection:
-        //            TryChangeState(State.Transition, State.Begin);
-        //            break;
-
-        //        case State.CharacterSelection:
-
-        //            if (player._characterSlot != null) player._characterSlot.HandleAction1(player);
-
-        //            else CustomNetworkManager.Instance.RequestPlayerJoin(player);
-
-        //            break;
-
-        //        case State.WaitingNextRound:
-        //            break;
-
-        //        case State.Round:
-        //            if (player._character) player._character?.TryAction1();
-        //            break;
-
-        //        case State.Score:
-        //            break;
-        //    }
-
-        //}
+#endregion
 
 
-        //#endregion
+        #region FSM
+
+        [System.Serializable]
+        public enum State
+        {
+            Menu,
+            CharacterSelection,
+            LevelSelection,
+            Begin,
+            Round,
+            Score,
+            WaitingNextRound,
+            Podium,
+            FinalPodium,
+            Transition
+        }
+
+        [SerializeField]
+        public State _state = State.LevelSelection;
+
+        public void FSMFixedUpdate()
+        {
+            switch (_state)
+            {
+                case State.Menu:
+                case State.CharacterSelection:
+                case State.Begin:
+                case State.LevelSelection:
+                case State.Round:
+                case State.Score:
+                case State.Podium:
+                case State.FinalPodium:
+                    CameraManager.Instance.Camera.orthographicSize =
+                        Mathf.Lerp(
+                            CameraManager.Instance.Camera.orthographicSize,
+                            _targetSizeCamera,
+                            _cameraSizeSpeed);
+
+                    break;
+            }
+        }
+
+        public void FSMUpdate()
+        {
+            switch (_state)
+            {
+
+                case State.Round:
+
+                    foreach (Player ctrl in _controllers)
+                    {
+                        ctrl._character.TryMove(ctrl.AxisLeft);
+                    }
+
+                    break;
+
+                case State.Menu:
+                case State.CharacterSelection:
+                case State.Begin:
+                case State.LevelSelection:
+                case State.Score:
+                case State.Podium:
+                case State.FinalPodium:
+                    break;
+            }
+        }
+
+        public bool TryChangeState(State transition, params object[] args)
+        {
+            if (TryTransition(transition, out State destination))
+            {
+                ExitState(destination);
+                return TryFinishChangeState(destination, args);
+            }
+
+            return false;
+        }
+
+        public virtual void ExitState(State destination)
+        {
+            switch (_state)
+            {
+                case State.Menu:
+                    break;
+
+            }
+        }
 
 
+        protected bool TryTransition(State transition, out State destination, params object[] args)
+        {
+            switch (_state)
+            {
+                case State.Menu:
+
+                    switch (transition)
+                    {
+                        case State.Round:
+                        case State.Menu:
+                        case State.CharacterSelection:
+                        case State.Transition:
+                        //case State.Round:
+                        case State.Begin:
+                        case State.WaitingNextRound:
+                        case State.LevelSelection:
+                        case State.Score:
+                        case State.Podium:
+                        case State.FinalPodium:
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
+                case State.CharacterSelection:
+
+                    switch (transition)
+                    {
+                        case State.Round:
+                        case State.Menu:
+                        case State.CharacterSelection:
+                        case State.Transition:
+                        //case State.Round:
+                        case State.Begin:
+                        case State.WaitingNextRound:
+                        case State.LevelSelection:
+                        case State.Score:
+                        case State.Podium:
+                        case State.FinalPodium:
+
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
+                case State.Begin:
+
+                    switch (transition)
+                    {
+                        case State.Round:
+                        case State.Menu:
+                        case State.CharacterSelection:
+                        case State.Transition:
+                        //case State.Round:
+                        case State.Begin:
+                        case State.WaitingNextRound:
+                        case State.LevelSelection:
+                        case State.Score:
+                        case State.Podium:
+                        case State.FinalPodium:
+
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
+                case State.Transition:
+                    switch (transition)
+                    {
+                        case State.Round:
+                        case State.Menu:
+                        case State.CharacterSelection:
+                        case State.Transition:
+                        case State.Begin:
+                        case State.WaitingNextRound:
+                        case State.LevelSelection:
+                        case State.Score:
+                        case State.Podium:
+                        case State.FinalPodium:
+
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
+                case State.Round:
+
+                    switch (transition)
+                    {
+                        case State.Menu:
+                        case State.CharacterSelection:
+                        case State.Begin:
+                        case State.Transition:
+                        case State.WaitingNextRound:
+                        case State.LevelSelection:
+                        case State.Score:
+                        case State.Podium:
+                        case State.FinalPodium:
+
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
+                case State.LevelSelection:
+                    switch (transition)
+                    {
+                        case State.Menu:
+                        case State.CharacterSelection:
+                        case State.Begin:
+                        case State.Transition:
+                        case State.WaitingNextRound:
+                        case State.LevelSelection:
+                        case State.Score:
+                        case State.Podium:
+                        case State.FinalPodium:
+
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
+
+                case State.WaitingNextRound:
+                    switch (transition)
+                    {
+                        case State.Round:
+                        case State.Menu:
+                        case State.CharacterSelection:
+                        case State.Begin:
+                        case State.Transition:
+                        case State.LevelSelection:
+                        //case State.Round:
+                        case State.Podium:
+                        case State.FinalPodium:
+
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
+                case State.Podium:
+                    switch (transition)
+                    {
+                        case State.Menu:
+                        case State.CharacterSelection:
+                        case State.Begin:
+                        case State.Transition:
+                        case State.WaitingNextRound:
+                        case State.LevelSelection:
+                        case State.Round:
+                        case State.Podium:
+                        case State.FinalPodium:
+
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
+                case State.FinalPodium:
+                    switch (transition)
+                    {
+                        case State.Menu:
+                        case State.CharacterSelection:
+                        case State.Begin:
+                        case State.Transition:
+                        case State.WaitingNextRound:
+                        case State.LevelSelection:
+                        case State.Round:
+                        case State.Podium:
+                        case State.FinalPodium:
+
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+            }
+
+            destination = State.Round;
+            return false;
+        }
+
+
+        public IEnumerator NewRoundCoroutine()
+        {
+            yield return new WaitForEndOfFrame();
+
+            OnNewRoundHandler?.Invoke(_round);
+
+            //_round.OnRoundBeginHandler += _currentLevel.OnBeginRound;
+
+            _round.OnRoundEndHandler += OnRoundEnd;
+
+            _round.BeginIntermission();
+
+            yield return null;
+        }
+
+        protected bool TryFinishChangeState(State target, params object[] args)
+        {
+            switch (target)
+            {
+                case State.Menu:
+                    _state = target;
+                    return true;
+
+                case State.CharacterSelection:
+                    OnCharacterSelectHandler?.Invoke(true);
+                    _state = target;
+                    return true;
+
+                case State.Begin:
+                    _podium.Clear();
+
+                    foreach (var c in _controllers)
+                    {
+                        if (c == null)
+                            continue;
+
+                        _podium.Add(c, c._characterResource);
+                    }
+
+                    _podium.gameObject.SetActive(false);
+
+                    OnLevelSelectHandler.Invoke(false);
+
+                    foreach (World.Level level in _levels)
+                    {
+                        if (level == null)
+                            continue;
+
+                        if (level == _selectedLevel)
+                            continue;
+
+                        level.gameObject.SetActive(false);
+                    }
+
+
+                    _selectedLevel.gameObject.SetActive(false);
+
+                    _state = target;
+                    return TryChangeState(State.Round, _roundTime);
+
+
+                case State.Transition:
+
+                    _transition = (State)args[0];
+                    _transitionTimer.Start();
+
+                    _transitionEffect.Perform();
+
+                    _state = target;
+                    return true;
+
+
+                case State.Podium:
+                    _podium.gameObject.SetActive(true);
+                    OnPodiumHandler?.Invoke();
+                    _state = target;
+                    return true;
+
+                case State.FinalPodium:
+                    _podium.gameObject.SetActive(true);
+                    OnFinalPodiumHandler?.Invoke();
+                    _state = target;
+                    return true;
+
+                case State.LevelSelection:
+
+                    _state = target;
+
+                    foreach (World.Level lv in _levels)
+                    {
+                        lv.gameObject.SetActive(true);
+                        lv.OnLevelSelect();
+                    }
+
+                    OnLevelSelect();
+                    OnLevelSelected(0);
+
+                    return true;
+
+                case State.Round:
+
+                    // TODO enable
+
+                    _selectedLevel.TargetPosition = Vector3.zero;
+                    _selectedLevel.transform.position = Vector3.zero;
+
+                    _selectedLevel.gameObject.SetActive(true);
+
+                    _currentLevel =
+                        Instantiate(
+                            _selectedLevel.gameObject,
+                            Vector3.zero, Quaternion.identity,
+                            gameObject.transform).GetComponent<World.Level>();
+
+                    _selectedLevel.gameObject.SetActive(false);
+
+
+                    _currentLevel.OnScoreValueAddedHandler += OnScoreValueAdded;
+
+                    _currentLevel.OnLevelCompletedHandler += OnLevelCompleted;
+
+                    List<Placeholder> placeholders = new List<Placeholder>();
+                    placeholders.AddRange(_currentLevel._characterPlaceholders);
+
+                    int i = 0;
+                    while (!placeholders.IsEmpty())
+                    {
+                        Placeholder placeholder = placeholders.RemoveRandom();
+
+                        _controllers[i]._character = _controllers[i]
+                            ._characterResource.Create(
+                                _currentLevel.GridToWorld(placeholder._gridPosition),
+                                _currentLevel.transform);
+
+                        _controllers[i]._character.Number = _controllers[i].Number;
+
+                        _controllers[i]._character.Color = _controllers[i].Color;
+
+                        _controllers[i]._character._level = _currentLevel;
+
+                        _controllers[i]._character.TryChangeState(Character.State.Disabled);
+
+                        _controllers[i].Score = 0;
+
+                        _controllers[i]._assignedNumber = placeholder.Number;
+
+                        i++;
+
+                        Destroy(placeholder.gameObject);
+                    }
+
+                    _round =
+                        new Round(
+                            _countDown,
+                            _roundTime,
+                            _countDownTime,
+                            _intermissionTime,
+                            _roundIndex);
+
+                    StartCoroutine(NewRoundCoroutine());
+
+                    _state = target;
+
+                    return true;
+
+                case State.Score:
+
+                    _state = target;
+
+                    return true;
+
+                case State.WaitingNextRound:
+                    //Lobby.Characters.Clear();
+                    //Lobby.Characters.AddRange(_selectedLevel.Characters);
+
+                    foreach (Player ctrl in Lobby.Controllers)
+                    {
+                        if (ctrl == null)
+                        {
+                            continue;
+                        }
+
+                        //ctrl.Character = null;
+                    }
+
+                    _state = target;
+
+                    OnWaiting();
+                    return true;
+
+
+                default:
+                    return false;
+            }
+
+        }
+
+        private bool _wasMovingVertical = false;
+
+        // TODO: Simulate LeftStick continuous axis with WASD
+        public void FSMHandleAxesLeft(Player controller, Vector2 axis)
+        {
+            bool isMovingHorizontal = UnityEngine.Mathf.Abs(axis.x) > 0.5f;
+            bool isMovingVertical = UnityEngine.Mathf.Abs(axis.y) > 0.5f;
+
+            Vector3 stepHorizontal = new Vector3(UnityEngine.Mathf.Sign(axis.x), 0, 0);
+            Vector3 stepVertical = new Vector3(0, 0, UnityEngine.Mathf.Sign(axis.y));
+            Vector3 step = Vector3.zero;
+
+            if (isMovingVertical && isMovingHorizontal)
+            {
+                //moving in both directions, prioritize later
+                if (_wasMovingVertical)
+                {
+                    step = stepHorizontal;
+                }
+                else
+                {
+                    step = stepVertical;
+                }
+            }
+            else if (isMovingHorizontal)
+            {
+                step = stepHorizontal;
+                _wasMovingVertical = false;
+
+
+            }
+            else if (isMovingVertical)
+            {
+                step = stepVertical;
+                _wasMovingVertical = true;
+            }
+
+            switch (_state)
+            {
+                case State.CharacterSelection:
+                    if (controller._characterSlot == null)
+                        break;
+
+                    if (UnityEngine.Mathf.Abs(step.z) > 0)
+                    {
+                        controller._characterSlot.Scroll(step.z > 0);
+                    }
+
+                    break;
+
+                case State.LevelSelection:
+
+                    if (UnityEngine.Mathf.Abs(step.x) > 0)
+                    {
+
+                        int prev = _currentLevelIndex;
+
+                        _currentLevelIndex =
+                            UnityEngine.Mathf.Clamp(_currentLevelIndex + (int)UnityEngine.Mathf.Sign(step.x), 0, _levels.Length - 1);
+
+                        if (prev != _currentLevelIndex)
+                        {
+                            OnLevelSelected((int)UnityEngine.Mathf.Sign(step.x));
+                        }
+                    }
+
+                    break;
+
+                case State.WaitingNextRound:
+
+                    break;
+
+                //case State.Round:
+                //    if (controller._character)
+                //        controller._character?.TryMove(axis);
+                //    break;
+
+                case State.Score:
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        public void FSMHandleAction0(Player controller)
+        {
+            switch (_state)
+            {
+                case State.LevelSelection:
+                    break;
+
+                case State.CharacterSelection:
+
+                    //if (_controllers.Contains(controller))
+                    //{
+                    //    _controllers.Remove(controller);
+                    //    OnControllerJoinHandler?.Invoke(controller);
+                    //}
+                    //else
+                    {
+                        controller._characterSlot.HandleAction0();
+                    }
+
+                    break;
+
+                case State.WaitingNextRound:
+
+                    if (_controllers.Contains(controller))
+                    {
+                        HUD.Leave(controller);
+                        _controllers.Remove(controller);
+                    }
+                    else
+                    {
+                        foreach (Player ctrl in Lobby.Controllers)
+                        {
+                            if (ctrl == null)
+                            {
+                                continue;
+                            }
+                        }
+
+                        TryChangeState(State.LevelSelection);
+                    }
+
+                    break;
+
+                case State.Round:
+                    if (controller._character)
+                        controller._character?.TryAction0();
+
+                    break;
+
+                case State.Score:
+                    break;
+            }
+        }
+
+
+        public void FSMHandleAction1(Player controller)
+        {
+            switch (_state)
+            {
+                case State.Podium:
+
+                    break;
+
+                case State.LevelSelection:
+                    TryChangeState(State.Transition, State.Begin);
+                    break;
+
+                case State.CharacterSelection:
+
+                    if (!_controllers.Contains(controller))
+                    {
+                        _controllers.Add(controller);
+                        OnControllerJoinHandler?.Invoke(controller);
+                    }
+                    else
+                    {
+                        controller._characterSlot.HandleAction1(controller);
+                    }
+
+                    break;
+
+
+                case State.WaitingNextRound:
+
+                    break;
+
+
+                case State.Round:
+                    if (controller._character)
+                        controller._character?.TryAction1();
+                    break;
+
+                case State.Score:
+                    break;
+            }
+
+        }
 
     }
 }

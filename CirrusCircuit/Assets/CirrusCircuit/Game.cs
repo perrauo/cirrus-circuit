@@ -20,7 +20,7 @@ namespace Cirrus.Circuit
 
     public class Game : BaseSingleton<Game>
     {
-        #region Core
+        #region Game
 
         [SerializeField]
         private bool _randomizeSeed = false;
@@ -103,13 +103,12 @@ namespace Cirrus.Circuit
         private Vector3 _updatedVectorBottomLeft;
 
         private Vector3 _updatedVectorTopRight;
-
-
+        
         public int _roundIndex;
 
         public Round _round;
 
-        public List<Player> _localPlayers = new List<Player>();
+        public List<Player> LocalPlayers = new List<Player>();
 
         public override void OnValidate()
         {
@@ -120,7 +119,6 @@ namespace Cirrus.Circuit
             if (_characterSelect == null) _characterSelect = FindObjectOfType<UI.CharacterSelect>();
             if (_startMenu == null) _startMenu = FindObjectOfType<UI.StartMenu>();
         }
-
 
         public override void Awake()
         {
@@ -206,19 +204,19 @@ namespace Cirrus.Circuit
         }
 
         // TODO: Simulate LeftStick continuous axis with WASD
-        public void HandleAxesLeft(Player controller, Vector2 axis)
+        public void HandleAxesLeft(Player player, Vector2 axis)
         {
-            FSMHandleAxesLeft(controller, axis);
+            FSMHandleAxesLeft(player, axis);
         }
 
-        public void HandleAction0(Player controller)
+        public void HandleAction0(Player player)
         {
-            FSMHandleAction0(controller);
+            FSMHandleAction0(player);
         }
 
-        public void HandleAction1(Player controller)
+        public void HandleAction1(Player player)
         {
-            FSMHandleAction1(controller);
+            FSMHandleAction1(player);
         }
 
         public void OnLevelSelect()
@@ -293,43 +291,23 @@ namespace Cirrus.Circuit
         public enum State
         {
             Menu,
-            CharacterSelection,
-            LevelSelection,
-            Begin,
-            Round,
-            Score,
-            WaitingNextRound,
-            Podium,
-            FinalPodium,
-            Transition,
             Session,
+            Transition
         }
 
         [SerializeField]
-        public State _state = State.LevelSelection;
+        public State _state = State.Menu;
 
         public void FSMFixedUpdate()
         {
             switch (_state)
             {
-                case State.Menu:
-                case State.CharacterSelection:
-                case State.Begin:
-                case State.LevelSelection:
-                case State.Round:
-                case State.Score:
-                case State.Podium:                
-                case State.FinalPodium:                 
-                    CameraManager.Instance.Camera.orthographicSize =
-                        Mathf.Lerp(
-                            CameraManager.Instance.Camera.orthographicSize,
-                            _targetSizeCamera,
-                            _cameraSizeSpeed);
-
+                case State.Menu:                                 
                     break;
 
                 case State.Session:
                     if (GameSession.Instance == null) return;
+                    GameSession.Instance.FSMFixedUpdate();
                     break;
             }
         }
@@ -338,23 +316,12 @@ namespace Cirrus.Circuit
         {
             switch (_state)
             {
-
-                case State.Round:
-
-                    foreach (Player player in _localPlayers)
-                    {
-                        player._character.TryMove(player.AxisLeft);
-                    }
-
+                case State.Menu:
                     break;
 
-                case State.Menu:
-                case State.CharacterSelection:
-                case State.Begin:
-                case State.LevelSelection:
-                case State.Score:
-                case State.Podium:
-                case State.FinalPodium:
+                case State.Session:
+                    if (GameSession.Instance == null) return;
+                    GameSession.Instance.FSMUpdate();
                     break;
             }
         }
@@ -370,36 +337,26 @@ namespace Cirrus.Circuit
             return false;
         }
 
+
         public virtual void ExitState(State destination)
         {
             switch (_state)
             {
                 case State.Menu:
                     break;
-
             }
         }
-
 
         private bool TryTransition(State transition, out State destination, params object[] args)
         {
             switch (_state)
             {
                 case State.Menu:
-
                     switch (transition)
-                    {
-                        case State.Round:
+                    {                        
                         case State.Menu:
-                        case State.CharacterSelection:
                         case State.Transition:
                         //case State.Round:
-                        case State.Begin:
-                        case State.WaitingNextRound:
-                        case State.LevelSelection:
-                        case State.Score:
-                        case State.Podium:
-                        case State.FinalPodium:
                             destination = transition;
                             return true;
                     }
@@ -409,17 +366,8 @@ namespace Cirrus.Circuit
 
                     switch (transition)
                     {
-                        case State.Round:
                         case State.Menu:
-                        case State.CharacterSelection:
                         case State.Transition:
-                        //case State.Round:
-                        case State.Begin:
-                        case State.WaitingNextRound:
-                        case State.LevelSelection:
-                        case State.Score:
-                        case State.Podium:
-                        case State.FinalPodium:
 
                             destination = transition;
                             return true;
@@ -594,7 +542,7 @@ namespace Cirrus.Circuit
                 case State.Begin:
                     Podium.Instance.Clear();
 
-                    foreach (var player in _localPlayers)
+                    foreach (var player in LocalPlayers)
                     {
                         if (player == null) continue;
                         //Podium.Instance.Add(player, player._characterResource);
@@ -620,14 +568,12 @@ namespace Cirrus.Circuit
                     _state = target;
                     return TryChangeState(State.Round, _roundTime);
 
-
                 case State.Transition:
                     _transition = (State)args[0];
                     _transitionTimer.Start();
                     Transitions.Transition.Instance.Perform();
                     _state = target;
                     return true;
-
 
                 case State.Podium:
                     Podium.Instance.gameObject.SetActive(true);
@@ -694,9 +640,9 @@ namespace Cirrus.Circuit
 
                         //_localPlayers[i]._character.Color = _localPlayers[i].Color;
 
-                        _localPlayers[i]._character._level = _currentLevel;
+                        LocalPlayers[i]._character._level = _currentLevel;
 
-                        _localPlayers[i]._character.TryChangeState(World.Objects.BaseObject.State.Disabled);
+                        LocalPlayers[i]._character.TryChangeState(World.Objects.BaseObject.State.Disabled);
 
                         //_localPlayers[i].Score = 0;
 
@@ -846,10 +792,10 @@ namespace Cirrus.Circuit
 
                 case State.WaitingNextRound:
 
-                    if (_localPlayers.Contains(player))
+                    if (LocalPlayers.Contains(player))
                     {
                         UI.HUD.Instance.Leave(player);
-                        _localPlayers.Remove(player);
+                        LocalPlayers.Remove(player);
                     }
                     else
                     {
