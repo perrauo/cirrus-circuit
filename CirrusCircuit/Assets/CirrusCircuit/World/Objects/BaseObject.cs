@@ -7,6 +7,7 @@ using Cirrus.Resources;
 using Cirrus.Utils;
 using System;
 using Cirrus.Circuit.Controls;
+using Cirrus.Circuit.Networking;
 //using Cirrus.DH.Conditions;
 //using Cirrus.DH.Objects.Actions;
 
@@ -234,11 +235,11 @@ namespace Cirrus.Circuit.World.Objects
             }
             else
             {
-                if (Game.Instance.LocalPlayers.Count == 0)
+                if (GameSession.Instance.LocalPlayers.Count == 0)
                     return;
 
                 _nextColorIndex = _nextColorIndex + 1;
-                _nextColorIndex = MathUtils.Wrap(_nextColorIndex, 0, Game.Instance.LocalPlayers.Count);
+                _nextColorIndex = MathUtils.Wrap(_nextColorIndex, 0, GameSession.Instance.LocalPlayers.Count);
                 //_nextColor = Game.Instance._localPlayers[_nextColorIndex].Color;
             }
         }

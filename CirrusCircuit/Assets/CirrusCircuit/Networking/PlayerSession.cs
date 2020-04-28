@@ -42,7 +42,7 @@ namespace Cirrus.Circuit.Networking
             {
                 if (!hasAuthority) return;
                 _score = value < 0 ? 0 : value;
-                ClientPlayer.Instance.CmdSetScore_PlayerSession(gameObject, _score);
+                ClientPlayer.Instance.Cmd_PlayerSession_SetScore(gameObject, _score);
             }
         }
 
@@ -60,7 +60,7 @@ namespace Cirrus.Circuit.Networking
             {
                 if (!hasAuthority) return;
                 _characterId = value;
-                ClientPlayer.Instance.CmdSetCharacterId_PlayerSession(gameObject, _characterId);
+                ClientPlayer.Instance.Cmd_PlayerSession_SetCharacterId(gameObject, _characterId);
             }                                    
         }
 
@@ -105,7 +105,7 @@ namespace Cirrus.Circuit.Networking
             }
 
             Debug.Log("Assigned server id with success: " + _serverId);
-            Game.Instance.LocalPlayers.Add(PlayerManager.Instance.LocalPlayers[_localId]);
+            GameSession.Instance.LocalPlayers.Add(PlayerManager.Instance.LocalPlayers[_localId]);
             PlayerManager.Instance.LocalPlayers[_localId]._session = this;
             PlayerManager.Instance.LocalPlayers[_localId]._characterSlot = CharacterSelect.Instance._slots[_serverId];
         }       

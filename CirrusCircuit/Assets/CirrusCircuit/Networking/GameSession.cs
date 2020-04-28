@@ -23,6 +23,8 @@ namespace Cirrus.Circuit.Networking
 
         protected static GameSession _instance;
 
+        private bool[] _wasMovingVertical = new bool[PlayerManager.Max];
+
         public static GameSession Instance
         {
             get
@@ -33,32 +35,22 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-        public override void OnStartClient()
-        {
-            base.OnStartClient();
-            Debug.Log("Client Started");
-            OnStartClientStaticHandler?.Invoke(true);
-        }
-
-        public override void OnStopClient()
-        {
-            base.OnStopClient();
-            OnStartClientStaticHandler?.Invoke(true);
-            _instance = null;
-        }
-
+        [SerializeField]
         public Round _round;
 
         [SyncVar]
         [SerializeField]
         public int _roundIndex;
-        
+
+        [SerializeField]
+        public List<Player> LocalPlayers = new List<Player>();
+
         [SerializeField]
         public List<PlayerSession> _players = new List<PlayerSession>();
-                
+
         public Events.Event OnScreenResizedHandler;
 
-        public Event<Gem, int, float> OnScoreValueAddedHandler;        
+        public Event<Gem, int, float> OnScoreValueAddedHandler;
 
         public Events.Event OnPodiumHandler;
 
@@ -80,10 +72,31 @@ namespace Cirrus.Circuit.Networking
 
         public int _currentLevelIndex = 0;
 
+        public World.Level SelectedLevel => Game.Instance._levels[_selectedLevelIndex];        
+
         [SyncVar]
         [SerializeField]
         public float _targetSizeCamera = 10f;
 
+
+        [Serializable]
+        public enum State
+        {
+            CharacterSelection,
+            LevelSelection,
+            Begin,
+            Round,
+            Score,
+            WaitingNextRound,
+            Podium,
+            FinalPodium,
+            Transition
+        }
+
+        [SerializeField]
+        public State _state = State.LevelSelection;
+
+        [SerializeField]
         private State _transition;
 
         ////////   
@@ -105,29 +118,71 @@ namespace Cirrus.Circuit.Networking
         {
                         
         }
-        
+
+
+        public IEnumerator NewRoundCoroutine()
+        {
+            yield return new WaitForEndOfFrame();
+
+            OnNewRoundHandler?.Invoke(_round);
+
+            //_round.OnRoundBeginHandler += _currentLevel.OnBeginRound;
+
+            _round.OnRoundEndHandler += OnRoundEnd;
+
+            _round.BeginIntermission();
+
+            yield return null;
+        }
+
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            Debug.Log("Client Started");
+            OnStartClientStaticHandler?.Invoke(true);
+        }
+
+        public override void OnStopClient()
+        {
+            base.OnStopClient();
+            OnStartClientStaticHandler?.Invoke(true);
+            _instance = null;
+        }
+
         public void OnLevelCompleted(World.Level.Rule rule)
         {
             _round.Terminate();
             //OnRoundEnd();
         }
 
+        [ClientRpc]
+        public void Rpc_SelectLevel(int step)
+        {
+            DoSelectLevel(step);
+        }
+
         public void SelectLevel(int step)
+        {
+            ClientPlayer.Instance.Cmd_GameSession_SelectLevel(gameObject, step);
+        }
+
+        public void DoSelectLevel(int step)
         {
             for (int i = 0; i < Game.Instance._levels.Length; i++)
             {
-                if (Game.Instance._levels[i] == null)
-                    continue;
-
+                if (Game.Instance._levels[i] == null) continue;
                 Game.Instance._levels[i].TargetPosition = Vector3.zero + Vector3.right * (i - _currentLevelIndex) * Game.Instance.DistanceLevelSelect;
             }
 
             _selectedLevelIndex = _currentLevelIndex;
 
-            _targetSizeCamera = Game.Instance._levels[_currentLevelIndex].CameraSize;
+            _targetSizeCamera = Game.Instance._levels[_selectedLevelIndex].CameraSize;
 
-            //OnLevelSelectedHandler?.Invoke(_selectedLevelIndex, step);
+            OnLevelSelectedHandler?.Invoke(SelectedLevel, step);
         }
+
+
 
         // TODO: Simulate LeftStick continuous axis with WASD
         public void HandleAxesLeft(Player controller, Vector2 axis)
@@ -225,29 +280,18 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-        [Serializable]
-        public enum State
-        {
-            Menu,
-            CharacterSelection,
-            LevelSelection,
-            Begin,
-            Round,
-            Score,
-            WaitingNextRound,
-            Podium,
-            FinalPodium,
-            Transition
-        }
 
-        [SerializeField]
-        public State _state = State.LevelSelection;
+
+
+
+
+        #region FSM
+
 
         public void FSMFixedUpdate()
         {
             switch (_state)
-            {
-                case State.Menu:
+            {                
                 case State.CharacterSelection:
                 case State.Begin:
                 case State.LevelSelection:
@@ -272,8 +316,7 @@ namespace Cirrus.Circuit.Networking
 
                 case State.Round:                    
                     break;
-
-                case State.Menu:
+                
                 case State.CharacterSelection:
                 case State.Begin:
                 case State.LevelSelection:
@@ -286,6 +329,13 @@ namespace Cirrus.Circuit.Networking
 
         public bool TryChangeState(State transition, params object[] args)
         {
+            ClientPlayer.Instance.Cmd_GameSession_TryChangeState(gameObject, transition, args);
+            return true;
+        }
+
+        [ClientRpc]
+        public bool RPC_TryChangeState(State transition, params object[] args)
+        {
             if (TryTransition(transition, out State destination))
             {
                 ExitState(destination);
@@ -295,47 +345,27 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
 
-        public virtual void ExitState(State destination)
+
+        private void ExitState(State destination)
         {
             switch (_state)
             {
-                case State.Menu:
-                    break;
+                default: break;
 
             }
         }
 
 
-        protected bool TryTransition(State transition, out State destination, params object[] args)
+        private bool TryTransition(State transition, out State destination, params object[] args)
         {
             switch (_state)
             {
-                case State.Menu:
-
-                    switch (transition)
-                    {
-                        case State.Round:
-                        case State.Menu:
-                        case State.CharacterSelection:
-                        case State.Transition:
-                        //case State.Round:
-                        case State.Begin:
-                        case State.WaitingNextRound:
-                        case State.LevelSelection:
-                        case State.Score:
-                        case State.Podium:
-                        case State.FinalPodium:
-                            destination = transition;
-                            return true;
-                    }
-                    break;
 
                 case State.CharacterSelection:
 
                     switch (transition)
                     {
                         case State.Round:
-                        case State.Menu:
                         case State.CharacterSelection:
                         case State.Transition:
                         //case State.Round:
@@ -356,7 +386,6 @@ namespace Cirrus.Circuit.Networking
                     switch (transition)
                     {
                         case State.Round:
-                        case State.Menu:
                         case State.CharacterSelection:
                         case State.Transition:
                         //case State.Round:
@@ -375,8 +404,7 @@ namespace Cirrus.Circuit.Networking
                 case State.Transition:
                     switch (transition)
                     {
-                        case State.Round:
-                        case State.Menu:
+                        case State.Round:                        
                         case State.CharacterSelection:
                         case State.Transition:
                         case State.Begin:
@@ -395,7 +423,6 @@ namespace Cirrus.Circuit.Networking
 
                     switch (transition)
                     {
-                        case State.Menu:
                         case State.CharacterSelection:
                         case State.Begin:
                         case State.Transition:
@@ -412,8 +439,7 @@ namespace Cirrus.Circuit.Networking
 
                 case State.LevelSelection:
                     switch (transition)
-                    {
-                        case State.Menu:
+                    { 
                         case State.CharacterSelection:
                         case State.Begin:
                         case State.Transition:
@@ -432,8 +458,7 @@ namespace Cirrus.Circuit.Networking
                 case State.WaitingNextRound:
                     switch (transition)
                     {
-                        case State.Round:
-                        case State.Menu:
+                        case State.Round:                        
                         case State.CharacterSelection:
                         case State.Begin:
                         case State.Transition:
@@ -450,7 +475,6 @@ namespace Cirrus.Circuit.Networking
                 case State.Podium:
                     switch (transition)
                     {
-                        case State.Menu:
                         case State.CharacterSelection:
                         case State.Begin:
                         case State.Transition:
@@ -468,7 +492,6 @@ namespace Cirrus.Circuit.Networking
                 case State.FinalPodium:
                     switch (transition)
                     {
-                        case State.Menu:
                         case State.CharacterSelection:
                         case State.Begin:
                         case State.Transition:
@@ -488,30 +511,10 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
 
-
-        public IEnumerator NewRoundCoroutine()
-        {
-            yield return new WaitForEndOfFrame();
-
-            OnNewRoundHandler?.Invoke(_round);
-
-            //_round.OnRoundBeginHandler += _currentLevel.OnBeginRound;
-
-            _round.OnRoundEndHandler += OnRoundEnd;
-
-            _round.BeginIntermission();
-
-            yield return null;
-        }
-
         protected bool TryFinishChangeState(State target, params object[] args)
         {
             switch (target)
-            {
-                case State.Menu:
-                    _state = target;
-                    return true;
-
+            {            
                 case State.CharacterSelection:
                     OnCharacterSelectHandler?.Invoke(true);
                     _state = target;
@@ -648,6 +651,8 @@ namespace Cirrus.Circuit.Networking
 
                     return true;
 
+
+
                 case State.Score:
 
                     _state = target;
@@ -671,52 +676,43 @@ namespace Cirrus.Circuit.Networking
 
         }
 
-        private bool _wasMovingVertical = false;
+
 
         // TODO: Simulate LeftStick continuous axis with WASD
-        public void FSMHandleAxesLeft(Player controller, Vector2 axis)
+        public void FSMHandleAxesLeft(Player player, Vector2 axis)
         {
-            bool isMovingHorizontal = UnityEngine.Mathf.Abs(axis.x) > 0.5f;
-            bool isMovingVertical = UnityEngine.Mathf.Abs(axis.y) > 0.5f;
+            bool isMovingHorizontal = Mathf.Abs(axis.x) > 0.5f;
+            bool isMovingVertical = Mathf.Abs(axis.y) > 0.5f;
 
-            Vector3 stepHorizontal = new Vector3(UnityEngine.Mathf.Sign(axis.x), 0, 0);
-            Vector3 stepVertical = new Vector3(0, 0, UnityEngine.Mathf.Sign(axis.y));
+            Vector3 stepHorizontal = new Vector3(Mathf.Sign(axis.x), 0, 0);
+            Vector3 stepVertical = new Vector3(0, 0, Mathf.Sign(axis.y));
             Vector3 step = Vector3.zero;
 
             if (isMovingVertical && isMovingHorizontal)
             {
-                //moving in both directions, prioritize later
-                if (_wasMovingVertical)
-                {
-                    step = stepHorizontal;
-                }
-                else
-                {
-                    step = stepVertical;
-                }
+                ////moving in both directions, prioritize later
+                //if (_wasMovingVertical[player.LocalId]) step = stepHorizontal;
+                //else step = stepVertical;
             }
             else if (isMovingHorizontal)
             {
                 step = stepHorizontal;
-                _wasMovingVertical = false;
-
-
+                //_wasMovingVertical[player.LocalId] = false;
             }
             else if (isMovingVertical)
             {
                 step = stepVertical;
-                _wasMovingVertical = true;
+                //_wasMovingVertical[player.LocalId] = true;
             }
 
             switch (_state)
             {
                 case State.CharacterSelection:
-                    if (controller._characterSlot == null)
-                        break;
 
                     if (Mathf.Abs(step.z) > 0)
                     {
-                        //controller._characterSlot.Scroll(step.z > 0);
+                        if (player._characterSlot == null) return;
+                        player._characterSlot.Scroll(step.z > 0);
                     }
 
                     break;
@@ -728,8 +724,8 @@ namespace Cirrus.Circuit.Networking
 
                         int prev = _currentLevelIndex;
 
-                        //_currentLevelIndex =
-                        //    Mathf.Clamp(_currentLevelIndex + (int)UnityEngine.Mathf.Sign(step.x), 0, _levels.Length - 1);
+                        _currentLevelIndex =
+                            Mathf.Clamp(_currentLevelIndex + (int)Mathf.Sign(step.x), 0, Game.Instance._levels.Length - 1);
 
                         if (prev != _currentLevelIndex)
                         {
@@ -779,29 +775,21 @@ namespace Cirrus.Circuit.Networking
 
                 case State.WaitingNextRound:
 
-                    //if (_players.Contains(player))
-                    //{
-                    //    //HUD.Leave(player);
-                    //    //_controllers.Remove(player);
-                    //}
-                    //else
+                    if (LocalPlayers.Contains(player))
                     {
-                        foreach (PlayerSession p in _players)
-                        {
-                            if (p == null)
-                            {
-                                continue;
-                            }
-                        }
-
+                        UI.HUD.Instance.Leave(player);
+                        LocalPlayers.Remove(player);
+                    }
+                    else
+                    {
+                        foreach (Player other in PlayerManager.Instance.LocalPlayers) if (other == null) continue;
                         TryChangeState(State.LevelSelection);
                     }
 
                     break;
 
                 case State.Round:
-                    if (player._character)
-                        player._character?.TryAction0();
+                    if (player._character) player._character?.TryAction0();
 
                     break;
 
@@ -809,7 +797,6 @@ namespace Cirrus.Circuit.Networking
                     break;
             }
         }
-
 
         public void FSMHandleAction1(Player player)
         {
@@ -825,27 +812,16 @@ namespace Cirrus.Circuit.Networking
 
                 case State.CharacterSelection:
 
-                    //if (!_players.Contains(controller))
-                    //{
-                    //    _controllers.Add(controller);
-                    //    OnControllerJoinHandler?.Invoke(controller);
-                    //}
-                    //else
-                    //{
-                    //    controller._characterSlot.HandleAction1(controller);
-                    //}
+                    if (player._characterSlot != null) player._characterSlot.HandleAction1(player);
+                    else CustomNetworkManager.Instance.RequestPlayerJoin(player);
 
                     break;
-
 
                 case State.WaitingNextRound:
-
                     break;
 
-
                 case State.Round:
-                    //if (controller._character)
-                    //    controller._character?.TryAction1();
+                    if (player._character) player._character?.TryAction1();
                     break;
 
                 case State.Score:
@@ -853,6 +829,8 @@ namespace Cirrus.Circuit.Networking
             }
 
         }
+
+        #endregion
 
     }
 }

@@ -33,32 +33,33 @@ namespace Cirrus.Circuit.Networking
         #region Character Select Slot
 
         [Command]
-        public void CmdTryChangeState_CharacterSelectSlot(GameObject obj, CharacterSelectSlot.State target)
+        public void Cmd_CharacterSelectSlot_TryChangeState(GameObject obj, CharacterSelectSlot.State target)
         {            
             CharacterSelectSlot slot;
-            if ((slot = obj.GetComponent<CharacterSelectSlot>()) != null) slot.RpcTryChangeState(target);          
+            if ((slot = obj.GetComponent<CharacterSelectSlot>()) != null) slot.Rpc_TryChangeState(target);          
         }
 
         [Command]
-        public void CmdScroll_CharacterSelectSlot(GameObject obj, bool scroll)
+        public void Cmd_CharacterSelectSlot_Scroll(GameObject obj, bool scroll)
         {
             CharacterSelectSlot slot;
-            if ((slot = obj.GetComponent<CharacterSelectSlot>()) != null) slot.RpcScroll(scroll);
+            if ((slot = obj.GetComponent<CharacterSelectSlot>()) != null) slot.Rpc_Scroll(scroll);
         }
+
 
         #endregion
 
         #region Player Session
 
         [Command]
-        public void CmdSetCharacterId_PlayerSession(GameObject obj, int characterId)
+        public void Cmd_PlayerSession_SetCharacterId(GameObject obj, int characterId)
         {
             PlayerSession session;
             if ((session = obj.GetComponent<PlayerSession>()) != null) session._characterId = characterId;
         }
 
         [Command]
-        public void CmdSetScore_PlayerSession(GameObject obj, float score)
+        public void Cmd_PlayerSession_SetScore(GameObject obj, float score)
         {
             PlayerSession session;
             if ((session = obj.GetComponent<PlayerSession>()) != null) session._score = score;
@@ -66,24 +67,26 @@ namespace Cirrus.Circuit.Networking
 
         #endregion
 
-        #region Game
-
-        public void TryChangeState_Game(Game.State transition, params object[] args)
-        {
-            CmdTryChangeState_Game(transition, args);
-        }
+        #region Game Session
 
         [Command]
-        public void CmdTryChangeState_Game(Game.State transition, object[] args)
+        public void Cmd_GameSession_SelectLevel(GameObject obj, int step)
         {
-            RpcTryChangeState_Game(transition, args);
+            GameSession session;
+            if ((session = obj.GetComponent<GameSession>()) != null) session.Rpc_SelectLevel(step);
+        }
+       
+
+        [Command]
+        public void Cmd_GameSession_TryChangeState(
+            GameObject obj, 
+            GameSession.State transition, 
+            object[] args)
+        {
+            GameSession session;
+            if ((session = obj.GetComponent<GameSession>()) != null) session.RPC_TryChangeState(transition, args);
         }
 
-        [ClientRpc]
-        public void RpcTryChangeState_Game(Game.State transition, object[] args)
-        {            
-            Game.Instance.TryChangeState(transition, args);
-        }
 
         #endregion
     }

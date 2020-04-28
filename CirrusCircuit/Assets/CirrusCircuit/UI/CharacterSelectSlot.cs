@@ -145,10 +145,6 @@ namespace Cirrus.Circuit.UI
         public virtual void Start()
         {
             _startPosition = _rect.localPosition - Vector3.up * _offset;
-
-            DoTryChangeState(State.Closed);
-
-            Scroll(true);
         }
 
         public void FixedUpdate()
@@ -169,7 +165,8 @@ namespace Cirrus.Circuit.UI
         {
             base.OnStartClient();
 
-            DoTryChangeState(_state);
+            TryChangeState(_state);
+            Scroll(true);
         }
 
         public override void OnStartAuthority()
@@ -184,27 +181,20 @@ namespace Cirrus.Circuit.UI
         {           
             if (!hasAuthority) return;
 
-            ClientPlayer.Instance.CmdTryChangeState_CharacterSelectSlot(gameObject, target);
+            ClientPlayer.Instance.Cmd_CharacterSelectSlot_TryChangeState(gameObject, target);
         }
 
         [ClientRpc]
-        public void RpcTryChangeState(State target)
+        public void Rpc_TryChangeState(State target)
         {
-            // Debug.Log("RPC CALLED");
-            DoTryChangeState(target);
-        }
-
-        private void DoTryChangeState(State target)
-        {
-            // Debug.Log("REGULAR CALLED");
 
             switch (target)
             {
                 case State.Closed:
                     if (_state != State.Closed)
-                        _characterSelect._openCount = 
-                            _characterSelect._openCount == 0 ? 
-                            0 : 
+                        _characterSelect._openCount =
+                            _characterSelect._openCount == 0 ?
+                            0 :
                             _characterSelect._openCount - 1;
 
                     _up.gameObject.SetActive(false);
@@ -215,9 +205,9 @@ namespace Cirrus.Circuit.UI
 
                 case State.Selecting:
                     if (_state == State.Closed)
-                        _characterSelect._openCount = 
+                        _characterSelect._openCount =
                             _characterSelect._openCount >= Controls.PlayerManager.Max ?
-                                Controls.PlayerManager.Max : 
+                                Controls.PlayerManager.Max :
                                 _characterSelect._openCount + 1;
 
                     if (_state == State.Ready)
@@ -228,12 +218,12 @@ namespace Cirrus.Circuit.UI
 
                     _up.gameObject.SetActive(true);
                     _down.gameObject.SetActive(true);
-                    _maskRect.gameObject.SetActive(true);                    
+                    _maskRect.gameObject.SetActive(true);
                     _statusText.text = "";
                     break;
 
                 case State.Ready:
-                    if(_state != State.Ready) _characterSelect._readyCount++;
+                    if (_state != State.Ready) _characterSelect._readyCount++;
 
                     Vector3 position =
                     CameraManager.Instance.Camera.ScreenToWorldPoint(
@@ -290,7 +280,8 @@ namespace Cirrus.Circuit.UI
             }
         }
         
-        private void Scroll(bool up)
+        [ClientRpc]
+        public void Rpc_Scroll(bool up)
         {
             _selectedIndex = up ? _selectedIndex - 1 : _selectedIndex + 1;
             _selectedIndex = Mathf.Clamp(_selectedIndex, 0, CharacterLibrary.Instance.Characters.Length - 1);
@@ -318,17 +309,11 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-        [ClientRpc]
-        public void RpcScroll(bool up)
-        {
-            Scroll(up);
-        }
-
-        public void CmdScroll(bool up)
+        public void Scroll(bool up)
         {            
             if (!hasAuthority) return;
 
-            ClientPlayer.Instance.CmdScroll_CharacterSelectSlot(gameObject, up);
+            ClientPlayer.Instance.Cmd_CharacterSelectSlot_Scroll(gameObject, up);
         }
 
         public void HandleAction0()

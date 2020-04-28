@@ -105,7 +105,7 @@ namespace Cirrus.Circuit.UI
 
         public void OnLevelSelected(World.Level level, int step)
         {
-            if (Game.Instance._currentLevelIndex == 0)
+            if (GameSession.Instance._currentLevelIndex == 0)
             {
                 _previous.gameObject.SetActive(false);
             }
@@ -114,7 +114,7 @@ namespace Cirrus.Circuit.UI
                 _previous.gameObject.SetActive(true);
             }
 
-            if (Game.Instance._currentLevelIndex == Game.Instance._levels.Length - 1)
+            if (GameSession.Instance._currentLevelIndex == Game.Instance._levels.Length - 1)
             {
                 _next.gameObject.SetActive(false);
             }
@@ -132,8 +132,8 @@ namespace Cirrus.Circuit.UI
                 StartCoroutine(PunchScale(false));
             }
 
-            if (Game.Instance._selectedLevel != null)
-                _levelName.text = Game.Instance._selectedLevel.Name;
+            if (GameSession.Instance._selectedLevelIndex < 0)
+                _levelName.text = Game.Instance._levels[GameSession.Instance._selectedLevelIndex].Name;
 
             // TODO upd num of players ??
             //foreach (var display in _playerDisplays)

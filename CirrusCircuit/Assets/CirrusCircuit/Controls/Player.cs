@@ -10,6 +10,7 @@ using UnityInput = UnityEngine.InputSystem;
 //using Cirrus.Circuit.Playable;
 
 using Inputs = UnityEngine.InputSystem;
+using Cirrus.Circuit.Networking;
 
 // Controls Navmesh Navigation
 
@@ -90,14 +91,14 @@ namespace Cirrus.Circuit.Controls
         public void OnAxesLeft(UnityInput.InputAction.CallbackContext context)
         {
             var axis = Vector2.ClampMagnitude(context.ReadValue<Vector2>(), 1);
-            Game.Instance.HandleAxesLeft(this, axis);
+            GameSession.Instance.HandleAxesLeft(this, axis);
         }
 
         // Cancel
         public void OnAction0(UnityInput.InputAction.CallbackContext context)
         {
             if (!context.performed)
-                Game.Instance.HandleAction0(this);
+                GameSession.Instance.HandleAction0(this);
         }
 
         // Accept
@@ -105,7 +106,7 @@ namespace Cirrus.Circuit.Controls
         {
             //context.
             if (!context.performed)
-                Game.Instance.HandleAction1(this);
+                GameSession.Instance.HandleAction1(this);
         }
     }
 }

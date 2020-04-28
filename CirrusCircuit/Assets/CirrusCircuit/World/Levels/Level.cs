@@ -8,6 +8,7 @@ using System;
 
 using System.Threading;
 using Cirrus.Utils;
+using Cirrus.Circuit.Networking;
 
 namespace Cirrus.Circuit.World
 {
@@ -161,7 +162,7 @@ namespace Cirrus.Circuit.World
                 if (obj is Objects.Characters.Character)
                     continue;
 
-                foreach (Controls.Player players in Game.Instance.LocalPlayers)
+                foreach (Controls.Player players in GameSession.Instance.LocalPlayers)
                 {
                     //if (obj.ColorId == players._colorId)
                     //{

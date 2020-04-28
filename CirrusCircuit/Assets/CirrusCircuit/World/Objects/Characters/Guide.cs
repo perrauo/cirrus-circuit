@@ -65,18 +65,12 @@ namespace Cirrus.Circuit.World.Objects
                 out RaycastHit hit,
                 _raycastDistance,
                 // Collide everything except layer 8
-                ~Game.Instance.Layers.MoveableFlags
+                ~Layers.MoveableFlags
                 ))
             {
                 int count = Mathf.FloorToInt(hit.distance / World.Level.GridSize);
 
-                foreach (var s in _squares)
-                {
-                    if (s)
-                    {
-                        _pool.Release(s);
-                    }
-                }
+                foreach (var s in _squares) if (s) _pool.Release(s);
 
                 _squares.Clear();
 

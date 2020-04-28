@@ -12,18 +12,29 @@ using StartMenu = Cirrus.Circuit.UI.StartMenu;
 namespace Cirrus.Circuit
 {
     ///
-    public class Layers
+    public static class Layers
     {
         //public int 
-        public int MoveableFlags = 1 << LayerMask.NameToLayer("Moveable");
-        public int SolidFlags = 1 << LayerMask.NameToLayer("Solid");
-        public int Moveable = LayerMask.NameToLayer("Moveable");
-        public int Solid = LayerMask.NameToLayer("Solid");
+        public static int MoveableFlags = 1 << LayerMask.NameToLayer("Moveable");
+        public static int SolidFlags = 1 << LayerMask.NameToLayer("Solid");
+        public static int Moveable = LayerMask.NameToLayer("Moveable");
+        public static int Solid = LayerMask.NameToLayer("Solid");
     }
+
 
     public class Game : BaseSingleton<Game>
     {
-        #region Game
+        [Serializable]
+        public enum State
+        {
+            Unknown,
+            Menu,
+            Session,
+            Transition
+        }
+
+        [SerializeField]
+        public State _state = State.Menu;
 
         [SerializeField]
         private bool _randomizeSeed = false;
@@ -31,22 +42,8 @@ namespace Cirrus.Circuit
 
         public Events.Event OnScreenResizedHandler;                
 
-        public Event<World.Level, int> OnLevelSelectedHandler;
-
-        public Event<bool> OnMenuHandler;
-
-        public Event<Player> OnLocalPlayerJoinHandler;
-
-        public Layers Layers;
-
         [SerializeField]
         public World.Level[] _levels;
-
-        public World.Level _selectedLevel;
-
-        public World.Level _currentLevel;
-
-        public int _currentLevelIndex = 0;
 
         [SerializeField]
         public float _distanceLevelSelect = 35;
@@ -93,26 +90,17 @@ namespace Cirrus.Circuit
         private Vector3 _updatedVectorBottomLeft;
 
         private Vector3 _updatedVectorTopRight;        
-
-        public List<Player> LocalPlayers = new List<Player>();
-
-        private bool[] _wasMovingVertical = new bool[PlayerManager.Max];
         
         public override void OnValidate()
         {
             base.OnValidate();
 
             _levels = GetComponentsInChildren<World.Level>(true);
-            _selectedLevel = _levels.Length == 0 ? null : _levels[0];
         }
 
         public override void Awake()
         {
             base.Awake();
-
-            Layers = new Layers();
-
-            TryChangeState(State.Menu);
         }
 
         public override void Start()
@@ -121,8 +109,8 @@ namespace Cirrus.Circuit
 
             _initialVectorBottomLeft = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
             _initialVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30)); // I used 30 as my camera z is -30
-
             Transitions.Transition.Instance.OnTransitionTimeoutHandler += OnTransitionTimeOut;
+            TryChangeState(State.Menu);
         }
 
         public void Update()
@@ -150,60 +138,26 @@ namespace Cirrus.Circuit
             TryChangeState(State.Transition, State.Session);
         }
 
-        // TODO: Simulate LeftStick continuous axis with WASD
-        public void HandleAxesLeft(Player player, Vector2 axis)
-        {
-            FSMHandleAxesLeft(player, axis);
-        }
-
-        public void HandleAction0(Player player)
-        {
-            FSMHandleAction0(player);
-        }
-
-        public void HandleAction1(Player player)
-        {
-            FSMHandleAction1(player);
-        }
-
         private void OnTransitionTimeOut()
         {
             TryChangeState(_transition);
         }
 
-        #endregion
-
-        #region FSM
-
-        [Serializable]
-        public enum State
-        {
-            Unknown,
-            Menu,
-            Session,
-            Transition
-        }
-
-        [SerializeField]
-        public State _state = State.Menu;
-
         public void FSMFixedUpdate()
         {
-
             switch (_state)
             {
+                case State.Unknown:                    
+                case State.Transition:
                 case State.Menu:
                     break;
-
+               
                 case State.Session:
                     CameraManager.Instance.Camera.orthographicSize =
                         Mathf.Lerp(
                             CameraManager.Instance.Camera.orthographicSize,
                             GameSession.Instance._targetSizeCamera,
                             _cameraSizeSpeed);
-
-                    if (GameSession.Instance == null) return;
-                    GameSession.Instance.FSMFixedUpdate();
 
                     break;
             }
@@ -214,11 +168,6 @@ namespace Cirrus.Circuit
             switch (_state)
             {
                 case State.Menu:
-                    break;
-
-                case State.Session:
-                    if (GameSession.Instance == null) return;
-                    GameSession.Instance.FSMUpdate();
                     break;
             }
         }
@@ -248,6 +197,18 @@ namespace Cirrus.Circuit
         {
             switch (_state)
             {
+                case State.Unknown:
+                    switch (target)
+                    {
+                        case State.Menu:
+                        case State.Transition:
+                        case State.Session:
+                            //case State.Round:
+                            destination = target;
+                            return true;
+                    }
+                    break;
+
                 case State.Menu:
                     switch (target)
                     {                        
@@ -294,6 +255,10 @@ namespace Cirrus.Circuit
         {
             switch (target)
             {
+                case State.Unknown:
+                    _state = target;
+                    return true;
+
                 case State.Menu:
                     _state = target;
                     StartMenu.Instance.Enabled = true;
@@ -312,59 +277,6 @@ namespace Cirrus.Circuit
 
                 default: return false;
             }
-        }
-
-
-        // TODO: Simulate LeftStick continuous axis with WASD
-        public void FSMHandleAxesLeft(Player player, Vector2 axis)
-        {
-            bool isMovingHorizontal = Mathf.Abs(axis.x) > 0.5f;
-            bool isMovingVertical = Mathf.Abs(axis.y) > 0.5f;
-
-            Vector3 stepHorizontal = new Vector3(Mathf.Sign(axis.x), 0, 0);
-            Vector3 stepVertical = new Vector3(0, 0, Mathf.Sign(axis.y));
-            Vector3 step = Vector3.zero;
-
-            if (isMovingVertical && isMovingHorizontal)
-            {
-                ////moving in both directions, prioritize later
-                //if (_wasMovingVertical[player.LocalId]) step = stepHorizontal;
-                //else step = stepVertical;
-            }
-            else if (isMovingHorizontal)
-            {
-                step = stepHorizontal;
-                //_wasMovingVertical[player.LocalId] = false;
-            }
-            else if (isMovingVertical)
-            {
-                step = stepVertical;
-                //_wasMovingVertical[player.LocalId] = true;
-            }
-
-            switch (_state)
-            {
-                default: break;
-            }
-        }
-
-        public void FSMHandleAction0(Player player)
-        {
-            switch (_state)
-            {
-                default: break;
-            }
-        }
-
-        public void FSMHandleAction1(Player player)
-        {
-            switch (_state)
-            {
-                default: break;
-            }
-        }
-
-        #endregion
-
+        }       
     }
 }
