@@ -84,7 +84,7 @@ namespace Cirrus.Circuit.UI
 
         public void OnSessionStart(bool enabled)
         {
-            Enabled = enabled;
+            Enabled = !enabled;
         }
 
     }
