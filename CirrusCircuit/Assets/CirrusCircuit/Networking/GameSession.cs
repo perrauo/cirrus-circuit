@@ -360,21 +360,40 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-        public bool TryChangeState(State transition, params object[] args)
+        public bool TryChangeState(State transition, State destination)
         {
-            ClientPlayer.Instance.Cmd_GameSession_TryChangeState(gameObject, transition, args);
+            ClientPlayer.Instance.Cmd_GameSession_TryChangeState(gameObject, transition, destination);
             return true;
         }
 
+        public bool TryChangeState(State transition)
+        {
+            ClientPlayer.Instance.Cmd_GameSession_TryChangeState(gameObject, transition);
+            return true;
+        }
+
+
         [ClientRpc]
-        public void Rpc_TryChangeState(State transition, params object[] args)
+        public void Rpc_TryChangeState(State transition, State target)
         {
             if (TryTransition(transition, out State destination))
             {
                 ExitState(destination);
-                TryFinishChangeState(destination, args);
+                TryFinishChangeState(destination, target);
             }
         }
+
+        [ClientRpc]
+        public void Rpc_TryChangeState(State transition)
+        {
+            if (TryTransition(transition, out State destination))
+            {
+                ExitState(destination);
+                TryFinishChangeState(destination, destination);
+            }
+        }
+
+
 
 
         private void ExitState(State destination)
@@ -542,7 +561,7 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
 
-        protected bool TryFinishChangeState(State target, object[] args)
+        protected bool TryFinishChangeState(State target, params object[] args)
         {
             switch (target)
             {            
@@ -579,7 +598,7 @@ namespace Cirrus.Circuit.Networking
                     Game.Instance._levels[_selectedLevelIndex].gameObject.SetActive(false);                    
 
                     _state = target;
-                    return TryChangeState(State.Round, Game.Instance.RoundTime);
+                    return TryChangeState(State.Round);
 
 
                 case State.Transition:

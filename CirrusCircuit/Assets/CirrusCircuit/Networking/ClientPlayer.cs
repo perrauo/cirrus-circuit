@@ -107,10 +107,19 @@ namespace Cirrus.Circuit.Networking
         public void Cmd_GameSession_TryChangeState(
             GameObject obj, 
             GameSession.State transition, 
-            object[] args)
+            GameSession.State destination)
         {
             GameSession session;
-            if ((session = obj.GetComponent<GameSession>()) != null) session.Rpc_TryChangeState(transition, args);
+            if ((session = obj.GetComponent<GameSession>()) != null) session.Rpc_TryChangeState(transition, destination);
+        }
+
+        [Command]
+        public void Cmd_GameSession_TryChangeState(
+            GameObject obj,
+            GameSession.State transition)
+        {
+            GameSession session;
+            if ((session = obj.GetComponent<GameSession>()) != null) session.Rpc_TryChangeState(transition);
         }
 
 
