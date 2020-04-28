@@ -9,15 +9,25 @@ namespace Cirrus.Circuit.Networking
     // Serves to sync the connection
     public class ClientPlayer : NetworkBehaviour
     {
-        public static ClientPlayer _Instance;
+        public static ClientPlayer _instance;
 
         public static ClientPlayer Instance
         {
             get
             {
-                if (_Instance == null)
-                    _Instance = FindObjectOfType<ClientPlayer>();
-                return _Instance;
+                if (_instance != null)
+                {
+                    foreach (var player in FindObjectsOfType<ClientPlayer>())
+                    {
+                        if (player.hasAuthority)
+                        {
+                            _instance = player;
+                            break;
+                        }
+                    }
+                }
+
+                return _instance;
             }
         }
 
