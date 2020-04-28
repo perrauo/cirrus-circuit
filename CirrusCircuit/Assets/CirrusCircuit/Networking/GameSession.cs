@@ -334,7 +334,7 @@ namespace Cirrus.Circuit.Networking
         }
 
         [ClientRpc]
-        public void RPC_TryChangeState(State transition, params object[] args)
+        public void Rpc_TryChangeState(State transition, params object[] args)
         {
             if (TryTransition(transition, out State destination))
             {
