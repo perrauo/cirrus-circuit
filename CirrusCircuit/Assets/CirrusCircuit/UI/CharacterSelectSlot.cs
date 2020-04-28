@@ -162,6 +162,7 @@ namespace Cirrus.Circuit.UI
         public override void OnStartAuthority()
         {
             base.OnStartAuthority();
+            Debug.Log("Selecting Character Slot");
             TryChangeState(State.Selecting);
         }
 
