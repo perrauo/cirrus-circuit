@@ -26,7 +26,7 @@ namespace Cirrus.Circuit.UI
             {
                 Enabled = true;
                 _number = value;
-                _text.text = "Round " + (_number+1).ToString();                
+                _text.text = "Round " + (_number + 1).ToString();
                 _timer.Start();
             }
 
@@ -88,6 +88,7 @@ namespace Cirrus.Circuit.UI
             _timer.OnTimeLimitHandler += OnTimeOut;
 
             GameSession.OnStartClientStaticHandler += OnClientStarted;
+            GameSession.Instance.OnNewRoundHandler += OnNewRound;
         }
 
         public void OnClientStarted(bool enable)
@@ -102,7 +103,7 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-        public void OnNewRound(Round round)
+        public void OnNewRound(RoundSession round)
         {
             round.OnRoundEndHandler += OnRoundEnd;
             round.OnIntermissionHandler += OnIntermission;

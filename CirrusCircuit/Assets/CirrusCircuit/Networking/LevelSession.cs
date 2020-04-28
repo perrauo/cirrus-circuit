@@ -138,7 +138,7 @@ namespace Cirrus.Circuit.Networking
             _randomDropSpawnTimer.OnTimeLimitHandler += OnSpawnTimeout;
 
 
-            GameSession.Instance.OnNewRoundHandler += OnNewRound;
+            //Game.Instance.OnNewRoundHandler += OnNewRound;
             //Game.Instance.On
 
             foreach (Door door in _doors)
@@ -156,7 +156,7 @@ namespace Cirrus.Circuit.Networking
 
         private int _requiredGemCount = 0;
 
-        public void OnNewRound(Round round)
+        public void OnNewRound(RoundSession round)
         {
             if (this == null)
                 return;

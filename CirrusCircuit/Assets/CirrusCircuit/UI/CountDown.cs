@@ -34,10 +34,11 @@ namespace Cirrus.Circuit.UI
             {
                 GameSession.Instance.OnNewRoundHandler -= OnNewRound;
             }
+
         }
 
 
-        private void OnNewRound(Round round)
+        private void OnNewRound(RoundSession round)
         {
             round.OnCountdownHandler += OnRoundCountdown;
             //round.OnIntermissionHandler += OnIntermission;

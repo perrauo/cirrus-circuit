@@ -46,37 +46,20 @@ namespace Cirrus.Circuit.UI
         {
             base.Awake();
 
-            GameSession.OnStartClientStaticHandler += OnClientStarted;                                   
+            GameSession.OnStartClientStaticHandler += OnClientStarted;
+            Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
+        }
+
+        public void OnCharacterSelect(bool enable)
+        {
+            Enabled = enable;
         }
 
         public void OnClientStarted(bool enable)
         {
-            if (enable)
-            {
-                GameSession.Instance.OnLevelSelectHandler += OnLevelSelect;
-                GameSession.Instance.OnLevelSelectHandler += OnMenu;
-            }
-            else
-            {
-                GameSession.Instance.OnLevelSelectHandler -= OnLevelSelect;
-                GameSession.Instance.OnLevelSelectHandler -= OnMenu;
-            }
-        }
 
-        public void OnSessionStart(bool enabled)
-        {
-            Enabled = enabled;
         }
-
-        public void OnLevelSelect(bool enabled)
-        {
-            Enabled = false;
-        }
-
-        public void OnMenu(bool enabled)
-        {
-            Enabled = false;
-        }
+        
 
 
         public enum State

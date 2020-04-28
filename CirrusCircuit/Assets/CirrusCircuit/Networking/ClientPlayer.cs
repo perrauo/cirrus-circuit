@@ -79,13 +79,6 @@ namespace Cirrus.Circuit.Networking
 
         #region Game Session
 
-        [Command]
-        public void Cmd_GameSession_SelectLevel(GameObject obj, int step)
-        {
-            GameSession session;
-            if ((session = obj.GetComponent<GameSession>()) != null) session.Rpc_SelectLevel(step);
-        }
-
 
         // TODO Character Select session
         [Command]
@@ -102,26 +95,46 @@ namespace Cirrus.Circuit.Networking
             if ((session = obj.GetComponent<GameSession>()) != null) session._characterSelectOpenCount = count;
         }
 
+        //[Command]
+        //public void Cmd_GameSession_TryChangeState_2(
+        //    GameObject obj,
+        //    GameSession.State transition)
+        //{
+        //    GameSession session;
+        //    if ((session = obj.GetComponent<GameSession>()) != null) session.Rpc_TryChangeState_2(transition);
+        //}
+
+
+        #endregion
+
+        #region Game
 
         [Command]
-        public void Cmd_GameSession_TryChangeState_1(
-            GameObject obj, 
-            GameSession.State transition, 
-            GameSession.State destination)
-        {
-            GameSession session;
-            if ((session = obj.GetComponent<GameSession>()) != null) session.Rpc_TryChangeState_1(transition, destination);
+        public void Cmd_Game_SelectLevel(int step)
+        {            
+            Rpc_Game_SelectLevel(step);
         }
+
 
         [Command]
-        public void Cmd_GameSession_TryChangeState_2(
-            GameObject obj,
-            GameSession.State transition)
+        public void Cmd_Game_TryChangeState_1(
+            Game.State transition,
+            bool transitionEffect)
         {
-            GameSession session;
-            if ((session = obj.GetComponent<GameSession>()) != null) session.Rpc_TryChangeState_2(transition);
+            Rpc_Game_TryChangeState_1(transition, transitionEffect);
         }
 
+        [ClientRpc]
+        public void Rpc_Game_TryChangeState_1(Game.State transition, bool transitionEffect)
+        {
+            Game.Instance.DoTryChangeState(transition, transitionEffect);
+        }
+
+        [ClientRpc]
+        public void Rpc_Game_SelectLevel(int step)
+        {
+            Game.Instance.DoSelectLevel(step);
+        }
 
         #endregion
     }

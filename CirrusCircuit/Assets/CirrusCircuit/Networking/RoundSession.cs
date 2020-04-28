@@ -1,5 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Cirrus.Circuit.Controls;
+using Cirrus.Circuit.UI;
+using Mirror;
+using UnityEngine;
+
+
 
 namespace Cirrus.Circuit
 {
@@ -11,7 +17,7 @@ namespace Cirrus.Circuit
 
     public delegate void OnRoundEnd();
 
-    public class Round
+    public class RoundSession : NetworkBehaviour
     {
         public OnIntermission OnIntermissionHandler;
 
@@ -21,27 +27,40 @@ namespace Cirrus.Circuit
 
         public OnRoundEnd OnRoundEndHandler;
 
+        [SerializeField]        
         private Timer _timer;
 
+        [SerializeField]
         private Timer _countDownTimer;
-
-        private float _intermissionTime = 0; // Where we show the round number
-
+        
+        [SerializeField]
         private Timer _intermissionTimer;
 
-        public float Time => _roundTime - _timer.Time;        
+        public float Time => _roundTime - _timer.Time;
 
+        [SyncVar]
+        [SerializeField]        
         private float _countDownTime = 1f;
 
+        [SyncVar]
+        [SerializeField]        
+        private float _intermissionTime = 0; // Where we show the round number
+
+        [SyncVar]
+        [SerializeField]        
         private int _countDown;
 
+        [SyncVar]
+        [SerializeField]
         private float _roundTime;
 
+        [SyncVar]
+        [SerializeField]
         private int _number = 0;
 
         public int Number => _number;        
 
-        public Round(int countDown, float time, float countDownTime, float intermissionTime, int number)
+        public RoundSession(int countDown, float time, float countDownTime, float intermissionTime, int number)
         {
             _intermissionTime = intermissionTime;
 

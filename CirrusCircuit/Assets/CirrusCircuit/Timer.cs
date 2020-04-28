@@ -5,7 +5,7 @@ using System;
 
 namespace Cirrus.Circuit
 {
-    [System.Serializable]
+    [Serializable]
     public class Timer
     {
         [SerializeField]

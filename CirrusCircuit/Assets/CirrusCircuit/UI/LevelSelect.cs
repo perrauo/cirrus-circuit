@@ -46,20 +46,12 @@ namespace Cirrus.Circuit.UI
         public void Awake()
         {
             GameSession.OnStartClientStaticHandler += OnClientStarted;
+            Game.Instance.OnLevelSelectedHandler += OnLevelSelected;
+            Game.Instance.OnLevelSelectHandler += OnLevelSelect;
         }
 
         public void OnClientStarted(bool enable)
-        {
-            if (enable)
-            {
-                GameSession.Instance.OnLevelSelectedHandler += OnLevelSelected;
-                GameSession.Instance.OnLevelSelectHandler += OnLevelSelect;
-            }
-            else
-            {
-                GameSession.Instance.OnLevelSelectedHandler -= OnLevelSelected;
-                GameSession.Instance.OnLevelSelectHandler -= OnLevelSelect;
-            }
+        {            
         }
 
         public void OnDestroy()
@@ -105,7 +97,7 @@ namespace Cirrus.Circuit.UI
 
         public void OnLevelSelected(World.Level level, int step)
         {
-            if (GameSession.Instance._currentLevelIndex == 0)
+            if (Game.Instance._currentLevelIndex == 0)
             {
                 _previous.gameObject.SetActive(false);
             }
@@ -114,7 +106,7 @@ namespace Cirrus.Circuit.UI
                 _previous.gameObject.SetActive(true);
             }
 
-            if (GameSession.Instance._currentLevelIndex == Game.Instance._levels.Length - 1)
+            if (Game.Instance._currentLevelIndex == Game.Instance._levels.Length - 1)
             {
                 _next.gameObject.SetActive(false);
             }

@@ -11,7 +11,7 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private UnityEngine.UI.Text _text;
 
-        private Round _round;
+        private RoundSession _round;
 
         public float Time
         {
@@ -65,13 +65,13 @@ namespace Cirrus.Circuit.UI
                 Time = _round.Time;
         }
 
-        public void OnNewRound(Round round)
+        public void OnNewRound(RoundSession round)
         {
             _round = round;
             _round.OnIntermissionHandler += OnIntermission;
         }
 
-        public void OnRound(Round round)
+        public void OnRound(RoundSession round)
         {
             Enabled = true;
         }

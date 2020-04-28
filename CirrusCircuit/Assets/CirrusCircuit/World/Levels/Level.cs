@@ -135,7 +135,7 @@ namespace Cirrus.Circuit.World
 
         private int _requiredGemCount = 0;
 
-        public void OnNewRound(Round round)
+        public void OnNewRound(RoundSession round)
         {
             if (this == null)
                 return;

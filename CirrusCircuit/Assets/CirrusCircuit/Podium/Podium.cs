@@ -91,20 +91,13 @@ namespace Cirrus.Circuit
             _finalTimer.OnTimeLimitHandler += OnFinalTimeout;
 
             GameSession.OnStartClientStaticHandler += OnClientStarted;
+            Game.Instance.OnPodiumHandler += OnPodium;
+            Game.Instance.OnFinalPodiumHandler += OnFinalPodium;
         }
 
         public void OnClientStarted(bool enable)
         {
-            if (enable)
-            {
-                GameSession.Instance.OnPodiumHandler += OnPodium;
-                GameSession.Instance.OnFinalPodiumHandler += OnFinalPodium;
-            }
-            else
-            {
-                GameSession.Instance.OnPodiumHandler -= OnPodium;
-                GameSession.Instance.OnFinalPodiumHandler -= OnFinalPodium;
-            }
+
         }
 
         public void FixedUpdate()
@@ -128,7 +121,7 @@ namespace Cirrus.Circuit
         public bool IsEmpty => _platforms.Count == 0;
 
 
-        public void OnRound(Round round)
+        public void OnRound(RoundSession round)
         {
             //round.OnRoundEndHandler += OnRoundEnd;
         }
