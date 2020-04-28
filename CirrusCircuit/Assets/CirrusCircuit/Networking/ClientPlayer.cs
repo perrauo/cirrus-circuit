@@ -137,13 +137,13 @@ namespace Cirrus.Circuit.Networking
         [ClientRpc]
         public void Rpc_Game_TryChangeState_1(Game.State transition, bool transitionEffect)
         {
-            Game.Instance.DoTryChangeState(transition, transitionEffect);
+            Game.Instance._TryChangeState(transition, transitionEffect);
         }
 
         [ClientRpc]
         public void Rpc_Game_SelectLevel(int step)
         {
-            Game.Instance.DoSelectLevel(step);
+            Game.Instance._SelectLevel(step);
         }
 
         #endregion

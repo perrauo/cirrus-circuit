@@ -122,6 +122,7 @@ namespace Cirrus.Circuit
 
         public int _currentLevelIndex = 0;
 
+        private bool[] _wasMovingVertical = new bool[PlayerManager.Max];
 
         public override void OnValidate()
         {
@@ -145,7 +146,7 @@ namespace Cirrus.Circuit
             Transitions.Transition.Instance.OnTransitionTimeoutHandler += OnTransitionTimeOut;
             UI.CharacterSelect.Instance.OnCharacterSelectReadyHandler += OnCharacterSelected;
 
-            DoTryChangeState(State.Menu, false);            
+            _TryChangeState(State.Menu, false);            
         }
 
 
@@ -171,7 +172,7 @@ namespace Cirrus.Circuit
 
         public void JoinSession()
         {
-            DoTryChangeState(State.CharacterSelection);
+            _TryChangeState(State.CharacterSelection);
         }
 
         public void OnCharacterSelected(int playerCount)
@@ -196,7 +197,12 @@ namespace Cirrus.Circuit
             FSMHandleAction1(player);
         }
 
-        public void DoSelectLevel(int step)
+        public void SelectLevel(int step)
+        {
+            ClientPlayer.Instance.Cmd_Game_SelectLevel(step);
+        }
+
+        public void _SelectLevel(int step)
         {
             for (int i = 0; i < Game.Instance._levels.Length; i++)
             {
@@ -261,7 +267,7 @@ namespace Cirrus.Circuit
             return true;
         }
 
-        public void DoTryChangeState(State transition, bool transitionEffect=true)
+        public void _TryChangeState(State transition, bool transitionEffect=true)
         {
             if (transitionEffect)
             {
@@ -536,16 +542,17 @@ namespace Cirrus.Circuit
 
                 case State.LevelSelection:
 
+                    OnLevelSelectHandler?.Invoke(true);
+
                     _state = target;
 
-                    foreach (World.Level lv in Game.Instance._levels)
+                    foreach (World.Level lv in _levels)
                     {
                         lv.gameObject.SetActive(true);
                         lv.OnLevelSelect();
                     }
 
-                    //OnLevelSelect();
-                    //SelectLevel(0);
+                    SelectLevel(0);                    
 
                     return true;
 
@@ -651,19 +658,19 @@ namespace Cirrus.Circuit
 
             if (isMovingVertical && isMovingHorizontal)
             {
-                ////moving in both directions, prioritize later
-                //if (_wasMovingVertical[player.LocalId]) step = stepHorizontal;
-                //else step = stepVertical;
+                //moving in both directions, prioritize later
+                if (_wasMovingVertical[player.LocalId]) step = stepHorizontal;
+                else step = stepVertical;
             }
             else if (isMovingHorizontal)
             {
                 step = stepHorizontal;
-                //_wasMovingVertical[player.LocalId] = false;
+                _wasMovingVertical[player.LocalId] = false;
             }
             else if (isMovingVertical)
             {
                 step = stepVertical;
-                //_wasMovingVertical[player.LocalId] = true;
+                _wasMovingVertical[player.LocalId] = true;
             }
 
             switch (_state)
@@ -680,19 +687,19 @@ namespace Cirrus.Circuit
 
                 case State.LevelSelection:
 
-                    //if (Mathf.Abs(step.x) > 0)
-                    //{
+                    if (Mathf.Abs(step.x) > 0)
+                    {
 
-                    //    int prev = _currentLevelIndex;
+                        int prev = _currentLevelIndex;
 
-                    //    _currentLevelIndex =
-                    //        Mathf.Clamp(_currentLevelIndex + (int)Mathf.Sign(step.x), 0, Game.Instance._levels.Length - 1);
+                        _currentLevelIndex =
+                            Mathf.Clamp(_currentLevelIndex + (int)Mathf.Sign(step.x), 0, Game.Instance._levels.Length - 1);
 
-                    //    if (prev != _currentLevelIndex)
-                    //    {
-                    //        SelectLevel((int)Mathf.Sign(step.x));
-                    //    }
-                    //}
+                        if (prev != _currentLevelIndex)
+                        {
+                            SelectLevel((int)Mathf.Sign(step.x));
+                        }
+                    }
 
                     break;
 
@@ -774,6 +781,7 @@ namespace Cirrus.Circuit
                 case State.CharacterSelection:
 
                     if (player._characterSlot != null) player._characterSlot.HandleAction1(player);
+
                     else CustomNetworkManager.Instance.RequestPlayerJoin(player);
 
                     break;
