@@ -884,7 +884,6 @@ namespace Cirrus.Circuit
                 case State.CharacterSelection:
 
                     if (player._characterSlot != null) player._characterSlot.HandleAction1(player);
-
                     else CustomNetworkManager.Instance.RequestPlayerJoin(player);
 
                     break;
