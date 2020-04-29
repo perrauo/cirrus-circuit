@@ -24,11 +24,22 @@ namespace Cirrus.Circuit.Networking
 
         public Door.OnScoreValueAdded OnScoreValueAddedHandler;
 
+        private static LevelSession _instance;
+
+        public static LevelSession Instance
+        {
+            get
+            {
+                if (_instance == null) _instance = FindObjectOfType<LevelSession>();
+                return _instance;
+            }
+        }
+
         private Level _level;
 
-        public static bool TryCreate(Level level, out LevelSession session)
+        public static LevelSession Create(Level level)
         {
-            session = null;
+            LevelSession session = null;
             if (ServerUtils.TryCreateNetworkObject(
                 NetworkServer.localConnection,
                 NetworkingLibrary.Instance.LevelSession.gameObject,
@@ -38,11 +49,11 @@ namespace Cirrus.Circuit.Networking
                 if ((session = obj.GetComponent<LevelSession>()) != null)
                 {
                     session._level = level;
-                    return true;
+                    return session;
                 }
             }
 
-            return false;
+            return null;
         }
 
         [SerializeField]
@@ -97,7 +108,6 @@ namespace Cirrus.Circuit.Networking
 
         [SerializeField]
         private float _randomDropSpawnTime = 2f;
-
 
         public void OnValidate()
         {

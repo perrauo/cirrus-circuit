@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 using Cirrus.MirrorExt;
+using Cirrus.Circuit.World;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -23,12 +24,23 @@ namespace Cirrus.Circuit.Networking
             NetworkServer.RegisterHandler<ClientPlayerMessage>(OnPlayerJoinMessage);
         }
 
-        public override void InitRound()
+        public override void InitRound(Level level)
         {
-            base.InitRound();
+            base.InitRound(level);
 
-            ServerUtils.TryCreateNetworkObject()
+            ServerUtils.TryCreateNetworkObject(
+                NetworkServer.localConnection,
+                NetworkingLibrary.Instance.RoundSession.gameObject,
+                out GameObject roundObject);
 
+            LevelSession.Create(level);
+
+            RoundSession.Create(
+                Game.Instance.CountDown,
+                Game.Instance.RoundTime,
+                Game.Instance.CountDownTime,
+                Game.Instance.IntermissionTime,
+                GameSession.Instance._roundIndex);                
         }
 
         public override void Stop()

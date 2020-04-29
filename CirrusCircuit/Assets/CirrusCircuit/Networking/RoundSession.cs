@@ -57,7 +57,19 @@ namespace Cirrus.Circuit.Networking
         [SerializeField]
         private int _id = 0;
 
-        public int Id => _id;        
+        public int Id => _id;
+
+        private static RoundSession _instance;
+
+        public static RoundSession Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    _instance = FindObjectOfType<RoundSession>();
+                return _instance;
+            }
+        }
 
         public static RoundSession Create(int countDown, float time, float countDownTime, float intermissionTime, int id)
         {
@@ -102,7 +114,6 @@ namespace Cirrus.Circuit.Networking
             _countDownTimer.Start();
         }
 
-
         public void Terminate()
         {
             _timer.Stop();
@@ -133,8 +144,6 @@ namespace Cirrus.Circuit.Networking
                 OnCountdownHandler?.Invoke(_countDown);
             }
         }
-
-
 
         public void OnRoundEnd()
         {

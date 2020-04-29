@@ -71,9 +71,6 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-        [SerializeField]
-        public RoundSession _round;
-
         [SyncVar]
         [SerializeField]
         public int _roundIndex;
@@ -139,13 +136,13 @@ namespace Cirrus.Circuit.Networking
         {
             yield return new WaitForEndOfFrame();
 
-            OnNewRoundHandler?.Invoke(_round);
+            //OnNewRoundHandler?.Invoke(_round);
 
             //_round.OnRoundBeginHandler += _currentLevel.OnBeginRound;
 
-            _round.OnRoundEndHandler += OnRoundEnd;
+            //_round.OnRoundEndHandler += OnRoundEnd;
 
-            _round.BeginIntermission();
+            //_round.BeginIntermission();
 
             yield return null;
         }
@@ -166,7 +163,7 @@ namespace Cirrus.Circuit.Networking
 
         public void OnLevelCompleted(World.Level.Rule rule)
         {
-            _round.Terminate();
+            //_round.Terminate();
             //OnRoundEnd();
         }
 

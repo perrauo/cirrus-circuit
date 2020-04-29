@@ -16,6 +16,7 @@ using Cirrus.Circuit.UI;
 using System.Reflection;
 using UnityEditor;
 using Cirrus.MirrorExt;
+using Cirrus.Circuit.World;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -68,7 +69,7 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
 
-        public virtual void InitRound()
+        public virtual void InitRound(Level level)
         {
 
         }
@@ -248,9 +249,9 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
 
-        public void InitRound()
+        public void InitRound(Level level)
         {
-            _handler.InitRound();
+            _handler.InitRound(level);
         }
     }
 
