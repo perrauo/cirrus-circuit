@@ -84,7 +84,9 @@ namespace Cirrus.Circuit.Networking
         
 
         public Event<Gem, int, float> OnScoreValueAddedHandler;
-      
+
+        [SyncVar]
+        [SerializeField]        
         public int _selectedLevelIndex;
         
         public Level SelectedLevel => Game.Instance._levels[_selectedLevelIndex];        
