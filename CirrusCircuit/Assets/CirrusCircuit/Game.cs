@@ -213,9 +213,9 @@ namespace Cirrus.Circuit
                 Instance._levels[i].TargetPosition = Vector3.zero + Vector3.right * (i - SelectedLevelIndex) * Instance.DistanceLevelSelect;
             }
 
-            GameSession.Instance._selectedLevelIndex = SelectedLevelIndex;
+            //GameSession.Instance._selectedLevelIndex = SelectedLevelIndex;
 
-            _targetSizeCamera = Instance._levels[GameSession.Instance._selectedLevelIndex].CameraSize;
+            _targetSizeCamera = GameSession.Instance.SelectedLevel.CameraSize;
 
             OnLevelSelectedHandler?.Invoke(GameSession.Instance.SelectedLevel, step);
         }

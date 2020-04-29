@@ -121,8 +121,8 @@ namespace Cirrus.Circuit.UI
                 StartCoroutine(PunchScale(false));
             }
 
-            if (GameSession.Instance._selectedLevelIndex < 0)
-                _levelName.text = Game.Instance._levels[GameSession.Instance._selectedLevelIndex].Name;
+            if (GameSession.Instance.SelectedLevelIndex < 0)
+                _levelName.text = GameSession.Instance.SelectedLevel.Name;
 
             // TODO upd num of players ??
             //foreach (var display in _playerDisplays)
