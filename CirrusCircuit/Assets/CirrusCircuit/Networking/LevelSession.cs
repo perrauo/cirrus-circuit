@@ -24,6 +24,8 @@ namespace Cirrus.Circuit.Networking
 
         public Door.OnScoreValueAdded OnScoreValueAddedHandler;
 
+        private Level _level;
+
         private static LevelSession _instance;
 
         public static LevelSession Instance
@@ -34,8 +36,6 @@ namespace Cirrus.Circuit.Networking
                 return _instance;
             }
         }
-
-        private Level _level;
 
         public static LevelSession Create(Level level)
         {
@@ -111,7 +111,6 @@ namespace Cirrus.Circuit.Networking
 
         public void OnValidate()
         {
-
             _name = gameObject.name.Substring(gameObject.name.IndexOf('.') + 1);
             _name = _name.Replace('.', ' ');
 
@@ -166,7 +165,7 @@ namespace Cirrus.Circuit.Networking
 
         private int _requiredGemCount = 0;
 
-        public void OnNewRound(RoundSession round)
+        public void Init(RoundSession round)
         {
             if (this == null)
                 return;
@@ -193,14 +192,14 @@ namespace Cirrus.Circuit.Networking
                 if (obj is Character)
                     continue;
 
-                foreach (Controls.Player players in GameSession.Instance.LocalPlayers)
+                foreach (PlayerSession player in GameSession.Instance.Players)
                 {
-                    //if (obj.ColorId == players._colorId)
-                    //{
-                    //    obj.ColorId = players.ServerId;
-                    //    obj.Color = players.Color;
-                    //    break;
-                    //}
+                    if (obj.ColorId == player._colorId)
+                    {
+                        obj.ColorId = player.ServerId;
+                        obj.Color = player.Color;
+                        break;
+                    }
                 }
             }
         }
@@ -322,14 +321,25 @@ namespace Cirrus.Circuit.Networking
 
             if (IsWithinBounds(position))
             {
-                return InnerTryMove(source, position, direction, ref offset, out pushed, out destination);
+                return InnerTryMove(
+                    source, 
+                    position, 
+                    direction, 
+                    ref offset, 
+                    out pushed, 
+                    out destination);
             }
 
             return false;
         }
 
         bool once = false;
-        public bool TryFallThrough(BaseObject source, Vector3Int step, ref Vector3 offset, out Vector3Int position, out BaseObject destination)
+        public bool TryFallThrough(
+            BaseObject source, 
+            Vector3Int step, ref 
+            Vector3 offset, 
+            out Vector3Int position, 
+            out BaseObject destination)
         {
             destination = null;            
             Vector3Int direction = step;//.SetXYZ(step.x, 0, step.z);
@@ -383,7 +393,6 @@ namespace Cirrus.Circuit.Networking
 
         public BaseObject Spawn(BaseObject template, Vector3Int pos)
         {
-
             BaseObject obj = template.Create(_level.GridToWorld(pos), transform);
 
             //obj.Register(this);
@@ -401,7 +410,6 @@ namespace Cirrus.Circuit.Networking
 
             return obj;
         }
-
 
         public void OnRainTimeout()
         {
@@ -428,7 +436,6 @@ namespace Cirrus.Circuit.Networking
         {
             Set(obj._gridPosition, null);
         }
-
 
         public void OnBeginRound(int number)
         {

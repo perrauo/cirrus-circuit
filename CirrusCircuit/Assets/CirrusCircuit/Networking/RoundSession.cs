@@ -65,6 +65,10 @@ namespace Cirrus.Circuit.Networking
         {
             base.OnStartClient();
 
+            _countDownTimer.OnTimeLimitHandler += OnTimeOut;
+            _intermissionTimer.OnTimeLimitHandler += OnIntermissionTimeoutBeginCountdown;
+
+
             Game.Instance._TryChangeState(Game.State.Round);
         }        
 
@@ -72,20 +76,24 @@ namespace Cirrus.Circuit.Networking
         {
             get
             {
-                if (_instance == null)
-                    _instance = FindObjectOfType<RoundSession>();
+                if (_instance == null) _instance = FindObjectOfType<RoundSession>();
                 return _instance;
             }
         }
 
-        public static RoundSession Create(int countDown, float time, float countDownTime, float intermissionTime, int id)
+        public static RoundSession Create(
+            int countDown, 
+            float time, 
+            float countDownTime, 
+            float intermissionTime, 
+            int id)
         {
             RoundSession session = null;
 
             if (ServerUtils.TryCreateNetworkObject(
                 NetworkServer.localConnection,
                 NetworkingLibrary.Instance.RoundSession.gameObject,
-                out NetworkIdentity obj, 
+                out GameObject obj, 
                 false))
              {
                 session = obj.GetComponent<RoundSession>();
@@ -97,11 +105,8 @@ namespace Cirrus.Circuit.Networking
                     session._roundTime = time;
                     session._countDownTime = countDownTime;
                     session._countDownTimer = new Timer(countDownTime, start: false, repeat: true);
-                    session._countDownTimer.OnTimeLimitHandler += session.OnTimeOut;
                     session._timer = new Timer(session._roundTime, start: false);
-
                     session._intermissionTimer = new Timer(session._intermissionTime, start: false, repeat: false);
-                    session._intermissionTimer.OnTimeLimitHandler += session.OnIntermissionTimeoutBeginCountdown;
                 }
             }
 
@@ -145,10 +150,7 @@ namespace Cirrus.Circuit.Networking
                 _timer.OnTimeLimitHandler += OnRoundEnd;
                 return;
             }
-            else
-            {
-                OnCountdownHandler?.Invoke(_countDown);
-            }
+            else OnCountdownHandler?.Invoke(_countDown);
         }
 
         public void OnRoundEnd()

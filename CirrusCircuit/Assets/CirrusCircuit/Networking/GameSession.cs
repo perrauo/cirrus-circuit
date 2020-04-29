@@ -42,7 +42,6 @@ namespace Cirrus.Circuit.Networking
             {
                 _characterSelectReadyCount = value < 0 ? 0 : value;
                 _characterSelectReadyCount = value > CharacterSelectOpenCount ? CharacterSelectOpenCount : value;
-
                 ClientPlayer.Instance.Cmd_GameSession_SetCharacterSelectReadyCount(gameObject, _characterSelectReadyCount);
             }
         }
@@ -65,8 +64,7 @@ namespace Cirrus.Circuit.Networking
         {
             get
             {
-                if (_instance == null)
-                    _instance = FindObjectOfType<GameSession>();
+                if (_instance == null) _instance = FindObjectOfType<GameSession>();
                 return _instance;
             }
         }

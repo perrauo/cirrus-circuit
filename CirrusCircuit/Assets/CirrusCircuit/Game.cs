@@ -499,6 +499,35 @@ namespace Cirrus.Circuit
                     OnCharacterSelectHandler?.Invoke(true);
                     _state = target;
                     return true;
+        
+                case State.Podium:
+                    Podium.Instance.gameObject.SetActive(true);
+                    OnPodiumHandler?.Invoke();
+                    _state = target;
+                    return true;
+
+                case State.FinalPodium:
+                    Podium.Instance.gameObject.SetActive(true);
+                    OnFinalPodiumHandler?.Invoke();
+                    _state = target;
+                    return true;
+
+                case State.LevelSelection:
+
+                    OnLevelSelectHandler?.Invoke(true);
+
+                    _state = target;
+
+                    foreach (Level level in _levels)
+                    {
+                        level.gameObject.SetActive(true);
+                        level.OnLevelSelect();
+                    }
+
+                    SelectLevel(0);                    
+
+                    return true;
+
 
                 case State.BeginRound:
 
@@ -528,35 +557,6 @@ namespace Cirrus.Circuit
                     _state = target;
                     CustomNetworkManager.Instance.InitRound(GameSession.Instance.SelectedLevel);
                     //TryChangeState(State.Round);
-                    return true;
-
-
-                case State.Podium:
-                    Podium.Instance.gameObject.SetActive(true);
-                    OnPodiumHandler?.Invoke();
-                    _state = target;
-                    return true;
-
-                case State.FinalPodium:
-                    Podium.Instance.gameObject.SetActive(true);
-                    OnFinalPodiumHandler?.Invoke();
-                    _state = target;
-                    return true;
-
-                case State.LevelSelection:
-
-                    OnLevelSelectHandler?.Invoke(true);
-
-                    _state = target;
-
-                    foreach (Level level in _levels)
-                    {
-                        level.gameObject.SetActive(true);
-                        level.OnLevelSelect();
-                    }
-
-                    SelectLevel(0);                    
-
                     return true;
 
                 case State.Round:
