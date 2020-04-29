@@ -70,9 +70,9 @@ namespace Cirrus.Circuit.World.Objects
         public int ColorId;
 
         [SerializeField]
-        protected UnityEngine.Color _color;
+        protected Color _color;
 
-        public virtual UnityEngine.Color Color
+        public virtual Color Color
         {
             get => _color;
 
@@ -86,7 +86,7 @@ namespace Cirrus.Circuit.World.Objects
         }
 
         [SerializeField]
-        protected UnityEngine.Color _nextColor;
+        protected Color _nextColor;
 
         private Timer _nextColorTimer;
 
@@ -119,7 +119,7 @@ namespace Cirrus.Circuit.World.Objects
         // TODO: will not be called on disabled level
         protected virtual void Awake()
         {
-            if (ColorId < 4)
+            if (ColorId < PlayerManager.PlayerMax)
             {
                 _nextColorIndex = ColorId;
                 _nextColorTimer = new Timer(_nextColorTime, start: false, repeat: true);
