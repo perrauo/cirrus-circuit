@@ -207,18 +207,18 @@ namespace Cirrus.Circuit
 
         public void _SelectLevel(int index)
         {
-            Debug.Log("DIFFERENT LEVEL SELECTED: " + SelectedLevelIndex);
+            Debug.Log("DIFFERENT LEVEL SELECTED: " + index);
 
             for (int i = 0; i < _levels.Length; i++)
             {
                 if (_levels[i] == null) continue;
 
-                _levels[i].TargetPosition = Vector3.right * (i - SelectedLevelIndex) * Instance.DistanceLevelSelect;
+                _levels[i].TargetPosition = Vector3.right * (i - index) * Instance.DistanceLevelSelect;
             }            
 
             _targetSizeCamera = GameSession.Instance.SelectedLevel.CameraSize;
 
-            OnLevelSelectedHandler?.Invoke(GameSession.Instance.SelectedLevel, SelectedLevelIndex);
+            OnLevelSelectedHandler?.Invoke(GameSession.Instance.SelectedLevel, index);
         }
 
         public void _ScrollLevel(int step)
