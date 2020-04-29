@@ -218,7 +218,6 @@ namespace Cirrus.Circuit
             OnLevelSelectedHandler?.Invoke(GameSession.Instance.SelectedLevel, step);
         }
 
-
         #region FSM
 
 
