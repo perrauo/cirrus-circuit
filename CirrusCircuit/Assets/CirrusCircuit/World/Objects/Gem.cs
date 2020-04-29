@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cirrus.Circuit.Controls;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -35,7 +36,7 @@ namespace Cirrus.Circuit.World.Objects
         {
             base.Interact(source);
 
-            if (ColorId >= 4)
+            if (ColorId >= PlayerManager.PlayerMax)
             {
                 ColorId = source.ColorId;
                 Color = source.Color;
@@ -46,8 +47,7 @@ namespace Cirrus.Circuit.World.Objects
         {
             base.Awake();
 
-            if(ColorId >= 4)
-                _visual.MakeUnique();
+            if(ColorId >= PlayerManager.PlayerMax) _visual.MakeUnique();
         }
 
         // Update is called once per frame

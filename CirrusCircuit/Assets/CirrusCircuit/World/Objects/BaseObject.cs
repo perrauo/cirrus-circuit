@@ -19,6 +19,21 @@ namespace Cirrus.Circuit.World.Objects
     {
         #region Object
 
+
+        [Serializable]
+        public enum State
+        {
+            Disabled,
+            LevelSelect,
+            Entering,
+            Falling,
+            Idle,
+            RampIdle,
+            Moving,
+            RampMoving
+        }
+
+
         public enum ObjectId
         {
             Default,
@@ -65,9 +80,14 @@ namespace Cirrus.Circuit.World.Objects
         public Vector3Int _gridPosition;
 
         public float _targetScale = 1;
+        
+        public int ColorId {
+            set => _colorId = (Number)value;       
+            get  => (int) _colorId;             
+        } 
 
         [SerializeField]
-        public int ColorId;
+        private Number _colorId;
 
         [SerializeField]
         protected Color _color;
@@ -80,8 +100,7 @@ namespace Cirrus.Circuit.World.Objects
             {
                 _color = value;
 
-                if(_visual != null)
-                    _visual.Color = _color;
+                if(_visual != null) _visual.Color = _color;
             }
         }
 
@@ -99,11 +118,15 @@ namespace Cirrus.Circuit.World.Objects
         [SerializeField]
         protected float _nextColorSpeed = 0.05f;
 
-
         public string Name => transform.name;
 
         [SerializeField]
         public Level _level = null;
+
+        private bool _isRegistered = false;
+
+        [SerializeField]
+        protected State _state = State.Idle;
 
         public virtual void OnValidate()
         {
@@ -133,8 +156,6 @@ namespace Cirrus.Circuit.World.Objects
             FSMAwake();
         }
 
-        private bool _isRegistered = false;
-
         public void Register(Level level)
         {
             if (_isRegistered)
@@ -160,7 +181,6 @@ namespace Cirrus.Circuit.World.Objects
 
         }
 
-
         public virtual void FixedUpdate()
         {
             FSMFixedUpdate();
@@ -171,26 +191,13 @@ namespace Cirrus.Circuit.World.Objects
             FSMUpdate();
         }
 
-        //public void UpdateColor()
-        //{
-        //    foreach (Controls.Controller ctrl in Game.Instance._controllers)
-        //    {
-        //        if (ctrl.Number == Number)
-        //        {
-        //            Color = ctrl.Color;
-        //            _nextColor = Color;
-        //            break;
-        //        }
-        //    }
-        //}
-
         public virtual void Interact(BaseObject source)
         {
-            //if (Number >= 4)
-            //{
-            //    Number = source.Number;
-            //    Color = source.Color;
-            //}
+            if (ColorId >= PlayerManager.PlayerMax)
+            {
+                ColorId = source.ColorId;
+                Color = source.Color;
+            }
         }
 
         public virtual bool TryMove(Vector3Int step, BaseObject incoming = null)
@@ -237,22 +244,6 @@ namespace Cirrus.Circuit.World.Objects
         #endregion
 
         #region FSM
-
-        [System.Serializable]
-        public enum State
-        {
-            Disabled,
-            LevelSelect,
-            Entering,
-            Falling,
-            Idle,
-            RampIdle,
-            Moving,
-            RampMoving
-        }
-
-        [SerializeField]
-        protected State _state = State.Idle;
 
         public virtual void FSMAwake()
         {
