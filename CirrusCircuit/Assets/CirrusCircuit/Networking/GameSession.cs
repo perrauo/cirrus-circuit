@@ -166,12 +166,6 @@ namespace Cirrus.Circuit.Networking
             //OnRoundEnd();
         }
 
-
-        public void SelectLevel(int step)
-        {
-            ClientPlayer.Instance.Cmd_Game_SelectLevel(step);
-        }
-
     
         // TODO: Simulate LeftStick continuous axis with WASD  
 

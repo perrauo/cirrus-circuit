@@ -1,4 +1,5 @@
-﻿using Cirrus.Circuit.Controls;
+﻿using System;
+using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.UI;
 using Mirror;
 using UnityEngine;
@@ -119,7 +120,9 @@ namespace Cirrus.Circuit.Networking
             if ((session = obj.GetComponent<GameSession>()) != null)
             {
                 Debug.Log("CMD Set Selected Level Index");
-                session._selectedLevelIndex = index;                
+                session._selectedLevelIndex = index;
+
+                Rpc_Game_SelectLevel(index);
             }
         }
 
@@ -140,11 +143,9 @@ namespace Cirrus.Circuit.Networking
 
 
         [Command]
-        public void Cmd_Game_SelectLevel(int step)
+        public void Cmd_Game_ScrollLevel(int delta)
         {
-            //Debug.Log("CMD GAME SELECT LEVEL");
-
-            Rpc_Game_SelectLevel(step);
+            throw new NotImplementedException();
         }
 
 
@@ -163,9 +164,9 @@ namespace Cirrus.Circuit.Networking
         }
 
         [ClientRpc]
-        public void Rpc_Game_SelectLevel(int step)
+        public void Rpc_Game_SelectLevel(int index)
         {
-            Game.Instance._SelectLevel(step);
+            Game.Instance._SelectLevel(index);
         }
 
         #endregion

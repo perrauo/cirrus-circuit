@@ -34,6 +34,9 @@ namespace Cirrus.Circuit
 
         public Event<Level, int> OnLevelSelectedHandler;
 
+        public Event<Level, int> OnLevelScrollHandler;
+
+
         public Events.Event OnScreenResizedHandler;
 
         public Events.Event OnPodiumHandler;
@@ -197,12 +200,12 @@ namespace Cirrus.Circuit
             FSMHandleAction1(player);
         }
 
-        public void SelectLevel(int step)
+        public void ScrollLevel(int delta)
         {
-            ClientPlayer.Instance.Cmd_Game_SelectLevel(step);
+            ClientPlayer.Instance.Cmd_Game_ScrollLevel(delta);
         }
 
-        public void _SelectLevel(int step)
+        public void _SelectLevel(int index)
         {
             Debug.Log("DIFFERENT LEVEL SELECTED: " + SelectedLevelIndex);
 
@@ -215,8 +218,14 @@ namespace Cirrus.Circuit
 
             _targetSizeCamera = GameSession.Instance.SelectedLevel.CameraSize;
 
-            OnLevelSelectedHandler?.Invoke(GameSession.Instance.SelectedLevel, step);
+            OnLevelSelectedHandler?.Invoke(GameSession.Instance.SelectedLevel, SelectedLevelIndex);
         }
+
+        public void _ScrollLevel(int step)
+        {
+            OnLevelScrollHandler?.Invoke(GameSession.Instance.SelectedLevel, step);
+        }
+
 
         #region FSM
 
@@ -494,7 +503,7 @@ namespace Cirrus.Circuit
 
                 case State.CharacterSelection:
 
-                    SelectLevel(0);
+                    GameSession.Instance.SelectedLevelIndex = 0;
 
                     OnCharacterSelectHandler?.Invoke(true);
                     _state = target;
@@ -524,7 +533,7 @@ namespace Cirrus.Circuit
                         level.OnLevelSelect();
                     }
 
-                    SelectLevel(0);                    
+                    GameSession.Instance.SelectedLevelIndex = 0;                 
 
                     return true;
 
@@ -693,17 +702,15 @@ namespace Cirrus.Circuit
                     if (Mathf.Abs(step.x) > 0)
                     {
                         int prev = SelectedLevelIndex;
+                        int delta = (int)Mathf.Sign(step.x);
 
                         GameSession.Instance.SelectedLevelIndex =
                             Mathf.Clamp(
-                                SelectedLevelIndex + (int)Mathf.Sign(step.x), 
+                                SelectedLevelIndex + delta, 
                                 0, 
                                 _levels.Length - 1);
 
-                        if (prev != SelectedLevelIndex)
-                        {
-                            SelectLevel((int)Mathf.Sign(step.x));
-                        }
+                        if (prev != SelectedLevelIndex) ScrollLevel(delta);                                                    
                     }
 
                     break;

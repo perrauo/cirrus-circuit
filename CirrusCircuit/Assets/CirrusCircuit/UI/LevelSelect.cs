@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Cirrus.Circuit.Networking;
+using Cirrus.Circuit.World;
 
 namespace Cirrus.Circuit.UI
 {
@@ -10,7 +11,7 @@ namespace Cirrus.Circuit.UI
 
         public bool Enabled
         {
-            get => _enabled;            
+            get => _enabled;
 
             set
             {
@@ -43,13 +44,17 @@ namespace Cirrus.Circuit.UI
         public void Awake()
         {
             GameSession.OnStartClientStaticHandler += OnClientStarted;
-            Game.Instance.OnLevelSelectedHandler += OnLevelSelected;
             Game.Instance.OnLevelSelectHandler += OnLevelSelect;
+
+            Game.Instance.OnLevelSelectedHandler += OnLevelSelected;
+            Game.Instance.OnLevelScrollHandler += OnLevelScroll;
+
+
         }
 
         public void OnClientStarted(bool enable)
-        {       
-            
+        {
+
         }
 
         public void OnDestroy()
@@ -91,36 +96,19 @@ namespace Cirrus.Circuit.UI
             Enabled = enabled;
         }
 
-        public void OnLevelSelected(World.Level level, int step)
+        public void OnLevelScroll(Level level, int step)
         {
-            if (Game.Instance.SelectedLevelIndex == 0)
-            {
-                _previous.gameObject.SetActive(false);
-            }
-            else
-            {
-                _previous.gameObject.SetActive(true);
-            }
+            StartCoroutine(PunchScale(step < 0));
+        }
 
-            if (Game.Instance.SelectedLevelIndex == Game.Instance._levels.Length - 1)
-            {
-                _next.gameObject.SetActive(false);
-            }
-            else
-            {
-                _next.gameObject.SetActive(true);
-            }
+        public void OnLevelSelected(Level level, int index)
+        {
+            _previous.gameObject.SetActive(
+                Game.Instance.SelectedLevelIndex != 0);
+            _next.gameObject.SetActive(
+                Game.Instance.SelectedLevelIndex != Game.Instance._levels.Length - 1);           
 
-            if (step < 0)
-            {
-                StartCoroutine(PunchScale(true));
-            }
-            else if (step > 0)
-            {
-                StartCoroutine(PunchScale(false));
-            }
-
-            _levelName.text = GameSession.Instance.SelectedLevel.Name;
+            _levelName.text = level.Name;
 
             // TODO upd num of players ??
             //foreach (var display in _playerDisplays)
