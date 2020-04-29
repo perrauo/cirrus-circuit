@@ -119,7 +119,7 @@ namespace Cirrus.Circuit.Networking
             if ((session = obj.GetComponent<GameSession>()) != null)
             {
                 Debug.Log("CMD Set Selected Level Index");
-                session._selectedLevelIndex = index;
+                session._selectedLevelIndex = index;                
             }
         }
 
