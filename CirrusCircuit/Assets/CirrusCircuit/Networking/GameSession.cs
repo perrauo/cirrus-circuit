@@ -99,10 +99,7 @@ namespace Cirrus.Circuit.Networking
         }
 
         public Level SelectedLevel => Game.Instance._levels[_selectedLevelIndex];        
-
-
-
-
+    
         ////////   
 
         public virtual void OnValidate()
