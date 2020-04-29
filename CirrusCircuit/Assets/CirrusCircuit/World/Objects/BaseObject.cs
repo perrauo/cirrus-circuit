@@ -261,13 +261,11 @@ namespace Cirrus.Circuit.World.Objects
             {
                 case State.Disabled:
                     break;
-
+                
                 case State.LevelSelect:
 
                     if (ColorId < PlayerManager.PlayerMax)
-                    {
                         Color = Color.Lerp(_color, _nextColor, _nextColorSpeed);
-                    }
 
                     break;
 
@@ -315,15 +313,9 @@ namespace Cirrus.Circuit.World.Objects
                             {
                                 TryChangeState(State.Idle);
                             }
-                            else
-                            {
-                                TryFall();// State.Falling, Vector3Int.down);                                
-                            }
+                            else TryFall();
                         }
-                        else
-                        {
-                            _destination.Accept(this);
-                        }
+                        else _destination.Accept(this);                        
                     }
 
                     break;
@@ -346,9 +338,7 @@ namespace Cirrus.Circuit.World.Objects
         }
 
         public virtual bool TryChangeState(State transition, params object[] args)
-        {
-            //Debug.Log(transition);
-
+        {            
             if (TryTransition(transition, out State destination))
             {
                 return TryFinishChangeState(destination, args);
