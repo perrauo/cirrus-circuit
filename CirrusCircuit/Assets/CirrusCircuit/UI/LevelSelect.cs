@@ -10,10 +10,7 @@ namespace Cirrus.Circuit.UI
 
         public bool Enabled
         {
-            get
-            {
-                return _enabled;
-            }
+            get => _enabled;            
 
             set
             {
@@ -47,11 +44,11 @@ namespace Cirrus.Circuit.UI
         {
             GameSession.OnStartClientStaticHandler += OnClientStarted;
             Game.Instance.OnLevelSelectedHandler += OnLevelSelected;
-            Game.Instance.OnLevelSelectHandler += OnLevelSelect;
         }
 
         public void OnClientStarted(bool enable)
-        {            
+        {       
+            
         }
 
         public void OnDestroy()

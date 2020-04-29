@@ -204,16 +204,16 @@ namespace Cirrus.Circuit
 
         public void _SelectLevel(int step)
         {
-            for (int i = 0; i < Game.Instance._levels.Length; i++)
+            for (int i = 0; i < Instance._levels.Length; i++)
             {
                 if (Instance._levels[i] == null) continue;
 
-                Instance._levels[i].TargetPosition = Vector3.zero + Vector3.right * (i - _currentLevelIndex) * Game.Instance.DistanceLevelSelect;
+                Instance._levels[i].TargetPosition = Vector3.zero + Vector3.right * (i - _currentLevelIndex) * Instance.DistanceLevelSelect;
             }
 
             GameSession.Instance._selectedLevelIndex = _currentLevelIndex;
 
-            _targetSizeCamera = Game.Instance._levels[GameSession.Instance._selectedLevelIndex].CameraSize;
+            _targetSizeCamera = Instance._levels[GameSession.Instance._selectedLevelIndex].CameraSize;
 
             OnLevelSelectedHandler?.Invoke(GameSession.Instance.SelectedLevel, step);
         }
@@ -689,11 +689,10 @@ namespace Cirrus.Circuit
 
                     if (Mathf.Abs(step.x) > 0)
                     {
-
                         int prev = _currentLevelIndex;
 
                         _currentLevelIndex =
-                            Mathf.Clamp(_currentLevelIndex + (int)Mathf.Sign(step.x), 0, Game.Instance._levels.Length - 1);
+                            Mathf.Clamp(_currentLevelIndex + (int)Mathf.Sign(step.x), 0, Instance._levels.Length - 1);
 
                         if (prev != _currentLevelIndex)
                         {
