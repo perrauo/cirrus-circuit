@@ -59,7 +59,7 @@ namespace Cirrus.Circuit.Networking
 
         public int Id => _id;        
 
-        public static RoundSession Create(int countDown, float time, float countDownTime, float intermissionTime, int number)
+        public static RoundSession Create(int countDown, float time, float countDownTime, float intermissionTime, int id)
         {
             RoundSession session = null;
 
@@ -74,7 +74,7 @@ namespace Cirrus.Circuit.Networking
                 {
 
                     session._intermissionTime = intermissionTime;
-                    session._id = number;
+                    session._id = id;
                     session._countDown = countDown;
                     session._roundTime = time;
                     session._countDownTime = countDownTime;

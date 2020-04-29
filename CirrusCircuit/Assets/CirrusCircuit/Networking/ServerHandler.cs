@@ -15,9 +15,7 @@ namespace Cirrus.Circuit.Networking
     public class ServerHandler : NetworkManagerHandler
     {
         private Dictionary<int, ClientPlayer> _connections = new Dictionary<int, ClientPlayer>();
-        private Dictionary<int, List<int>> _players = new Dictionary<int, List<int>>();
-        private int _playerCount = 0;
-
+        private Dictionary<int, List<int>> _players = new Dictionary<int, List<int>>();        
 
         public ServerHandler(CustomNetworkManager net) : base(net)
         {
@@ -50,7 +48,7 @@ namespace Cirrus.Circuit.Networking
         
         public bool DoTryPlayerJoin(NetworkConnection conn, int localPlayerId)
         {
-            if (_playerCount == PlayerManager.PlayerMax) return false;
+            if (GameSession.Instance.PlayerCount == PlayerManager.PlayerMax) return false;
 
             List<int> connectionPlayers = null;
             if (_players.TryGetValue(conn.connectionId, out connectionPlayers))
@@ -76,7 +74,7 @@ namespace Cirrus.Circuit.Networking
                     PlayerSession session;
                     if ((session = sessionObj.GetComponent<PlayerSession>()) != null)
                     {
-                        session._serverId = _playerCount++;
+                        session._serverId = GameSession.Instance.PlayerCount++;
                         session._color = PlayerManager.Instance.GetColor(session._serverId);
                         session._name = PlayerManager.Instance.GetName(session._serverId);                        
 

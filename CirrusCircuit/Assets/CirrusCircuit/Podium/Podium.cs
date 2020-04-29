@@ -194,7 +194,7 @@ namespace Cirrus.Circuit
                     float secondMax = -99999999f;
                     PlayerSession winner = null;
                     float max = -99999999f;
-                    foreach (PlayerSession player in GameSession.Instance._players)
+                    foreach (PlayerSession player in GameSession.Instance.Players)
                     {
                         if (player.Score > max)
                         {

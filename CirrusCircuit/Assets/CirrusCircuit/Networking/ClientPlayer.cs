@@ -89,6 +89,12 @@ namespace Cirrus.Circuit.Networking
 
         #region Game Session
 
+        [Command]
+        public void Cmd_GameSession_SetPlayerCount(GameObject obj, int count)
+        {
+            GameSession session;
+            if ((session = obj.GetComponent<GameSession>()) != null) session._playerCount = count;
+        }
 
         // TODO Character Select session
         [Command]

@@ -81,8 +81,22 @@ namespace Cirrus.Circuit.Networking
         [SerializeField]
         public List<Player> LocalPlayers = new List<Player>();
 
+        [SyncVar]
         [SerializeField]
-        public List<PlayerSession> _players = new List<PlayerSession>();
+        public int _playerCount = 0;
+
+        public int PlayerCount
+        {
+            get => _playerCount;
+            set
+            {
+                _playerCount = value < 0 ? 0 : value;                
+                ClientPlayer.Instance.Cmd_GameSession_SetPlayerCount(gameObject, _playerCount);
+            }
+        }
+
+        [SerializeField]
+        public List<PlayerSession> Players = new List<PlayerSession>();
         
         public Event<Gem, int, float> OnScoreValueAddedHandler;
 
