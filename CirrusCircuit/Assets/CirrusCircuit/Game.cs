@@ -206,11 +206,11 @@ namespace Cirrus.Circuit
         {
             //Debug.Log("DIFFERENT LEVEL SELECTED");
 
-            for (int i = 0; i < Instance._levels.Length; i++)
+            for (int i = 0; i < _levels.Length; i++)
             {
-                if (Instance._levels[i] == null) continue;
+                if (_levels[i] == null) continue;
 
-                Instance._levels[i].TargetPosition = Vector3.zero + Vector3.right * (i - SelectedLevelIndex) * Instance.DistanceLevelSelect;
+                _levels[i].TargetPosition = Vector3.right * (i - SelectedLevelIndex) * Instance.DistanceLevelSelect;
             }            
 
             _targetSizeCamera = GameSession.Instance.SelectedLevel.CameraSize;
