@@ -154,7 +154,7 @@ namespace Cirrus.Circuit.UI
         public override void OnStartClient()
         {
             base.OnStartLocalPlayer();
-            _TryChangeState(_state);
+            _TrySetState(_state);
             Scroll(true);
         }
        
@@ -163,17 +163,17 @@ namespace Cirrus.Circuit.UI
         {
             base.OnStartAuthority();
             Debug.Log("Selecting Character Slot");
-            TryChangeState(State.Selecting);
+            TrySetState(State.Selecting);
         }
 
 
-        public void TryChangeState(State target)
+        public void TrySetState(State target)
         {
             Debug.Log("CHARA SET STATE");
-            ClientPlayer.Instance.Cmd_CharacterSelectSlot_TryChangeState(gameObject, target);
+            ClientPlayer.Instance.Cmd_CharacterSelectSlot_SetState(gameObject, target);
         }
 
-        public void _TryChangeState(State target)
+        public void _TrySetState(State target)
         {
             switch (target)
             {
@@ -240,9 +240,9 @@ namespace Cirrus.Circuit.UI
         }
 
         [ClientRpc]
-        public void Rpc_TryChangeState(State target)
+        public void Rpc_TrySetState(State target)
         {
-            _TryChangeState(target);
+            _TrySetState(target);
         }
         
         public IEnumerator PunchScale(bool previous)
@@ -317,8 +317,8 @@ namespace Cirrus.Circuit.UI
                     break;
 
                 case State.Ready:
-                    CharacterSelect.Instance.TryChangeState(CharacterSelect.State.Select);
-                    TryChangeState(State.Selecting);
+                    CharacterSelect.Instance.TrySetState(CharacterSelect.State.Select);
+                    TrySetState(State.Selecting);
                     break;
 
                 case State.Closed:
@@ -334,12 +334,12 @@ namespace Cirrus.Circuit.UI
                     Controls.Player player = (Controls.Player) args[0];
                     Debug.Log("Assigned id: " + CharacterLibrary.Instance.Characters[_selectedIndex].Id);
                     player._session.CharacterId = CharacterLibrary.Instance.Characters[_selectedIndex].Id;
-                    TryChangeState(State.Ready);
+                    TrySetState(State.Ready);
                     break;                    
 
                 case State.Ready:
                     // Try to change the state of the select screen, not the slot
-                    CharacterSelect.Instance.TryChangeState(CharacterSelect.State.Ready);
+                    CharacterSelect.Instance.TrySetState(CharacterSelect.State.Ready);
                     break;
 
                 case State.Closed:

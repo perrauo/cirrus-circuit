@@ -50,7 +50,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public override void Accept(BaseObject incoming)
         {
-            incoming.TryChangeState(BaseObject.State.RampIdle);
+            incoming.TrySetState(BaseObject.State.RampIdle);
         }
     }
 }

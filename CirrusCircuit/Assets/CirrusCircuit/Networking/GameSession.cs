@@ -21,6 +21,16 @@ namespace Cirrus.Circuit.Networking
 {    
     public class GameSession : NetworkBehaviour
     {
+        //public enum State
+        //{
+        //    Round,
+        //    LevelSelection,
+        //}
+
+        //[SerializeField]
+        //[SyncVar()]
+        //private State _state;
+
         public static Event<bool> OnStartClientStaticHandler;
 
         protected static GameSession _instance;
@@ -183,9 +193,9 @@ namespace Cirrus.Circuit.Networking
         private void OnPodiumFinished()
         {
             //if (_state == State.FinalPodium)
-            //    TryChangeState(State.LevelSelection);
+            //    TrySetState(State.LevelSelection);
             
-            //else TryChangeState(State.Round);
+            //else TrySetState(State.Round);
             
         }
 

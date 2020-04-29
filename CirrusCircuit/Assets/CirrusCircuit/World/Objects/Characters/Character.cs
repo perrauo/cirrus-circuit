@@ -82,9 +82,9 @@ namespace Cirrus.Circuit.World.Objects.Characters
             //_controller.SetCallbacks(this);
         }
 
-        public override bool TryChangeState(State transition, params object[] args)
+        public override bool TrySetState(State transition, params object[] args)
         {
-            return base.TryChangeState(transition, args);
+            return base.TrySetState(transition, args);
         }
 
         public override void OnRoundEnd()

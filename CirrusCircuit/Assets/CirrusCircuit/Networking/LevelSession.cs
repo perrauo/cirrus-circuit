@@ -26,7 +26,6 @@ namespace Cirrus.Circuit.Networking
 
         private Level _level;
 
-
         private static LevelSession _instance;
 
         public static LevelSession Instance
@@ -175,7 +174,7 @@ namespace Cirrus.Circuit.Networking
                 if (obj == null)
                     continue;
 
-                obj.TryChangeState(BaseObject.State.Disabled);
+                obj.TrySetState(BaseObject.State.Disabled);
 
                 if (obj is Gem)
                 {
@@ -362,7 +361,7 @@ namespace Cirrus.Circuit.Networking
 
             //obj.Register(this);
 
-            obj.TryChangeState(BaseObject.State.Idle);
+            obj.TrySetState(BaseObject.State.Idle);
 
             return obj;
         }
@@ -408,7 +407,7 @@ namespace Cirrus.Circuit.Networking
             {
                 if (obj == null) continue;
 
-                obj.TryChangeState(BaseObject.State.Idle);
+                obj.TrySetState(BaseObject.State.Idle);
             }
 
             _randomDropRainTimer.Start();
@@ -423,7 +422,7 @@ namespace Cirrus.Circuit.Networking
 
                 obj.OnRoundEnd();
 
-                obj.TryChangeState(BaseObject.State.Disabled);
+                obj.TrySetState(BaseObject.State.Disabled);
             }
 
             _randomDropRainTimer.Stop();
@@ -451,7 +450,7 @@ namespace Cirrus.Circuit.Networking
                 if (obj == null)
                     continue;
 
-                obj.TryChangeState(BaseObject.State.LevelSelect);
+                obj.TrySetState(BaseObject.State.LevelSelect);
             }
         }
     }

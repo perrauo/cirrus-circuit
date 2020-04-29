@@ -48,15 +48,15 @@ namespace Cirrus.Circuit.Networking
         #region Character Select Slot
 
         [Command]
-        public void Cmd_CharacterSelectSlot_TryChangeState(GameObject obj, CharacterSelectSlot.State target)
+        public void Cmd_CharacterSelectSlot_SetState(GameObject obj, CharacterSelectSlot.State target)
         {            
             CharacterSelectSlot slot;
 
-            Debug.Log("RPC SELECT OUTER CMD");
+            //Debug.Log("RPC SELECT OUTER CMD");
             if ((slot = obj.GetComponent<CharacterSelectSlot>()) != null)
             {
-                Debug.Log("RPC SELECT INNER CMD");
-                slot.Rpc_TryChangeState(target);
+                //Debug.Log("RPC SELECT INNER CMD");
+                slot.Rpc_TrySetState(target);
             }
         }
 
@@ -126,12 +126,12 @@ namespace Cirrus.Circuit.Networking
         }
 
         //[Command]
-        //public void Cmd_GameSession_TryChangeState_2(
+        //public void Cmd_GameSession_TrySetState_2(
         //    GameObject obj,
         //    GameSession.State transition)
         //{
         //    GameSession session;
-        //    if ((session = obj.GetComponent<GameSession>()) != null) session.Rpc_TryChangeState_2(transition);
+        //    if ((session = obj.GetComponent<GameSession>()) != null) session.Rpc_TrySetState_2(transition);
         //}
         //
 
@@ -149,17 +149,17 @@ namespace Cirrus.Circuit.Networking
 
 
         [Command]
-        public void Cmd_Game_TryChangeState(
+        public void Cmd_Game_SetState(
             Game.State transition,
             bool transitionEffect)
         {
-            Rpc_Game_TryChangeState(transition, transitionEffect);
+            Rpc_Game_SetState(transition, transitionEffect);
         }
 
         [ClientRpc]
-        public void Rpc_Game_TryChangeState(Game.State transition, bool transitionEffect)
+        public void Rpc_Game_SetState(Game.State transition, bool transitionEffect)
         {
-            Game.Instance._TryChangeState(transition, transitionEffect);
+            Game.Instance._SetState(transition, transitionEffect);
         }
 
         [ClientRpc]

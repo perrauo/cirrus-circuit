@@ -37,8 +37,8 @@ namespace Cirrus.Circuit.UI
 
         public void OnValidate()
         {
-        }
 
+        }
 
         public void Awake()
         {
@@ -110,7 +110,7 @@ namespace Cirrus.Circuit.UI
             // TODO upd num of players ??
             //foreach (var display in _playerDisplays)
             //{
-            //    display.TryChangeState(Player.State.Disabled);
+            //    display.TrySetState(Player.State.Disabled);
             //}
         }
 

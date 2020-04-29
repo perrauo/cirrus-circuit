@@ -155,7 +155,7 @@ namespace Cirrus.Circuit.World
                 if (obj == null)
                     continue;
 
-                obj.TryChangeState(BaseObject.State.Disabled);
+                obj.TrySetState(BaseObject.State.Disabled);
 
                 if (obj is Gem)
                 {
@@ -377,7 +377,7 @@ namespace Cirrus.Circuit.World
 
             obj.Register(this);
 
-            obj.TryChangeState(BaseObject.State.Idle);
+            obj.TrySetState(BaseObject.State.Idle);
 
             return obj;
         }
@@ -425,7 +425,7 @@ namespace Cirrus.Circuit.World
             {
                 if (obj == null) continue;
 
-                obj.TryChangeState(BaseObject.State.Idle);
+                obj.TrySetState(BaseObject.State.Idle);
             }
 
             _randomDropRainTimer.Start();
@@ -440,7 +440,7 @@ namespace Cirrus.Circuit.World
 
                 obj.OnRoundEnd();
 
-                obj.TryChangeState(BaseObject.State.Disabled);
+                obj.TrySetState(BaseObject.State.Disabled);
             }
 
             _randomDropRainTimer.Stop();
@@ -468,7 +468,7 @@ namespace Cirrus.Circuit.World
                 if (obj == null)
                     continue;
 
-                obj.TryChangeState(BaseObject.State.LevelSelect);
+                obj.TrySetState(BaseObject.State.LevelSelect);
             }
         }
     }

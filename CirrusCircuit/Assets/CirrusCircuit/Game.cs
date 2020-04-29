@@ -149,7 +149,7 @@ namespace Cirrus.Circuit
             Transitions.Transition.Instance.OnTransitionTimeoutHandler += OnTransitionTimeOut;
             UI.CharacterSelect.Instance.OnCharacterSelectReadyHandler += OnCharacterSelected;
 
-            _TryChangeState(State.Menu, false);            
+            _SetState(State.Menu, false);            
         }
 
 
@@ -175,12 +175,12 @@ namespace Cirrus.Circuit
 
         public void JoinSession()
         {
-            _TryChangeState(State.CharacterSelection);
+            _SetState(State.CharacterSelection);
         }
 
         public void OnCharacterSelected(int playerCount)
         {
-            TryChangeState(State.LevelSelection);
+            SetState(State.LevelSelection);
         }
 
 
@@ -267,13 +267,13 @@ namespace Cirrus.Circuit
             }
         }
 
-        public bool TryChangeState(State transition, bool transitionEffect = true)
+        public bool SetState(State transition, bool transitionEffect = true)
         {
-            ClientPlayer.Instance.Cmd_Game_TryChangeState(transition, transitionEffect);
+            ClientPlayer.Instance.Cmd_Game_SetState(transition, transitionEffect);
             return true;
         }
 
-        public void _TryChangeState(State transition, bool transitionEffect=true)
+        public void _SetState(State transition, bool transitionEffect=true)
         {
             if (transitionEffect)
             {
@@ -283,7 +283,7 @@ namespace Cirrus.Circuit
             else if (TryTransition(transition, out State destination))
             {
                 ExitState(destination);
-                TryFinishChangeState(destination);
+                TryFinishSetState(destination);
             }
         }
 
@@ -293,7 +293,7 @@ namespace Cirrus.Circuit
             if (TryTransition(_nextState, out State destination))
             {
                 ExitState(destination);
-                TryFinishChangeState(destination);
+                TryFinishSetState(destination);
             }
         }
 
@@ -490,7 +490,7 @@ namespace Cirrus.Circuit
         }
     
 
-        protected bool TryFinishChangeState(State target, params object[] args)
+        protected bool TryFinishSetState(State target, params object[] args)
         {
             switch (target)
             {
@@ -563,7 +563,7 @@ namespace Cirrus.Circuit
                     CustomNetworkManager.Instance.InitRound(GameSession.Instance.SelectedLevel);
 
                     _state = target;
-                    //TryChangeState(State.Round);
+                    //TrySetState(State.Round);
                     return true;
 
                 case State.Round:
@@ -604,7 +604,7 @@ namespace Cirrus.Circuit
 
                     //    _controllers[i]._character._level = _currentLevel;
 
-                    //    _controllers[i]._character.TryChangeState(Character.State.Disabled);
+                    //    _controllers[i]._character.TrySetState(Character.State.Disabled);
 
                     //    _controllers[i].Score = 0;
 
@@ -761,7 +761,7 @@ namespace Cirrus.Circuit
                     //else
                     //{
                     //    foreach (Player other in PlayerManager.Instance.LocalPlayers) if (other == null) continue;
-                    //    TryChangeState(State.LevelSelection);
+                    //    TrySetState(State.LevelSelection);
                     //}
 
                     break;
@@ -785,7 +785,7 @@ namespace Cirrus.Circuit
                     break;
 
                 case State.LevelSelection:
-                    TryChangeState(State.BeginRound);
+                    SetState(State.BeginRound);
                     break;
 
                 case State.CharacterSelection:

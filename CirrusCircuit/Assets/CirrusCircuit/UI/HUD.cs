@@ -33,9 +33,9 @@ namespace Cirrus.Circuit.UI
         {
             if (_availablePlayerDisplays.Count != 0)
             {
-                //_availablePlayerDisplays[0].TryChangeState(Player.State.Ready, player.ServerId);
+                //_availablePlayerDisplays[0].TrySetState(Player.State.Ready, player.ServerId);
                 _availablePlayerDisplays.RemoveAt(0);
-                //_playerDisplays[index]?.TryChangeState(state);
+                //_playerDisplays[index]?.TrySetState(state);
             }            
         }
 
@@ -43,7 +43,7 @@ namespace Cirrus.Circuit.UI
         {
             if (controller.PlayerDisplay)
             {
-                controller.PlayerDisplay.TryChangeState(Player.State.Waiting);
+                controller.PlayerDisplay.TrySetState(Player.State.Waiting);
                 _availablePlayerDisplays.Add(controller.PlayerDisplay);
                 controller.PlayerDisplay = null;
             }

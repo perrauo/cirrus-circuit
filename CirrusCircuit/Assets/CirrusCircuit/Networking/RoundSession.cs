@@ -68,7 +68,7 @@ namespace Cirrus.Circuit.Networking
             _countDownTimer.OnTimeLimitHandler += OnTimeOut;
             _intermissionTimer.OnTimeLimitHandler += OnIntermissionTimeoutBeginCountdown;
 
-            Game.Instance._TryChangeState(Game.State.Round);
+            Game.Instance._SetState(Game.State.Round);
         }        
 
         public static RoundSession Instance

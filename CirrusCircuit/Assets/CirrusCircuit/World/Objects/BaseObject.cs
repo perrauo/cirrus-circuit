@@ -202,7 +202,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual bool TryMove(Vector3Int step, BaseObject incoming = null)
         {
-            return TryChangeState(State.Moving, step, incoming);
+            return TrySetState(State.Moving, step, incoming);
         }
 
         public virtual bool TryEnter(Vector3Int step, ref Vector3 offset, BaseObject incoming = null)
@@ -218,12 +218,12 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual bool TryFall(BaseObject incoming = null)
         {
-            return TryChangeState(State.Falling, Vector3Int.down);
+            return TrySetState(State.Falling, Vector3Int.down);
         }
 
         public virtual void Accept(BaseObject incoming)
         {
-            //incoming.TryChangeState
+            //incoming.TrySetState
         }
 
         public void OnNextColorTimeOut()
@@ -245,12 +245,12 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void FSMAwake()
         {
-            TryChangeState(State.Disabled);
+            TrySetState(State.Disabled);
         }
 
         public virtual void FSMStart()
         {
-            //TryChangeState(State.Disabled);
+            //TrySetState(State.Disabled);
         }
 
         public virtual void FSMFixedUpdate()
@@ -309,7 +309,7 @@ namespace Cirrus.Circuit.World.Objects
 
                             if (_level.TryGet(_gridPosition + Vector3Int.down, out obj))
                             {
-                                TryChangeState(State.Idle);
+                                TrySetState(State.Idle);
                             }
                             else TryFall();
                         }
@@ -322,7 +322,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void OnRound()
         {
-            TryChangeState(State.Idle);
+            TrySetState(State.Idle);
         }
 
         public virtual void OnRoundBegin()
@@ -335,11 +335,11 @@ namespace Cirrus.Circuit.World.Objects
 
         }
 
-        public virtual bool TryChangeState(State transition, params object[] args)
+        public virtual bool TrySetState(State transition, params object[] args)
         {            
             if (TryTransition(transition, out State destination))
             {
-                return TryFinishChangeState(destination, args);
+                return TryFinishSetState(destination, args);
             }
 
             return false;
@@ -478,7 +478,7 @@ namespace Cirrus.Circuit.World.Objects
             return false;
         }
 
-        protected virtual bool TryFinishChangeState(State target, params object[] args)
+        protected virtual bool TryFinishSetState(State target, params object[] args)
         {
             Vector3Int previousGridPosition = _gridPosition;
             Vector3Int newGridPosition = Vector3Int.zero;
