@@ -7612,7 +7612,6 @@ MonoBehaviour:
   _intermissionTime: 2
   _transitionDistance: 48
   _targetSizeCamera: 10
-  _currentLevelIndex: 0
 --- !u!1001 &8802615577050479312
 PrefabInstance:
   m_ObjectHideFlags: 0

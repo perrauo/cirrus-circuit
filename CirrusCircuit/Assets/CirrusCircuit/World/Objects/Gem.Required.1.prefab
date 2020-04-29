@@ -7,10 +7,45 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 7703265525122326587, guid: f21a58351e578c94aa1a2d52cd62707e,
+    - target: {fileID: 589164697707602030, guid: f21a58351e578c94aa1a2d52cd62707e,
         type: 3}
-      propertyPath: m_Name
-      value: Gem.Required.2
+      propertyPath: Number
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 589164697707602030, guid: f21a58351e578c94aa1a2d52cd62707e,
+        type: 3}
+      propertyPath: _color.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 589164697707602030, guid: f21a58351e578c94aa1a2d52cd62707e,
+        type: 3}
+      propertyPath: _color.g
+      value: 0.70026994
+      objectReference: {fileID: 0}
+    - target: {fileID: 589164697707602030, guid: f21a58351e578c94aa1a2d52cd62707e,
+        type: 3}
+      propertyPath: _color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 589164697707602030, guid: f21a58351e578c94aa1a2d52cd62707e,
+        type: 3}
+      propertyPath: _colorId
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 589164697707602030, guid: f21a58351e578c94aa1a2d52cd62707e,
+        type: 3}
+      propertyPath: _nextColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 589164697707602030, guid: f21a58351e578c94aa1a2d52cd62707e,
+        type: 3}
+      propertyPath: _nextColor.g
+      value: 0.70026994
+      objectReference: {fileID: 0}
+    - target: {fileID: 589164697707602030, guid: f21a58351e578c94aa1a2d52cd62707e,
+        type: 3}
+      propertyPath: _nextColor.b
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 661945422966739770, guid: f21a58351e578c94aa1a2d52cd62707e,
         type: 3}
@@ -67,25 +102,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 589164697707602030, guid: f21a58351e578c94aa1a2d52cd62707e,
+    - target: {fileID: 7703265525122326587, guid: f21a58351e578c94aa1a2d52cd62707e,
         type: 3}
-      propertyPath: Number
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 589164697707602030, guid: f21a58351e578c94aa1a2d52cd62707e,
-        type: 3}
-      propertyPath: _color.r
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 589164697707602030, guid: f21a58351e578c94aa1a2d52cd62707e,
-        type: 3}
-      propertyPath: _color.g
-      value: 0.70026994
-      objectReference: {fileID: 0}
-    - target: {fileID: 589164697707602030, guid: f21a58351e578c94aa1a2d52cd62707e,
-        type: 3}
-      propertyPath: _color.b
-      value: 1
+      propertyPath: m_Name
+      value: Gem.Required.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f21a58351e578c94aa1a2d52cd62707e, type: 3}

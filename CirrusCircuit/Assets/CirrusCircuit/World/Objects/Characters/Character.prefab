@@ -58,7 +58,7 @@ MonoBehaviour:
   _targetPosition: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 0, y: 0, z: 0}
   _targetScale: 1
-  ColorId: 0
+  _colorId: 0
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorTime: 2
