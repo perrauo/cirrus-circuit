@@ -548,10 +548,10 @@ namespace Cirrus.Circuit
 
                     _state = target;
 
-                    foreach (Level lv in _levels)
+                    foreach (Level level in _levels)
                     {
-                        lv.gameObject.SetActive(true);
-                        lv.OnLevelSelect();
+                        level.gameObject.SetActive(true);
+                        level.OnLevelSelect();
                     }
 
                     SelectLevel(0);                    
