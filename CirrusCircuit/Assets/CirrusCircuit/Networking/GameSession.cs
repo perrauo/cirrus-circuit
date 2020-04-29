@@ -29,7 +29,7 @@ namespace Cirrus.Circuit.Networking
 
         public Event<RoundSession> OnNewRoundHandler;
 
-        private bool[] _wasMovingVertical = new bool[PlayerManager.Max];
+        private bool[] _wasMovingVertical = new bool[PlayerManager.PlayerMax];
 
         [SyncVar]
         [SerializeField]        

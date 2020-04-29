@@ -122,7 +122,7 @@ namespace Cirrus.Circuit
 
         public int SelectedLevelIndex => GameSession.Instance.SelectedLevelIndex;
 
-        private bool[] _wasMovingVertical = new bool[PlayerManager.Max];
+        private bool[] _wasMovingVertical = new bool[PlayerManager.PlayerMax];
 
         public override void OnValidate()
         {

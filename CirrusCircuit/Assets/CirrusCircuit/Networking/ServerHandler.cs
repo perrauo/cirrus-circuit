@@ -50,7 +50,7 @@ namespace Cirrus.Circuit.Networking
         
         public bool DoTryPlayerJoin(NetworkConnection conn, int localPlayerId)
         {
-            if (_playerCount == PlayerManager.Max) return false;
+            if (_playerCount == PlayerManager.PlayerMax) return false;
 
             List<int> connectionPlayers = null;
             if (_players.TryGetValue(conn.connectionId, out connectionPlayers))

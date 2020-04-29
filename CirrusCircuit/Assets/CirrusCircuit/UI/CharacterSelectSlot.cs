@@ -193,8 +193,8 @@ namespace Cirrus.Circuit.UI
                 case State.Selecting:
                     if (_state == State.Closed)
                         GameSession.Instance.CharacterSelectOpenCount =
-                            GameSession.Instance.CharacterSelectOpenCount >= Controls.PlayerManager.Max ?
-                                Controls.PlayerManager.Max :
+                            GameSession.Instance.CharacterSelectOpenCount >= Controls.PlayerManager.PlayerMax ?
+                                Controls.PlayerManager.PlayerMax :
                                 GameSession.Instance.CharacterSelectOpenCount + 1;
 
                     if (_state == State.Ready)

@@ -55,9 +55,9 @@ namespace Cirrus.Circuit.Networking
 
         [SyncVar]
         [SerializeField]
-        private int _number = 0;
+        private int _id = 0;
 
-        public int Number => _number;        
+        public int Id => _id;        
 
         public static RoundSession Create(int countDown, float time, float countDownTime, float intermissionTime, int number)
         {
@@ -74,7 +74,7 @@ namespace Cirrus.Circuit.Networking
                 {
 
                     session._intermissionTime = intermissionTime;
-                    session._number = number;
+                    session._id = number;
                     session._countDown = countDown;
                     session._roundTime = time;
                     session._countDownTime = countDownTime;
@@ -92,7 +92,7 @@ namespace Cirrus.Circuit.Networking
 
         public void BeginIntermission()
         {
-            OnIntermissionHandler?.Invoke(_number);
+            OnIntermissionHandler?.Invoke(_id);
             _intermissionTimer.Start();
         }
         
@@ -123,7 +123,7 @@ namespace Cirrus.Circuit.Networking
             else if (_countDown < 0)
             {
                 OnCountdownHandler?.Invoke(_countDown);
-                OnRoundBeginHandler.Invoke(_number);
+                OnRoundBeginHandler.Invoke(_id);
                 _timer.Start();
                 _timer.OnTimeLimitHandler += OnRoundEnd;
                 return;

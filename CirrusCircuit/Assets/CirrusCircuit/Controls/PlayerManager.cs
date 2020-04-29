@@ -23,19 +23,19 @@ namespace Cirrus.Circuit.Controls
 
         public int LocalPlayerCount = 0;
         
-        public const int Max = 4;
+        public const int PlayerMax = 4;
 
         public string GetName(int id)
         {
             string name = DefaultName;
-            if (id < Max) name = Names[id];
+            if (id < PlayerMax) name = Names[id];
             return name;
         }
 
         public Color GetColor(int id)
         {
             Color color = Color.white;
-            if (id < Max) color = Colors[id];
+            if (id < PlayerMax) color = Colors[id];
             return color;
         }
 
@@ -43,7 +43,7 @@ namespace Cirrus.Circuit.Controls
         {
             base.Awake();
 
-            LocalPlayers = new Player[Max];
+            LocalPlayers = new Player[PlayerMax];
 
             var devices = Inputs.InputDevice.all;
 
@@ -71,7 +71,7 @@ namespace Cirrus.Circuit.Controls
                     }
                 }
 
-                if (LocalPlayerCount > Max) break;
+                if (LocalPlayerCount > PlayerMax) break;
             }
         }
 

@@ -224,24 +224,13 @@ namespace Cirrus.Circuit.World.Objects
             if (_state != State.LevelSelect)
                 return;
 
-            if (Game.Instance == null)
-            {
-                if (_fallbackColors.Length != 0)
-                {
-                    _nextColorIndex = _nextColorIndex + 1;
-                    _nextColorIndex = Utils.MathUtils.Wrap(_nextColorIndex, 0, 2);
-                    _nextColor = _fallbackColors[_nextColorIndex];
-                }
-            }
-            else
-            {
-                if (GameSession.Instance.LocalPlayers.Count == 0)
-                    return;
+            if (GameSession.Instance.LocalPlayers.Count == 0)
+                return;
 
-                _nextColorIndex = _nextColorIndex + 1;
-                _nextColorIndex = MathUtils.Wrap(_nextColorIndex, 0, GameSession.Instance.LocalPlayers.Count);
-                //_nextColor = Game.Instance._localPlayers[_nextColorIndex].Color;
-            }
+            _nextColorIndex = _nextColorIndex + 1;
+            _nextColorIndex = MathUtils.Wrap(_nextColorIndex, 0, GameSession.Instance.LocalPlayers.Count);
+            _nextColor = PlayerManager.Instance.GetColor(_nextColorIndex);
+
         }
 
 
@@ -283,9 +272,8 @@ namespace Cirrus.Circuit.World.Objects
                     break;
 
                 case State.LevelSelect:
-                    //Color = 
-                    //Color = Fixed
-                    if (ColorId < 4)
+
+                    if (ColorId < PlayerManager.PlayerMax)
                     {
                         Color = Color.Lerp(_color, _nextColor, _nextColorSpeed);
                     }
@@ -533,7 +521,7 @@ namespace Cirrus.Circuit.World.Objects
 
                 case State.LevelSelect:
 
-                    if (ColorId < 4)
+                    if (ColorId < PlayerManager.PlayerMax)
                     {
                         OnNextColorTimeOut();
                         _nextColorTimer.Start();
@@ -634,17 +622,20 @@ namespace Cirrus.Circuit.World.Objects
                         //offset -= Vector3.up * (Level.GridSize / 2);
                     }
 
-                    if (_level.TryMove(this, step + stepOffset, ref offset, out newGridPosition, out pushed, out destination))
+                    if (_level.TryMove(
+                        this, 
+                        step + stepOffset, 
+                        ref offset, 
+                        out newGridPosition, 
+                        out pushed, 
+                        out destination))
                     {
-                        if (pushed)
-                            pushed.Interact(this);
-
+                        if (pushed) pushed.Interact(this);
                         _destination = destination;
                         _gridPosition = newGridPosition;
                         _targetPosition = _level.GridToWorld(_gridPosition);
                         _targetPosition += offset;
                         _direction = step;
-
                         _state = target;
                         result = true;
                     }
