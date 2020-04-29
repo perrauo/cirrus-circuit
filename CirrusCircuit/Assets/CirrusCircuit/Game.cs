@@ -699,7 +699,7 @@ namespace Cirrus.Circuit
                             Mathf.Clamp(
                                 _currentLevelIndex + (int)Mathf.Sign(step.x), 
                                 0, 
-                                Instance._levels.Length - 1);
+                                _levels.Length - 1);
 
                         if (prev != _currentLevelIndex)
                         {

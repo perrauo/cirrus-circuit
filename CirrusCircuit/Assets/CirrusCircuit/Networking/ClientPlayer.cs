@@ -121,7 +121,9 @@ namespace Cirrus.Circuit.Networking
 
         [Command]
         public void Cmd_Game_SelectLevel(int step)
-        {            
+        {
+            Debug.Log("CMD GAME SELECT LEVEL");
+
             Rpc_Game_SelectLevel(step);
         }
 
