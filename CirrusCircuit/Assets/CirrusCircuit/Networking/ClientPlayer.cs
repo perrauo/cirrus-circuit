@@ -113,6 +113,7 @@ namespace Cirrus.Circuit.Networking
         //    GameSession session;
         //    if ((session = obj.GetComponent<GameSession>()) != null) session.Rpc_TryChangeState_2(transition);
         //}
+        //
 
 
         #endregion
