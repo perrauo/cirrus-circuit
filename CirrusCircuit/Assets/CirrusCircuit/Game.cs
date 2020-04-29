@@ -235,7 +235,7 @@ namespace Cirrus.Circuit
                     CameraManager.Instance.Camera.orthographicSize =
                         Mathf.Lerp(
                             CameraManager.Instance.Camera.orthographicSize,
-                            Game.Instance._targetSizeCamera,
+                            _targetSizeCamera,
                             CameraSizeSpeed);
 
                     break;
@@ -262,7 +262,7 @@ namespace Cirrus.Circuit
 
         public bool TryChangeState(State transition, bool transitionEffect = true)
         {
-            ClientPlayer.Instance.Cmd_Game_TryChangeState_1(transition, transitionEffect);
+            ClientPlayer.Instance.Cmd_Game_TryChangeState(transition, transitionEffect);
             return true;
         }
 

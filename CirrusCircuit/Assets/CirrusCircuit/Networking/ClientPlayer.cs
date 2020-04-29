@@ -125,17 +125,16 @@ namespace Cirrus.Circuit.Networking
             Rpc_Game_SelectLevel(step);
         }
 
-
         [Command]
-        public void Cmd_Game_TryChangeState_1(
+        public void Cmd_Game_TryChangeState(
             Game.State transition,
             bool transitionEffect)
         {
-            Rpc_Game_TryChangeState_1(transition, transitionEffect);
+            Rpc_Game_TryChangeState(transition, transitionEffect);
         }
 
         [ClientRpc]
-        public void Rpc_Game_TryChangeState_1(Game.State transition, bool transitionEffect)
+        public void Rpc_Game_TryChangeState(Game.State transition, bool transitionEffect)
         {
             Game.Instance._TryChangeState(transition, transitionEffect);
         }
