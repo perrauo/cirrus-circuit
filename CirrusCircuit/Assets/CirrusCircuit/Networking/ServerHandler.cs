@@ -33,7 +33,7 @@ namespace Cirrus.Circuit.Networking
                 NetworkingLibrary.Instance.RoundSession.gameObject,
                 out GameObject roundObject);
 
-            LevelSession.Create(level);
+            LevelSession.Create();
 
             RoundSession.Create(
                 Game.Instance.CountDown,

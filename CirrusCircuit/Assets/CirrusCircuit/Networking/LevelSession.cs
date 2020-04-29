@@ -26,6 +26,7 @@ namespace Cirrus.Circuit.Networking
 
         private Level _level;
 
+
         private static LevelSession _instance;
 
         public static LevelSession Instance
@@ -37,7 +38,7 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-        public static LevelSession Create(Level level)
+        public static LevelSession Create()
         {
             LevelSession session = null;
             if (ServerUtils.TryCreateNetworkObject(
@@ -48,20 +49,13 @@ namespace Cirrus.Circuit.Networking
             {
                 if ((session = obj.GetComponent<LevelSession>()) != null)
                 {
-                    session._level = level;
                     return session;
                 }
             }
 
             return null;
         }
-
-        [SerializeField]
-        private Vector3Int _offset = new Vector3Int(2, 2, 2);
-
-        [SerializeField]
-        private Vector3Int _dimension = new Vector3Int(20, 20, 20);
-
+    
         Mutex _mutex;
 
         [SerializeField]
@@ -109,6 +103,8 @@ namespace Cirrus.Circuit.Networking
         [SerializeField]
         private float _randomDropSpawnTime = 2f;
 
+        public Level Level => GameSession.Instance.SelectedLevel;
+
         public void OnValidate()
         {
             _name = gameObject.name.Substring(gameObject.name.IndexOf('.') + 1);
@@ -136,8 +132,6 @@ namespace Cirrus.Circuit.Networking
         public void Awake()
         {
             _mutex = new Mutex(false);
-            _objects = new BaseObject[_dimension.x * _dimension.y * _dimension.z];
-
 
             _randomDropRainTimer = new Timer(_randomDropRainTime, start: false, repeat: true);
             _randomDropRainTimer.OnTimeLimitHandler += OnRainTimeout;
@@ -204,44 +198,15 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-        public bool IsWithinBounds(Vector3Int pos)
-        {
-            return
-                (pos.x >= 0 && pos.x < _dimension.x &&
-                pos.y >= 0 && pos.y < _dimension.y &&
-                pos.z >= 0 && pos.z < _dimension.z);
-        }
-
-        public bool IsWithinBoundsX(int pos)
-        {
-            return pos >= 0 && pos < _dimension.x;
-        }
-
-        public bool IsWithinBoundsY(int pos)
-        {
-            return pos >= 0 && pos < _dimension.y;
-        }
-
-        public bool IsWithinBoundsZ(int pos)
-        {
-            return pos >= 0 && pos < _dimension.z;
-        }
-
-
-        public Vector3Int GetOverflow(Vector3Int pos)
-        {
-            return _dimension - pos;
-        }
-
         public bool TryGet(Vector3Int pos, out BaseObject obj)
         {
             obj = null;
-            if (!IsWithinBounds(pos))
+            if (!Level.IsWithinBounds(pos))
                 return false;
 
             _mutex.WaitOne();
 
-            int i = pos.x + _dimension.x * pos.y + _dimension.x * _dimension.y * pos.z;
+            int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
 
             obj = _objects[i];
             _mutex.ReleaseMutex();
@@ -253,7 +218,7 @@ namespace Cirrus.Circuit.Networking
         {
             _mutex.WaitOne();
 
-            int i = pos.x + _dimension.x * pos.y + _dimension.x * _dimension.y * pos.z;
+            int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
 
             _objects[i] = obj;
 
@@ -319,7 +284,7 @@ namespace Cirrus.Circuit.Networking
 
             position = source._gridPosition + step;
 
-            if (IsWithinBounds(position))
+            if (Level.IsWithinBounds(position))
             {
                 return InnerTryMove(
                     source, 
@@ -347,16 +312,16 @@ namespace Cirrus.Circuit.Networking
 
             //bool once = false;
 
-            if(!IsWithinBoundsY(position.y))
+            if(!Level.IsWithinBoundsY(position.y))
             {
                 for (int k = 0; k < FallTrials; k++)
                 {
                     position = new Vector3Int(
-                        UnityEngine.Random.Range(_offset.x, _dimension.x - _offset.x),
-                        _dimension.y - 1,
-                        UnityEngine.Random.Range(_offset.x, _dimension.z - _offset.z));
+                        UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.x - Level.Offset.x),
+                        Level.Dimension.y - 1,
+                        UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.z - Level.Offset.z));
 
-                    for (int i = 0; i < _dimension.y; i++)
+                    for (int i = 0; i < Level.Dimension.y; i++)
                     {                                          
                         //Spawn(_objectResources.DebugObject, position.Copy().SetY(position.y - i));
                      
@@ -383,9 +348,9 @@ namespace Cirrus.Circuit.Networking
         public void Rain(BaseObject template)
         {
             Vector3Int position = new Vector3Int(
-                UnityEngine.Random.Range(_offset.x, _dimension.x - _offset.x - 1),
-                _dimension.y - 1,
-                UnityEngine.Random.Range(_offset.x, _dimension.z - _offset.z - 1));
+                UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.x - Level.Offset.x - 1),
+                Level.Dimension.y - 1,
+                UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.z - Level.Offset.z - 1));
 
             Spawn(template, position);
         }
@@ -414,9 +379,9 @@ namespace Cirrus.Circuit.Networking
         public void OnRainTimeout()
         {
             Vector3Int position = new Vector3Int(
-                UnityEngine.Random.Range(_offset.x, _dimension.x - _offset.x - 1),
-                _dimension.y - 1,
-                UnityEngine.Random.Range(_offset.x, _dimension.z - _offset.z - 1));
+                UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.x - Level.Offset.x - 1),
+                Level.Dimension.y - 1,
+                UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.z - Level.Offset.z - 1));
 
             Rain(
                 ObjectLibrary.Instance.SimpleGems[UnityEngine.Random.Range(0, ObjectLibrary.Instance.SimpleGems.Length)]);
@@ -426,7 +391,7 @@ namespace Cirrus.Circuit.Networking
         {
             Vector3Int pos = _level.WorldToGrid(obj.transform.position);
 
-            int i = pos.x + _dimension.x * pos.y + _dimension.x * _dimension.y * pos.z;
+            int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
 
             _objects[i] = obj;
             return (_level.GridToWorld(pos), pos);

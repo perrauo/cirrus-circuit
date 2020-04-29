@@ -34,8 +34,12 @@ namespace Cirrus.Circuit.World
         [SerializeField]
         private Vector3Int _offset = new Vector3Int(2, 2, 2);
 
+        public Vector3Int Offset => _offset;
+
         [SerializeField]
         private Vector3Int _dimension = new Vector3Int(20, 20, 20);
+
+        public Vector3Int Dimension => _dimension;
 
         Mutex _mutex;
 
