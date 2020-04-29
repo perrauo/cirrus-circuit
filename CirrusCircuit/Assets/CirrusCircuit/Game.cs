@@ -226,7 +226,6 @@ namespace Cirrus.Circuit
             OnLevelScrollHandler?.Invoke(GameSession.Instance.SelectedLevel, step);
         }
 
-
         #region FSM
 
 
@@ -525,15 +524,15 @@ namespace Cirrus.Circuit
 
                     OnLevelSelectHandler?.Invoke(true);
 
+                    GameSession.Instance.SelectedLevelIndex = 0;
+
                     _state = target;
 
                     foreach (Level level in _levels)
                     {
                         level.gameObject.SetActive(true);
                         level.OnLevelSelect();
-                    }
-
-                    GameSession.Instance.SelectedLevelIndex = 0;                 
+                    }             
 
                     return true;
 
@@ -557,14 +556,14 @@ namespace Cirrus.Circuit
                     foreach (Level level in _levels)
                     {
                         if (level == null) continue;
-                        if (level == _levels[GameSession.Instance.SelectedLevelIndex]) continue;
+                        if (level == GameSession.Instance.SelectedLevel) continue;
                         level.gameObject.SetActive(false);
                     }
 
-                    _levels[GameSession.Instance.SelectedLevelIndex].gameObject.SetActive(false);
+                    GameSession.Instance.SelectedLevel.gameObject.SetActive(false);                    
+                    CustomNetworkManager.Instance.InitRound(GameSession.Instance.SelectedLevel);
 
                     _state = target;
-                    CustomNetworkManager.Instance.InitRound(GameSession.Instance.SelectedLevel);
                     //TryChangeState(State.Round);
                     return true;
 
@@ -706,7 +705,7 @@ namespace Cirrus.Circuit
 
                         GameSession.Instance.SelectedLevelIndex =
                             Mathf.Clamp(
-                                SelectedLevelIndex + delta, 
+                                GameSession.Instance.SelectedLevelIndex + delta, 
                                 0, 
                                 _levels.Length - 1);
 
