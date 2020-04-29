@@ -205,6 +205,7 @@ namespace Cirrus.Circuit
             ClientPlayer.Instance.Cmd_Game_ScrollLevel(delta);
         }
 
+        // TODO change for SyncVar hook
         public void _SelectLevel(int index)
         {            
             for (int i = 0; i < _levels.Length; i++)
