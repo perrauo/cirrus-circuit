@@ -23,6 +23,14 @@ namespace Cirrus.Circuit.Networking
             NetworkServer.RegisterHandler<ClientPlayerMessage>(OnPlayerJoinMessage);
         }
 
+        public override void InitRound()
+        {
+            base.InitRound();
+
+            ServerUtils.TryCreateNetworkObject()
+
+        }
+
         public override void Stop()
         {
             _net.StopHost();

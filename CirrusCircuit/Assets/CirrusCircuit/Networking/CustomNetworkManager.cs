@@ -67,6 +67,11 @@ namespace Cirrus.Circuit.Networking
         {
             return false;
         }
+
+        public virtual void InitRound()
+        {
+
+        }
     }
 
 
@@ -243,6 +248,10 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
 
+        public void InitRound()
+        {
+            _handler.InitRound();
+        }
     }
 
 

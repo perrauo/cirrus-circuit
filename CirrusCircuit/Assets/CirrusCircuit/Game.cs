@@ -501,33 +501,34 @@ namespace Cirrus.Circuit
                     return true;
 
                 case State.BeginRound:
-                    //_podium.Clear();
 
-                    //Podium.Instance.Clear();
+                    Podium.Instance.Clear();
 
-                    //foreach (var player in _players)
-                    //{
-                    //    if (player == null)
-                    //        continue;
+                    foreach (var player in GameSession.Instance.Players)
+                    {
+                        if (player == null)
+                            continue;
 
-                    //    Podium.Instance.Add(
-                    //        player,
-                    //        CharacterLibrary.Instance.Characters[player.CharacterId]);
-                    //}
+                        Podium.Instance.Add(
+                            player,
+                            CharacterLibrary.Instance.Characters[player.CharacterId]);
+                    }
 
-                    //Podium.Instance.gameObject.SetActive(false);
+                    Podium.Instance.gameObject.SetActive(false);
 
-                    //foreach (World.Level level in Game.Instance._levels)
-                    //{
-                    //    if (level == null) continue;
-                    //    if (level == Game.Instance._levels[_selectedLevelIndex]) continue;
-                    //    level.gameObject.SetActive(false);
-                    //}
+                    foreach (Level level in _levels)
+                    {
+                        if (level == null) continue;
+                        if (level == _levels[GameSession.Instance.SelectedLevelIndex]) continue;
+                        level.gameObject.SetActive(false);
+                    }
 
-                    //Game.Instance._levels[_selectedLevelIndex].gameObject.SetActive(false);
+                    _levels[GameSession.Instance.SelectedLevelIndex].gameObject.SetActive(false);
 
-                    //_state = target;
-                    return TryChangeState(State.Round);
+                    _state = target;
+                    CustomNetworkManager.Instance.InitRound();
+                    //TryChangeState(State.Round);
+                    return true;
 
 
                 case State.Podium:
