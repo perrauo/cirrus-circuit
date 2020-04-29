@@ -26,7 +26,6 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private float _selectPunchScaleTime = 1f;
 
-
         [SerializeField]
         private UnityEngine.UI.Text _levelName;
 
@@ -48,8 +47,6 @@ namespace Cirrus.Circuit.UI
 
             Game.Instance.OnLevelSelectedHandler += OnLevelSelected;
             Game.Instance.OnLevelScrollHandler += OnLevelScroll;
-
-
         }
 
         public void OnClientStarted(bool enable)
