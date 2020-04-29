@@ -705,7 +705,7 @@ namespace Cirrus.Circuit
 
                         GameSession.Instance.SelectedLevelIndex =
                             Mathf.Clamp(
-                                GameSession.Instance.SelectedLevelIndex + delta, 
+                                SelectedLevelIndex + delta, 
                                 0, 
                                 _levels.Length - 1);
 
