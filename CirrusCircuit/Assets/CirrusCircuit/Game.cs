@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cirrus.Events;
+using Cirrus.Circuit.World;
 using StartMenu = Cirrus.Circuit.UI.StartMenu;
 
 namespace Cirrus.Circuit
@@ -31,13 +32,13 @@ namespace Cirrus.Circuit
 
         public Event<bool> OnLevelSelectHandler;
 
+        public Event<Level, int> OnLevelSelectedHandler;
+
         public Events.Event OnScreenResizedHandler;
 
         public Events.Event OnPodiumHandler;
 
         public Events.Event OnFinalPodiumHandler;
-
-        public Event<World.Level, int> OnLevelSelectedHandler;
 
         #endregion
 
@@ -69,9 +70,8 @@ namespace Cirrus.Circuit
         private bool _randomizeSeed = false;
         public bool IsSeedRandomized => _randomizeSeed;
        
-
         [SerializeField]
-        public World.Level[] _levels;
+        public Level[] _levels;
 
         [SerializeField]
         public float _distanceLevelSelect = 35;
@@ -204,16 +204,14 @@ namespace Cirrus.Circuit
 
         public void _SelectLevel(int step)
         {
-            Debug.Log("DIFFERENT LEVEL SELECTED");
+            //Debug.Log("DIFFERENT LEVEL SELECTED");
 
             for (int i = 0; i < Instance._levels.Length; i++)
             {
                 if (Instance._levels[i] == null) continue;
 
                 Instance._levels[i].TargetPosition = Vector3.zero + Vector3.right * (i - SelectedLevelIndex) * Instance.DistanceLevelSelect;
-            }
-
-            //GameSession.Instance._selectedLevelIndex = SelectedLevelIndex;
+            }            
 
             _targetSizeCamera = GameSession.Instance.SelectedLevel.CameraSize;
 
@@ -550,7 +548,7 @@ namespace Cirrus.Circuit
 
                     _state = target;
 
-                    foreach (World.Level lv in _levels)
+                    foreach (Level lv in _levels)
                     {
                         lv.gameObject.SetActive(true);
                         lv.OnLevelSelect();

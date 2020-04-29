@@ -44,6 +44,7 @@ namespace Cirrus.Circuit.UI
         {
             GameSession.OnStartClientStaticHandler += OnClientStarted;
             Game.Instance.OnLevelSelectedHandler += OnLevelSelected;
+            Game.Instance.OnLevelSelectHandler += OnLevelSelect;
         }
 
         public void OnClientStarted(bool enable)
@@ -85,12 +86,10 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-
         public void OnLevelSelect(bool enabled)
         {
             Enabled = enabled;
         }
-
 
         public void OnLevelSelected(World.Level level, int step)
         {
@@ -121,8 +120,7 @@ namespace Cirrus.Circuit.UI
                 StartCoroutine(PunchScale(false));
             }
 
-            if (GameSession.Instance.SelectedLevelIndex < 0)
-                _levelName.text = GameSession.Instance.SelectedLevel.Name;
+            if (GameSession.Instance.SelectedLevelIndex < 0) _levelName.text = GameSession.Instance.SelectedLevel.Name;
 
             // TODO upd num of players ??
             //foreach (var display in _playerDisplays)

@@ -4,8 +4,7 @@ using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.UI;
 using Mirror;
 using UnityEngine;
-
-
+using Cirrus.MirrorExt;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -60,24 +59,35 @@ namespace Cirrus.Circuit.Networking
 
         public int Number => _number;        
 
-        public RoundSession(int countDown, float time, float countDownTime, float intermissionTime, int number)
+        public static RoundSession Create(int countDown, float time, float countDownTime, float intermissionTime, int number)
         {
-            _intermissionTime = intermissionTime;
+            RoundSession session = null;
 
-            _number = number;
+            if (ServerUtils.TryCreateNetworkObject(
+                NetworkServer.localConnection,
+                NetworkingLibrary.Instance.RoundSession.gameObject,
+                out NetworkIdentity obj, 
+                false))
+             {
+                session = obj.GetComponent<RoundSession>();
+                if (session != null)
+                {
 
-            _countDown = countDown;
+                    session._intermissionTime = intermissionTime;
+                    session._number = number;
+                    session._countDown = countDown;
+                    session._roundTime = time;
+                    session._countDownTime = countDownTime;
+                    session._countDownTimer = new Timer(countDownTime, start: false, repeat: true);
+                    session._countDownTimer.OnTimeLimitHandler += session.OnTimeOut;
+                    session._timer = new Timer(session._roundTime, start: false);
 
-            _roundTime = time;
-            _countDownTime = countDownTime;
+                    session._intermissionTimer = new Timer(session._intermissionTime, start: false, repeat: false);
+                    session._intermissionTimer.OnTimeLimitHandler += session.OnIntermissionTimeoutBeginCountdown;
+                }
+            }
 
-            _countDownTimer = new Timer(countDownTime, start:false, repeat:true);
-            _countDownTimer.OnTimeLimitHandler += OnTimeOut;
-
-            _timer = new Timer(_roundTime, start:false);
-
-            _intermissionTimer = new Timer(_intermissionTime, start: false, repeat:false);
-            _intermissionTimer.OnTimeLimitHandler += OnIntermissionTimeoutBeginCountdown;
+            return session;
         }
 
         public void BeginIntermission()
