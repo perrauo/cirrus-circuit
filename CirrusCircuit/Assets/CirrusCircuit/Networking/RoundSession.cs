@@ -3,7 +3,7 @@ using System.Collections;
 using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.UI;
 using Mirror;
-using UnityEngine;
+//using UnityEngine;
 using Cirrus.MirrorExt;
 
 namespace Cirrus.Circuit.Networking
@@ -60,6 +60,13 @@ namespace Cirrus.Circuit.Networking
         public int Id => _id;
 
         private static RoundSession _instance;
+        
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+
+            Game.Instance._TryChangeState(Game.State.Round);
+        }        
 
         public static RoundSession Instance
         {
@@ -84,7 +91,6 @@ namespace Cirrus.Circuit.Networking
                 session = obj.GetComponent<RoundSession>();
                 if (session != null)
                 {
-
                     session._intermissionTime = intermissionTime;
                     session._id = id;
                     session._countDown = countDown;
