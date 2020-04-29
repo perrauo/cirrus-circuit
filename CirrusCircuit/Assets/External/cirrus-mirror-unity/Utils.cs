@@ -1,24 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using Cirrus.Circuit.Controls;
 using Cirrus.Utils;
 using Mirror;
-
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Mirror;
-using Cirrus.Circuit.UI;
-using System.Reflection;
-using UnityEditor;
 using Object = UnityEngine.Object;
 
 namespace Cirrus.MirrorExt
 {
+    [Serializable]
+    public class GameObjectSyncList : SyncList<GameObject> { }
+
+    [Serializable]
+    public class IntObjectSyncList : SyncList<int> { }
+
     public static class ServerUtils
     {
         public static bool TryCreatePlayer(

@@ -18,7 +18,7 @@ using Cirrus.Circuit.World;
 using Random = UnityEngine.Random;
 
 namespace Cirrus.Circuit.Networking
-{
+{    
     public class GameSession : NetworkBehaviour
     {
         public static Event<bool> OnStartClientStaticHandler;
@@ -92,7 +92,7 @@ namespace Cirrus.Circuit.Networking
 
         [SyncVar]
         [SerializeField]
-        public List<GameObject> _players = new List<GameObject>();
+        public SyncList<GameObject> _players = new SyncList<GameObject>();
         public IEnumerable<PlayerSession> Players => _players.Select(x => x.GetComponent<PlayerSession>());
 
         public Event<Gem, int, float> OnScoreValueAddedHandler;
