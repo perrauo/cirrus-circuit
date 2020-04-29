@@ -90,6 +90,7 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
+        [SyncVar]
         [SerializeField]
         public List<GameObject> _players = new List<GameObject>();
         public IEnumerable<PlayerSession> Players => _players.Select(x => x.GetComponent<PlayerSession>());
