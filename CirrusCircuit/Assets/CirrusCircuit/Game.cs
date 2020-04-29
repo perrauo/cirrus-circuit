@@ -120,7 +120,7 @@ namespace Cirrus.Circuit
 
         private Vector3 _updatedVectorTopRight;
 
-        public int _currentLevelIndex = 0;
+        public int SelectedLevelIndex => GameSession.Instance.SelectedLevelIndex;
 
         private bool[] _wasMovingVertical = new bool[PlayerManager.Max];
 
@@ -210,10 +210,10 @@ namespace Cirrus.Circuit
             {
                 if (Instance._levels[i] == null) continue;
 
-                Instance._levels[i].TargetPosition = Vector3.zero + Vector3.right * (i - _currentLevelIndex) * Instance.DistanceLevelSelect;
+                Instance._levels[i].TargetPosition = Vector3.zero + Vector3.right * (i - SelectedLevelIndex) * Instance.DistanceLevelSelect;
             }
 
-            GameSession.Instance._selectedLevelIndex = _currentLevelIndex;
+            GameSession.Instance._selectedLevelIndex = SelectedLevelIndex;
 
             _targetSizeCamera = Instance._levels[GameSession.Instance._selectedLevelIndex].CameraSize;
 
@@ -693,15 +693,15 @@ namespace Cirrus.Circuit
 
                     if (Mathf.Abs(step.x) > 0)
                     {
-                        int prev = _currentLevelIndex;
+                        int prev = SelectedLevelIndex;
 
-                        _currentLevelIndex =
+                        GameSession.Instance.SelectedLevelIndex =
                             Mathf.Clamp(
-                                _currentLevelIndex + (int)Mathf.Sign(step.x), 
+                                SelectedLevelIndex + (int)Mathf.Sign(step.x), 
                                 0, 
                                 _levels.Length - 1);
 
-                        if (prev != _currentLevelIndex)
+                        if (prev != SelectedLevelIndex)
                         {
                             SelectLevel((int)Mathf.Sign(step.x));
                         }

@@ -105,6 +105,14 @@ namespace Cirrus.Circuit.Networking
             if ((session = obj.GetComponent<GameSession>()) != null) session._characterSelectOpenCount = count;
         }
 
+
+        [Command]
+        public void Cmd_GameSession_SetSelectedLevelIndex(GameObject obj, int index)
+        {            
+            GameSession session;
+            if ((session = obj.GetComponent<GameSession>()) != null) session._characterSelectOpenCount = index;
+        }
+
         //[Command]
         //public void Cmd_GameSession_TryChangeState_2(
         //    GameObject obj,
@@ -120,13 +128,15 @@ namespace Cirrus.Circuit.Networking
 
         #region Game
 
+
         [Command]
         public void Cmd_Game_SelectLevel(int step)
         {
-            Debug.Log("CMD GAME SELECT LEVEL");
+            //Debug.Log("CMD GAME SELECT LEVEL");
 
             Rpc_Game_SelectLevel(step);
         }
+
 
         [Command]
         public void Cmd_Game_TryChangeState(

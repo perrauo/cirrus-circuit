@@ -82,14 +82,25 @@ namespace Cirrus.Circuit.Networking
         [SerializeField]
         public List<PlayerSession> _players = new List<PlayerSession>();
         
-
         public Event<Gem, int, float> OnScoreValueAddedHandler;
 
         [SyncVar]
         [SerializeField]        
         public int _selectedLevelIndex;
-        
+
+        public int SelectedLevelIndex
+        {
+            get => _selectedLevelIndex;
+            set
+            {
+                _selectedLevelIndex = value < 0 ? 0 : value;
+                ClientPlayer.Instance.Cmd_GameSession_SetSelectedLevelIndex(gameObject, _selectedLevelIndex);
+            }
+        }
+
         public Level SelectedLevel => Game.Instance._levels[_selectedLevelIndex];        
+
+
 
 
         ////////   
@@ -144,6 +155,7 @@ namespace Cirrus.Circuit.Networking
             _round.Terminate();
             //OnRoundEnd();
         }
+
 
         public void SelectLevel(int step)
         {

@@ -94,7 +94,7 @@ namespace Cirrus.Circuit.UI
 
         public void OnLevelSelected(World.Level level, int step)
         {
-            if (Game.Instance._currentLevelIndex == 0)
+            if (Game.Instance.SelectedLevelIndex == 0)
             {
                 _previous.gameObject.SetActive(false);
             }
@@ -103,7 +103,7 @@ namespace Cirrus.Circuit.UI
                 _previous.gameObject.SetActive(true);
             }
 
-            if (Game.Instance._currentLevelIndex == Game.Instance._levels.Length - 1)
+            if (Game.Instance.SelectedLevelIndex == Game.Instance._levels.Length - 1)
             {
                 _next.gameObject.SetActive(false);
             }
