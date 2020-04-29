@@ -677,6 +677,8 @@ namespace Cirrus.Circuit
             {
                 case State.CharacterSelection:
 
+                    SelectLevel(0);
+
                     if (Mathf.Abs(step.z) > 0)
                     {
                         if (player._characterSlot == null) return;
