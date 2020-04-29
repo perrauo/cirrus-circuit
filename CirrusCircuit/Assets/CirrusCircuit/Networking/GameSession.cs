@@ -13,6 +13,8 @@ using Cirrus.Events;
 using Cirrus.Circuit.World.Objects.Characters;
 using Cirrus.MirrorExt;
 
+using Cirrus.Circuit.World;
+
 using Random = UnityEngine.Random;
 
 namespace Cirrus.Circuit.Networking
@@ -85,7 +87,7 @@ namespace Cirrus.Circuit.Networking
       
         public int _selectedLevelIndex;
         
-        public World.Level SelectedLevel => Game.Instance._levels[_selectedLevelIndex];        
+        public Level SelectedLevel => Game.Instance._levels[_selectedLevelIndex];        
 
 
         ////////   

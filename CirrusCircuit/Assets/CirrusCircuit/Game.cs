@@ -204,6 +204,8 @@ namespace Cirrus.Circuit
 
         public void _SelectLevel(int step)
         {
+            Debug.Log("DIFFERENT LEVEL SELECTED");
+
             for (int i = 0; i < Instance._levels.Length; i++)
             {
                 if (Instance._levels[i] == null) continue;
