@@ -494,6 +494,9 @@ namespace Cirrus.Circuit
                     return true;
 
                 case State.CharacterSelection:
+
+                    SelectLevel(0);
+
                     OnCharacterSelectHandler?.Invoke(true);
                     _state = target;
                     return true;
@@ -676,8 +679,6 @@ namespace Cirrus.Circuit
             switch (_state)
             {
                 case State.CharacterSelection:
-
-                    SelectLevel(0);
 
                     if (Mathf.Abs(step.z) > 0)
                     {
