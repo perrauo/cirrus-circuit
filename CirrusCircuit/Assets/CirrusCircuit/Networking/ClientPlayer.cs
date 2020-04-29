@@ -119,9 +119,8 @@ namespace Cirrus.Circuit.Networking
             GameSession session;
             if ((session = obj.GetComponent<GameSession>()) != null)
             {
-                Debug.Log("CMD Set Selected Level Index");
+                //Debug.Log("CMD Set Selected Level Index");
                 session._selectedLevelIndex = index;
-
                 Rpc_Game_SelectLevel(index);
             }
         }
@@ -166,6 +165,7 @@ namespace Cirrus.Circuit.Networking
         [ClientRpc]
         public void Rpc_Game_SelectLevel(int index)
         {
+            Debug.Log("RPC SELECT LEVEL: " + index);
             Game.Instance._SelectLevel(index);
         }
 
