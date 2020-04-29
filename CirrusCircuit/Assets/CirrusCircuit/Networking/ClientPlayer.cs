@@ -116,7 +116,11 @@ namespace Cirrus.Circuit.Networking
         public void Cmd_GameSession_SetSelectedLevelIndex(GameObject obj, int index)
         {            
             GameSession session;
-            if ((session = obj.GetComponent<GameSession>()) != null) session._selectedLevelIndex = index;
+            if ((session = obj.GetComponent<GameSession>()) != null)
+            {
+                Debug.Log("CMD Set Selected Level Index");
+                session._selectedLevelIndex = index;
+            }
         }
 
         //[Command]
