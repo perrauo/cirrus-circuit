@@ -68,7 +68,6 @@ namespace Cirrus.Circuit.Networking
             _countDownTimer.OnTimeLimitHandler += OnTimeOut;
             _intermissionTimer.OnTimeLimitHandler += OnIntermissionTimeoutBeginCountdown;
 
-
             Game.Instance._TryChangeState(Game.State.Round);
         }        
 
