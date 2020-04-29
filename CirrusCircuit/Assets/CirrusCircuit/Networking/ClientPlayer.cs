@@ -145,7 +145,7 @@ namespace Cirrus.Circuit.Networking
         [Command]
         public void Cmd_Game_ScrollLevel(int delta)
         {
-            throw new NotImplementedException();
+            Rpc_Game_ScrollLevel(delta);
         }
 
 
@@ -167,6 +167,12 @@ namespace Cirrus.Circuit.Networking
         public void Rpc_Game_SelectLevel(int index)
         {
             Game.Instance._SelectLevel(index);
+        }
+
+        [ClientRpc]
+        public void Rpc_Game_ScrollLevel(int step)
+        {
+            Game.Instance._ScrollLevel(step);
         }
 
         #endregion
