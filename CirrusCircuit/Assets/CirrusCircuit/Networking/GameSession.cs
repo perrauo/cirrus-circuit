@@ -96,8 +96,9 @@ namespace Cirrus.Circuit.Networking
         }
 
         [SerializeField]
-        public List<PlayerSession> Players = new List<PlayerSession>();
-        
+        public List<GameObject> _players = new List<GameObject>();
+        public IEnumerable<PlayerSession> Players => _players.Select(x => x.GetComponent<PlayerSession>());
+
         public Event<Gem, int, float> OnScoreValueAddedHandler;
 
         [SyncVar]

@@ -77,15 +77,16 @@ namespace Cirrus.Circuit.Networking
                         session._serverId = GameSession.Instance.PlayerCount++;
                         session._color = PlayerManager.Instance.GetColor(session._serverId);
                         session._name = PlayerManager.Instance.GetName(session._serverId);                        
-
-                        session._localId = localPlayerId;
+                        session._localId = localPlayerId;                        
+                        session.netIdentity.AssignClientAuthority(conn);
+                        
                         connectionPlayers.Add(localPlayerId);
 
-                        session.netIdentity.AssignClientAuthority(conn);
+                        GameSession.Instance._players.Add(session.gameObject);
                         CharacterSelect.Instance.AssignAuthority(conn, session._serverId);
 
-                        Debug.Log("Server player ID: " + session._serverId);
-                        Debug.Log("Local player ID: " + localPlayerId);
+                        //Debug.Log("Server player ID: " + session._serverId);
+                        //Debug.Log("Local player ID: " + localPlayerId);
                         return true;
                     }
                     else ServerUtils.TryDestroyNetworkObject(sessionObj.gameObject);
