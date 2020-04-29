@@ -92,7 +92,7 @@ namespace Cirrus.Circuit.Networking
 
         [SyncVar]
         [SerializeField]
-        public SyncList<GameObject> _players = new SyncList<GameObject>();
+        public GameObjectSyncList _players = new GameObjectSyncList();
         public IEnumerable<PlayerSession> Players => _players.Select(x => x.GetComponent<PlayerSession>());
 
         public Event<Gem, int, float> OnScoreValueAddedHandler;
