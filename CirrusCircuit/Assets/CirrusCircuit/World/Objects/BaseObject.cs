@@ -235,7 +235,7 @@ namespace Cirrus.Circuit.World.Objects
                 return;
 
             _nextColorIndex = _nextColorIndex + 1;
-            _nextColorIndex = MathUtils.Wrap(_nextColorIndex, 0, GameSession.Instance._players.Count);
+            _nextColorIndex = MathUtils.Wrap(_nextColorIndex, 0, GameSession.Instance.PlayerCount);
             _nextColor = PlayerManager.Instance.GetColor(_nextColorIndex);
 
         }
