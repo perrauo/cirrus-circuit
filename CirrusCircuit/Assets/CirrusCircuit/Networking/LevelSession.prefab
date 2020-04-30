@@ -47,6 +47,7 @@ MonoBehaviour:
   sceneId: 0
   serverOnly: 0
   m_AssetId: 
+  hasSpawned: 0
 --- !u!114 &8112736306419752256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60,18 +61,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.1
-  _offset: {x: 2, y: 2, z: 2}
-  _dimension: {x: 20, y: 20, z: 20}
-  _objects: []
-  _name: LevelSession
-  _characters: []
-  _gems: []
-  _doors: []
-  _characterPlaceholders: []
-  DistanceLevelSelection: 35
+  syncInterval: 0
   CameraSize: 10
   TargetPosition: {x: 0, y: 0, z: 0}
-  _positionSpeed: 0.4
-  _randomDropRainTime: 2
-  _randomDropSpawnTime: 2
+  _requiredGemCount: 0
