@@ -129,7 +129,7 @@ namespace Cirrus.Circuit.Networking
 
                 res._levelSession = this;
                 res.gameObject.SetActive(true);
-                RegisterObject(res);
+                (res.Transform.position, res._gridPosition) = RegisterObject(res);
 
                 res.TrySetState(BaseObject.State.Idle);
             }
@@ -159,6 +159,8 @@ namespace Cirrus.Circuit.Networking
                 info.Session._object._levelSession = this;
                 info.Session._object.ColorId = info.PlayerId;
                 info.Session._object.Color = player.Color;
+                info.Session._object._gridPosition = info.Position;
+                RegisterObject(info.Session._object);
 
                 // TODO idle after count down
                 //info.Session._object.TrySetState(BaseObject.State.Disabled); 
