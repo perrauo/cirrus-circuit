@@ -141,6 +141,9 @@ namespace Cirrus.Circuit.Networking
                     }
 
                 }
+
+                AssetDatabase.SaveAssets();
+                EditorUtility.SetDirty(this);
             }
         }
 
