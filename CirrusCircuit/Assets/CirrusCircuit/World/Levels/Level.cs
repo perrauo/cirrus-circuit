@@ -161,20 +161,20 @@ namespace Cirrus.Circuit.World
             return _dimension - pos;
         }
 
-        public bool TryGet(Vector3Int pos, out BaseObject obj)
-        {
-            obj = null;
-            if (!IsWithinBounds(pos))
-                return false;
+        //public bool TryGet(Vector3Int pos, out BaseObject obj)
+        //{
+        //    obj = null;
+        //    if (!IsWithinBounds(pos))
+        //        return false;
 
-            _mutex.WaitOne();
+        //    _mutex.WaitOne();
 
-            int i = VectorUtils.ToIndex(pos, Dimension.x, Dimension.y);
+        //    int i = VectorUtils.ToIndex(pos, Dimension.x, Dimension.y);
 
-            obj = _objects[i];
-            _mutex.ReleaseMutex();
-            return obj != null;            
-        }
+        //    obj = _objects[i];
+        //    _mutex.ReleaseMutex();
+        //    return obj != null;            
+        //}
 
         // https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid
         public void Set(Vector3Int pos, BaseObject obj)
@@ -188,152 +188,7 @@ namespace Cirrus.Circuit.World
 
             _mutex.ReleaseMutex();
         }
-
-        private bool InnerIsMoveAllowed(
-            BaseObject source,
-            Vector3Int position,
-            Vector3Int direction)
-        {
-            BaseObject pushed = null;
-            
-            if (TryGet(position, out pushed))
-            {
-                if (pushed.IsMoveAllowed(direction, source)) return true;
-                
-                else if (pushed.IsEnterAllowed(direction, source)) return true;                
-            }
-            else return true;
-
-            return false;
-        }
-
-        private bool InnerTryMove(
-            BaseObject source, 
-            Vector3Int position, 
-            Vector3Int direction, 
-            ref Vector3 offset, 
-            out BaseObject pushed, 
-            out BaseObject destination)
-        {
-            pushed = null;
-            destination = null;
-
-            if (TryGet(position, out pushed))
-            {
-                if (pushed.TryMove(direction, source))
-                {
-                    // Only set occupying tile if not visiting
-                    // Only set occupying tile if not visiting
-                    if (source._destination == null)
-                        Set(source._gridPosition, null);
-                    else
-                        source._destination._user = null;
-
-                    Set(position, source);
-                    return true;
-                }
-                else if (pushed.TryEnter(direction, ref offset, source))
-                {
-                    destination = pushed;
-
-                    // Only set occupying tile if not visiting
-                    if (source._destination == null) Set(source._gridPosition, null);
-                    else source._destination._user = null;
-
-                    return true;
-                }
-            }
-            else
-            {
-                // Only set occupying tile if not visiting
-                if (source._destination == null)
-                    Set(source._gridPosition, null);
-                else
-                    source._destination._user = null;
-
-                Set(position, source);
-                return true;
-            }
-
-            return false;
-        }
-
-        public bool IsMoveAllowed(
-            BaseObject source,
-            Vector3Int step)
-        {
-            Vector3Int direction = step;//.SetXYZ(step.x, 0, step.z);
-
-            Vector3Int position = source._gridPosition + step;
-
-            if (IsWithinBounds(position))
-            {
-                return InnerIsMoveAllowed(source, position, direction);
-            }
-
-            return false;
-        }
-
-
-
-        public bool TryMove(
-            BaseObject source, 
-            Vector3Int step, 
-            ref Vector3 offset,
-            out Vector3Int position, 
-            out BaseObject pushed, 
-            out BaseObject destination)
-        {
-            destination = null;
-            pushed = null;
-
-            Vector3Int direction = step;//.SetXYZ(step.x, 0, step.z);
-
-            position = source._gridPosition + step;
-
-            if (IsWithinBounds(position))
-            {
-                return InnerTryMove(source, position, direction, ref offset, out pushed, out destination);
-            }
-
-            return false;
-        }
-
-        public bool TryFallThrough(BaseObject source, Vector3Int step, ref Vector3 offset, out Vector3Int position, out BaseObject destination)
-        {
-            destination = null;            
-            Vector3Int direction = step;//.SetXYZ(step.x, 0, step.z);
-            position = source._gridPosition + step;
-
-            //bool once = false;
-
-            if(!IsWithinBoundsY(position.y))
-            {
-                for (int k = 0; k < FallTrials; k++)
-                {
-                    position = new Vector3Int(
-                        UnityEngine.Random.Range(_offset.x, _dimension.x - _offset.x),
-                        _dimension.y - 1,
-                        UnityEngine.Random.Range(_offset.x, _dimension.z - _offset.z));
-
-                    for (int i = 0; i < _dimension.y; i++)
-                    {                                          
-                        //Spawn(_objectResources.DebugObject, position.Copy().SetY(position.y - i));
-                     
-                        if (TryGet(position.Copy().SetY(position.y - i), out BaseObject target))
-                        {
-                            if (target is Gem) continue;
-                            if (target is Objects.Characters.Character) continue;
-                            if (target is Door) continue;
-
-                            return InnerTryMove(source, position, direction, ref offset, out BaseObject pushed, out destination);
-                        }
-                    }                    
-                }           
-            }
-
-            return false;
-        }
+    
 
         private void OnSpawnTimeout()
         {
@@ -381,7 +236,10 @@ namespace Cirrus.Circuit.World
                 UnityEngine.Random.Range(_offset.x, _dimension.z - _offset.z - 1));
 
             Rain(
-                ObjectLibrary.Instance.SimpleGems[UnityEngine.Random.Range(0, ObjectLibrary.Instance.SimpleGems.Length)]);
+                ObjectLibrary.Instance.SimpleGems[
+                    UnityEngine.Random.Range(
+                        0, 
+                        ObjectLibrary.Instance.SimpleGems.Length)]);
         }
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
