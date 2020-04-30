@@ -127,7 +127,7 @@ namespace Cirrus.Circuit.World.Objects
                         OnGemEntered(incoming as Gem);
 
                         incoming._targetScale = 0;
-                        offset += Vector3.up * World.Level.GridSize / 2;
+                        offset += Vector3.up * World.Level.CellSize / 2;
 
                         return true;
 

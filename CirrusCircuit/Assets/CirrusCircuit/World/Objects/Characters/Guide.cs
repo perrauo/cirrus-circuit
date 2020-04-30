@@ -68,7 +68,7 @@ namespace Cirrus.Circuit.World.Objects
                 ~Layers.MoveableFlags
                 ))
             {
-                int count = Mathf.FloorToInt(hit.distance / World.Level.GridSize);
+                int count = Mathf.FloorToInt(hit.distance / World.Level.CellSize);
 
                 foreach (var s in _squares) if (s) _pool.Release(s);
 

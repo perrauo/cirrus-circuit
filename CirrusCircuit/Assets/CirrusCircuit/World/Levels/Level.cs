@@ -29,7 +29,7 @@ namespace Cirrus.Circuit.World
         public Door.OnScoreValueAdded OnScoreValueAddedHandler;
 
         [SerializeField]
-        public static int GridSize = 2;
+        public static int CellSize = 2;
 
         [SerializeField]
         private Vector3Int _offset = new Vector3Int(2, 2, 2);
@@ -101,17 +101,17 @@ namespace Cirrus.Circuit.World
         public Vector3Int WorldToGrid(Vector3 pos)
         {
             return new Vector3Int(
-                Mathf.RoundToInt(pos.x / GridSize) + _offset.x,
-                Mathf.RoundToInt(pos.y / GridSize) + _offset.y,
-                Mathf.RoundToInt(pos.z / GridSize) + _offset.z);
+                Mathf.RoundToInt(pos.x / CellSize) + _offset.x,
+                Mathf.RoundToInt(pos.y / CellSize) + _offset.y,
+                Mathf.RoundToInt(pos.z / CellSize) + _offset.z);
         }
 
         public Vector3 GridToWorld(Vector3Int pos)
         {
             return new Vector3Int(
-                (pos.x - _offset.x) * GridSize,
-                (pos.y - _offset.y) * GridSize,
-                (pos.z - _offset.z) * GridSize);
+                (pos.x - _offset.x) * CellSize,
+                (pos.y - _offset.y) * CellSize,
+                (pos.z - _offset.z) * CellSize);
         }
 
         public bool IsWithinBounds(Vector3Int pos)
