@@ -25,7 +25,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
     public class Character : BaseObject
     {
-        public override ObjectId Id { get { return ObjectId.Character; } }
+        public override ObjectId Id => ObjectId.Character;
 
         public Player _controller;
 

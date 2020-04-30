@@ -8,6 +8,8 @@ namespace Cirrus.Circuit.World.Objects
 {
     public class Ramp : BaseObject
     {
+        public override ObjectId Id => ObjectId.Ramp;
+
         public override bool TryMove(Vector3Int step, BaseObject incoming = null)
         {
             switch (incoming.Id)

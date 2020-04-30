@@ -568,9 +568,12 @@ namespace Cirrus.Circuit
 
                 case State.Round:
 
-                    //Game.Instance._levels[_selectedLevelIndex].TargetPosition = Vector3.zero;
-                    //Game.Instance._levels[_selectedLevelIndex].transform.position = Vector3.zero;
-                    //Game.Instance._levels[_selectedLevelIndex].gameObject.SetActive(true);
+                    //GameSession.Instance.SelectedLevel.TargetPosition = Vector3.zero;
+                    //GameSession.Instance.SelectedLevel.transform.position = Vector3.zero;
+                    //GameSession.Instance.SelectedLevel.gameObject.SetActive(true);
+
+                    LevelSession.Instance.Init();
+
 
                     //_currentLevel =
                     //    Instantiate(

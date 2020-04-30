@@ -8,6 +8,8 @@ namespace Cirrus.Circuit.World.Objects
 {
     public class Door : BaseObject
     {
+        public override ObjectId Id => ObjectId.Door;
+
         public delegate void OnScoreValueAdded(
         Gem gem,
         int playerNumber,

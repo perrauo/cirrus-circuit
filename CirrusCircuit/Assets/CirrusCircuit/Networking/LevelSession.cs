@@ -16,6 +16,11 @@ using Cirrus.MirrorExt;
 
 namespace Cirrus.Circuit.Networking
 {
+    public class ObjectSyncList : SyncList<BaseObject.ObjectId> {
+        public ObjectSyncList(int capacity) : base(new List<BaseObject.ObjectId>(capacity)) {
+        }
+    }
+
     public class LevelSession : NetworkBehaviour
     {
         private const int FallTrials = 100;
@@ -23,8 +28,6 @@ namespace Cirrus.Circuit.Networking
         public Event<Level.Rule> OnLevelCompletedHandler;
 
         public Door.OnScoreValueAdded OnScoreValueAddedHandler;
-
-        private Level _level;
 
         private static LevelSession _instance;
 
@@ -37,164 +40,142 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-        public static LevelSession Create()
-        {
-            LevelSession session = null;
-            if (ServerUtils.TryCreateNetworkObject(
-                NetworkServer.localConnection,
-                NetworkingLibrary.Instance.LevelSession.gameObject,
-                out NetworkIdentity obj
-                ))
-            {
-                if ((session = obj.GetComponent<LevelSession>()) != null)
-                {
-                    return session;
-                }
-            }
-
-            return null;
-        }
-    
         Mutex _mutex;
 
+        [SyncVar]
         [SerializeField]
-        private BaseObject[] _objects;
+        public ObjectSyncList _objectIds;
 
-        [SerializeField]
-        private string _name;
-
-        public string Name => _name;        
-
-        [SerializeField]
-        public Character[] _characters;
-
-        public Character[] Characters => _characters;
-
-        public int CharacterCount => _characters.Length;        
-
-        [SerializeField]
-        public Gem[] _gems;
-
-        [SerializeField]
-        public Door[] _doors;
-
-        [SerializeField]
-        public Placeholder[] _characterPlaceholders;
-
-        [SerializeField]
-        public float DistanceLevelSelection = 35;
 
         [SerializeField]
         public float CameraSize = 10;
 
         public Vector3 TargetPosition;
 
-        [SerializeField]
-        public float _positionSpeed = 0.4f;
-
         private Timer _randomDropRainTimer;
-
-        [SerializeField]
-        private float _randomDropRainTime = 2f;
 
         private Timer _randomDropSpawnTimer;
 
-        [SerializeField]
-        private float _randomDropSpawnTime = 2f;
+        private int _requiredGems = 0;
 
         public Level Level => GameSession.Instance.SelectedLevel;
 
-        public void OnValidate()
+        [SyncVar]
+        [SerializeField]
+        public int _requiredGemCount = 0;
+
+        public int RequiredGemCount
         {
-            _name = gameObject.name.Substring(gameObject.name.IndexOf('.') + 1);
-            _name = _name.Replace('.', ' ');
+            get => _requiredGemCount;
+            set
+            {
+                _requiredGemCount = value;
+                ClientPlayer.Instance.Cmd_LevelSession_SetRequiredGemCount(gameObject, _requiredGemCount);
+            }
+        }
 
-            if (_gems != null && _gems.Length == 0)
-                _gems = gameObject.GetComponentsInChildren<Gem>();
 
-            if (_doors != null && _doors.Length == 0)
-                _doors = gameObject.GetComponentsInChildren<Door>();
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
 
-            if (_characters != null && _characters.Length == 0)
-                _characters = gameObject.GetComponentsInChildren<Character>();
+            foreach (var obj in GameSession.Instance.SelectedLevel.Objects)
+            {
 
-            if (_characterPlaceholders != null && _characterPlaceholders.Length == 0)
-                _characterPlaceholders = gameObject.GetComponentsInChildren<Placeholder>();
+            }
+        }
 
+        public static LevelSession Create()
+        {
+            LevelSession session = null;
+            if (ServerUtils.TryCreateNetworkObject(
+                NetworkServer.localConnection,
+                NetworkingLibrary.Instance.LevelSession.gameObject,
+                out GameObject gobj
+                ))
+            {
+                session._objectIds = new ObjectSyncList(GameSession.Instance.SelectedLevel.Size);
+
+                if ((session = gobj.GetComponent<LevelSession>()) != null)
+                {                    
+                    int i = 0;
+                    foreach (var obj in GameSession.Instance.SelectedLevel.Objects)
+                    {
+                        if (obj == null) session.SetObjectId(i, BaseObject.ObjectId.None);
+                        else session.SetObjectId(i, obj.Id);
+                    }
+
+                    return session;
+                }
+            }
+
+            return null;
+        }
+
+
+        // https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid
+        public void SetObject(Vector3Int pos, BaseObject obj)
+        {
+            int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
+
+            //_objects[i] = obj;
+
+        }
+
+        public void SetObjectId(int idx, BaseObject.ObjectId id)
+        {
+            ClientPlayer.Instance.Cmd_LevelSession_SetObjectId(gameObject, idx, id);
+        }
+
+        public void SetObjectId(Vector3Int pos, BaseObject.ObjectId id)
+        {
+            int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
+
+            SetObjectId(i, id);
+        }
+
+        public void RegisterObjectId(BaseObject obj)
+        {
+            Vector3Int pos = Level.WorldToGrid(obj.transform.position);
+
+            int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
+
+            SetObjectId(i, obj.Id);
+        }
+
+
+        public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
+        {
+            Vector3Int pos = Level.WorldToGrid(obj.transform.position);
+
+            int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
+
+            return (Level.GridToWorld(pos), pos);
+        }
+
+        public void UnregisterObjectId(BaseObject obj)
+        {
+            SetObjectId(obj._gridPosition, BaseObject.ObjectId.None);
+        }
+
+        public void UnregisterObject(BaseObject obj)
+        {
+            SetObject(obj._gridPosition, null);
         }
 
         public void FixedUpdate()
         {
-            transform.position = Vector3.Lerp(transform.position, TargetPosition, _positionSpeed);
+            transform.position = Vector3.Lerp(transform.position, TargetPosition, Level._positionSpeed);
         }
 
         public void Awake()
         {
             _mutex = new Mutex(false);
 
-            _randomDropRainTimer = new Timer(_randomDropRainTime, start: false, repeat: true);
+            _randomDropRainTimer = new Timer(Level.RandomDropRainTime, start: false, repeat: true);
             _randomDropRainTimer.OnTimeLimitHandler += OnRainTimeout;
-
-
-            _randomDropSpawnTimer = new Timer(_randomDropSpawnTime, start: false, repeat: false);
-            _randomDropSpawnTimer.OnTimeLimitHandler += OnSpawnTimeout;
-
-
-            //Game.Instance.OnNewRoundHandler += OnNewRound;
-            //Game.Instance.On
-
-            foreach (Door door in _doors)
-            {
-                if (door == null)
-                    continue;
-
-                door.OnScoreValueAddedHandler += OnGemEntered;
-
-                //Game.Instance.Lobby.Controllers[(int)door.PlayerNumber].On
-            }            
-        }
-
-        private int _requiredGems = 0;
-
-        private int _requiredGemCount = 0;
-
-        public void Init(RoundSession round)
-        {
-            if (this == null)
-                return;
-
-            if(!gameObject.activeInHierarchy)
-                return;
-
-            round.OnRoundBeginHandler += OnBeginRound;
-            round.OnRoundEndHandler += OnRoundEnd;
-
-            foreach (BaseObject obj in _objects)
-            {
-                if (obj == null)
-                    continue;
-
-                obj.TrySetState(BaseObject.State.Disabled);
-
-                if (obj is Gem)
-                {
-                    Gem gem = obj as Gem;
-                    _requiredGems += gem.IsRequired ? 1 : 0;
-                }
-
-                if (obj is Character)
-                    continue;
-
-                foreach (PlayerSession player in GameSession.Instance.Players)
-                {
-                    if (obj.ColorId == player._colorId)
-                    {
-                        obj.ColorId = player.ServerId;
-                        obj.Color = player.Color;
-                        break;
-                    }
-                }
-            }
+            _randomDropSpawnTimer = new Timer(Level.RandomDropSpawnTime, start: false, repeat: false);
+            _randomDropSpawnTimer.OnTimeLimitHandler += OnSpawnTimeout;      
         }
 
         public bool TryGet(Vector3Int pos, out BaseObject obj)
@@ -207,22 +188,9 @@ namespace Cirrus.Circuit.Networking
 
             int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
 
-            obj = _objects[i];
+            //obj = _objects[i];
             _mutex.ReleaseMutex();
             return obj != null;            
-        }
-
-        // https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid
-        public void Set(Vector3Int pos, BaseObject obj)
-        {
-            _mutex.WaitOne();
-
-            int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
-
-            _objects[i] = obj;
-
-
-            _mutex.ReleaseMutex();
         }
 
 
@@ -237,10 +205,10 @@ namespace Cirrus.Circuit.Networking
                 {
                     // Only set occupying tile if not visiting
                     // Only set occupying tile if not visiting
-                    if (source._destination == null) Set(source._gridPosition, null);
+                    if (source._destination == null) SetObject(source._gridPosition, null);
                     else source._destination._user = null;
 
-                    Set(position, source);
+                    SetObject(position, source);
                     return true;
 
                 }
@@ -249,7 +217,7 @@ namespace Cirrus.Circuit.Networking
                     destination = pushed;
 
                     // Only set occupying tile if not visiting
-                    if (source._destination == null) Set(source._gridPosition, null);
+                    if (source._destination == null) SetObject(source._gridPosition, null);
                     else source._destination._user = null;
 
                     return true;
@@ -258,10 +226,10 @@ namespace Cirrus.Circuit.Networking
             else
             {
                 // Only set occupying tile if not visiting
-                if (source._destination == null) Set(source._gridPosition, null);
+                if (source._destination == null) SetObject(source._gridPosition, null);
                 else source._destination._user = null;
 
-                Set(position, source);
+                SetObject(position, source);
                 return true;
             }
 
@@ -296,8 +264,7 @@ namespace Cirrus.Circuit.Networking
 
             return false;
         }
-
-        bool once = false;
+        
         public bool TryFallThrough(
             BaseObject source, 
             Vector3Int step, ref 
@@ -357,7 +324,7 @@ namespace Cirrus.Circuit.Networking
 
         public BaseObject Spawn(BaseObject template, Vector3Int pos)
         {
-            BaseObject obj = template.Create(_level.GridToWorld(pos), transform);
+            BaseObject obj = template.Create(Level.GridToWorld(pos), transform);
 
             //obj.Register(this);
 
@@ -370,7 +337,7 @@ namespace Cirrus.Circuit.Networking
         public GameObject Spawn(GameObject template, Vector3Int pos)
         {
 
-            GameObject obj = template.Create(_level.GridToWorld(pos), transform);
+            GameObject obj = template.Create(Level.GridToWorld(pos), transform);
 
             return obj;
         }
@@ -386,57 +353,52 @@ namespace Cirrus.Circuit.Networking
                 ObjectLibrary.Instance.SimpleGems[UnityEngine.Random.Range(0, ObjectLibrary.Instance.SimpleGems.Length)]);
         }
 
-        public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
-        {
-            Vector3Int pos = _level.WorldToGrid(obj.transform.position);
-
-            int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
-
-            _objects[i] = obj;
-            return (_level.GridToWorld(pos), pos);
-        }
-
-        public void UnregisterObject(BaseObject obj)
-        {
-            Set(obj._gridPosition, null);
-        }
 
         public void OnBeginRound(int number)
         {
-            foreach (BaseObject obj in _objects)
-            {
-                if (obj == null) continue;
+            //foreach (BaseObject obj in _objects)
+            //{
+            //    if (obj == null) continue;
 
-                obj.TrySetState(BaseObject.State.Idle);
-            }
+            //    obj.TrySetState(BaseObject.State.Idle);
+            //}
 
             _randomDropRainTimer.Start();
         }
 
         public void OnRoundEnd()
         {
-            foreach (BaseObject obj in _objects)
-            {
-                if (obj == null)
-                    continue;
+            //foreach (BaseObject obj in _objects)
+            //{
+            //    if (obj == null)
+            //        continue;
 
-                obj.OnRoundEnd();
+            //    obj.OnRoundEnd();
 
-                obj.TrySetState(BaseObject.State.Disabled);
-            }
+            //    obj.TrySetState(BaseObject.State.Disabled);
+            //}
+
+            //foreach (GameObject obj in _objects)
+            //{
+            //    if (obj == null)
+            //        continue;
+
+            //    //obj.OnRoundEnd();
+
+            //    //obj.TrySetState(BaseObject.State.Disabled);
+            //}
 
             _randomDropRainTimer.Stop();
         }
 
         private void OnGemEntered(Gem gem, int player, float value)
         {
-
             OnScoreValueAddedHandler?.Invoke(gem, player, value);
 
             if (gem.IsRequired)
             {
-                _requiredGemCount++;
-                if (_requiredGemCount >= _requiredGems)
+                RequiredGemCount++;
+                if (RequiredGemCount >= _requiredGems)
                 {
                     OnLevelCompletedHandler?.Invoke(Level.Rule.RequiredGemsCollected);
                 }
@@ -445,13 +407,12 @@ namespace Cirrus.Circuit.Networking
         
         public void OnLevelSelect()
         {
-            foreach (BaseObject obj in _objects)
-            {
-                if (obj == null)
-                    continue;
+            //foreach (BaseObject obj in _objects)
+            //{
+            //    if (obj == null) continue;
 
-                obj.TrySetState(BaseObject.State.LevelSelect);
-            }
+            //    obj.TrySetState(BaseObject.State.LevelSelect);
+            //}
         }
     }
 }

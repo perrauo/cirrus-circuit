@@ -41,10 +41,14 @@ namespace Cirrus.Circuit.World
 
         public Vector3Int Dimension => _dimension;
 
+        public int Size => Dimension.x * Dimension.y * Dimension.z;
+
         Mutex _mutex;
 
         [SerializeField]
         private BaseObject[] _objects;
+
+        public IEnumerable<BaseObject> Objects => _objects;
 
         [SerializeField]
         private string _name;
@@ -78,15 +82,13 @@ namespace Cirrus.Circuit.World
         [SerializeField]
         public float _positionSpeed = 0.4f;
 
-        private Timer _randomDropRainTimer;
-
         [SerializeField]
         private float _randomDropRainTime = 2f;
-
-        private Timer _randomDropSpawnTimer;
+        public float RandomDropRainTime => _randomDropRainTime;
 
         [SerializeField]
         private float _randomDropSpawnTime = 2f;
+        public float RandomDropSpawnTime => _randomDropSpawnTime;
 
         public void OnValidate()
         {
@@ -116,67 +118,24 @@ namespace Cirrus.Circuit.World
             _mutex = new Mutex(false);
             _objects = new BaseObject[_dimension.x * _dimension.y * _dimension.z];
 
-            _randomDropRainTimer = new Timer(_randomDropRainTime, start: false, repeat: true);
-            _randomDropRainTimer.OnTimeLimitHandler += OnRainTimeout;
+            //_randomDropRainTimer = new Timer(_randomDropRainTime, start: false, repeat: true);
+            //_randomDropRainTimer.OnTimeLimitHandler += OnRainTimeout;
 
-            _randomDropSpawnTimer = new Timer(_randomDropSpawnTime, start: false, repeat: false);
-            _randomDropSpawnTimer.OnTimeLimitHandler += OnSpawnTimeout;
+            //_randomDropSpawnTimer = new Timer(_randomDropSpawnTime, start: false, repeat: false);
+            //_randomDropSpawnTimer.OnTimeLimitHandler += OnSpawnTimeout;
             
             //Game.Instance.On
 
-            foreach (Door door in _doors)
-            {
-                if (door == null)
-                    continue;
+            //foreach (Door door in _doors)
+            //{
+            //    if (door == null)
+            //        continue;
 
-                door.OnScoreValueAddedHandler += OnGemEntered;
+            //    door.OnScoreValueAddedHandler += OnGemEntered;
 
-                //Game.Instance.Lobby.Controllers[(int)door.PlayerNumber].On
-            }            
-        }
-
-        private int _requiredGems = 0;
-
-        private int _requiredGemCount = 0;
-
-        public void OnNewRound(RoundSession round)
-        {
-            if (this == null)
-                return;
-
-            if(!gameObject.activeInHierarchy)
-                return;
-
-            round.OnRoundBeginHandler += OnBeginRound;
-            round.OnRoundEndHandler += OnRoundEnd;
-
-            foreach (BaseObject obj in _objects)
-            {
-                if (obj == null)
-                    continue;
-
-                obj.TrySetState(BaseObject.State.Disabled);
-
-                if (obj is Gem)
-                {
-                    Gem gem = obj as Gem;
-                    _requiredGems += gem.IsRequired ? 1 : 0;
-                }
-
-                if (obj is Objects.Characters.Character)
-                    continue;
-
-                foreach (Controls.Player players in GameSession.Instance.LocalPlayers)
-                {
-                    //if (obj.ColorId == players._colorId)
-                    //{
-                    //    obj.ColorId = players.ServerId;
-                    //    obj.Color = players.Color;
-                    //    break;
-                    //}
-                }
-            }
-        }
+            //    //Game.Instance.Lobby.Controllers[(int)door.PlayerNumber].On
+            //}            
+        }   
 
         public Vector3Int WorldToGrid(Vector3 pos)
         {
@@ -317,7 +276,6 @@ namespace Cirrus.Circuit.World
             return false;
         }
 
-        bool once = false;
         public bool TryFallThrough(BaseObject source, Vector3Int step, ref Vector3 offset, out Vector3Int position, out BaseObject destination)
         {
             destination = null;            
@@ -416,49 +374,6 @@ namespace Cirrus.Circuit.World
         public void UnregisterObject(BaseObject obj)
         {
             Set(obj._gridPosition, null);
-        }
-
-
-        public void OnBeginRound(int number)
-        {
-            foreach (BaseObject obj in _objects)
-            {
-                if (obj == null) continue;
-
-                obj.TrySetState(BaseObject.State.Idle);
-            }
-
-            _randomDropRainTimer.Start();
-        }
-
-        public void OnRoundEnd()
-        {
-            foreach (BaseObject obj in _objects)
-            {
-                if (obj == null)
-                    continue;
-
-                obj.OnRoundEnd();
-
-                obj.TrySetState(BaseObject.State.Disabled);
-            }
-
-            _randomDropRainTimer.Stop();
-        }
-
-        private void OnGemEntered(Gem gem, int player, float value)
-        {
-
-            OnScoreValueAddedHandler?.Invoke(gem, player, value);
-
-            if (gem.IsRequired)
-            {
-                _requiredGemCount++;
-                if (_requiredGemCount >= _requiredGems)
-                {
-                    OnLevelCompletedHandler?.Invoke(Rule.RequiredGemsCollected);
-                }
-            }
         }
         
         public void OnLevelSelect()

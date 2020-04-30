@@ -7,6 +7,7 @@ namespace Cirrus.Circuit.World.Objects
 {
     public class Solid : BaseObject
     {
+        public override ObjectId Id => ObjectId.Solid;
 
         public override bool TryMove(Vector3Int step, BaseObject incoming = null)
         {

@@ -19,7 +19,6 @@ namespace Cirrus.Circuit.World.Objects
     {
         #region Object
 
-
         [Serializable]
         public enum State
         {
@@ -33,13 +32,17 @@ namespace Cirrus.Circuit.World.Objects
             RampMoving
         }
 
-
         public enum ObjectId
         {
+            None,
             Default,
             Character,
+            CharacterPlaceholder,
             Gem,
             Door,
+            Solid,
+            Ramp,
+            Breakable
         }
 
         public virtual ObjectId Id => ObjectId.Default;
@@ -163,8 +166,7 @@ namespace Cirrus.Circuit.World.Objects
 
             _level = level;
 
-            if (_level != null)
-                (transform.position, _gridPosition) = _level.RegisterObject(this);
+            if (_level != null) (transform.position, _gridPosition) = _level.RegisterObject(this);
 
             _isRegistered = true;
         }

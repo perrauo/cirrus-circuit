@@ -3,7 +3,7 @@ using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.UI;
 using Mirror;
 using UnityEngine;
-
+using Cirrus.Circuit.World.Objects;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -87,6 +87,26 @@ namespace Cirrus.Circuit.Networking
         }
 
         #endregion
+
+        #region Level Session
+
+        [Command]
+        public void Cmd_LevelSession_SetRequiredGemCount(GameObject obj, int count)
+        {
+            LevelSession session;
+            if ((session = obj.GetComponent<LevelSession>()) != null) session._requiredGemCount = count;
+        }
+
+        [Command]
+        public void Cmd_LevelSession_SetObjectId(GameObject obj, int idx, BaseObject.ObjectId id)
+        {
+            LevelSession session;
+            if ((session = obj.GetComponent<LevelSession>()) != null) session._objectIds[idx] = id;
+        }    
+
+        #endregion
+
+
 
         #region Game Session
 

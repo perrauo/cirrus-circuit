@@ -7,13 +7,12 @@ namespace Cirrus.Circuit.World.Objects
 {
     public class Gem : BaseObject
     {
-        public override ObjectId Id { get { return ObjectId.Gem; } }
+        public override ObjectId Id => ObjectId.Gem;
 
         public enum GemType
         {
             Small,
             Large,
-
         }
 
         [SerializeField]

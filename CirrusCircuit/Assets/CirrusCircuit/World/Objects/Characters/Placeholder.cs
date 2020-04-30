@@ -6,6 +6,8 @@ namespace Cirrus.Circuit.World.Objects.Characters
 {
     public class Placeholder : BaseObject
     {
+        public override ObjectId Id => ObjectId.CharacterPlaceholder;
+
         [SerializeField]
         private CameraManager _camera;
 
