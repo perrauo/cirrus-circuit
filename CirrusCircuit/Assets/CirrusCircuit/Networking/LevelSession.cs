@@ -127,6 +127,7 @@ namespace Cirrus.Circuit.Networking
                     door.OnScoreValueAddedHandler += OnGemEntered;
                 }
 
+                res._levelSession = this;
                 res.gameObject.SetActive(true);
                 RegisterObject(res);
 
@@ -142,7 +143,6 @@ namespace Cirrus.Circuit.Networking
                 if ((obj = _objects[session.Index]) != null)
                 {
                     obj._session = session;
-                    obj._levelSession = this;
                     session._object = obj;
                 }
             }
@@ -165,8 +165,7 @@ namespace Cirrus.Circuit.Networking
                 //info.Session._object.TrySetState(BaseObject.State.Disabled); 
                 info.Session._object.TrySetState(BaseObject.State.Idle);
 
-                PlayerManager.Instance.LocalPlayers[player.LocalId]._character = (Character)info.Session._object;
-                
+                PlayerManager.Instance.LocalPlayers[player.LocalId]._character = (Character)info.Session._object;                
             }
         }
 
