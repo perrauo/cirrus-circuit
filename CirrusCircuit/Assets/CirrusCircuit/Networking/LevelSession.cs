@@ -113,7 +113,9 @@ namespace Cirrus.Circuit.Networking
             if (ServerUtils.TryCreateNetworkObject(
                 NetworkServer.localConnection,
                 NetworkingLibrary.Instance.LevelSession.gameObject,
-                out gobj))
+                out gobj,
+                false,
+                false))
             {
                 if ((levelSession = gobj.GetComponent<LevelSession>()) != null)
                 {
@@ -126,12 +128,16 @@ namespace Cirrus.Circuit.Networking
                             if (ServerUtils.TryCreateNetworkObject(
                                 NetworkServer.localConnection,
                                 NetworkingLibrary.Instance.ObjectSession.gameObject,
-                                out gobj, false))
+                                out gobj, 
+                                false,
+                                false))
                             {
                                 if ((objectSession = gobj.GetComponent<ObjectSession>()) != null)
                                 {
                                     objectSession.Index = i;
                                     levelSession._objectSessions.Add(objectSession.gameObject);
+
+                                    NetworkServer.Spawn(gobj);
                                 }
                             }
                         }
@@ -139,8 +145,12 @@ namespace Cirrus.Circuit.Networking
                         i++;
                     }
 
+
+                    NetworkServer.Spawn(levelSession.gameObject);
                     return levelSession;
                 }
+
+
             }
 
             return null;
