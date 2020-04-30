@@ -623,7 +623,7 @@ namespace Cirrus.Circuit.World.Objects
                     //_collider.enabled = true;
 
                     // TODO: Redundant
-                    if (_level.TryGet(_gridPosition + Vector3Int.down, out destination))
+                    if (_levelSession.TryGet(_gridPosition + Vector3Int.down, out destination))
                     {
                         _state = target;
                         result = true;
