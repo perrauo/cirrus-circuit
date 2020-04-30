@@ -18,7 +18,7 @@ namespace Cirrus.Circuit.Networking
 {
     public class ObjectIdSyncList : SyncList<BaseObject.ObjectId> {
         public ObjectIdSyncList() { }
-        public ObjectIdSyncList(int capacity) : base(new List<BaseObject.ObjectId>(capacity)) {
+        public ObjectIdSyncList(int capacity) : base(new BaseObject.ObjectId[capacity]) {
         }
     }
 
