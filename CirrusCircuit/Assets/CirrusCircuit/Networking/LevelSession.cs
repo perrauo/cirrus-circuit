@@ -44,7 +44,7 @@ namespace Cirrus.Circuit.Networking
 
         Mutex _mutex;
 
-        public ObjectIdSyncList _objectIds = new ObjectIdSyncList(Level.MaxSize);
+        public readonly ObjectIdSyncList _objectIds = new ObjectIdSyncList(Level.MaxSize);
 
 
         public void InitObjectIds()
