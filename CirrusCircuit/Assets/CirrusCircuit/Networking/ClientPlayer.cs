@@ -5,6 +5,7 @@ using Mirror;
 using UnityEngine;
 using Cirrus.Circuit.World.Objects;
 using System.Linq;
+using System.Threading;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -214,17 +215,23 @@ namespace Cirrus.Circuit.Networking
 
         #region Game Session
 
+        private Mutex Cmd_ObjectSession_TryMove_mutex = new Mutex();
+
         [Command]
         public void Cmd_ObjectSession_TryMove(GameObject obj, Vector3Int step)
         {
             ObjectSession session;
             if ((session = obj.GetComponent<ObjectSession>()) != null)
             {
+                Cmd_ObjectSession_TryMove_mutex.WaitOne();
+
                 // Server holds the truth
                 if (session.IsMoveAllowed(step))
                 {
                     session.Rpc_TryMove(step);
                 }
+
+                Cmd_ObjectSession_TryMove_mutex.ReleaseMutex();
             }
         }
 

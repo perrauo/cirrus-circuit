@@ -20,6 +20,8 @@ namespace Cirrus.Circuit.Networking
         [SerializeField]        
         public int _index = -1;
 
+        private Mutex _mutex;
+
         public int Index {
             get => _index;
             set {
@@ -27,8 +29,6 @@ namespace Cirrus.Circuit.Networking
                 ClientPlayer.Instance.Cmd_ObjectSession_SetIndex(gameObject, _index);
             }
         }
-
-        private Mutex _mutex;
 
         [ClientRpc]
         public void Rpc_TryMove(Vector3Int step)
