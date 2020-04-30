@@ -26,6 +26,10 @@ namespace Cirrus.Circuit.Networking
         [SerializeField]
         public RoundSession RoundSession;
 
+
+        [SerializeField]
+        public ObjectSession ObjectSession;
+
         [SerializeField]
         public NetworkBehaviour[] Others;        
     }

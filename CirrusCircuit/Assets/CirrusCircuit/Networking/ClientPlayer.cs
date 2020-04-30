@@ -101,11 +101,11 @@ namespace Cirrus.Circuit.Networking
         [Command]
         public void Cmd_LevelSession_SetObjectId(GameObject obj, int idx, BaseObject.ObjectId id)
         {
-            LevelSession session;
-            if ((session = obj.GetComponent<LevelSession>()) != null)
-            {                
-                session._objectIds[idx] = id;
-            }
+            //LevelSession session;
+            //if ((session = obj.GetComponent<LevelSession>()) != null)
+            //{                
+            //    session._objectIds[idx] = id;
+            //}
         }
 
         [Command]
@@ -120,9 +120,7 @@ namespace Cirrus.Circuit.Networking
         }
 
         #endregion
-
-
-
+    
         #region Game Session
 
         [Command]
@@ -211,5 +209,27 @@ namespace Cirrus.Circuit.Networking
         }
 
         #endregion
+
+
+
+        #region Game Session
+
+        [Command]
+        public void Cmd_ObjectSession_TryMove(GameObject obj, Vector3Int step)
+        {
+            ObjectSession session;
+            if ((session = obj.GetComponent<ObjectSession>()) != null)
+            {
+                // Server holds the truth
+                if (session.IsMoveAllowed(step))
+                {
+                    session.Rpc_TryMove(step);
+                }
+            }
+        }
+
+
+        #endregion
+
     }
 }

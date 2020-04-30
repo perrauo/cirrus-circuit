@@ -16,7 +16,6 @@ using Cirrus.MirrorExt;
 
 namespace Cirrus.Circuit.Networking
 {
-
     [Serializable]
     public class ObjectIdSyncList : SyncList<BaseObject.ObjectId> {
         public ObjectIdSyncList() { }
@@ -43,9 +42,6 @@ namespace Cirrus.Circuit.Networking
         }
 
         Mutex _mutex;
-
-        public ObjectIdSyncList _objectIds = new ObjectIdSyncList();
-
 
         public void InitObjectIds()
         {
@@ -75,7 +71,6 @@ namespace Cirrus.Circuit.Networking
                 ClientPlayer.Instance.Cmd_LevelSession_SetRequiredGemCount(gameObject, _requiredGemCount);
             }
         }
-
 
         public override void OnStartClient()
         {
@@ -149,7 +144,6 @@ namespace Cirrus.Circuit.Networking
 
             SetObjectId(i, obj.Id);
         }
-
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
         {

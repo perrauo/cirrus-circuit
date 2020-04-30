@@ -48,6 +48,9 @@ namespace Cirrus.Circuit.World.Objects
         public virtual ObjectId Id => ObjectId.Default;
 
         [SerializeField]
+        public ObjectSession _session;
+
+        [SerializeField]
         protected Visual _visual;
 
         [SerializeField]
@@ -202,9 +205,41 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
+        public virtual void TryMove(Vector3Int step)
+        {
+            _session.TryMove(step);
+        }
+
+        public virtual void _TryMove(Vector3Int step, BaseObject incoming = null)
+        {
+            TryMove(step, incoming);
+        }
+
+        // TODO State move argument
+        public virtual bool IsMoveAllowed(Vector3Int step, BaseObject incoming = null)
+        {
+            if (TryTransition(State.Moving, out State dest))
+            {
+                if (_level.IsMoveAllowed(this, step)) return true;
+            }
+
+            return false;
+                
+        }
+
         public virtual bool TryMove(Vector3Int step, BaseObject incoming = null)
         {
-            return TrySetState(State.Moving, step, incoming);
+            return TrySetState(
+                State.Moving, 
+                step, 
+                incoming);
+        }
+
+        public virtual bool IsEnterAllowed(Vector3Int step, BaseObject incoming = null)
+        {
+            if (_user != null) return _user.IsMoveAllowed(step, incoming);
+
+            else return true;            
         }
 
         public virtual bool TryEnter(Vector3Int step, ref Vector3 offset, BaseObject incoming = null)
@@ -303,7 +338,9 @@ namespace Cirrus.Circuit.World.Objects
                 case State.Moving:
                 case State.RampMoving:
 
-                    if (VectorUtils.IsCloseEnough(Transform.transform.position, _targetPosition))
+                    if (VectorUtils.IsCloseEnough(
+                        Transform.transform.position, 
+                        _targetPosition))
                     {
                         if (_destination == null)
                         {
@@ -627,7 +664,13 @@ namespace Cirrus.Circuit.World.Objects
                     step = (Vector3Int)args[0];
                     incoming = (BaseObject)args[1];
 
-                    if (_level.TryMove(this, step, ref offset, out newGridPosition, out pushed, out destination))
+                    if (_level.TryMove(
+                        this, 
+                        step, 
+                        ref offset, 
+                        out newGridPosition, 
+                        out pushed, 
+                        out destination))
                     {
                         //destination.
                         if(pushed) pushed.Interact(this);                        

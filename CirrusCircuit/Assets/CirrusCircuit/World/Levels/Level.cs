@@ -214,8 +214,31 @@ namespace Cirrus.Circuit.World
             _mutex.ReleaseMutex();
         }
 
+        private bool InnerIsMoveAllowed(
+            BaseObject source,
+            Vector3Int position,
+            Vector3Int direction)
+        {
+            BaseObject pushed = null;
+            
+            if (TryGet(position, out pushed))
+            {
+                if (pushed.IsMoveAllowed(direction, source)) return true;
+                
+                else if (pushed.IsEnterAllowed(direction, source)) return true;                
+            }
+            else return true;
 
-        private bool InnerTryMove(BaseObject source, Vector3Int position, Vector3Int direction, ref Vector3 offset, out BaseObject pushed, out BaseObject destination)
+            return false;
+        }
+
+        private bool InnerTryMove(
+            BaseObject source, 
+            Vector3Int position, 
+            Vector3Int direction, 
+            ref Vector3 offset, 
+            out BaseObject pushed, 
+            out BaseObject destination)
         {
             pushed = null;
             destination = null;
@@ -226,12 +249,13 @@ namespace Cirrus.Circuit.World
                 {
                     // Only set occupying tile if not visiting
                     // Only set occupying tile if not visiting
-                    if (source._destination == null) Set(source._gridPosition, null);
-                    else source._destination._user = null;
+                    if (source._destination == null)
+                        Set(source._gridPosition, null);
+                    else
+                        source._destination._user = null;
 
                     Set(position, source);
                     return true;
-
                 }
                 else if (pushed.TryEnter(direction, ref offset, source))
                 {
@@ -247,8 +271,10 @@ namespace Cirrus.Circuit.World
             else
             {
                 // Only set occupying tile if not visiting
-                if (source._destination == null) Set(source._gridPosition, null);
-                else source._destination._user = null;
+                if (source._destination == null)
+                    Set(source._gridPosition, null);
+                else
+                    source._destination._user = null;
 
                 Set(position, source);
                 return true;
@@ -256,6 +282,24 @@ namespace Cirrus.Circuit.World
 
             return false;
         }
+
+        public bool IsMoveAllowed(
+            BaseObject source,
+            Vector3Int step)
+        {
+            Vector3Int direction = step;//.SetXYZ(step.x, 0, step.z);
+
+            Vector3Int position = source._gridPosition + step;
+
+            if (IsWithinBounds(position))
+            {
+                return InnerIsMoveAllowed(source, position, direction);
+            }
+
+            return false;
+        }
+
+
 
         public bool TryMove(
             BaseObject source, 
