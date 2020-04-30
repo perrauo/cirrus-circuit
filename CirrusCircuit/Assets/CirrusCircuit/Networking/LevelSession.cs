@@ -95,11 +95,11 @@ namespace Cirrus.Circuit.Networking
                 out GameObject gobj
                 ))
             {
-                session._objectIds = new ObjectSyncList(GameSession.Instance.SelectedLevel.Size);
 
                 if ((session = gobj.GetComponent<LevelSession>()) != null)
-                {                    
+                {
                     int i = 0;
+                    session._objectIds = new ObjectSyncList(GameSession.Instance.SelectedLevel.Size);
                     foreach (var obj in GameSession.Instance.SelectedLevel.Objects)
                     {
                         if (obj == null) session.SetObjectId(i, BaseObject.ObjectId.None);
