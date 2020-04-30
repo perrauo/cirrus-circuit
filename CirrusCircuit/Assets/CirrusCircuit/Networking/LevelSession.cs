@@ -128,11 +128,9 @@ namespace Cirrus.Circuit.Networking
                 }
 
                 res._levelSession = this;
-                res._level = Level;
+                res._level = Level;                
                 res.gameObject.SetActive(true);
                 (res.Transform.position, res._gridPosition) = RegisterObject(res);
-
-                res.TrySetState(BaseObject.State.Idle);
             }
             
             foreach (var info in PlaceholderInfos)
@@ -168,6 +166,8 @@ namespace Cirrus.Circuit.Networking
                 {
                     obj._session = session;
                     session._object = obj;
+
+                    res.TrySetState(BaseObject.State.Idle);
                 }
             }
         }

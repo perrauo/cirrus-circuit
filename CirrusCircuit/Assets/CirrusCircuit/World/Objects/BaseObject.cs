@@ -671,7 +671,6 @@ namespace Cirrus.Circuit.World.Objects
                     {
                         _state = target;
                         result = true;
-
                     }
                     else
                     {
