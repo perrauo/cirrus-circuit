@@ -142,6 +142,7 @@ namespace Cirrus.Circuit.Networking
                 if ((obj = _objects[session.Index]) != null)
                 {
                     obj._session = session;
+                    obj._levelSession = this;
                     session._object = obj;
                 }
             }
@@ -156,6 +157,7 @@ namespace Cirrus.Circuit.Networking
                         Level.GridToWorld(info.Position),
                         transform);                
                 info.Session._object._session = info.Session;
+                info.Session._object._levelSession = this;
                 info.Session._object.ColorId = info.PlayerId;
                 info.Session._object.Color = player.Color;
 
