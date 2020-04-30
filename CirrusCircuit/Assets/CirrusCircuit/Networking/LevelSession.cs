@@ -102,12 +102,13 @@ namespace Cirrus.Circuit.Networking
 
                 if ((session = gobj.GetComponent<LevelSession>()) != null)
                 {
-                    int i = 0;
-                    session._objectIds = new ObjectIdSyncList(GameSession.Instance.SelectedLevel.Size);
+                    session.InitObjectIds();
+                    int i = 0;                    
                     foreach (var obj in GameSession.Instance.SelectedLevel.Objects)
                     {
                         if (obj == null) session.SetObjectId(i, BaseObject.ObjectId.None);
                         else session.SetObjectId(i, obj.Id);
+                        i++;
                     }
 
                     return session;
