@@ -84,7 +84,9 @@ namespace Cirrus.Circuit.Networking
             base.OnStartClient();
 
             foreach (var obj in GameSession.Instance.SelectedLevel.Objects)
-            {                
+            {
+                if (obj == null) continue;
+
                 var res = obj.Create(obj.transform.position, transform);
                 res.gameObject.SetActive(true);
                 RegisterObject(res);
