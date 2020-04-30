@@ -71,7 +71,7 @@ namespace Cirrus.Circuit.Networking
                 ClientPlayer.Instance.Cmd_LevelSession_SetRequiredGemCount(gameObject, _requiredGemCount);
             }
         }
-
+        
         public override void OnStartClient()
         {
             base.OnStartClient();
@@ -88,7 +88,7 @@ namespace Cirrus.Circuit.Networking
             }
 
             // TODO multiple object per square
-            Debug.Log("SESSION OBJECT COUNT " + _objectSessions.Count);
+            
             foreach (var session in ObjectSessions)
             {
                 if (session.Index >= _objects.Length) continue;
@@ -126,14 +126,14 @@ namespace Cirrus.Circuit.Networking
                             if (ServerUtils.TryCreateNetworkObject(                 
                                 NetworkingLibrary.Instance.ObjectSession.gameObject,
                                 out gobj,                                 
-                                true))
+                                false))
                             {
                                 if ((objectSession = gobj.GetComponent<ObjectSession>()) != null)
                                 {
-                                    objectSession.Index = i;
+                                    objectSession._index = i;
                                     levelSession._objectSessions.Add(objectSession.gameObject);
 
-                                    NetworkServer.Spawn(gobj);
+                                    NetworkServer.Spawn(gobj, NetworkServer.localConnection);
                                 }
                             }
                         }
