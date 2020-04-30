@@ -208,9 +208,19 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
+        public virtual void TryFall()
+        {
+            _session.TryFall();
+        }
+
         public virtual void TryMove(Vector3Int step)
         {
             _session.TryMove(step);
+        }
+
+        public virtual void _TryFall()
+        {
+            TryFall(null);
         }
 
         public virtual void _TryMove(
@@ -232,8 +242,28 @@ namespace Cirrus.Circuit.World.Objects
                 if (_levelSession.IsMoveAllowed(this, step)) return true;
             }
 
+            return false;                
+        }
+
+        // TODO State move argument
+        public virtual bool IsFallAllowed(
+            BaseObject incoming = null)
+        {
+            if (TryTransition(
+                State.Falling,
+                out State dest))
+            {
+                if (_levelSession.IsMoveAllowed(this, Vector3Int.down)) return true;
+            }
+
             return false;
-                
+
+        }
+    
+        public virtual bool TryFall(
+            BaseObject incoming)
+        {
+            return TrySetState(State.Falling, Vector3Int.down);
         }
 
         public virtual bool TryMove(
@@ -269,11 +299,6 @@ namespace Cirrus.Circuit.World.Objects
 
         }
 
-        public virtual bool TryFall(
-            BaseObject incoming = null)
-        {
-            return TrySetState(State.Falling, Vector3Int.down);
-        }
 
         public virtual void Accept(BaseObject incoming)
         {
@@ -327,9 +352,22 @@ namespace Cirrus.Circuit.World.Objects
                 case State.Moving:
                 case State.RampMoving:
 
-                    Transform.transform.position = Vector3.Lerp(Transform.transform.position, _targetPosition, _stepSpeed);
-                    float scale = Mathf.Lerp(Transform.transform.localScale.x, _targetScale, _scaleSpeed);
-                    Transform.transform.localScale = new Vector3(scale, scale, scale);
+                    Transform.transform.position = Vector3.Lerp(
+                        Transform.transform.position, 
+                        _targetPosition, 
+                        _stepSpeed);
+
+                    float scale = 
+                        Mathf.Lerp(
+                            Transform.transform.localScale.x, 
+                            _targetScale, 
+                            _scaleSpeed);
+
+                    Transform.transform.localScale = 
+                        new Vector3(
+                            scale, 
+                            scale, 
+                            scale);
 
                     break;
             }
@@ -600,7 +638,8 @@ namespace Cirrus.Circuit.World.Objects
                         _state = target;
                         result = true;
                     }
-                    else if (_levelSession.TryFallThrough(this,
+                    else if (_levelSession.TryFallThrough(
+                        this,
                         step,
                         ref offset,
                         out newGridPosition,
@@ -626,7 +665,9 @@ namespace Cirrus.Circuit.World.Objects
                     //_collider.enabled = true;
 
                     // TODO: Redundant
-                    if (_levelSession.TryGet(_gridPosition + Vector3Int.down, out destination))
+                    if (_levelSession.TryGet(
+                        _gridPosition + Vector3Int.down, 
+                        out destination))
                     {
                         _state = target;
                         result = true;

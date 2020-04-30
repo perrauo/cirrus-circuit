@@ -31,6 +31,16 @@ namespace Cirrus.Circuit.Networking
         }
 
         [ClientRpc]
+        public void Rpc_TryFall(Vector3Int step)
+        {
+            _mutex.WaitOne();
+
+            _object._TryFall();
+
+            _mutex.ReleaseMutex();
+        }
+
+        [ClientRpc]
         public void Rpc_TryMove(Vector3Int step)
         {
             _mutex.WaitOne();
@@ -45,9 +55,19 @@ namespace Cirrus.Circuit.Networking
             ClientPlayer.Instance.Cmd_ObjectSession_TryMove(gameObject, step);
         }
 
+        public void TryFall()
+        {
+            ClientPlayer.Instance.Cmd_ObjectSession_TryFall(gameObject);
+        }
+
         public bool IsMoveAllowed(Vector3Int step)
         {
             return _object.IsMoveAllowed(step);
+        }
+
+        public bool IsFallAllowed()
+        {
+            return _object.IsFallAllowed();
         }
     }
 }
