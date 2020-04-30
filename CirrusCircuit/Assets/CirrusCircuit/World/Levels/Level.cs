@@ -95,25 +95,7 @@ namespace Cirrus.Circuit.World
         public void Awake()
         {
             _mutex = new Mutex(false);
-            _objects = new BaseObject[_dimension.x * _dimension.y * _dimension.z];
-
-            //_randomDropRainTimer = new Timer(_randomDropRainTime, start: false, repeat: true);
-            //_randomDropRainTimer.OnTimeLimitHandler += OnRainTimeout;
-
-            //_randomDropSpawnTimer = new Timer(_randomDropSpawnTime, start: false, repeat: false);
-            //_randomDropSpawnTimer.OnTimeLimitHandler += OnSpawnTimeout;
-            
-            //Game.Instance.On
-
-            //foreach (Door door in _doors)
-            //{
-            //    if (door == null)
-            //        continue;
-
-            //    door.OnScoreValueAddedHandler += OnGemEntered;
-
-            //    //Game.Instance.Lobby.Controllers[(int)door.PlayerNumber].On
-            //}            
+            _objects = new BaseObject[Dimension.x * Dimension.y * Dimension.z];         
         }   
 
         public Vector3Int WorldToGrid(Vector3 pos)
@@ -153,30 +135,13 @@ namespace Cirrus.Circuit.World
         public bool IsWithinBoundsZ(int pos)
         {
             return pos >= 0 && pos < _dimension.z;
-        }
-
+        }    
 
         public Vector3Int GetOverflow(Vector3Int pos)
         {
             return _dimension - pos;
         }
 
-        //public bool TryGet(Vector3Int pos, out BaseObject obj)
-        //{
-        //    obj = null;
-        //    if (!IsWithinBounds(pos))
-        //        return false;
-
-        //    _mutex.WaitOne();
-
-        //    int i = VectorUtils.ToIndex(pos, Dimension.x, Dimension.y);
-
-        //    obj = _objects[i];
-        //    _mutex.ReleaseMutex();
-        //    return obj != null;            
-        //}
-
-        // https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid
         public void Set(Vector3Int pos, BaseObject obj)
         {
             _mutex.WaitOne();
