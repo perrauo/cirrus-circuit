@@ -259,13 +259,48 @@ namespace Cirrus.Circuit.Networking
             return null;
         }
 
+        private bool InnerIsMoveAllowed(
+            BaseObject source,
+            Vector3Int position,
+            Vector3Int direction)
+        {
+            BaseObject pushed = null;
+
+            if (TryGet(position, out pushed))
+            {
+                if (pushed.IsMoveAllowed(direction, source)) return true;
+
+                else if (pushed.IsEnterAllowed(direction, source)) return true;
+            }
+            else return true;
+
+            return false;
+        }
+
+        public bool IsMoveAllowed(
+            BaseObject source,
+            Vector3Int step)
+        {
+            Vector3Int direction = step;//.SetXYZ(step.x, 0, step.z);
+
+            Vector3Int position = source._gridPosition + step;
+
+            if (Level.IsWithinBounds(position))
+            {
+                return InnerIsMoveAllowed(source, position, direction);
+            }
+
+            return false;
+        }
+
+
 
         // https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid
         public void SetObject(Vector3Int pos, BaseObject obj)
         {
             int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
 
-            //_objects[i] = obj;
+            _objects[i] = obj;
 
         }
 

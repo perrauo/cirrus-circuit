@@ -129,6 +129,8 @@ namespace Cirrus.Circuit.World.Objects
         [SerializeField]
         public Level _level = null;
 
+        public LevelSession _levelSession = null;
+
         private bool _isRegistered = false;
 
         [SerializeField]
@@ -162,6 +164,7 @@ namespace Cirrus.Circuit.World.Objects
             FSMAwake();
         }
 
+        // TODO remove
         public void Register(Level level)
         {
             if (_isRegistered)
@@ -210,24 +213,32 @@ namespace Cirrus.Circuit.World.Objects
             _session.TryMove(step);
         }
 
-        public virtual void _TryMove(Vector3Int step, BaseObject incoming = null)
+        public virtual void _TryMove(
+            Vector3Int step, 
+            BaseObject incoming = null)
         {
             TryMove(step, incoming);
         }
 
         // TODO State move argument
-        public virtual bool IsMoveAllowed(Vector3Int step, BaseObject incoming = null)
+        public virtual bool IsMoveAllowed(
+            Vector3Int step, 
+            BaseObject incoming = null)
         {
-            if (TryTransition(State.Moving, out State dest))
+            if (TryTransition(
+                State.Moving, 
+                out State dest))
             {
-                if (_level.IsMoveAllowed(this, step)) return true;
+                if (_levelSession.IsMoveAllowed(this, step)) return true;
             }
 
             return false;
                 
         }
 
-        public virtual bool TryMove(Vector3Int step, BaseObject incoming = null)
+        public virtual bool TryMove(
+            Vector3Int step, 
+            BaseObject incoming = null)
         {
             return TrySetState(
                 State.Moving, 
@@ -235,14 +246,19 @@ namespace Cirrus.Circuit.World.Objects
                 incoming);
         }
 
-        public virtual bool IsEnterAllowed(Vector3Int step, BaseObject incoming = null)
+        public virtual bool IsEnterAllowed(
+            Vector3Int step, 
+            BaseObject incoming = null)
         {
             if (_user != null) return _user.IsMoveAllowed(step, incoming);
 
             else return true;            
         }
 
-        public virtual bool TryEnter(Vector3Int step, ref Vector3 offset, BaseObject incoming = null)
+        public virtual bool TryEnter(
+            Vector3Int step, 
+            ref Vector3 offset, 
+            BaseObject incoming = null)
         {
             if (_user != null)
             {
@@ -253,7 +269,8 @@ namespace Cirrus.Circuit.World.Objects
 
         }
 
-        public virtual bool TryFall(BaseObject incoming = null)
+        public virtual bool TryFall(
+            BaseObject incoming = null)
         {
             return TrySetState(State.Falling, Vector3Int.down);
         }
@@ -270,7 +287,6 @@ namespace Cirrus.Circuit.World.Objects
             _nextColorIndex = _nextColorIndex + 1;
             _nextColorIndex = MathUtils.Wrap(_nextColorIndex, 0, GameSession.Instance.PlayerCount);
             _nextColor = PlayerManager.Instance.GetColor(_nextColorIndex);
-
         }
 
 
@@ -298,7 +314,9 @@ namespace Cirrus.Circuit.World.Objects
                 case State.LevelSelect:
 
                     if (ColorId < PlayerManager.PlayerMax)
+                    {
                         Color = Color.Lerp(_color, _nextColor, _nextColorSpeed);
+                    }
 
                     break;
 
@@ -344,7 +362,7 @@ namespace Cirrus.Circuit.World.Objects
                         {
                             BaseObject obj;
 
-                            if (_level.TryGet(_gridPosition + Vector3Int.down, out obj))
+                            if (_levelSession.TryGet(_gridPosition + Vector3Int.down, out obj))
                             {
                                 TrySetState(State.Idle);
                             }
@@ -372,7 +390,9 @@ namespace Cirrus.Circuit.World.Objects
 
         }
 
-        public virtual bool TrySetState(State transition, params object[] args)
+        public virtual bool TrySetState(
+            State transition, 
+            params object[] args)
         {            
             if (TryTransition(transition, out State destination))
             {
@@ -382,7 +402,10 @@ namespace Cirrus.Circuit.World.Objects
             return false;
         }
 
-        protected virtual bool TryTransition(State transition, out State destination, params object[] args)
+        protected virtual bool TryTransition(
+            State transition, 
+            out State destination, 
+            params object[] args)
         {
             switch (_state)
             {
@@ -515,7 +538,9 @@ namespace Cirrus.Circuit.World.Objects
             return false;
         }
 
-        protected virtual bool TryFinishSetState(State target, params object[] args)
+        protected virtual bool TryFinishSetState(
+            State target, 
+            params object[] args)
         {
             Vector3Int previousGridPosition = _gridPosition;
             Vector3Int newGridPosition = Vector3Int.zero;
