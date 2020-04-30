@@ -13,15 +13,10 @@ using Cirrus.Circuit.World;
 using Cirrus.Circuit.World.Objects.Characters;
 using Cirrus.Events;
 using Cirrus.MirrorExt;
+using System.Linq;
 
 namespace Cirrus.Circuit.Networking
 {
-    [Serializable]
-    public class ObjectIdSyncList : SyncList<BaseObject.ObjectId> {
-        public ObjectIdSyncList() { }
-        public ObjectIdSyncList(int capacity) : base(new BaseObject.ObjectId[capacity]) { }
-    }
-
     public class LevelSession : NetworkBehaviour
     {
         private const int FallTrials = 100;
@@ -41,12 +36,7 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-        Mutex _mutex;
-
-        public void InitObjectIds()
-        {
-            ClientPlayer.Instance.Cmd_LevelSession_InitObjectIds(gameObject);
-        }
+        Mutex _mutex;        
 
         public Vector3 TargetPosition;
 
@@ -55,6 +45,16 @@ namespace Cirrus.Circuit.Networking
         private Timer _randomDropSpawnTimer;
 
         private int _requiredGems = 0;
+
+
+        [SerializeField]
+        public BaseObject[] _objects;
+        
+        [SyncVar]
+        [SerializeField]
+        public GameObjectSyncList _objectSessions = new GameObjectSyncList();
+        public IEnumerable<ObjectSession> ObjectSessions => _objectSessions.Select(x => x.GetComponent<ObjectSession>());
+
 
         public Level Level => GameSession.Instance.SelectedLevel;
 
@@ -76,6 +76,8 @@ namespace Cirrus.Circuit.Networking
         {
             base.OnStartClient();
 
+            _objects = new BaseObject[GameSession.Instance.SelectedLevel.Size];
+
             foreach (var obj in GameSession.Instance.SelectedLevel.Objects)
             {
                 if (obj == null) continue;
@@ -84,30 +86,60 @@ namespace Cirrus.Circuit.Networking
                 res.gameObject.SetActive(true);
                 RegisterObject(res);
             }
+
+            // TODO multiple object per square
+            foreach (var session in ObjectSessions)
+            {
+                if (session.Index >= _objects.Length) continue;
+
+                BaseObject obj = null;                
+                if ((obj = _objects[session.Index]) != null)
+                {
+                    obj._session = session;
+                }
+            }
+
         }
+
+
+
 
         public static LevelSession Create()
         {
-            LevelSession session = null;
+            GameObject gobj;
+            LevelSession levelSession = null;
             if (ServerUtils.TryCreateNetworkObject(
                 NetworkServer.localConnection,
                 NetworkingLibrary.Instance.LevelSession.gameObject,
-                out GameObject gobj
+                out gobj
                 ))
             {
 
-                if ((session = gobj.GetComponent<LevelSession>()) != null)
+                if ((levelSession = gobj.GetComponent<LevelSession>()) != null)
                 {
-                    session.InitObjectIds();
-                    int i = 0;                    
+
+                    ObjectSession objectSession;
+                    int i = 0;
                     foreach (var obj in GameSession.Instance.SelectedLevel.Objects)
-                    {
-                        //if (obj == null) session.SetObjectId(i, BaseObject.ObjectId.None);
-                        //else session.SetObjectId(i, obj.Id);
-                        //i++;
+                    {                    
+                        if (obj != null)
+                        {
+                            if (ServerUtils.TryCreateNetworkObject(
+                                NetworkServer.localConnection,
+                                NetworkingLibrary.Instance.ObjectSession.gameObject,
+                                out gobj, false))
+                            {
+                                if ((objectSession = gobj.GetComponent<ObjectSession>()) != null)
+                                {
+                                    objectSession.Index = i;
+                                }
+                            }
+                        }
+
+                        i++;
                     }
 
-                    return session;
+                    return levelSession;
                 }
             }
 
@@ -124,40 +156,17 @@ namespace Cirrus.Circuit.Networking
 
         }
 
-        public void SetObjectId(int idx, BaseObject.ObjectId id)
-        {
-            ClientPlayer.Instance.Cmd_LevelSession_SetObjectId(gameObject, idx, id);
-        }
-
-        public void SetObjectId(Vector3Int pos, BaseObject.ObjectId id)
-        {
-            int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
-
-            SetObjectId(i, id);
-        }
-
-        public void RegisterObjectId(BaseObject obj)
-        {
-            Vector3Int pos = Level.WorldToGrid(obj.transform.position);
-
-            int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
-
-            SetObjectId(i, obj.Id);
-        }
-
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
         {
             Vector3Int pos = Level.WorldToGrid(obj.transform.position);
 
             int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
 
+            _objects[i] = obj;
+
             return (Level.GridToWorld(pos), pos);
         }
 
-        public void UnregisterObjectId(BaseObject obj)
-        {
-            SetObjectId(obj._gridPosition, BaseObject.ObjectId.None);
-        }
 
         public void UnregisterObject(BaseObject obj)
         {

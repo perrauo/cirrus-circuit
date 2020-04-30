@@ -16,6 +16,18 @@ namespace Cirrus.Circuit.Networking
         [SerializeField]
         public World.Objects.BaseObject _object;
 
+        [SyncVar]
+        [SerializeField]        
+        public int _index = -1;
+
+        public int Index {
+            get => _index;
+            set {
+                _index = value;
+                ClientPlayer.Instance.Cmd_ObjectSession_SetIndex(gameObject, _index);
+            }
+        }
+
         private Mutex _mutex;
 
         [ClientRpc]

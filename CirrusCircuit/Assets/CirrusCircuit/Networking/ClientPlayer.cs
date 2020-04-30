@@ -228,6 +228,15 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
+        [Command]
+        public void Cmd_ObjectSession_SetIndex(GameObject obj, int idx)
+        {
+            ObjectSession session;
+            if ((session = obj.GetComponent<ObjectSession>()) != null)
+            {
+                session._index = idx;
+            }
+        }
 
         #endregion
 

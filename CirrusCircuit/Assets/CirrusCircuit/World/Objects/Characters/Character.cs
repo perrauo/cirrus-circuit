@@ -120,24 +120,28 @@ namespace Cirrus.Circuit.World.Objects.Characters
             if (isMovingVertical && isMovingHorizontal)
             {
                 //moving in both directions, prioritize later
-                if (_wasMovingVertical && base.TryMove(stepHorizontal)) _guide.Show(stepHorizontal);
-                else if (base.TryMove(stepVertical)) _guide.Show(stepVertical);
+                if (_wasMovingVertical)
+                {
+                    base.TryMove(stepHorizontal);
+                    _guide.Show(stepHorizontal);
+                }
+                else
+                {
+                    base.TryMove(stepVertical);
+                    _guide.Show(stepVertical);
+                }
             }
             else if (isMovingHorizontal)
             {
-                if (base.TryMove(stepHorizontal))
-                {
-                    _guide.Show(stepHorizontal);
-                    _wasMovingVertical = false;
-                }
+                TryMove(stepHorizontal);                
+                _guide.Show(stepHorizontal);
+                _wasMovingVertical = false;                
             }
             else if (isMovingVertical)
             {
-                if (base.TryMove(stepVertical))
-                {
-                    _guide.Show(stepVertical);
-                    _wasMovingVertical = true;
-                }
+                TryMove(stepVertical);                
+                _guide.Show(stepVertical);
+                _wasMovingVertical = true;                
             }
 
             yield return new WaitForSeconds(_moveDelay);
@@ -150,8 +154,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
         // Use the same raycast to show guide
         public void TryMove(Vector2 axis)
         {
-            if(!_moveCoroutineActive)
-                StartCoroutine(MoveCoroutine(axis));                        
+            if(!_moveCoroutineActive) StartCoroutine(MoveCoroutine(axis));
         }
 
 
