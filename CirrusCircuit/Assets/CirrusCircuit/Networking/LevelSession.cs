@@ -16,9 +16,9 @@ using Cirrus.MirrorExt;
 
 namespace Cirrus.Circuit.Networking
 {
-    public class ObjectSyncList : SyncList<BaseObject.ObjectId> {
-        public ObjectSyncList() { }
-        public ObjectSyncList(int capacity) : base(new List<BaseObject.ObjectId>(capacity)) {
+    public class ObjectIdSyncList : SyncList<BaseObject.ObjectId> {
+        public ObjectIdSyncList() { }
+        public ObjectIdSyncList(int capacity) : base(new List<BaseObject.ObjectId>(capacity)) {
         }
     }
 
@@ -45,7 +45,7 @@ namespace Cirrus.Circuit.Networking
 
         [SyncVar]
         [SerializeField]
-        public ObjectSyncList _objectIds;
+        public ObjectIdSyncList _objectIds;
 
 
         [SerializeField]
@@ -99,7 +99,7 @@ namespace Cirrus.Circuit.Networking
                 if ((session = gobj.GetComponent<LevelSession>()) != null)
                 {
                     int i = 0;
-                    session._objectIds = new ObjectSyncList(GameSession.Instance.SelectedLevel.Size);
+                    session._objectIds = new ObjectIdSyncList(GameSession.Instance.SelectedLevel.Size);
                     foreach (var obj in GameSession.Instance.SelectedLevel.Objects)
                     {
                         if (obj == null) session.SetObjectId(i, BaseObject.ObjectId.None);
