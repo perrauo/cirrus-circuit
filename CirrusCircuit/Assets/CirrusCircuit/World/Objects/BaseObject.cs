@@ -362,7 +362,9 @@ namespace Cirrus.Circuit.World.Objects
                         {
                             BaseObject obj;
 
-                            if (_levelSession.TryGet(_gridPosition + Vector3Int.down, out obj))
+                            if (_levelSession.TryGet(
+                                _gridPosition + Vector3Int.down, 
+                                out obj))
                             {
                                 TrySetState(State.Idle);
                             }
@@ -394,7 +396,9 @@ namespace Cirrus.Circuit.World.Objects
             State transition, 
             params object[] args)
         {            
-            if (TryTransition(transition, out State destination))
+            if (TryTransition(
+                transition, 
+                out State destination))
             {
                 return TryFinishSetState(destination, args);
             }
@@ -545,12 +549,12 @@ namespace Cirrus.Circuit.World.Objects
             Vector3Int previousGridPosition = _gridPosition;
             Vector3Int newGridPosition = Vector3Int.zero;
             Vector3Int step;
+            Vector3 offset = Vector3.zero;
+            Vector3Int stepOffset = Vector3Int.zero;
             BaseObject incoming  = null;
             BaseObject destination;
             BaseObject pushed;
             BaseObject above;
-            Vector3 offset = Vector3.zero;
-            Vector3Int stepOffset = Vector3Int.zero;
             bool result = false;
 
             switch (target)
@@ -574,7 +578,6 @@ namespace Cirrus.Circuit.World.Objects
 
                 case State.Entering:
                     _targetScale = 0;
-
                     _state = target;
                     result = true;
                     break;
@@ -597,7 +600,7 @@ namespace Cirrus.Circuit.World.Objects
                         _state = target;
                         result = true;
                     }
-                    else if (_level.TryFallThrough(this,
+                    else if (_levelSession.TryFallThrough(this,
                         step,
                         ref offset,
                         out newGridPosition,
@@ -663,7 +666,7 @@ namespace Cirrus.Circuit.World.Objects
                         //offset -= Vector3.up * (Level.GridSize / 2);
                     }
 
-                    if (_level.TryMove(
+                    if (_levelSession.TryMove(
                         this, 
                         step + stepOffset, 
                         ref offset, 
@@ -687,7 +690,7 @@ namespace Cirrus.Circuit.World.Objects
                     step = (Vector3Int)args[0];
                     incoming = (BaseObject)args[1];
 
-                    if (_level.TryMove(
+                    if (_levelSession.TryMove(
                         this, 
                         step, 
                         ref offset, 
@@ -724,7 +727,7 @@ namespace Cirrus.Circuit.World.Objects
                     case State.RampMoving:
                     case State.Falling:
 
-                        if (_level.TryGet(previousGridPosition + Vector3Int.up, out above))
+                        if (_levelSession.TryGet(previousGridPosition + Vector3Int.up, out above))
                         {
                             above.TryFall();// (State.Falling, Vector3Int.down);
                         }
