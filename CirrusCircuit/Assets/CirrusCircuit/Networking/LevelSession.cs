@@ -126,7 +126,7 @@ namespace Cirrus.Circuit.Networking
                             if (ServerUtils.TryCreateNetworkObject(                 
                                 NetworkingLibrary.Instance.ObjectSession.gameObject,
                                 out gobj,                                 
-                                false))
+                                true))
                             {
                                 if ((objectSession = gobj.GetComponent<ObjectSession>()) != null)
                                 {
