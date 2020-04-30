@@ -568,66 +568,6 @@ namespace Cirrus.Circuit
 
                 case State.Round:
 
-                    //GameSession.Instance.SelectedLevel.TargetPosition = Vector3.zero;
-                    //GameSession.Instance.SelectedLevel.transform.position = Vector3.zero;
-                    //GameSession.Instance.SelectedLevel.gameObject.SetActive(true);
-
-                    //LevelSession.Instance.Init();
-
-
-                    //_currentLevel =
-                    //    Instantiate(
-                    //        Game.Instance._levels[_selectedLevelIndex].gameObject,
-                    //        Vector3.zero, Quaternion.identity,
-                    //        gameObject.transform).GetComponent<World.Level>();
-
-                    //_selectedLevelIndex.gameObject.SetActive(false);
-
-
-                    //_currentLevel.OnScoreValueAddedHandler += OnScoreValueAdded;
-
-                    //_currentLevel.OnLevelCompletedHandler += OnLevelCompleted;
-
-                    //List<Placeholder> placeholders = new List<Placeholder>();
-                    //placeholders.AddRange(_currentLevel._characterPlaceholders);
-
-                    int i = 0;
-                    //while (!placeholders.IsEmpty())
-                    //{
-                    //    Placeholder placeholder = placeholders.RemoveRandom();
-
-                    //    _controllers[i]._character = _controllers[i]
-                    //        ._characterResource.Create(
-                    //            _currentLevel.GridToWorld(placeholder._gridPosition),
-                    //            _currentLevel.transform);
-
-                    //    _controllers[i]._character.Number = _controllers[i].Number;
-
-                    //    _controllers[i]._character.Color = _controllers[i].Color;
-
-                    //    _controllers[i]._character._level = _currentLevel;
-
-                    //    _controllers[i]._character.TrySetState(Character.State.Disabled);
-
-                    //    _controllers[i].Score = 0;
-
-                    //    _controllers[i]._assignedNumber = placeholder.Number;
-
-                    //    i++;
-
-                    //    Destroy(placeholder.gameObject);
-                    //}
-
-                    //_round =
-                    //    new Round(
-                    //        Game.Instance.CountDown,
-                    //        Game.Instance.RoundTime,
-                    //        Game.Instance.CountDownTime,
-                    //        Game.Instance.IntermissionTime,
-                    //        _roundIndex);
-
-                    //StartCoroutine(NewRoundCoroutine());
-
                     _state = target;
 
                     return true;
@@ -720,10 +660,10 @@ namespace Cirrus.Circuit
 
                     break;
 
-                //case State.Round:
-                //    if (controller._character)
-                //        controller._character?.TryMove(axis);
-                //    break;
+                case State.Round:
+                    if (player._character != null)
+                        player._character?.TryMove(axis);
+                    break;
 
                 case State.Score:
                     break;
