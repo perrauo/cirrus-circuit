@@ -215,7 +215,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void _TryMove(
             Vector3Int step, 
-            BaseObject incoming = null)
+            BaseObject incoming)
         {
             TryMove(step, incoming);
         }

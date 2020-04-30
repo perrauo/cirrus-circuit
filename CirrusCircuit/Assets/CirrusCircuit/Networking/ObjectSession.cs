@@ -35,7 +35,7 @@ namespace Cirrus.Circuit.Networking
         {
             _mutex.WaitOne();
 
-            _object._TryMove(step);
+            _object._TryMove(step, null);
 
             _mutex.ReleaseMutex();
         }
