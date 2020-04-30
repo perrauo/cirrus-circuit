@@ -12,6 +12,8 @@ namespace Cirrus.Circuit.Networking
     // Serves to sync the connection
     public class ClientPlayer : NetworkBehaviour
     {
+        public static void AssertGameObjectNull(GameObject gameObject) => Utils.DebugUtils.Assert(gameObject != null, "Cmd GameObject is null. Was the object spawn?");
+
         public static ClientPlayer _instance;
 
         public static ClientPlayer Instance
@@ -220,6 +222,8 @@ namespace Cirrus.Circuit.Networking
         [Command]
         public void Cmd_ObjectSession_TryMove(GameObject obj, Vector3Int step)
         {
+            AssertGameObjectNull(obj);
+
             ObjectSession session;
             if ((session = obj.GetComponent<ObjectSession>()) != null)
             {
@@ -238,6 +242,8 @@ namespace Cirrus.Circuit.Networking
         [Command]
         public void Cmd_ObjectSession_SetIndex(GameObject obj, int idx)
         {
+            AssertGameObjectNull(obj);
+
             ObjectSession session;
             if ((session = obj.GetComponent<ObjectSession>()) != null)
             {
