@@ -14,19 +14,24 @@ using Cirrus.Circuit.World.Objects.Characters;
 using Cirrus.Events;
 using Cirrus.MirrorExt;
 using System.Linq;
+using Cirrus.Circuit.Controls;
 
 namespace Cirrus.Circuit.Networking
 {
     public class LevelSession : NetworkBehaviour
     {
+        [Serializable]
         public class PlaceholderInfo
         {
             public GameObject _session = null;
             public ObjectSession Session => _session == null ? null : _session.GetComponent<ObjectSession>();
             public int PlayerId = -1;
-            public int CharacterId = -1;
+            public int _characterId = -1;
+            public CharacterAsset Character => CharacterLibrary.Instance.Characters[_characterId];
+            public Vector3Int Position;
         }
 
+        [Serializable]
         public class PlaceholderInfoSyncList : SyncList<PlaceholderInfo> { }
 
         [SerializeField]
@@ -99,7 +104,7 @@ namespace Cirrus.Circuit.Networking
         }
 
 
-
+        // TODO multiple object per square
         public override void OnStartClient()
         {
             base.OnStartClient();
@@ -127,8 +132,6 @@ namespace Cirrus.Circuit.Networking
             }
             
 
-            // TODO multiple object per square
-
             foreach (var session in ObjectSessions)
             {
                 if (session.Index >= _objects.Length) continue;
@@ -141,24 +144,22 @@ namespace Cirrus.Circuit.Networking
                 }
             }
 
-            foreach (var placeholder in PlaceholderInfos)
-            {
-                //_character = _controllers[i]
-                //    ._characterResource.Create(
-                //        _currentLevel.GridToWorld(placeholder._gridPosition),
-                //        _currentLevel.transform);
+            foreach (var info in PlaceholderInfos)
+            {                
+                PlayerSession player = GameSession.Instance.GetPlayer(info.PlayerId);
+                player.Score = 0;
 
-                //_controllers[i]._character.Number = _controllers[i].Number;
+                info.Session._object = 
+                    info.Character.Create(
+                        Level.GridToWorld(info.Position),
+                        transform);                
+                info.Session._object._session = info.Session;
+                info.Session._object.ColorId = info.PlayerId;
+                info.Session._object.Color = player.Color;
+                info.Session._object.TrySetState(BaseObject.State.Disabled);
 
-                //_controllers[i]._character.Color = _controllers[i].Color;
-
-                //_controllers[i]._character._level = _currentLevel;
-
-                //_controllers[i]._character.TryChangeState(Character.State.Disabled);
-
-                //_controllers[i].Score = 0;
-
-                //_controllers[i]._assignedNumber = placeholder.Number;                
+                PlayerManager.Instance.LocalPlayers[player.LocalId]._character = (Character)info.Session._object;
+                
             }
         }
 
@@ -193,19 +194,24 @@ namespace Cirrus.Circuit.Networking
                                     levelSession._objectSessions.Add(objectSession.gameObject);
 
                                     NetworkServer.Spawn(gobj, NetworkServer.localConnection);
-                                }
 
-                                if (obj is Gem)
-                                {
-                                    Gem gem = (Gem)obj;
-                                    levelSession.RequiredGems += gem.IsRequired ? 1 : 0;
-                                }
-                                else if (obj is Placeholder)
-                                {
-                                    var info = new PlaceholderInfo();
-                                    info._session = gobj;
-                                    placeholders.Add(info);
-                                    levelSession._placeholderInfos.Add(info);
+                                    if (obj is Gem)
+                                    {
+                                        Gem gem = (Gem)obj;
+                                        levelSession.RequiredGems += gem.IsRequired ? 1 : 0;
+                                    }
+                                    else if (obj is Placeholder)
+                                    {
+                                        var info = new PlaceholderInfo()
+                                        {
+                                            _session = gobj,
+                                            Position = obj._gridPosition
+                                        };
+
+                                        placeholders.Add(info);
+                                        levelSession._placeholderInfos.Add(info);
+                                    }
+
                                 }
                             }
                         }
@@ -219,12 +225,22 @@ namespace Cirrus.Circuit.Networking
                         PlayerSession player = null;
                         if ((player = GameSession.Instance.GetPlayer(i)) != null)
                         {
-                            PlaceholderInfo placeholder = placeholders.RemoveRandom();
-                            placeholder.PlayerId = player.ServerId;
-                            placeholder.CharacterId = player.CharacterId;
-                        }
-                        i++;
+                            PlaceholderInfo info = placeholders.RemoveRandom();
+                            info.PlayerId = player.ServerId;
+                            info._characterId = player.CharacterId;
+                            
+                            if (
+                                CustomNetworkManager.Instance.ServerHandler.TryGetConnection(
+                                    player._connectionId, 
+                                    out ClientPlayer client))
+                            {
+                                info.Session.netIdentity.AssignClientAuthority(
+                                    client.connectionToClient);
+                            }
 
+                        }
+
+                        i++;
                     }
 
 

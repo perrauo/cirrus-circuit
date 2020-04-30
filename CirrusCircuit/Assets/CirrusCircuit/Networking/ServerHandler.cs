@@ -64,22 +64,28 @@ namespace Cirrus.Circuit.Networking
                 }
             }
         }
-        
+
+        public bool TryGetConnection(int connectionId, out ClientPlayer client)
+        {
+            return _connections.TryGetValue(connectionId, out client);
+        }
+
+
         public bool DoTryPlayerJoin(NetworkConnection conn, int localPlayerId)
         {
             if (GameSession.Instance.PlayerCount == PlayerManager.PlayerMax) return false;
 
-            List<int> connectionPlayers = null;
-            if (_players.TryGetValue(conn.connectionId, out connectionPlayers))
+            List<int> playersPerConnection = null;
+            if (_players.TryGetValue(conn.connectionId, out playersPerConnection))
             {
                 if (
-                    connectionPlayers == null ||
-                    connectionPlayers.Contains(localPlayerId)) return false;                
+                    playersPerConnection == null ||
+                    playersPerConnection.Contains(localPlayerId)) return false;                
             }
             else
             {
-                connectionPlayers = new List<int>();
-                _players.Add(conn.connectionId, connectionPlayers);
+                playersPerConnection = new List<int>();
+                _players.Add(conn.connectionId, playersPerConnection);
             }
 
             if (_connections.TryGetValue(conn.connectionId, out ClientPlayer clientConnection))
@@ -93,13 +99,14 @@ namespace Cirrus.Circuit.Networking
                     PlayerSession session;
                     if ((session = sessionObj.GetComponent<PlayerSession>()) != null)
                     {
+                        session._connectionId = conn.connectionId;
                         session._serverId = GameSession.Instance.PlayerCount++;
                         session._color = PlayerManager.Instance.GetColor(session._serverId);
                         session._name = PlayerManager.Instance.GetName(session._serverId);                        
                         session._localId = localPlayerId;                        
                         session.netIdentity.AssignClientAuthority(conn);
                         
-                        connectionPlayers.Add(localPlayerId);
+                        playersPerConnection.Add(localPlayerId);
 
                         GameSession.Instance._players.Add(session.gameObject);
                         CharacterSelect.Instance.AssignAuthority(conn, session._serverId);

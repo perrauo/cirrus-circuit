@@ -78,6 +78,10 @@ namespace Cirrus.Circuit.Networking
 
         [SyncVar]
         [SerializeField]
+        public int _connectionId = 0;
+
+        [SyncVar]
+        [SerializeField]
         public int _serverId = 0;
 
         public int ServerId => _serverId;
