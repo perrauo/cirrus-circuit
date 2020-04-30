@@ -60,22 +60,6 @@ namespace Cirrus.Circuit.World
         public string Name => _name;        
 
         [SerializeField]
-        public Objects.Characters.Character[] _characters;
-
-        public Objects.Characters.Character[] Characters => _characters;
-
-        public int CharacterCount => _characters.Length;        
-
-        [SerializeField]
-        public Gem[] _gems;
-
-        [SerializeField]
-        public Door[] _doors;
-
-        [SerializeField]
-        public Objects.Characters.Placeholder[] _characterPlaceholders;
-
-        [SerializeField]
         public float DistanceLevelSelection = 35;
 
         [SerializeField]
@@ -98,18 +82,6 @@ namespace Cirrus.Circuit.World
         {
             _name = gameObject.name.Substring(gameObject.name.IndexOf('.') + 1);
             _name = _name.Replace('.', ' ');
-
-            if (_gems != null && _gems.Length == 0)
-                _gems = gameObject.GetComponentsInChildren<Gem>();
-
-            if (_doors != null && _doors.Length == 0)
-                _doors = gameObject.GetComponentsInChildren<Door>();
-
-            if (_characters != null && _characters.Length == 0)
-                _characters = gameObject.GetComponentsInChildren<Objects.Characters.Character>();
-
-            if (_characterPlaceholders != null && _characterPlaceholders.Length == 0)
-                _characterPlaceholders = gameObject.GetComponentsInChildren<Objects.Characters.Placeholder>();
         }
 
         public void FixedUpdate()

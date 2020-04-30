@@ -112,6 +112,15 @@ namespace Cirrus.Circuit.Networking
         }
 
         [Command]
+        public void Cmd_LevelSession_SetRequiredGems(GameObject obj, int count)
+        {
+            if (obj == null) return;
+
+            LevelSession session;
+            if ((session = obj.GetComponent<LevelSession>()) != null) session._requiredGems = count;
+        }
+
+        [Command]
         public void Cmd_LevelSession_SetObjectId(GameObject obj, int idx, BaseObject.ObjectId id)
         {
             //LevelSession session;

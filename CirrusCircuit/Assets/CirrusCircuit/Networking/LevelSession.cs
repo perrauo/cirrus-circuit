@@ -44,8 +44,6 @@ namespace Cirrus.Circuit.Networking
 
         private Timer _randomDropSpawnTimer;
 
-        private int _requiredGems = 0;
-
 
         [SerializeField]
         public BaseObject[] _objects;
@@ -71,18 +69,50 @@ namespace Cirrus.Circuit.Networking
                 ClientPlayer.Instance.Cmd_LevelSession_SetRequiredGemCount(gameObject, _requiredGemCount);
             }
         }
-        
+
+
+        [SyncVar]
+        [SerializeField]
+        public int _requiredGems = 0;
+        public int RequiredGems
+        {
+            get => _requiredGems;
+            set
+            {
+                _requiredGems = value;
+                ClientPlayer.Instance.Cmd_LevelSession_SetRequiredGems(gameObject, _requiredGems);
+            }
+        }
+
+
+
         public override void OnStartClient()
         {
             base.OnStartClient();
 
             _objects = new BaseObject[Level.Size];
 
+            List<Placeholder> placeholders = new List<Placeholder>();
+
             foreach (var obj in Level.Objects)
             {
                 if (obj == null) continue;
 
                 var res = obj.Create(obj.transform.position, transform);
+
+                if (res is Placeholder) placeholders.Add((Placeholder)res);
+                else if (res is Door)
+                {
+                    var door = (Door)res;
+                    door.OnScoreValueAddedHandler += OnGemEntered;
+
+                }
+                else if (res is Gem)
+                {
+                    var gem = (Gem)res;   
+                    //_requiredGems += gem.IsRequired ? 1 : 0;
+                }
+                                                    
                 res.gameObject.SetActive(true);
                 RegisterObject(res);
             }
@@ -123,6 +153,12 @@ namespace Cirrus.Circuit.Networking
                     {                    
                         if (obj != null)
                         {
+                            if (obj is Gem)
+                            {
+                                Gem gem = (Gem)obj;
+                                levelSession.RequiredGems += gem.IsRequired ? 1 : 0;
+                            }
+
                             if (ServerUtils.TryCreateNetworkObject(                 
                                 NetworkingLibrary.Instance.ObjectSession.gameObject,
                                 out gobj,                                 
@@ -130,7 +166,7 @@ namespace Cirrus.Circuit.Networking
                             {
                                 if ((objectSession = gobj.GetComponent<ObjectSession>()) != null)
                                 {
-                                    objectSession._index = i;
+                                    objectSession.Index = i;
                                     levelSession._objectSessions.Add(objectSession.gameObject);
 
                                     NetworkServer.Spawn(gobj, NetworkServer.localConnection);
