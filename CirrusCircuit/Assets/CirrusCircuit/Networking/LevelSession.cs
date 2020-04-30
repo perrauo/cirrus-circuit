@@ -129,6 +129,8 @@ namespace Cirrus.Circuit.Networking
 
                 res.gameObject.SetActive(true);
                 RegisterObject(res);
+
+                info.Session._object.TrySetState(BaseObject.State.Idle);
             }
             
 
@@ -156,7 +158,10 @@ namespace Cirrus.Circuit.Networking
                 info.Session._object._session = info.Session;
                 info.Session._object.ColorId = info.PlayerId;
                 info.Session._object.Color = player.Color;
-                info.Session._object.TrySetState(BaseObject.State.Disabled);
+
+                // TODO idle after count down
+                //info.Session._object.TrySetState(BaseObject.State.Disabled); 
+                info.Session._object.TrySetState(BaseObject.State.Idle);
 
                 PlayerManager.Instance.LocalPlayers[player.LocalId]._character = (Character)info.Session._object;
                 
