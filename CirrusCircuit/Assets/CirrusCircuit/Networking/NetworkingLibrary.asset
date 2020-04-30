@@ -22,5 +22,7 @@ MonoBehaviour:
     type: 3}
   RoundSession: {fileID: 6159277905948844201, guid: 5ed1e24e50e69944db611a6f634c2812,
     type: 3}
+  ObjectSession: {fileID: 7160719661955192827, guid: dd632b591a9fe7148a50f73c8ebb4f0d,
+    type: 3}
   Others:
   - {fileID: 665928394, guid: bb41d15f8a991064d9f7080d0fc8e3f4, type: 3}
