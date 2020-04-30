@@ -48,7 +48,7 @@ namespace Cirrus.Circuit.Networking
         public ObjectIdSyncList _objectIds;
 
         public void InitObjectIds() {
-            ClientPlayer.Instance.Cmd_LevelSession_SetRequiredGemCount(gameObject, _requiredGemCount);
+            ClientPlayer.Instance.Cmd_LevelSession_InitObjectIds(gameObject);
         }
 
 
