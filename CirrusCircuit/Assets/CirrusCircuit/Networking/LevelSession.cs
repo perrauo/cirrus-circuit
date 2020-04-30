@@ -16,6 +16,8 @@ using Cirrus.MirrorExt;
 
 namespace Cirrus.Circuit.Networking
 {
+
+    [Serializable]
     public class ObjectIdSyncList : SyncList<BaseObject.ObjectId> {
         public ObjectIdSyncList() { }
         public ObjectIdSyncList(int capacity) : base(new BaseObject.ObjectId[capacity]) { }
@@ -42,9 +44,8 @@ namespace Cirrus.Circuit.Networking
 
         Mutex _mutex;
 
-        [SyncVar]
-        [SerializeField]
         public ObjectIdSyncList _objectIds = new ObjectIdSyncList(Level.MaxSize);
+
 
         public void InitObjectIds()
         {
