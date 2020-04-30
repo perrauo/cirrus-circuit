@@ -17,6 +17,7 @@ using Cirrus.MirrorExt;
 namespace Cirrus.Circuit.Networking
 {
     public class ObjectSyncList : SyncList<BaseObject.ObjectId> {
+        public ObjectSyncList() { }
         public ObjectSyncList(int capacity) : base(new List<BaseObject.ObjectId>(capacity)) {
         }
     }
