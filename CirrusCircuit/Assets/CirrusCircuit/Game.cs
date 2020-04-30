@@ -572,7 +572,7 @@ namespace Cirrus.Circuit
                     //GameSession.Instance.SelectedLevel.transform.position = Vector3.zero;
                     //GameSession.Instance.SelectedLevel.gameObject.SetActive(true);
 
-                    LevelSession.Instance.Init();
+                    //LevelSession.Instance.Init();
 
 
                     //_currentLevel =
