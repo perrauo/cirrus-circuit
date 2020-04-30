@@ -4,6 +4,7 @@ using Cirrus.Circuit.UI;
 using Mirror;
 using UnityEngine;
 using Cirrus.Circuit.World.Objects;
+using System.Linq;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -110,14 +111,12 @@ namespace Cirrus.Circuit.Networking
         [Command]
         public void Cmd_LevelSession_InitObjectIds(GameObject obj)
         {
-            LevelSession session;
-            if ((session = obj.GetComponent<LevelSession>()) != null)
-            {
-                Debug.Log("Init Object Ids");
-                session._objectIds =
-                    new ObjectIdSyncList(
-                        GameSession.Instance.SelectedLevel.Size);
-            }
+            //LevelSession session;
+            //if ((session = obj.GetComponent<LevelSession>()) != null)
+            //{
+            //    Debug.Log("Init Object Ids");
+            //    session._objectIds.(new BaseObject.ObjectId[GameSession.Instance.SelectedLevel.Size]);                    
+            //}
         }
 
         #endregion

@@ -44,7 +44,7 @@ namespace Cirrus.Circuit.Networking
 
         [SyncVar]
         [SerializeField]
-        public ObjectIdSyncList _objectIds;
+        public ObjectIdSyncList _objectIds = new ObjectIdSyncList(Level.MaxSize);
 
         public void InitObjectIds()
         {

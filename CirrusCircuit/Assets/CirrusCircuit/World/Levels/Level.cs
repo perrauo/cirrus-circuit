@@ -39,9 +39,13 @@ namespace Cirrus.Circuit.World
         [SerializeField]
         private Vector3Int _dimension = new Vector3Int(20, 20, 20);
 
-        public Vector3Int Dimension => _dimension;
-
+        public Vector3Int Dimension => _dimension;    
         public int Size => Dimension.x * Dimension.y * Dimension.z;
+
+        public const int MaxX = 12;
+        public const int MaxY = 12;
+        public const int MaxZ = 12;
+        public const int MaxSize = MaxX * MaxY * MaxZ;
 
         Mutex _mutex;
 
