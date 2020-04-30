@@ -18,8 +18,7 @@ namespace Cirrus.Circuit.Networking
 {
     public class ObjectIdSyncList : SyncList<BaseObject.ObjectId> {
         public ObjectIdSyncList() { }
-        public ObjectIdSyncList(int capacity) : base(new BaseObject.ObjectId[capacity]) {
-        }
+        public ObjectIdSyncList(int capacity) : base(new BaseObject.ObjectId[capacity]) { }
     }
 
     public class LevelSession : NetworkBehaviour
@@ -85,8 +84,10 @@ namespace Cirrus.Circuit.Networking
             base.OnStartClient();
 
             foreach (var obj in GameSession.Instance.SelectedLevel.Objects)
-            {
-
+            {                
+                var res = obj.Create(obj.transform.position, transform);
+                res.gameObject.SetActive(true);
+                RegisterObject(res);
             }
         }
 
