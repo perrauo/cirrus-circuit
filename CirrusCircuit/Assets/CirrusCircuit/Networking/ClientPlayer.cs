@@ -91,6 +91,16 @@ namespace Cirrus.Circuit.Networking
         #region Level Session
 
         [Command]
+        public void Cmd_LevelSession_InitObjectIds(GameObject obj)
+        {
+            LevelSession session;
+            if ((session = obj.GetComponent<LevelSession>()) != null)
+                session._objectIds = 
+                    new ObjectIdSyncList(
+                        GameSession.Instance.SelectedLevel.Size);
+        }
+
+        [Command]
         public void Cmd_LevelSession_SetRequiredGemCount(GameObject obj, int count)
         {
             LevelSession session;

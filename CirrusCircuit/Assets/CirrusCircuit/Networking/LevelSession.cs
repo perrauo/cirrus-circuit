@@ -47,6 +47,10 @@ namespace Cirrus.Circuit.Networking
         [SerializeField]
         public ObjectIdSyncList _objectIds;
 
+        public void InitObjectIds() {
+            ClientPlayer.Instance.Cmd_LevelSession_SetRequiredGemCount(gameObject, _requiredGemCount);
+        }
+
 
         [SerializeField]
         public float CameraSize = 10;
