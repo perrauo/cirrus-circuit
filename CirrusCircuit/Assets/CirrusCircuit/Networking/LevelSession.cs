@@ -46,7 +46,8 @@ namespace Cirrus.Circuit.Networking
         [SerializeField]
         public ObjectIdSyncList _objectIds;
 
-        public void InitObjectIds() {
+        public void InitObjectIds()
+        {
             ClientPlayer.Instance.Cmd_LevelSession_InitObjectIds(gameObject);
         }
 
