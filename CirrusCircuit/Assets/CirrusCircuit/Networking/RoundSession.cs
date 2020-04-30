@@ -89,11 +89,10 @@ namespace Cirrus.Circuit.Networking
         {
             RoundSession session = null;
 
-            if (ServerUtils.TryCreateNetworkObject(
-                NetworkServer.localConnection,
+            if (ServerUtils.TryCreateNetworkObject(                
                 NetworkingLibrary.Instance.RoundSession.gameObject,
-                out GameObject obj, 
-                false))
+                out GameObject obj,                
+                true))
              {
                 session = obj.GetComponent<RoundSession>();
                 if (session != null)

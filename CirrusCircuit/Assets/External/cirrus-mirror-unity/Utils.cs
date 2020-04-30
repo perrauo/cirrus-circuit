@@ -31,10 +31,21 @@ namespace Cirrus.MirrorExt
         }
 
         public static bool TryCreateNetworkObject(
-            NetworkConnection conn,
             GameObject template,
             out GameObject obj,
-            bool clientAuthority = true,
+            bool spawn = true)
+        {
+            return TryCreateNetworkObject(
+                template, 
+                out obj, 
+                NetworkServer.localConnection, 
+                spawn);
+        }
+
+        public static bool TryCreateNetworkObject(            
+            GameObject template,
+            out GameObject obj,
+            NetworkConnection conn,
             bool spawn= true)
         {
             obj = null;
@@ -43,7 +54,7 @@ namespace Cirrus.MirrorExt
 
             obj = template.gameObject.Create();
 
-            if(spawn) NetworkServer.Spawn(obj, clientAuthority ? conn : null);
+            if(spawn) NetworkServer.Spawn(obj, conn);
 
             return true;
         }
