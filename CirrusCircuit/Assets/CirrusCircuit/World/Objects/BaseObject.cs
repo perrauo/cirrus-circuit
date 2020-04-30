@@ -583,7 +583,7 @@ namespace Cirrus.Circuit.World.Objects
 
                     step = (Vector3Int)args[0];
 
-                    if (_level.TryMove(
+                    if (_levelSession.TryMove(
                         this,
                         step,
                         ref offset,
