@@ -31,7 +31,7 @@ namespace Cirrus.Circuit.Networking
         }
 
         [ClientRpc]
-        public void Rpc_TryFall(Vector3Int step)
+        public void Rpc_TryFall()
         {
             _mutex.WaitOne();
 
