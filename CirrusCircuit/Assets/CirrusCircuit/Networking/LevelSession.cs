@@ -112,10 +112,11 @@ namespace Cirrus.Circuit.Networking
             {
                 if (obj == null) continue;
 
+                if (obj is Placeholder) continue;
+
                 var res = obj.Create(obj.transform.position, transform);
 
-                if (res is Placeholder) continue;
-                else if (res is Door)
+                if (res is Door)
                 {
                     var door = (Door)res;
                     door.OnScoreValueAddedHandler += OnGemEntered;
