@@ -19,6 +19,29 @@ namespace Cirrus.Circuit.Networking
 {
     public class LevelSession : NetworkBehaviour
     {
+        public class PlaceholderInfo
+        {
+            public GameObject _session = null;
+            public ObjectSession Session => _session == null ? null : _session.GetComponent<ObjectSession>();
+            public int PlayerId = -1;
+            public int CharacterId = -1;
+        }
+
+        public class PlaceholderInfoSyncList : SyncList<PlaceholderInfo> { }
+
+        [SerializeField]
+        public BaseObject[] _objects;
+
+        [SyncVar]
+        [SerializeField]
+        public GameObjectSyncList _objectSessions = new GameObjectSyncList();
+        public IEnumerable<ObjectSession> ObjectSessions => _objectSessions.Select(x => x.GetComponent<ObjectSession>());
+
+        [SyncVar]
+        [SerializeField]
+        public PlaceholderInfoSyncList _placeholderInfos = new PlaceholderInfoSyncList();
+        public IEnumerable<PlaceholderInfo> PlaceholderInfos => _placeholderInfos;
+
         private const int FallTrials = 100;
 
         public Event<Level.Rule> OnLevelCompletedHandler;
@@ -36,22 +59,13 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-        Mutex _mutex;        
+        Mutex _mutex;
 
         public Vector3 TargetPosition;
 
         private Timer _randomDropRainTimer;
 
         private Timer _randomDropSpawnTimer;
-
-
-        [SerializeField]
-        public BaseObject[] _objects;
-        
-        [SyncVar]
-        [SerializeField]
-        public GameObjectSyncList _objectSessions = new GameObjectSyncList();
-        public IEnumerable<ObjectSession> ObjectSessions => _objectSessions.Select(x => x.GetComponent<ObjectSession>());
 
 
         public Level Level => GameSession.Instance.SelectedLevel;
@@ -100,30 +114,25 @@ namespace Cirrus.Circuit.Networking
 
                 var res = obj.Create(obj.transform.position, transform);
 
-                if (res is Placeholder) placeholders.Add((Placeholder)res);
+                if (res is Placeholder) continue;
                 else if (res is Door)
                 {
                     var door = (Door)res;
                     door.OnScoreValueAddedHandler += OnGemEntered;
+                }
 
-                }
-                else if (res is Gem)
-                {
-                    var gem = (Gem)res;   
-                    //_requiredGems += gem.IsRequired ? 1 : 0;
-                }
-                                                    
                 res.gameObject.SetActive(true);
                 RegisterObject(res);
             }
+            
 
             // TODO multiple object per square
-            
+
             foreach (var session in ObjectSessions)
             {
                 if (session.Index >= _objects.Length) continue;
 
-                BaseObject obj = null;                
+                BaseObject obj = null;
                 if ((obj = _objects[session.Index]) != null)
                 {
                     obj._session = session;
@@ -131,10 +140,26 @@ namespace Cirrus.Circuit.Networking
                 }
             }
 
+            foreach (var placeholder in PlaceholderInfos)
+            {
+                //_character = _controllers[i]
+                //    ._characterResource.Create(
+                //        _currentLevel.GridToWorld(placeholder._gridPosition),
+                //        _currentLevel.transform);
+
+                //_controllers[i]._character.Number = _controllers[i].Number;
+
+                //_controllers[i]._character.Color = _controllers[i].Color;
+
+                //_controllers[i]._character._level = _currentLevel;
+
+                //_controllers[i]._character.TryChangeState(Character.State.Disabled);
+
+                //_controllers[i].Score = 0;
+
+                //_controllers[i]._assignedNumber = placeholder.Number;                
+            }
         }
-
-
-
 
         public static LevelSession Create()
         {
@@ -142,26 +167,23 @@ namespace Cirrus.Circuit.Networking
             LevelSession levelSession = null;
             if (ServerUtils.TryCreateNetworkObject(
                 NetworkingLibrary.Instance.LevelSession.gameObject,
-                out gobj,                
+                out gobj,
                 false))
             {
                 if ((levelSession = gobj.GetComponent<LevelSession>()) != null)
                 {
                     int i = 0;
-                    ObjectSession objectSession;                    
+                    ObjectSession objectSession;
+                    List<PlaceholderInfo> placeholders = new List<PlaceholderInfo>();
+
                     foreach (var obj in GameSession.Instance.SelectedLevel.Objects)
-                    {                    
+                    {
                         if (obj != null)
                         {
-                            if (obj is Gem)
-                            {
-                                Gem gem = (Gem)obj;
-                                levelSession.RequiredGems += gem.IsRequired ? 1 : 0;
-                            }
 
-                            if (ServerUtils.TryCreateNetworkObject(                 
+                            if (ServerUtils.TryCreateNetworkObject(
                                 NetworkingLibrary.Instance.ObjectSession.gameObject,
-                                out gobj,                                 
+                                out gobj,
                                 false))
                             {
                                 if ((objectSession = gobj.GetComponent<ObjectSession>()) != null)
@@ -171,11 +193,39 @@ namespace Cirrus.Circuit.Networking
 
                                     NetworkServer.Spawn(gobj, NetworkServer.localConnection);
                                 }
+
+                                if (obj is Gem)
+                                {
+                                    Gem gem = (Gem)obj;
+                                    levelSession.RequiredGems += gem.IsRequired ? 1 : 0;
+                                }
+                                else if (obj is Placeholder)
+                                {
+                                    var info = new PlaceholderInfo();
+                                    info._session = gobj;
+                                    placeholders.Add(info);
+                                    levelSession._placeholderInfos.Add(info);
+                                }
                             }
                         }
 
                         i++;
                     }
+
+                    i = 0;
+                    while (!placeholders.IsEmpty())
+                    {
+                        PlayerSession player = null;
+                        if ((player = GameSession.Instance.GetPlayer(i)) != null)
+                        {
+                            PlaceholderInfo placeholder = placeholders.RemoveRandom();
+                            placeholder.PlayerId = player.ServerId;
+                            placeholder.CharacterId = player.CharacterId;
+                        }
+                        i++;
+
+                    }
+
 
                     NetworkServer.Spawn(levelSession.gameObject, NetworkServer.localConnection);
                     return levelSession;
@@ -227,7 +277,7 @@ namespace Cirrus.Circuit.Networking
             _randomDropRainTimer = new Timer(Level.RandomDropRainTime, start: false, repeat: true);
             _randomDropRainTimer.OnTimeLimitHandler += OnRainTimeout;
             _randomDropSpawnTimer = new Timer(Level.RandomDropSpawnTime, start: false, repeat: false);
-            _randomDropSpawnTimer.OnTimeLimitHandler += OnSpawnTimeout;      
+            _randomDropSpawnTimer.OnTimeLimitHandler += OnSpawnTimeout;
         }
 
         public bool TryGet(Vector3Int pos, out BaseObject obj)
@@ -242,7 +292,7 @@ namespace Cirrus.Circuit.Networking
 
             //obj = _objects[i];
             _mutex.ReleaseMutex();
-            return obj != null;            
+            return obj != null;
         }
 
 
@@ -289,11 +339,11 @@ namespace Cirrus.Circuit.Networking
         }
 
         public bool TryMove(
-            BaseObject source, 
-            Vector3Int step, 
+            BaseObject source,
+            Vector3Int step,
             ref Vector3 offset,
-            out Vector3Int position, 
-            out BaseObject pushed, 
+            out Vector3Int position,
+            out BaseObject pushed,
             out BaseObject destination)
         {
             destination = null;
@@ -306,31 +356,31 @@ namespace Cirrus.Circuit.Networking
             if (Level.IsWithinBounds(position))
             {
                 return InnerTryMove(
-                    source, 
-                    position, 
-                    direction, 
-                    ref offset, 
-                    out pushed, 
+                    source,
+                    position,
+                    direction,
+                    ref offset,
+                    out pushed,
                     out destination);
             }
 
             return false;
         }
-        
+
         public bool TryFallThrough(
-            BaseObject source, 
-            Vector3Int step, ref 
-            Vector3 offset, 
-            out Vector3Int position, 
+            BaseObject source,
+            Vector3Int step, ref
+            Vector3 offset,
+            out Vector3Int position,
             out BaseObject destination)
         {
-            destination = null;            
+            destination = null;
             Vector3Int direction = step;//.SetXYZ(step.x, 0, step.z);
             position = source._gridPosition + step;
 
             //bool once = false;
 
-            if(!Level.IsWithinBoundsY(position.y))
+            if (!Level.IsWithinBoundsY(position.y))
             {
                 for (int k = 0; k < FallTrials; k++)
                 {
@@ -340,9 +390,9 @@ namespace Cirrus.Circuit.Networking
                         UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.z - Level.Offset.z));
 
                     for (int i = 0; i < Level.Dimension.y; i++)
-                    {                                          
+                    {
                         //Spawn(_objectResources.DebugObject, position.Copy().SetY(position.y - i));
-                     
+
                         if (TryGet(position.Copy().SetY(position.y - i), out BaseObject target))
                         {
                             if (target is Gem) continue;
@@ -351,8 +401,8 @@ namespace Cirrus.Circuit.Networking
 
                             return InnerTryMove(source, position, direction, ref offset, out BaseObject pushed, out destination);
                         }
-                    }                    
-                }           
+                    }
+                }
             }
 
             return false;
@@ -456,7 +506,7 @@ namespace Cirrus.Circuit.Networking
                 }
             }
         }
-        
+
         public void OnLevelSelect()
         {
             //foreach (BaseObject obj in _objects)

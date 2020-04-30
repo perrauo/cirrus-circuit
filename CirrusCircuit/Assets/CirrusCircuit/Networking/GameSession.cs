@@ -105,6 +105,13 @@ namespace Cirrus.Circuit.Networking
         public GameObjectSyncList _players = new GameObjectSyncList();
         public IEnumerable<PlayerSession> Players => _players.Select(x => x.GetComponent<PlayerSession>());
 
+        public PlayerSession GetPlayer(int i)
+        {
+            if (i < 0) return null;
+            if (i >= _players.Count) return null;
+            return _players[i].GetComponent<PlayerSession>();
+        }
+
         public Event<Gem, int, float> OnScoreValueAddedHandler;
 
         [SyncVar]
