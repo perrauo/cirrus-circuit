@@ -189,7 +189,6 @@ namespace Cirrus.Circuit.World
             _mutex.ReleaseMutex();
         }
     
-
         private void OnSpawnTimeout()
         {
             // TODO
@@ -208,7 +207,6 @@ namespace Cirrus.Circuit.World
 
         public BaseObject Spawn(BaseObject template, Vector3Int pos)
         {
-
             BaseObject obj = template.Create(GridToWorld(pos), transform);
 
             obj.Register(this);
@@ -221,10 +219,9 @@ namespace Cirrus.Circuit.World
 
         public GameObject Spawn(GameObject template, Vector3Int pos)
         {
-
-            GameObject obj = template.Create(GridToWorld(pos), transform);
-
-            return obj;
+            return template.Create(
+                GridToWorld(pos), 
+                transform);            
         }
 
 
