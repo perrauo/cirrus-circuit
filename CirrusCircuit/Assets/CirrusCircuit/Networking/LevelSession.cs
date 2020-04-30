@@ -302,7 +302,7 @@ namespace Cirrus.Circuit.Networking
         // https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid
         public void SetObject(Vector3Int pos, BaseObject obj)
         {
-            int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
+            int i = VectorUtils.ToIndex(pos, Level.Dimension.x, Level.Dimension.y);
 
             _objects[i] = obj;
 
@@ -312,7 +312,7 @@ namespace Cirrus.Circuit.Networking
         {
             Vector3Int pos = Level.WorldToGrid(obj.transform.position);
 
-            int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
+            int i = VectorUtils.ToIndex(pos, Level.Dimension.x, Level.Dimension.y);
 
             //Debug.Log("Registered: " + obj);
             _objects[i] = obj;
@@ -349,7 +349,7 @@ namespace Cirrus.Circuit.Networking
 
             _mutex.WaitOne();
 
-            int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
+            int i = VectorUtils.ToIndex(pos, Level.Dimension.x, Level.Dimension.y);
 
             //obj = _objects[i];
             _mutex.ReleaseMutex();

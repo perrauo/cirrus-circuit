@@ -86,7 +86,10 @@ namespace Cirrus.Circuit.World
 
         public void FixedUpdate()
         {
-            transform.position = Vector3.Lerp(transform.position, TargetPosition, _positionSpeed);
+            transform.position = Vector3.Lerp(
+                transform.position, 
+                TargetPosition, 
+                _positionSpeed);
         }
 
         public void Awake()
@@ -166,7 +169,7 @@ namespace Cirrus.Circuit.World
 
             _mutex.WaitOne();
 
-            int i = pos.x + _dimension.x * pos.y + _dimension.x * _dimension.y * pos.z;
+            int i = VectorUtils.ToIndex(pos, Dimension.x, Dimension.y);
 
             obj = _objects[i];
             _mutex.ReleaseMutex();
@@ -178,7 +181,7 @@ namespace Cirrus.Circuit.World
         {
             _mutex.WaitOne();
 
-            int i = pos.x + _dimension.x * pos.y + _dimension.x * _dimension.y * pos.z;
+            int i = VectorUtils.ToIndex(pos, Dimension.x, Dimension.y);
 
             _objects[i] = obj;
 
@@ -385,7 +388,7 @@ namespace Cirrus.Circuit.World
         {
             Vector3Int pos = WorldToGrid(obj.transform.position);
 
-            int i = pos.x + _dimension.x * pos.y + _dimension.x * _dimension.y * pos.z;
+            int i = VectorUtils.ToIndex(pos, Dimension.x, Dimension.y);
 
             _objects[i] = obj;
             return (GridToWorld(pos), pos);
