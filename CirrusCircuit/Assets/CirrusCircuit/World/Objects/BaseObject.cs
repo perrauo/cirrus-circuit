@@ -32,7 +32,7 @@ namespace Cirrus.Circuit.World.Objects
             RampMoving
         }
 
-        public enum ObjectId
+        public enum ObjectId : byte
         {
             None,
             Default,
