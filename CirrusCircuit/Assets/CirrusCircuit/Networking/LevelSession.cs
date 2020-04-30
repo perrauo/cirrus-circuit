@@ -128,6 +128,7 @@ namespace Cirrus.Circuit.Networking
                 }
 
                 res._levelSession = this;
+                res._level = Level;
                 res.gameObject.SetActive(true);
                 (res.Transform.position, res._gridPosition) = RegisterObject(res);
 
@@ -145,6 +146,7 @@ namespace Cirrus.Circuit.Networking
                         transform);                
                 info.Session._object._session = info.Session;
                 info.Session._object._levelSession = this;
+                info.Session._object._level = Level;
                 info.Session._object.ColorId = info.PlayerId;
                 info.Session._object.Color = player.Color;
                 info.Session._object._gridPosition = info.Position;
