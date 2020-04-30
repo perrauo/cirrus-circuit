@@ -22,12 +22,6 @@ namespace Cirrus.Circuit.World
             RequiredGemsCollected,
         }
 
-        public delegate void OnLevelCompleted(Rule rule);
-
-        public OnLevelCompleted OnLevelCompletedHandler;
-
-        public Door.OnScoreValueAdded OnScoreValueAddedHandler;
-
         [SerializeField]
         public static int CellSize = 2;
 
@@ -46,8 +40,6 @@ namespace Cirrus.Circuit.World
         public const int MaxY = 25;
         public const int MaxZ = 25;
         public const int MaxSize = MaxX * MaxY * MaxZ;
-
-        Mutex _mutex;
 
         [SerializeField]
         private BaseObject[] _objects;
@@ -93,8 +85,7 @@ namespace Cirrus.Circuit.World
         }
 
         public void Awake()
-        {
-            _mutex = new Mutex(false);
+        {            
             _objects = new BaseObject[Dimension.x * Dimension.y * Dimension.z];         
         }   
 
@@ -143,15 +134,11 @@ namespace Cirrus.Circuit.World
         }
 
         public void Set(Vector3Int pos, BaseObject obj)
-        {
-            _mutex.WaitOne();
-
+        {            
             int i = VectorUtils.ToIndex(pos, Dimension.x, Dimension.y);
 
             _objects[i] = obj;
-
-
-            _mutex.ReleaseMutex();
+            
         }
     
         private void OnSpawnTimeout()
