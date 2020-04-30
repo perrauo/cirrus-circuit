@@ -145,8 +145,7 @@ namespace Cirrus.Circuit.Networking
                         i++;
                     }
 
-
-                    NetworkServer.Spawn(levelSession.gameObject);
+                    NetworkServer.Spawn(levelSession.gameObject, NetworkServer.localConnection);
                     return levelSession;
                 }
 
