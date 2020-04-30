@@ -44,7 +44,7 @@ namespace Cirrus.Circuit.Networking
 
         Mutex _mutex;
 
-        public ObjectIdSyncList _objectIds = new ObjectIdSyncList(25);
+        public ObjectIdSyncList _objectIds = new ObjectIdSyncList();
 
 
         public void InitObjectIds()
@@ -107,9 +107,9 @@ namespace Cirrus.Circuit.Networking
                     int i = 0;                    
                     foreach (var obj in GameSession.Instance.SelectedLevel.Objects)
                     {
-                        if (obj == null) session.SetObjectId(i, BaseObject.ObjectId.None);
-                        else session.SetObjectId(i, obj.Id);
-                        i++;
+                        //if (obj == null) session.SetObjectId(i, BaseObject.ObjectId.None);
+                        //else session.SetObjectId(i, obj.Id);
+                        //i++;
                     }
 
                     return session;
