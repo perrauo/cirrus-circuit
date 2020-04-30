@@ -675,7 +675,7 @@ namespace Cirrus.Circuit.World.Objects
                     }
                     else
                     {
-                        TryFall();// State.Falling, Vector3Int.down);                                
+                        TryFall();                              
                     }
 
                     break;
@@ -770,7 +770,7 @@ namespace Cirrus.Circuit.World.Objects
 
                         if (_levelSession.TryGet(previousGridPosition + Vector3Int.up, out above))
                         {
-                            above.TryFall();// (State.Falling, Vector3Int.down);
+                            above.TryFall();
                         }
 
                         _state = target;
