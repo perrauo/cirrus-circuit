@@ -265,9 +265,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public void OnNextColorTimeOut()
         {
-            if (_state != State.LevelSelect) return;  
-
-            if (GameSession.Instance.LocalPlayers.Count == 0) return;
+            if (_state != State.LevelSelect) return;
 
             _nextColorIndex = _nextColorIndex + 1;
             _nextColorIndex = MathUtils.Wrap(_nextColorIndex, 0, GameSession.Instance.PlayerCount);
