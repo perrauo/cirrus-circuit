@@ -88,6 +88,7 @@ namespace Cirrus.Circuit.Networking
             }
 
             // TODO multiple object per square
+            Debug.Log("SESSION OBJECT COUNT " + _objectSessions.Count);
             foreach (var session in ObjectSessions)
             {
                 if (session.Index >= _objects.Length) continue;
@@ -161,7 +162,7 @@ namespace Cirrus.Circuit.Networking
 
             int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
 
-            Debug.Log("Registered: " + obj);
+            //Debug.Log("Registered: " + obj);
             _objects[i] = obj;
 
             return (Level.GridToWorld(pos), pos);
