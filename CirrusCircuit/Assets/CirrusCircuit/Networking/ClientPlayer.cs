@@ -53,7 +53,9 @@ namespace Cirrus.Circuit.Networking
 
         [Command]
         public void Cmd_CharacterSelectSlot_SetState(GameObject obj, CharacterSelectSlot.State target)
-        {            
+        {
+            if (obj == null) return;
+
             CharacterSelectSlot slot;
 
             //Debug.Log("RPC SELECT OUTER CMD");
@@ -67,6 +69,8 @@ namespace Cirrus.Circuit.Networking
         [Command]
         public void Cmd_CharacterSelectSlot_Scroll(GameObject obj, bool scroll)
         {
+            if (obj == null) return;
+
             CharacterSelectSlot slot;
             if ((slot = obj.GetComponent<CharacterSelectSlot>()) != null) slot.Rpc_Scroll(scroll);
         }
@@ -79,6 +83,8 @@ namespace Cirrus.Circuit.Networking
         [Command]
         public void Cmd_PlayerSession_SetCharacterId(GameObject obj, int characterId)
         {
+            if (obj == null) return;
+
             PlayerSession session;
             if ((session = obj.GetComponent<PlayerSession>()) != null) session._characterId = characterId;
         }
@@ -86,6 +92,8 @@ namespace Cirrus.Circuit.Networking
         [Command]
         public void Cmd_PlayerSession_SetScore(GameObject obj, float score)
         {
+            if (obj == null) return;
+
             PlayerSession session;
             if ((session = obj.GetComponent<PlayerSession>()) != null) session._score = score;
         }
@@ -97,6 +105,8 @@ namespace Cirrus.Circuit.Networking
         [Command]
         public void Cmd_LevelSession_SetRequiredGemCount(GameObject obj, int count)
         {
+            if (obj == null) return;
+
             LevelSession session;
             if ((session = obj.GetComponent<LevelSession>()) != null) session._requiredGemCount = count;
         }
@@ -129,6 +139,8 @@ namespace Cirrus.Circuit.Networking
         [Command]
         public void Cmd_GameSession_SetPlayerCount(GameObject obj, int count)
         {
+            if (obj == null) return;
+
             GameSession session;
             if ((session = obj.GetComponent<GameSession>()) != null) session._playerCount = count;
         }
@@ -137,6 +149,8 @@ namespace Cirrus.Circuit.Networking
         [Command]
         public void Cmd_GameSession_SetCharacterSelectReadyCount(GameObject obj, int count)
         {
+            if (obj == null) return;
+
             GameSession session;
             if ((session = obj.GetComponent<GameSession>()) != null) session._characterSelectReadyCount = count;
         }
@@ -214,15 +228,15 @@ namespace Cirrus.Circuit.Networking
         #endregion
 
 
-
-        #region Game Session
+        #region Object Session
 
         private Mutex Cmd_ObjectSession_TryMove_mutex = new Mutex();
 
         [Command]
         public void Cmd_ObjectSession_TryMove(GameObject obj, Vector3Int step)
         {
-            AssertGameObjectNull(obj);
+            //AssertGameObjectNull(obj);
+            if (obj == null) return;
 
             ObjectSession session;
             if ((session = obj.GetComponent<ObjectSession>()) != null)
@@ -242,7 +256,8 @@ namespace Cirrus.Circuit.Networking
         [Command]
         public void Cmd_ObjectSession_SetIndex(GameObject obj, int idx)
         {
-            AssertGameObjectNull(obj);
+            //AssertGameObjectNull(obj);
+            if (obj == null) return;
 
             ObjectSession session;
             if ((session = obj.GetComponent<ObjectSession>()) != null)
