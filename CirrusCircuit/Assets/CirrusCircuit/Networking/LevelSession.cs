@@ -150,10 +150,6 @@ namespace Cirrus.Circuit.Networking
                 info.Session._object._gridPosition = info.Position;
                 RegisterObject(info.Session._object);
 
-                // TODO idle after count down
-                //info.Session._object.TrySetState(BaseObject.State.Disabled); 
-                info.Session._object.TrySetState(BaseObject.State.Idle);
-
                 PlayerManager.Instance.LocalPlayers[player.LocalId]._character = (Character)info.Session._object;                
             }
 
@@ -167,7 +163,7 @@ namespace Cirrus.Circuit.Networking
                     obj._session = session;
                     session._object = obj;
 
-                    res.TrySetState(BaseObject.State.Idle);
+                    obj.TrySetState(BaseObject.State.Idle);
                 }
             }
         }
