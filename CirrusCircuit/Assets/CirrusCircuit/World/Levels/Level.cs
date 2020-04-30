@@ -42,9 +42,9 @@ namespace Cirrus.Circuit.World
         public Vector3Int Dimension => _dimension;    
         public int Size => Dimension.x * Dimension.y * Dimension.z;
 
-        public const int MaxX = 30;
-        public const int MaxY = 30;
-        public const int MaxZ = 30;
+        public const int MaxX = 25;
+        public const int MaxY = 25;
+        public const int MaxZ = 25;
         public const int MaxSize = MaxX * MaxY * MaxZ;
 
         Mutex _mutex;
