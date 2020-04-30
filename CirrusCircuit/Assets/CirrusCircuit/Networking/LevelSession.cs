@@ -44,17 +44,13 @@ namespace Cirrus.Circuit.Networking
 
         Mutex _mutex;
 
-        public readonly ObjectIdSyncList _objectIds = new ObjectIdSyncList(Level.MaxSize);
+        public ObjectIdSyncList _objectIds = new ObjectIdSyncList(25);
 
 
         public void InitObjectIds()
         {
             ClientPlayer.Instance.Cmd_LevelSession_InitObjectIds(gameObject);
         }
-
-
-        [SerializeField]
-        public float CameraSize = 10;
 
         public Vector3 TargetPosition;
 
