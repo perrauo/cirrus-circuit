@@ -96,6 +96,7 @@ namespace Cirrus.Circuit.Networking
                 if ((obj = _objects[session.Index]) != null)
                 {
                     obj._session = session;
+                    session._object = obj;
                 }
             }
 
