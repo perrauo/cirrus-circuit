@@ -76,9 +76,9 @@ namespace Cirrus.Circuit.Networking
         {
             base.OnStartClient();
 
-            _objects = new BaseObject[GameSession.Instance.SelectedLevel.Size];
+            _objects = new BaseObject[Level.Size];
 
-            foreach (var obj in GameSession.Instance.SelectedLevel.Objects)
+            foreach (var obj in Level.Objects)
             {
                 if (obj == null) continue;
 
@@ -161,6 +161,7 @@ namespace Cirrus.Circuit.Networking
 
             int i = pos.x + Level.Dimension.x * pos.y + Level.Dimension.x * Level.Dimension.y * pos.z;
 
+            Debug.Log("Registered: " + obj);
             _objects[i] = obj;
 
             return (Level.GridToWorld(pos), pos);
