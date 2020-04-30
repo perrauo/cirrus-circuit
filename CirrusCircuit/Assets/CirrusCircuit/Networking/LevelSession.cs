@@ -130,7 +130,7 @@ namespace Cirrus.Circuit.Networking
                 res.gameObject.SetActive(true);
                 RegisterObject(res);
 
-                info.Session._object.TrySetState(BaseObject.State.Idle);
+                res.TrySetState(BaseObject.State.Idle);
             }
             
 
