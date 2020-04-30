@@ -91,16 +91,6 @@ namespace Cirrus.Circuit.Networking
         #region Level Session
 
         [Command]
-        public void Cmd_LevelSession_InitObjectIds(GameObject obj)
-        {
-            LevelSession session;
-            if ((session = obj.GetComponent<LevelSession>()) != null)
-                session._objectIds = 
-                    new ObjectIdSyncList(
-                        GameSession.Instance.SelectedLevel.Size);
-        }
-
-        [Command]
         public void Cmd_LevelSession_SetRequiredGemCount(GameObject obj, int count)
         {
             LevelSession session;
@@ -111,8 +101,24 @@ namespace Cirrus.Circuit.Networking
         public void Cmd_LevelSession_SetObjectId(GameObject obj, int idx, BaseObject.ObjectId id)
         {
             LevelSession session;
-            if ((session = obj.GetComponent<LevelSession>()) != null) session._objectIds[idx] = id;
-        }    
+            if ((session = obj.GetComponent<LevelSession>()) != null)
+            {                
+                session._objectIds[idx] = id;
+            }
+        }
+
+        [Command]
+        public void Cmd_LevelSession_InitObjectIds(GameObject obj)
+        {
+            LevelSession session;
+            if ((session = obj.GetComponent<LevelSession>()) != null)
+            {
+                Debug.Log("Init Object Ids");
+                session._objectIds =
+                    new ObjectIdSyncList(
+                        GameSession.Instance.SelectedLevel.Size);
+            }
+        }
 
         #endregion
 
