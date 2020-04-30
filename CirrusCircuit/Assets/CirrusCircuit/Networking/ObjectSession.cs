@@ -20,7 +20,7 @@ namespace Cirrus.Circuit.Networking
         [SerializeField]        
         public int _index = -1;
 
-        private Mutex _mutex;
+        private Mutex _mutex = new Mutex();
 
         public int Index {
             get => _index;
