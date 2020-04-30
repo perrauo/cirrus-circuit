@@ -134,7 +134,6 @@ namespace Cirrus.Circuit.Networking
                 res.TrySetState(BaseObject.State.Idle);
             }
             
-
             foreach (var session in ObjectSessions)
             {
                 if (session.Index >= _objects.Length) continue;

@@ -661,8 +661,8 @@ namespace Cirrus.Circuit
                     break;
 
                 case State.Round:
-                    if (player._character != null)
-                        player._character?.TryMove(axis);
+                    if (player._character != null) player._character?.TryMove(axis);
+
                     break;
 
                 case State.Score:

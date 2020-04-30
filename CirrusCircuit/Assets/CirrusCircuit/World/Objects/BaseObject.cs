@@ -238,7 +238,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual bool TryMove(
             Vector3Int step, 
-            BaseObject incoming = null)
+            BaseObject incoming)
         {
             return TrySetState(
                 State.Moving, 
