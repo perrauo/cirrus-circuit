@@ -208,12 +208,12 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
-        public virtual void TryFall()
+        public virtual void RemoteTryFall()
         {
             _session.TryFall();
         }
 
-        public virtual void TryMove(Vector3Int step)
+        public virtual void RemoteTryMove(Vector3Int step)
         {
             _session.TryMove(step);
         }
@@ -406,7 +406,7 @@ namespace Cirrus.Circuit.World.Objects
                             {
                                 TrySetState(State.Idle);
                             }
-                            else TryFall();
+                            else RemoteTryFall();
                         }
                         else _destination.Accept(this);                        
                     }
@@ -674,7 +674,7 @@ namespace Cirrus.Circuit.World.Objects
                     }
                     else
                     {
-                        TryFall();                              
+                        RemoteTryFall();                              
                     }
 
                     break;
@@ -769,7 +769,7 @@ namespace Cirrus.Circuit.World.Objects
 
                         if (_levelSession.TryGet(previousGridPosition + Vector3Int.up, out above))
                         {
-                            above.TryFall();
+                            above.RemoteTryFall();
                         }
 
                         _state = target;
