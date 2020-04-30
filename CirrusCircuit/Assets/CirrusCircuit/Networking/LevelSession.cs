@@ -134,18 +134,6 @@ namespace Cirrus.Circuit.Networking
                 res.TrySetState(BaseObject.State.Idle);
             }
             
-            foreach (var session in ObjectSessions)
-            {
-                if (session.Index >= _objects.Length) continue;
-
-                BaseObject obj = null;
-                if ((obj = _objects[session.Index]) != null)
-                {
-                    obj._session = session;
-                    session._object = obj;
-                }
-            }
-
             foreach (var info in PlaceholderInfos)
             {                
                 PlayerSession player = GameSession.Instance.GetPlayer(info.PlayerId);
@@ -167,6 +155,18 @@ namespace Cirrus.Circuit.Networking
                 info.Session._object.TrySetState(BaseObject.State.Idle);
 
                 PlayerManager.Instance.LocalPlayers[player.LocalId]._character = (Character)info.Session._object;                
+            }
+
+            foreach (var session in ObjectSessions)
+            {
+                if (session.Index >= _objects.Length) continue;
+
+                BaseObject obj = null;
+                if ((obj = _objects[session.Index]) != null)
+                {
+                    obj._session = session;
+                    session._object = obj;
+                }
             }
         }
 
