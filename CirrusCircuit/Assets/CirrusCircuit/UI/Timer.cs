@@ -43,7 +43,8 @@ namespace Cirrus.Circuit.UI
         public void Awake()
         {
             GameSession.OnStartClientStaticHandler += OnClientStarted;
-            Game.Instance.OnRoundStartedHandler += OnNewRound;            
+            Game.Instance.OnRoundStartedHandler += OnRoundStarted;
+            //Game.Instance.OnR
         }
 
         public void OnClientStarted(bool enable)
@@ -57,9 +58,14 @@ namespace Cirrus.Circuit.UI
                 Time = _round.Time;
         }
 
-        public void OnNewRound()
+        public void OnRoundStarted()
         {            
             RoundSession.Instance.OnIntermissionHandler += OnIntermission;
+            Enabled = true;
+        }
+
+        public void OnRoundEnded()
+        {            
             Enabled = true;
         }
 

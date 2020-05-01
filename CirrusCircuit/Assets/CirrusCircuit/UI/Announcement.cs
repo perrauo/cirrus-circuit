@@ -87,25 +87,19 @@ namespace Cirrus.Circuit.UI
             _timer = new Circuit.Timer(_time, start: false, repeat: false);
             _timer.OnTimeLimitHandler += OnTimeOut;
 
-            GameSession.OnStartClientStaticHandler += OnSessionClientStarted;            
+            GameSession.OnStartClientStaticHandler += OnSessionClientStarted;
+            Game.Instance.OnRoundStartedHandler += OnNewRound;
         }
 
         public void OnSessionClientStarted(bool enable)
         {
-            if (enable)
-            {
-                GameSession.Instance.OnNewRoundHandler += OnNewRound;
-            }
-            else
-            {
-                GameSession.Instance.OnNewRoundHandler -= OnNewRound;
-            }
+
         }
 
-        public void OnNewRound(RoundSession round)
+        public void OnNewRound()
         {
-            round.OnRoundEndHandler += OnRoundEnd;
-            round.OnIntermissionHandler += OnIntermission;
+            RoundSession.Instance.OnRoundEndHandler += OnRoundEnd;
+            RoundSession.Instance.OnIntermissionHandler += OnIntermission;
         }
 
         public void OnIntermission(int count)

@@ -35,16 +35,14 @@ namespace Cirrus.Circuit.UI
         private void OnNewRound()
         {
             RoundSession.Instance.OnCountdownHandler += OnRoundCountdown;
-            RoundSession.Instance.OnIntermissionHandler += OnIntermission;
+            //RoundSession.Instance.OnIntermissionHandler += OnIntermission;
         }
 
 
         public int Number
         {
-            get
-            {
-                return _value;
-            }
+            get => _value;
+            
 
             set
             {

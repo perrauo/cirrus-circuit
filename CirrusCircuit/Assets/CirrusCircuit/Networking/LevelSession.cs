@@ -29,6 +29,7 @@ namespace Cirrus.Circuit.Networking
             public int _characterId = -1;
             public CharacterAsset Character => CharacterLibrary.Instance.Characters[_characterId];
             public Vector3Int Position;
+            public Quaternion Rotation;
         }
 
         [Serializable]
@@ -119,7 +120,11 @@ namespace Cirrus.Circuit.Networking
 
                 if (obj is Placeholder) continue;
 
-                var res = obj.Create(obj.transform.position, transform);
+                var res = obj.Create(
+                    obj.Transform.position,
+                    obj.Transform.rotation,
+                    transform
+                    );
 
                 if (res is Door)
                 {
@@ -128,7 +133,9 @@ namespace Cirrus.Circuit.Networking
                 }
 
                 res._levelSession = this;
-                res._level = Level;                
+                res._level = Level;
+                res.Color = PlayerManager.Instance.GetColor(res.ColorId);
+
                 res.gameObject.SetActive(true);
                 (res.Transform.position, res._gridPosition) = RegisterObject(res);
             }
@@ -142,7 +149,8 @@ namespace Cirrus.Circuit.Networking
                 info.Session._object = 
                     info.Character.Create(
                         Level.GridToWorld(info.Position),
-                        transform);                
+                        transform,
+                        info.Rotation);                
                 info.Session._object._session = info.Session;
                 info.Session._object._levelSession = this;
                 info.Session._object._level = Level;
@@ -153,7 +161,6 @@ namespace Cirrus.Circuit.Networking
 
                 if (player.ServerId == localPlayer.ServerId)
                     localPlayer._character = (Character)info.Session._object;
-
             }
 
             foreach (var session in ObjectSessions)
@@ -213,7 +220,8 @@ namespace Cirrus.Circuit.Networking
                                         var info = new PlaceholderInfo()
                                         {
                                             _session = gobj,
-                                            Position = obj._gridPosition
+                                            Position = obj._gridPosition,
+                                            Rotation = obj.Transform.rotation
                                         };
 
                                         placeholders.Add(info);
