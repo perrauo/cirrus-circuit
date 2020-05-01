@@ -8,6 +8,7 @@ using UnityEngine;
 
 using Cirrus.Circuit.World;
 using System;
+using Cirrus.Circuit.World.Objects;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -28,6 +29,20 @@ namespace Cirrus.Circuit.Networking
                 _index = value;
                 ClientPlayer.Instance.Cmd_ObjectSession_SetIndex(gameObject, _index);
             }
+        }
+
+        [ClientRpc]
+        public void Rpc_Interact(GameObject sourceObject)
+        {
+            ObjectSession sourceSession = null;
+            if ((sourceSession = sourceObject.GetComponent<ObjectSession>()) != null)
+            {
+                _mutex.WaitOne();
+
+                _object._Interact(sourceSession._object);
+
+                _mutex.ReleaseMutex();
+            }            
         }
 
         [ClientRpc]
@@ -58,6 +73,11 @@ namespace Cirrus.Circuit.Networking
         public void TryFall()
         {
             ClientPlayer.Instance.Cmd_ObjectSession_TryFall(gameObject);
+        }
+
+        public void Interact(BaseObject source)
+        {
+            ClientPlayer.Instance.Cmd_ObjectSession_Interact(gameObject, source._session.gameObject);
         }
 
         public bool IsMoveAllowed(Vector3Int step)

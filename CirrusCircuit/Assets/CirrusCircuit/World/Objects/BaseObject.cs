@@ -199,7 +199,15 @@ namespace Cirrus.Circuit.World.Objects
             FSMUpdate();
         }
 
-        public virtual void Interact(BaseObject source)
+        //public virtual void RemoteInteract()
+
+
+        public virtual void RemoteInteract(BaseObject source)
+        {
+            _session.Interact(source);
+        }
+
+        public virtual void _Interact(BaseObject source)
         {
             if (ColorId >= PlayerManager.PlayerMax)
             {
@@ -207,6 +215,7 @@ namespace Cirrus.Circuit.World.Objects
                 Color = source.Color;
             }
         }
+
 
         public virtual void RemoteTryFall()
         {
@@ -295,8 +304,7 @@ namespace Cirrus.Circuit.World.Objects
                 if (_user.TryMove(step, incoming)) return true;
             }
 
-            return true;            
-
+            return true;
         }
 
 
@@ -714,7 +722,7 @@ namespace Cirrus.Circuit.World.Objects
                         out pushed, 
                         out destination))
                     {
-                        if (pushed) pushed.Interact(this);
+                        if (pushed) pushed.RemoteInteract(this);
                         _destination = destination;
                         _gridPosition = newGridPosition;
                         _targetPosition = _level.GridToWorld(_gridPosition);
@@ -739,7 +747,7 @@ namespace Cirrus.Circuit.World.Objects
                         out destination))
                     {
                         //destination.
-                        if(pushed) pushed.Interact(this);                        
+                        if(pushed) pushed.RemoteInteract(this);                        
 
                         _destination = destination;
                         _gridPosition = newGridPosition;

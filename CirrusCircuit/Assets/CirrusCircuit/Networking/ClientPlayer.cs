@@ -239,6 +239,29 @@ namespace Cirrus.Circuit.Networking
 
         #region Object Session
 
+        private Mutex Cmd_ObjectSession_Interact_mutex = new Mutex();
+
+        [Command]
+        public void Cmd_ObjectSession_Interact(GameObject obj, GameObject sourceObj)
+        {
+            //AssertGameObjectNull(obj);
+            if (obj == null) return;
+
+            ObjectSession session;
+            if ((session = obj.GetComponent<ObjectSession>()) != null)
+            {
+                Cmd_ObjectSession_Interact_mutex.WaitOne();
+
+                // Server holds the truth
+                //if (session.IsFallAllowed())
+                {
+                    session.Rpc_Interact(sourceObj);
+                }
+
+                Cmd_ObjectSession_Interact_mutex.ReleaseMutex();
+            }
+        }    
+
         private Mutex Cmd_ObjectSession_TryFall_mutex = new Mutex();
 
         [Command]
