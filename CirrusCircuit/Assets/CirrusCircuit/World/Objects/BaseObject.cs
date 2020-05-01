@@ -199,18 +199,18 @@ namespace Cirrus.Circuit.World.Objects
             FSMUpdate();
         }
 
-        public virtual void RemoteInteract(BaseObject source)
+        public virtual void Cmd_Interact(BaseObject source)
         {
             _session.Interact(source);
         }
 
 
-        public virtual void RemoteTryFall()
+        public virtual void Cmd_TryFall()
         {
             _session.TryFall();
         }
 
-        public virtual void RemoteTryMove(Vector3Int step)
+        public virtual void Cmd_TryMove(Vector3Int step)
         {
             _session.TryMove(step);
         }
@@ -412,7 +412,7 @@ namespace Cirrus.Circuit.World.Objects
                             {
                                 TrySetState(State.Idle);
                             }
-                            else RemoteTryFall();
+                            else Cmd_TryFall();
                         }
                         else _destination.Accept(this);                        
                     }
@@ -680,7 +680,7 @@ namespace Cirrus.Circuit.World.Objects
                     }
                     else
                     {
-                        RemoteTryFall();                              
+                        Cmd_TryFall();                              
                     }
 
                     break;
@@ -720,7 +720,7 @@ namespace Cirrus.Circuit.World.Objects
                         out pushed, 
                         out destination))
                     {
-                        if (pushed) pushed.RemoteInteract(this);
+                        if (pushed) pushed.Cmd_Interact(this);
                         _destination = destination;
                         _gridPosition = newGridPosition;
                         _targetPosition = _level.GridToWorld(_gridPosition);
@@ -745,7 +745,7 @@ namespace Cirrus.Circuit.World.Objects
                         out destination))
                     {
                         //destination.
-                        if(pushed) pushed.RemoteInteract(this);                        
+                        if(pushed) pushed.Cmd_Interact(this);                        
 
                         _destination = destination;
                         _gridPosition = newGridPosition;
@@ -775,7 +775,7 @@ namespace Cirrus.Circuit.World.Objects
 
                         if (_levelSession.TryGet(previousGridPosition + Vector3Int.up, out above))
                         {
-                            above.RemoteTryFall();
+                            above.Cmd_TryFall();
                         }
 
                         _state = target;

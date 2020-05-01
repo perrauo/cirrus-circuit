@@ -122,24 +122,24 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 //moving in both directions, prioritize later
                 if (_wasMovingVertical)
                 {
-                    base.RemoteTryMove(stepHorizontal);
+                    base.Cmd_TryMove(stepHorizontal);
                     _guide.Show(stepHorizontal);
                 }
                 else
                 {
-                    base.RemoteTryMove(stepVertical);
+                    base.Cmd_TryMove(stepVertical);
                     _guide.Show(stepVertical);
                 }
             }
             else if (isMovingHorizontal)
             {
-                RemoteTryMove(stepHorizontal);                
+                Cmd_TryMove(stepHorizontal);                
                 _guide.Show(stepHorizontal);
                 _wasMovingVertical = false;                
             }
             else if (isMovingVertical)
             {
-                RemoteTryMove(stepVertical);                
+                Cmd_TryMove(stepVertical);                
                 _guide.Show(stepVertical);
                 _wasMovingVertical = true;                
             }

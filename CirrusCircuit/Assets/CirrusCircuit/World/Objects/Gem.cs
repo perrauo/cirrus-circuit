@@ -31,9 +31,9 @@ namespace Cirrus.Circuit.World.Objects
         //    return Instantiate(gameObject, position, Quaternion.identity, parent).GetComponent<Gem>();
         //}
 
-        public override void RemoteInteract(BaseObject source)
+        public override void Cmd_Interact(BaseObject source)
         {
-            base.RemoteInteract(source);
+            base.Cmd_Interact(source);
 
             if (ColorId >= PlayerManager.PlayerMax)
             {

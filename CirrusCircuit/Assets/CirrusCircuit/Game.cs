@@ -180,7 +180,7 @@ namespace Cirrus.Circuit
 
         public void OnCharacterSelected(int playerCount)
         {
-            RemoteSetState(State.LevelSelection);
+            Cmd_SetState(State.LevelSelection);
         }
 
 
@@ -200,7 +200,7 @@ namespace Cirrus.Circuit
             FSMHandleAction1(player);
         }
 
-        public void RemoteScrollLevel(int delta)
+        public void Cmd_ScrollLevel(int delta)
         {
             ClientPlayer.Instance.Cmd_Game_ScrollLevel(delta);
         }
@@ -267,7 +267,7 @@ namespace Cirrus.Circuit
             }
         }
 
-        public bool RemoteSetState(State transition, bool transitionEffect = true)
+        public bool Cmd_SetState(State transition, bool transitionEffect = true)
         {
             ClientPlayer.Instance.Cmd_Game_SetState(transition, transitionEffect);
             return true;
@@ -651,7 +651,7 @@ namespace Cirrus.Circuit
                                 0, 
                                 _levels.Length - 1);
 
-                        if (prev != SelectedLevelIndex) RemoteScrollLevel(delta);                                                    
+                        if (prev != SelectedLevelIndex) Cmd_ScrollLevel(delta);                                                    
                     }
 
                     break;
@@ -728,7 +728,7 @@ namespace Cirrus.Circuit
                     break;
 
                 case State.LevelSelection:
-                    RemoteSetState(State.BeginRound);
+                    Cmd_SetState(State.BeginRound);
                     break;
 
                 case State.CharacterSelection:
