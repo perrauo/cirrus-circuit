@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc4677bb2766aa44bb839d64c97005cb, type: 3}
   m_Name: ObjectLibrary
   m_EditorClassIdentifier: 
-  Objects: []
+  Objects:
+  - {fileID: 2925202201668641964, guid: bf4551c291cbae542942abbc6d0da8b0, type: 3}
+  - {fileID: 3979356921097635732, guid: 772d186bee4d99a4fb26a0bccacf80e8, type: 3}
+  - {fileID: 772353883658427710, guid: daef428e53c17e24099253f4ec95c844, type: 3}
   Gems:
   - {fileID: 4001282745868766237, guid: bf4551c291cbae542942abbc6d0da8b0, type: 3}
   - {fileID: 2893152209011896101, guid: 772d186bee4d99a4fb26a0bccacf80e8, type: 3}
