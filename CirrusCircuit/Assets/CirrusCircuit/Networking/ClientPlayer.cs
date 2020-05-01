@@ -236,7 +236,6 @@ namespace Cirrus.Circuit.Networking
 
         #endregion
 
-
         #region Object Session
 
         private Mutex Cmd_ObjectSession_Interact_mutex = new Mutex();
@@ -323,6 +322,52 @@ namespace Cirrus.Circuit.Networking
         }
 
         #endregion
+
+
+        #region Round Session
+
+        [Command]
+        public void Cmd_OnIntermissionTimeoutBeginCountdown(GameObject obj)
+        {
+            //AssertGameObjectNull(obj);
+            if (obj == null) return;
+
+            RoundSession session;
+            if ((session = obj.GetComponent<RoundSession>()) != null)
+            {
+                session.Rpc_OnTimeout();
+            }
+        }
+
+        [Command]
+        public void Cmd_RoundSession_OnTimeout(GameObject obj)
+        {
+            //AssertGameObjectNull(obj);
+            if (obj == null) return;
+
+            RoundSession session;
+            if ((session = obj.GetComponent<RoundSession>()) != null)
+            {
+                session.Rpc_OnTimeout();
+            }
+        }
+
+
+        [Command]
+        public void Cmd_RoundSession_OnRoundEnd(GameObject obj)
+        {
+            //AssertGameObjectNull(obj);
+            if (obj == null) return;
+
+            RoundSession session;
+            if ((session = obj.GetComponent<RoundSession>()) != null)
+            {
+                session.Rpc_OnRoundEnd();
+            }
+        }
+
+        #endregion
+
 
     }
 }

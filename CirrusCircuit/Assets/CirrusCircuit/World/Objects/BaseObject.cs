@@ -199,21 +199,9 @@ namespace Cirrus.Circuit.World.Objects
             FSMUpdate();
         }
 
-        //public virtual void RemoteInteract()
-
-
         public virtual void RemoteInteract(BaseObject source)
         {
             _session.Interact(source);
-        }
-
-        public virtual void _Interact(BaseObject source)
-        {
-            if (ColorId >= PlayerManager.PlayerMax)
-            {
-                ColorId = source.ColorId;
-                Color = source.Color;
-            }
         }
 
 
@@ -225,6 +213,16 @@ namespace Cirrus.Circuit.World.Objects
         public virtual void RemoteTryMove(Vector3Int step)
         {
             _session.TryMove(step);
+        }
+
+
+        public virtual void _Interact(BaseObject source)
+        {
+            if (ColorId >= PlayerManager.PlayerMax)
+            {
+                ColorId = source.ColorId;
+                Color = source.Color;
+            }
         }
 
         public virtual void _TryFall()

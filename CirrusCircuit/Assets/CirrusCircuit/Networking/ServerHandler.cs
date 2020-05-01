@@ -24,9 +24,9 @@ namespace Cirrus.Circuit.Networking
             NetworkServer.RegisterHandler<ClientPlayerMessage>(OnPlayerJoinMessage);
         }
 
-        public override void InitRound(Level level)
+        public override void StartRound()
         {
-            base.InitRound(level);
+            base.StartRound();
 
             ServerUtils.TryCreateNetworkObject(                
                 NetworkingLibrary.Instance.RoundSession.gameObject,

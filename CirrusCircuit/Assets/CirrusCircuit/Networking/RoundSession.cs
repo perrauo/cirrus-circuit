@@ -60,13 +60,19 @@ namespace Cirrus.Circuit.Networking
         public int Id => _id;
 
         private static RoundSession _instance;
-        
+
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+
+            _countDownTimer.OnTimeLimitHandler += Cmd_OnTimeout;
+            _intermissionTimer.OnTimeLimitHandler += Cmd_OnIntermissionTimeoutBeginCountdown;
+
+        }
+
         public override void OnStartClient()
         {
-            base.OnStartClient();
-
-            _countDownTimer.OnTimeLimitHandler += OnTimeOut;
-            _intermissionTimer.OnTimeLimitHandler += OnIntermissionTimeoutBeginCountdown;
+            base.OnStartClient();            
 
             Game.Instance._SetState(Game.State.Round);
         }        
@@ -114,44 +120,87 @@ namespace Cirrus.Circuit.Networking
         public void BeginIntermission()
         {
             OnIntermissionHandler?.Invoke(_id);
-            _intermissionTimer.Start();
+            if(CustomNetworkManager.IsServer) _intermissionTimer.Start();
         }
-        
-        public void OnIntermissionTimeoutBeginCountdown()
+
+
+        [ClientRpc]
+        public void Rpc_OnIntermissionTimeoutBeginCountdown()
+        {
+            _OnIntermissionTimeoutBeginCountdown();
+        }
+
+        public void _OnIntermissionTimeoutBeginCountdown()
         {
             OnCountdownHandler?.Invoke(_countDown);
-            _countDownTimer.Start();
+            if(CustomNetworkManager.IsServer) _countDownTimer.Start();
         }
+
 
         public void Terminate()
         {
             _timer.Stop();
             _countDownTimer.Stop();
             _intermissionTimer.Stop();
-            OnRoundEnd();
+            Cmd_OnRoundEnd();
         }
 
-        private void OnTimeOut()
+
+        private void Cmd_OnTimeout()
+        {
+            ClientPlayer.Instance.Cmd_RoundSession_OnTimeout(gameObject);
+        }
+
+
+        public void Cmd_OnIntermissionTimeoutBeginCountdown()
+        {
+            ClientPlayer.Instance.Cmd_OnIntermissionTimeoutBeginCountdown(gameObject);
+        }
+
+        [ClientRpc]
+        public void Rpc_OnTimeout()
+        {
+            _OnTimeOut();
+        }
+
+        private void _OnTimeOut()
         {
             _countDown--;
 
             if (_countDown < -1)
             {
                 OnCountdownHandler?.Invoke(_countDown);
-                _countDownTimer.Stop();
+
+                if(CustomNetworkManager.IsServer) _countDownTimer.Stop();
             }
             else if (_countDown < 0)
             {
                 OnCountdownHandler?.Invoke(_countDown);
                 OnRoundBeginHandler.Invoke(_id);
-                _timer.Start();
-                _timer.OnTimeLimitHandler += OnRoundEnd;
+
+                if (CustomNetworkManager.IsServer)
+                {
+                    _timer.Start();
+                    _timer.OnTimeLimitHandler += Cmd_OnRoundEnd;
+                }
+
                 return;
             }
             else OnCountdownHandler?.Invoke(_countDown);
         }
 
-        public void OnRoundEnd()
+        public void Cmd_OnRoundEnd()
+        {
+            ClientPlayer.Instance.Cmd_RoundSession_OnRoundEnd(gameObject);
+        }
+
+        [ClientRpc]
+        public void Rpc_OnRoundEnd()
+        {
+            _OnRoundEnd();
+        }
+
+        public void _OnRoundEnd()
         {
             OnRoundEndHandler.Invoke();
         }

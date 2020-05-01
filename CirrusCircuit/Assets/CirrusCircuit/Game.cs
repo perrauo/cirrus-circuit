@@ -559,8 +559,8 @@ namespace Cirrus.Circuit
                         level.gameObject.SetActive(false);
                     }
 
-                    GameSession.Instance.SelectedLevel.gameObject.SetActive(false);                    
-                    CustomNetworkManager.Instance.InitRound(GameSession.Instance.SelectedLevel);
+                    GameSession.Instance.SelectedLevel.gameObject.SetActive(false);
+                    CustomNetworkManager.Instance.StartRound();
 
                     _state = target;
                     //TrySetState(State.Round);

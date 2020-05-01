@@ -69,7 +69,7 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
 
-        public virtual void InitRound(Level level)
+        public virtual void StartRound()
         {
 
         }
@@ -81,7 +81,8 @@ namespace Cirrus.Circuit.Networking
         private TelepathyTransport Transport => (TelepathyTransport)transport;
         private NetworkManagerHandler _handler;
 
-        public bool IsServer => _handler is ServerHandler;
+        //public bool IsServer => _handler is ServerHandler;
+        public static bool IsServer => Instance._handler is ServerHandler;
         public ClientHandler ClientHandler => IsServer ? null : (ClientHandler)_handler;
         public ServerHandler ServerHandler => IsServer ? (ServerHandler)_handler : null;
 
@@ -252,9 +253,9 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
 
-        public void InitRound(Level level)
+        public void StartRound()
         {
-            _handler.InitRound(level);
+            _handler.StartRound();
         }
     }
 
