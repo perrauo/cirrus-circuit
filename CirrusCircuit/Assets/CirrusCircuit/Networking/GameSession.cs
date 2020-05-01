@@ -35,11 +35,7 @@ namespace Cirrus.Circuit.Networking
 
         protected static GameSession _instance;
 
-        public static bool IsNull => _instance == null;
-
-        public Event<RoundSession> OnNewRoundHandler;
-
-        private bool[] _wasMovingVertical = new bool[PlayerManager.PlayerMax];
+        public static bool IsNull => _instance == null;       
 
         [SyncVar]
         [SerializeField]        

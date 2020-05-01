@@ -43,20 +43,12 @@ namespace Cirrus.Circuit.UI
         public void Awake()
         {
             GameSession.OnStartClientStaticHandler += OnClientStarted;
+            Game.Instance.OnRoundStartedHandler += OnNewRound;            
         }
 
         public void OnClientStarted(bool enable)
         {
-            if (enable)
-            {
-                GameSession.Instance.OnNewRoundHandler += OnNewRound;
-                GameSession.Instance.OnNewRoundHandler += OnRound;
-            }
-            else
-            {
-                GameSession.Instance.OnNewRoundHandler -= OnNewRound;
-                GameSession.Instance.OnNewRoundHandler -= OnRound;
-            }
+
         }
 
         public void Update()
@@ -65,14 +57,9 @@ namespace Cirrus.Circuit.UI
                 Time = _round.Time;
         }
 
-        public void OnNewRound(RoundSession round)
-        {
-            _round = round;
-            _round.OnIntermissionHandler += OnIntermission;
-        }
-
-        public void OnRound(RoundSession round)
-        {
+        public void OnNewRound()
+        {            
+            RoundSession.Instance.OnIntermissionHandler += OnIntermission;
             Enabled = true;
         }
 
@@ -80,7 +67,6 @@ namespace Cirrus.Circuit.UI
         {
             Enabled = true;
         }
-
 
 
     }

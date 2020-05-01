@@ -22,26 +22,20 @@ namespace Cirrus.Circuit.UI
         public void Awake()
         {            
             GameSession.OnStartClientStaticHandler += OnClientStarted;
+            Game.Instance.OnRoundStartedHandler += OnNewRound;
         }
 
         public void OnClientStarted(bool enable)
         {
-            if (enable)
-            {
-                GameSession.Instance.OnNewRoundHandler += OnNewRound;
-            }
-            else
-            {
-                GameSession.Instance.OnNewRoundHandler -= OnNewRound;
-            }
+
 
         }
 
 
-        private void OnNewRound(RoundSession round)
+        private void OnNewRound()
         {
-            round.OnCountdownHandler += OnRoundCountdown;
-            //round.OnIntermissionHandler += OnIntermission;
+            RoundSession.Instance.OnCountdownHandler += OnRoundCountdown;
+            RoundSession.Instance.OnIntermissionHandler += OnIntermission;
         }
 
 
@@ -95,10 +89,5 @@ namespace Cirrus.Circuit.UI
                 transform.GetChild(0).gameObject.SetActive(_enabled);
             }
         }
-
-
-
-
-
     }
 }
