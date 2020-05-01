@@ -104,6 +104,25 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
+        public void FixedUpdate()
+        {
+            transform.position = Vector3.Lerp(transform.position, TargetPosition, Level._positionSpeed);
+        }
+
+        public void Awake()
+        {
+            _mutex = new Mutex(false);
+
+            if (CustomNetworkManager.IsServer)
+            {
+                _randomDropRainTimer = new Timer(
+                    Level.RandomDropRainTime,
+                    start: false,
+                    repeat: true);
+
+                _randomDropRainTimer.OnTimeLimitHandler += Cmd_OnRainTimeout;
+            }
+        }
 
         // TODO multiple object per square
         public override void OnStartClient()
@@ -296,14 +315,10 @@ namespace Cirrus.Circuit.Networking
             Vector3Int position = source._gridPosition + step;
 
             if (Level.IsWithinBounds(position))
-            {
                 return InnerIsMoveAllowed(source, position, direction);
-            }
 
             return false;
         }
-
-
 
         // https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid
         public void SetObject(Vector3Int pos, BaseObject obj)
@@ -332,41 +347,17 @@ namespace Cirrus.Circuit.Networking
             SetObject(obj._gridPosition, null);
         }
 
-        public void FixedUpdate()
-        {
-            transform.position = Vector3.Lerp(transform.position, TargetPosition, Level._positionSpeed);
-        }
-
-        public void Awake()
-        {
-            _mutex = new Mutex(false);
-
-            _randomDropRainTimer = new Timer(
-                Level.RandomDropRainTime, 
-                start: false, 
-                repeat: true);
-
-            _randomDropRainTimer.OnTimeLimitHandler += OnRainTimeout;
-
-            _randomDropSpawnTimer = new Timer(
-                Level.RandomDropSpawnTime, 
-                start: false, 
-                repeat: false);
-
-            _randomDropSpawnTimer.OnTimeLimitHandler += OnSpawnTimeout;
-        }
 
         public bool TryGet(Vector3Int pos, out BaseObject obj)
         {
             obj = null;
-            if (!Level.IsWithinBounds(pos))
-                return false;
+            if (!Level.IsWithinBounds(pos)) return false;
 
             _mutex.WaitOne();
 
             int i = VectorUtils.ToIndex(pos, Level.Dimension.x, Level.Dimension.y);
-
             obj = _objects[i];
+
             _mutex.ReleaseMutex();
             return obj != null;
         }
@@ -424,9 +415,7 @@ namespace Cirrus.Circuit.Networking
         {
             destination = null;
             pushed = null;
-
-            Vector3Int direction = step;//.SetXYZ(step.x, 0, step.z);
-
+            Vector3Int direction = step;
             position = source._gridPosition + step;
 
             if (Level.IsWithinBounds(position))
@@ -482,23 +471,7 @@ namespace Cirrus.Circuit.Networking
             }
 
             return false;
-        }
-
-        private void OnSpawnTimeout()
-        {
-            // TODO
-        }
-
-        public void Rain(BaseObject template)
-        {
-            Vector3Int position = new Vector3Int(
-                UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.x - Level.Offset.x - 1),
-                Level.Dimension.y - 1,
-                UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.z - Level.Offset.z - 1));
-
-            Spawn(template, position);
-        }
-
+        }        
 
         public BaseObject Spawn(BaseObject template, Vector3Int pos)
         {
@@ -512,27 +485,56 @@ namespace Cirrus.Circuit.Networking
         }
 
 
-        public GameObject Spawn(GameObject template, Vector3Int pos)
-        {
-
+        public void Cmd_Spawn(GameObject template, Vector3Int pos)
+        {        
             GameObject obj = template.Create(Level.GridToWorld(pos), transform);
 
-            return obj;
+            if (CustomNetworkManager.IsServer)
+            {
+                //obj.
+            }
+
+            //return obj;
         }
 
-        public void OnRainTimeout()
+        public void Rpc_Spawn(int objId)
+        {
+
+        }
+
+        public void _Spawn(GameObject template, Vector3Int pos)
+        {
+
+        }
+
+
+
+        public void Cmd_OnRainTimeout()
         {
             Vector3Int position = new Vector3Int(
                 UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.x - Level.Offset.x - 1),
                 Level.Dimension.y - 1,
                 UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.z - Level.Offset.z - 1));
 
-            Rain(
-                ObjectLibrary.Instance.SimpleGems[UnityEngine.Random.Range(0, ObjectLibrary.Instance.SimpleGems.Length)]);
+            int gemId = UnityEngine.Random.Range(0, ObjectLibrary.Instance.Objects.Length);
+
+            ClientPlayer.Instance.Cmd_LevelSession_OnRainTimeout(gameObject, position, gemId);
+            
         }
 
+        [ClientRpc]
+        public void Rpc_OnRainTimeout(Vector3Int pos, int gemId)
+        {
+            _OnRainTimeout(pos, gemId);
+        }
 
-        public void OnBeginRound(int number)
+        public void _OnRainTimeout(Vector3Int pos, int gemId)
+        {
+            var template = ObjectLibrary.Instance.Objects[gemId];
+            Spawn(template, pos);
+        }
+
+        public void OnRoundStarted(int id)
         {
             //foreach (BaseObject obj in _objects)
             //{

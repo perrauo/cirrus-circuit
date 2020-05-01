@@ -66,9 +66,9 @@ namespace Cirrus.Circuit.World
         private float _randomDropRainTime = 2f;
         public float RandomDropRainTime => _randomDropRainTime;
 
-        [SerializeField]
-        private float _randomDropSpawnTime = 2f;
-        public float RandomDropSpawnTime => _randomDropSpawnTime;
+        //[SerializeField]
+        //private float _randomDropSpawnTime = 2f;
+        //public float RandomDropSpawnTime => _randomDropSpawnTime;
 
         public void OnValidate()
         {
@@ -185,10 +185,10 @@ namespace Cirrus.Circuit.World
                 UnityEngine.Random.Range(_offset.x, _dimension.z - _offset.z - 1));
 
             Rain(
-                ObjectLibrary.Instance.SimpleGems[
+                ObjectLibrary.Instance.Objects[
                     UnityEngine.Random.Range(
                         0, 
-                        ObjectLibrary.Instance.SimpleGems.Length)]);
+                        ObjectLibrary.Instance.Objects.Length)]);
         }
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)

@@ -102,6 +102,16 @@ namespace Cirrus.Circuit.Networking
 
         #region Level Session
 
+
+        [Command]
+        public void Cmd_LevelSession_OnRainTimeout(GameObject obj, Vector3Int pos, int gemId)
+        {
+            if (obj == null) return;
+
+            LevelSession session;
+            if ((session = obj.GetComponent<LevelSession>()) != null) session.Rpc_OnRainTimeout(pos, gemId);
+        }
+
         [Command]
         public void Cmd_LevelSession_SetRequiredGemCount(GameObject obj, int count)
         {

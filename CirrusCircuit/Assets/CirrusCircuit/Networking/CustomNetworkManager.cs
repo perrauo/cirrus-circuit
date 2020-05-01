@@ -88,80 +88,6 @@ namespace Cirrus.Circuit.Networking
 
         public static CustomNetworkManager Instance => (CustomNetworkManager)singleton;
 
-        #region Editor
-
-        public void UpdatePrefabList()
-        {
-            if (NetworkingLibrary.Instance != null)
-            {
-                spawnPrefabs.Clear();
-
-                //Debug.Log("1");
-
-                foreach (FieldInfo field in typeof(NetworkingLibrary).GetFields())
-                {
-                    //Debug.Log("2");
-
-                    var val = field.GetValue(NetworkingLibrary.Instance);
-                    if (val != null)
-                    {
-                        //Debug.Log(val);                        
-
-                        if (val is MonoBehaviour)
-                        {
-                            if (!spawnPrefabs.Contains(((MonoBehaviour)val).gameObject))
-                            {
-                                spawnPrefabs.Add(((MonoBehaviour)val).gameObject);
-                            }
-                        }
-                        else if (val is NetworkBehaviour)
-                        {
-                            if (!spawnPrefabs.Contains(((NetworkBehaviour)val).gameObject))
-                            {
-                                spawnPrefabs.Add(((NetworkBehaviour)val).gameObject);
-                            }
-                        }
-                        else if (val is GameObject)
-                        {
-                            if (!spawnPrefabs.Contains(val))
-                            {
-                                spawnPrefabs.Add((GameObject)val);
-                            }
-                        }
-                        else if (val is NetworkBehaviour[])
-                        {
-                            foreach (var obj in (NetworkBehaviour[])val)
-                            {
-                                if (!spawnPrefabs.Contains(obj.gameObject))
-                                {
-                                    spawnPrefabs.Add((GameObject)obj.gameObject);
-                                }
-                            }
-                        }
-
-                    }
-
-                }
-
-                AssetDatabase.SaveAssets();
-                EditorUtility.SetDirty(this);
-            }
-        }
-
-        public override void OnValidate()
-        {
-            base.OnValidate();
-
-
-#if UNITY_EDITOR
-            if (spawnPrefabs.Count == 0)
-            {
-                UpdatePrefabList();
-            }
-#endif
-        }
-
-        #endregion
 
         public override void OnClientConnect(NetworkConnection conn)
         {
@@ -257,6 +183,86 @@ namespace Cirrus.Circuit.Networking
         {
             _handler.StartRound();
         }
+
+
+
+
+        #region Editor
+
+#if UNITY_EDITOR
+        public void UpdatePrefabList()
+        {
+            if (NetworkingLibrary.Instance != null)
+            {
+                spawnPrefabs.Clear();
+
+                //Debug.Log("1");
+
+                foreach (FieldInfo field in typeof(NetworkingLibrary).GetFields())
+                {
+                    //Debug.Log("2");
+
+                    var val = field.GetValue(NetworkingLibrary.Instance);
+                    if (val != null)
+                    {
+                        //Debug.Log(val);                        
+
+                        if (val is MonoBehaviour)
+                        {
+                            if (!spawnPrefabs.Contains(((MonoBehaviour)val).gameObject))
+                            {
+                                spawnPrefabs.Add(((MonoBehaviour)val).gameObject);
+                            }
+                        }
+                        else if (val is NetworkBehaviour)
+                        {
+                            if (!spawnPrefabs.Contains(((NetworkBehaviour)val).gameObject))
+                            {
+                                spawnPrefabs.Add(((NetworkBehaviour)val).gameObject);
+                            }
+                        }
+                        else if (val is GameObject)
+                        {
+                            if (!spawnPrefabs.Contains(val))
+                            {
+                                spawnPrefabs.Add((GameObject)val);
+                            }
+                        }
+                        else if (val is NetworkBehaviour[])
+                        {
+                            foreach (var obj in (NetworkBehaviour[])val)
+                            {
+                                if (!spawnPrefabs.Contains(obj.gameObject))
+                                {
+                                    spawnPrefabs.Add((GameObject)obj.gameObject);
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+
+                AssetDatabase.SaveAssets();
+                EditorUtility.SetDirty(this);
+            }
+        }
+
+        public override void OnValidate()
+        {
+            base.OnValidate();
+
+
+
+            if (spawnPrefabs.Count == 0)
+            {
+                UpdatePrefabList();
+            }
+
+        }
+
+#endif
+        #endregion
     }
 
 
