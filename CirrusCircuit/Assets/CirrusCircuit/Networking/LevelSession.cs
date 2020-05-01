@@ -237,14 +237,14 @@ namespace Cirrus.Circuit.Networking
                             info.PlayerId = player.ServerId;
                             info._characterId = player.CharacterId;
 
-                            if (
-                                CustomNetworkManager.Instance.ServerHandler.TryGetConnection(
-                                    player._connectionId,
-                                    out ClientPlayer client))
-                            {
-                                info.Session.netIdentity.AssignClientAuthority(
-                                    client.connectionToClient);
-                            }
+                            //if (
+                            //    CustomNetworkManager.Instance.ServerHandler.TryGetConnection(
+                            //        player._connectionId,
+                            //        out ClientPlayer client))
+                            //{
+                            //    info.Session.netIdentity.AssignClientAuthority(
+                            //        client.connectionToClient);
+                            //}
 
                         }
 
