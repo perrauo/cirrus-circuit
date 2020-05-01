@@ -203,7 +203,6 @@ namespace Cirrus.Circuit.Networking
 
                                     NetworkServer.Spawn(gobj, NetworkServer.localConnection);
 
-
                                     if (obj is Gem)
                                     {
                                         Gem gem = (Gem)obj;

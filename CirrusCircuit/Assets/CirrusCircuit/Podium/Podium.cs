@@ -5,6 +5,7 @@ using UnityEngine;
 using Cirrus.Circuit.Networking;
 
 using Mirror;
+using Cirrus.Circuit.World.Objects.Characters;
 
 namespace Cirrus.Circuit
 {
@@ -20,11 +21,7 @@ namespace Cirrus.Circuit
         {
             get
             {
-                if (_instance == null)
-                {
-                    _instance = FindObjectOfType<Podium>();
-                }
-
+                if (_instance == null) _instance = FindObjectOfType<Podium>();
                 return _instance;
             }
         }    
@@ -102,7 +99,10 @@ namespace Cirrus.Circuit
 
         public void FixedUpdate()
         {
-            transform.position = Vector3.Lerp(transform.position, TargetPosition, _positionSpeed);
+            transform.position = Vector3.Lerp(
+                transform.position, 
+                TargetPosition, 
+                _positionSpeed);
 
             for(int i = 0; i < _characters.Count; i++) {
                 _characters[i].Transform.transform.position =
@@ -144,8 +144,7 @@ namespace Cirrus.Circuit
         {
             foreach (var p in _platforms)
             {
-                if (p == null)
-                    continue;
+                if (p == null) continue;
 
                 _timer.OnTimeLimitHandler -= p.OnTransitionToTimeOut;
                 Destroy(p.gameObject);
@@ -155,7 +154,9 @@ namespace Cirrus.Circuit
             _characters.Clear();
         }
 
-        public void Add(PlayerSession player, World.Objects.Characters.CharacterAsset characterResource)
+        public void Add(
+            PlayerSession player, 
+            CharacterAsset characterResource)
         {
             Platform platform = _platformTemplate.Create(
                 _platformsParent.transform.position + Vector3.right * _platforms.Count * _platformOffset,

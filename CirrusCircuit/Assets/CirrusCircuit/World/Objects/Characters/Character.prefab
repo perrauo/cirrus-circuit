@@ -66,7 +66,14 @@ MonoBehaviour:
   _nextColorIndex: 0
   _nextColorSpeed: 0.05
   _level: {fileID: 0}
+  _levelSession: {fileID: 0}
   _state: 0
+  _controller:
+    _session: {fileID: 0}
+    _character: {fileID: 0}
+    _characterSlot: {fileID: 0}
+    PlayerDisplay: {fileID: 0}
+    _localId: 0
   _guide: {fileID: 7203719092928459714}
   _moveDelay: 0.05
   _rotationSpeed: 0.6
