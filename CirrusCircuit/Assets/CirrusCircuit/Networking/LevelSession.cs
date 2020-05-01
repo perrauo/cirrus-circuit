@@ -331,9 +331,18 @@ namespace Cirrus.Circuit.Networking
         {
             _mutex = new Mutex(false);
 
-            _randomDropRainTimer = new Timer(Level.RandomDropRainTime, start: false, repeat: true);
+            _randomDropRainTimer = new Timer(
+                Level.RandomDropRainTime, 
+                start: false, 
+                repeat: true);
+
             _randomDropRainTimer.OnTimeLimitHandler += OnRainTimeout;
-            _randomDropSpawnTimer = new Timer(Level.RandomDropSpawnTime, start: false, repeat: false);
+
+            _randomDropSpawnTimer = new Timer(
+                Level.RandomDropSpawnTime, 
+                start: false, 
+                repeat: false);
+
             _randomDropSpawnTimer.OnTimeLimitHandler += OnSpawnTimeout;
         }
 

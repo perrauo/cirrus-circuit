@@ -19,11 +19,12 @@ using Cirrus.Circuit.Networking;
 
 
 namespace Cirrus.Circuit.Controls
-{    
-    //[System.Serializable]
+{
+    [System.Serializable]
     public class Player : ActionMap.IPlayerActions
     {
-        public Networking.PlayerSession _session;
+        [SerializeField]
+        public PlayerSession _session;
 
         public delegate void OnReady(Player ctrl);
 
@@ -35,14 +36,17 @@ namespace Cirrus.Circuit.Controls
 
         private Inputs.InputControlScheme _scheme;
         
+        [SerializeField]
         public World.Objects.Characters.Character _character;        
 
+        [SerializeField]
         public UI.CharacterSelectSlot _characterSlot;
 
         public UI.Player PlayerDisplay = null;
 
         public Vector2 AxisLeft => _actionMap.Player.AxesLeft.ReadValue<Vector2>();
 
+        [SerializeField]
         public int _localId = 0;
 
         public int LocalId => _localId;

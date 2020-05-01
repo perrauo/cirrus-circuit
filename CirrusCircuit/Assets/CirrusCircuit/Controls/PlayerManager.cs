@@ -19,6 +19,7 @@ namespace Cirrus.Circuit.Controls
         [SerializeField]
         public Color[] Colors = new Color[4];
 
+        [SerializeField]
         public Player[] LocalPlayers;
 
         public int LocalPlayerCount = 0;
