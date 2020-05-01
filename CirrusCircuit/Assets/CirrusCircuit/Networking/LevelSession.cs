@@ -347,7 +347,7 @@ namespace Cirrus.Circuit.Networking
 
             int i = VectorUtils.ToIndex(pos, Level.Dimension.x, Level.Dimension.y);
 
-            //obj = _objects[i];
+            obj = _objects[i];
             _mutex.ReleaseMutex();
             return obj != null;
         }
