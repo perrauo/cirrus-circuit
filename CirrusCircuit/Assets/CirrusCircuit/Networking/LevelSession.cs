@@ -288,7 +288,7 @@ namespace Cirrus.Circuit.Networking
             return null;
         }
 
-        private bool InnerIsMoveAllowed(
+        private bool DoIsMoveAllowed(
             BaseObject source,
             Vector3Int position,
             Vector3Int direction)
@@ -315,7 +315,7 @@ namespace Cirrus.Circuit.Networking
             Vector3Int position = source._gridPosition + step;
 
             if (Level.IsWithinBounds(position))
-                return InnerIsMoveAllowed(source, position, direction);
+                return DoIsMoveAllowed(source, position, direction);
 
             return false;
         }
@@ -363,7 +363,7 @@ namespace Cirrus.Circuit.Networking
         }
 
 
-        private bool InnerTryMove(BaseObject source, Vector3Int position, Vector3Int direction, ref Vector3 offset, out BaseObject pushed, out BaseObject destination)
+        private bool DoTryMove(BaseObject source, Vector3Int position, Vector3Int direction, ref Vector3 offset, out BaseObject pushed, out BaseObject destination)
         {
             pushed = null;
             destination = null;
@@ -420,7 +420,7 @@ namespace Cirrus.Circuit.Networking
 
             if (Level.IsWithinBounds(position))
             {
-                return InnerTryMove(
+                return DoTryMove(
                     source,
                     position,
                     direction,
@@ -464,7 +464,7 @@ namespace Cirrus.Circuit.Networking
                             if (target is Character) continue;
                             if (target is Door) continue;
 
-                            return InnerTryMove(source, position, direction, ref offset, out BaseObject pushed, out destination);
+                            return DoTryMove(source, position, direction, ref offset, out BaseObject pushed, out destination);
                         }
                     }
                 }
@@ -478,7 +478,14 @@ namespace Cirrus.Circuit.Networking
             CommandClient.Instance.Cmd_LevelSession_Spawn(
                 gameObject, 
                 spawnable.Id, pos);
-        }        
+        }
+
+        public void Cmd_Spawn(int spawnId, Vector3Int pos)
+        {
+            CommandClient.Instance.Cmd_LevelSession_Spawn(
+                gameObject,
+                spawnId, pos);
+        }
 
         [ClientRpc]
         public void Rpc_Spawn(GameObject sessionObj, int spawnId, Vector3Int pos)
@@ -519,22 +526,23 @@ namespace Cirrus.Circuit.Networking
                 Level.Dimension.y - 1,
                 UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.z - Level.Offset.z - 1));
 
-            int gemId = UnityEngine.Random.Range(0, ObjectLibrary.Instance.Objects.Count);
+            Gem gem = ObjectLibrary.Instance.Gems[UnityEngine.Random.Range(0, ObjectLibrary.Instance.Gems.Length)];
 
-            CommandClient.Instance.Cmd_LevelSession_OnRainTimeout(gameObject, position, gemId);
-            
+            if (gem.TryGetComponent(out Spawnable spawn))
+            {
+                CommandClient.Instance.Cmd_LevelSession_OnRainTimeout(gameObject, position, spawn.Id);
+            }
         }
 
         [ClientRpc]
-        public void Rpc_OnRainTimeout(Vector3Int pos, int gemId)
+        public void Rpc_OnRainTimeout(Vector3Int pos, int objectId)
         {
-            _OnRainTimeout(pos, gemId);
+            _OnRainTimeout(pos, objectId);
         }
 
-        public void _OnRainTimeout(Vector3Int pos, int gemId)
-        {
-            var template = ObjectLibrary.Instance.Objects[gemId];
-            //Cmd_Spawn(gameObject, pos);
+        public void _OnRainTimeout(Vector3Int pos, int objectId)
+        {            
+            Cmd_Spawn(objectId, pos);        
         }
 
         public void OnRoundStarted(int id)

@@ -118,11 +118,11 @@ namespace Cirrus.Circuit.Networking
 
 
         [Command]
-        public void Cmd_LevelSession_OnRainTimeout(GameObject obj, Vector3Int pos, int gemId)
+        public void Cmd_LevelSession_OnRainTimeout(GameObject obj, Vector3Int pos, int objectId)
         {
             if (obj == null) return;
            
-            if (obj.TryGetComponent(out LevelSession session)) session.Rpc_OnRainTimeout(pos, gemId);
+            if (obj.TryGetComponent(out LevelSession session)) session.Rpc_OnRainTimeout(pos, objectId);
         }
 
         [Command]

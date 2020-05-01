@@ -19,6 +19,16 @@ namespace Cirrus.Circuit.World.Objects
             return Objects[id];
         }
 
+        public bool TryGet(int id, out Spawnable spawnable)
+        {
+            spawnable = null;
+            if (id < 0) return false;
+            if (id > Objects.Count) return false;
+            if (Objects[id] == null) return false;
+            spawnable = Objects[id];
+            return true;
+        }
+
         public void SortId()
         {
             foreach (var obj in Objects)
