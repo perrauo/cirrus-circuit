@@ -48,7 +48,7 @@ namespace Cirrus.Circuit.Networking
             {
                 _characterSelectReadyCount = value < 0 ? 0 : value;
                 _characterSelectReadyCount = value > CharacterSelectOpenCount ? CharacterSelectOpenCount : value;
-                ClientPlayer.Instance.Cmd_GameSession_SetCharacterSelectReadyCount(gameObject, _characterSelectReadyCount);
+                CommandClient.Instance.Cmd_GameSession_SetCharacterSelectReadyCount(gameObject, _characterSelectReadyCount);
             }
         }
 
@@ -62,7 +62,7 @@ namespace Cirrus.Circuit.Networking
             set
             {
                 _characterSelectOpenCount = value < 0 ? 0 : value;
-                ClientPlayer.Instance.Cmd_GameSession_SetCharacterSelectOpenCount(gameObject, _characterSelectOpenCount);
+                CommandClient.Instance.Cmd_GameSession_SetCharacterSelectOpenCount(gameObject, _characterSelectOpenCount);
             }
         }
 
@@ -92,7 +92,7 @@ namespace Cirrus.Circuit.Networking
             set
             {
                 _playerCount = value < 0 ? 0 : value;                
-                ClientPlayer.Instance.Cmd_GameSession_SetPlayerCount(gameObject, _playerCount);
+                CommandClient.Instance.Cmd_GameSession_SetPlayerCount(gameObject, _playerCount);
             }
         }
 
@@ -120,7 +120,7 @@ namespace Cirrus.Circuit.Networking
             set
             {
                 _selectedLevelIndex = value < 0 ? 0 : value;
-                ClientPlayer.Instance.Cmd_GameSession_SetSelectedLevelIndex(gameObject, _selectedLevelIndex);
+                CommandClient.Instance.Cmd_GameSession_SetSelectedLevelIndex(gameObject, _selectedLevelIndex);
             }
         }
 

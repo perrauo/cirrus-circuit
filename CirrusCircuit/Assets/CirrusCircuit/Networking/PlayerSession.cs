@@ -42,7 +42,7 @@ namespace Cirrus.Circuit.Networking
             {
                 if (!hasAuthority) return;
                 _score = value < 0 ? 0 : value;
-                ClientPlayer.Instance.Cmd_PlayerSession_SetScore(gameObject, _score);
+                CommandClient.Instance.Cmd_PlayerSession_SetScore(gameObject, _score);
             }
         }
 
@@ -60,7 +60,7 @@ namespace Cirrus.Circuit.Networking
             {
                 if (!hasAuthority) return;
                 _characterId = value;
-                ClientPlayer.Instance.Cmd_PlayerSession_SetCharacterId(gameObject, _characterId);
+                CommandClient.Instance.Cmd_PlayerSession_SetCharacterId(gameObject, _characterId);
             }                                    
         }
 

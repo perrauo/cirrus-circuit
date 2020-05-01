@@ -139,57 +139,7 @@ namespace Cirrus.Circuit.World
 
             _objects[i] = obj;
             
-        }
-    
-        private void OnSpawnTimeout()
-        {
-            // TODO
-        }
-
-        public void Rain(BaseObject template)
-        {
-            Vector3Int position = new Vector3Int(
-                UnityEngine.Random.Range(_offset.x, _dimension.x - _offset.x - 1),
-                _dimension.y - 1,
-                UnityEngine.Random.Range(_offset.x, _dimension.z - _offset.z - 1));
-
-            Spawn(template, position);
-        }
-
-
-        public BaseObject Spawn(BaseObject template, Vector3Int pos)
-        {
-            BaseObject obj = template.Create(GridToWorld(pos), transform);
-
-            obj.Register(this);
-
-            obj.TrySetState(BaseObject.State.Idle);
-
-            return obj;
-        }
-
-
-        public GameObject Spawn(GameObject template, Vector3Int pos)
-        {
-            return template.Create(
-                GridToWorld(pos), 
-                transform);            
-        }
-
-
-        public void OnRainTimeout()
-        {
-            Vector3Int position = new Vector3Int(
-                UnityEngine.Random.Range(_offset.x, _dimension.x - _offset.x - 1),
-                _dimension.y - 1,
-                UnityEngine.Random.Range(_offset.x, _dimension.z - _offset.z - 1));
-
-            Rain(
-                ObjectLibrary.Instance.Objects[
-                    UnityEngine.Random.Range(
-                        0, 
-                        ObjectLibrary.Instance.Objects.Length)]);
-        }
+        }    
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
         {

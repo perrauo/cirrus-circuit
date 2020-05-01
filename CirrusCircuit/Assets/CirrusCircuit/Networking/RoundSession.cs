@@ -148,13 +148,13 @@ namespace Cirrus.Circuit.Networking
 
         private void Cmd_OnTimeout()
         {
-            ClientPlayer.Instance.Cmd_RoundSession_OnTimeout(gameObject);
+            CommandClient.Instance.Cmd_RoundSession_OnTimeout(gameObject);
         }
 
 
         public void Cmd_OnIntermissionTimeoutBeginCountdown()
         {
-            ClientPlayer.Instance.Cmd_OnIntermissionTimeoutBeginCountdown(gameObject);
+            CommandClient.Instance.Cmd_OnIntermissionTimeoutBeginCountdown(gameObject);
         }
 
         [ClientRpc]
@@ -191,7 +191,7 @@ namespace Cirrus.Circuit.Networking
 
         public void Cmd_OnRoundEnd()
         {
-            ClientPlayer.Instance.Cmd_RoundSession_OnRoundEnd(gameObject);
+            CommandClient.Instance.Cmd_RoundSession_OnRoundEnd(gameObject);
         }
 
         [ClientRpc]

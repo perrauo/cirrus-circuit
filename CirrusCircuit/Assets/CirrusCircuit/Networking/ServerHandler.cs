@@ -15,7 +15,7 @@ namespace Cirrus.Circuit.Networking
 
     public class ServerHandler : NetworkManagerHandler
     {
-        private Dictionary<int, ClientPlayer> _connections = new Dictionary<int, ClientPlayer>();
+        private Dictionary<int, CommandClient> _connections = new Dictionary<int, CommandClient>();
         private Dictionary<int, List<int>> _players = new Dictionary<int, List<int>>();        
 
         public ServerHandler(CustomNetworkManager net) : base(net)
@@ -60,12 +60,12 @@ namespace Cirrus.Circuit.Networking
                     NetworkingLibrary.Instance.ClientConnectionPlayer.gameObject,
                     out NetworkBehaviour player))
                 {
-                    _connections.Add(conn.connectionId, (ClientPlayer)player);
+                    _connections.Add(conn.connectionId, (CommandClient)player);
                 }
             }
         }
 
-        public bool TryGetConnection(int connectionId, out ClientPlayer client)
+        public bool TryGetConnection(int connectionId, out CommandClient client)
         {
             return _connections.TryGetValue(connectionId, out client);
         }
@@ -88,7 +88,7 @@ namespace Cirrus.Circuit.Networking
                 _players.Add(conn.connectionId, playersPerConnection);
             }
 
-            if (_connections.TryGetValue(conn.connectionId, out ClientPlayer clientConnection))
+            if (_connections.TryGetValue(conn.connectionId, out CommandClient clientConnection))
             {
                 if (ServerUtils.TryCreateNetworkObject(
                     conn, 
@@ -147,7 +147,7 @@ namespace Cirrus.Circuit.Networking
                 NetworkingLibrary.Instance.ClientConnectionPlayer.gameObject, 
                 out NetworkBehaviour client))
             {
-                _connections.Add(conn.connectionId, (ClientPlayer)client);
+                _connections.Add(conn.connectionId, (CommandClient)client);
             }
         }
     }

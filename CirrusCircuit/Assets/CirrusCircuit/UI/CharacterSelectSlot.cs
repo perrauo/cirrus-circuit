@@ -170,7 +170,7 @@ namespace Cirrus.Circuit.UI
         public void TrySetState(State target)
         {
             Debug.Log("CHARA SET STATE");
-            ClientPlayer.Instance.Cmd_CharacterSelectSlot_SetState(gameObject, target);
+            CommandClient.Instance.Cmd_CharacterSelectSlot_SetState(gameObject, target);
         }
 
         public void _TrySetState(State target)
@@ -306,7 +306,7 @@ namespace Cirrus.Circuit.UI
         {            
             if (!hasAuthority) return;
 
-            ClientPlayer.Instance.Cmd_CharacterSelectSlot_Scroll(gameObject, up);
+            CommandClient.Instance.Cmd_CharacterSelectSlot_Scroll(gameObject, up);
         }
 
         public void HandleAction0()

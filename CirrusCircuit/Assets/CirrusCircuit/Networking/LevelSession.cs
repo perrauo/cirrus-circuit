@@ -86,7 +86,7 @@ namespace Cirrus.Circuit.Networking
             set
             {
                 _requiredGemCount = value;
-                ClientPlayer.Instance.Cmd_LevelSession_SetRequiredGemCount(gameObject, _requiredGemCount);
+                CommandClient.Instance.Cmd_LevelSession_SetRequiredGemCount(gameObject, _requiredGemCount);
             }
         }
 
@@ -100,7 +100,7 @@ namespace Cirrus.Circuit.Networking
             set
             {
                 _requiredGems = value;
-                ClientPlayer.Instance.Cmd_LevelSession_SetRequiredGems(gameObject, _requiredGems);
+                CommandClient.Instance.Cmd_LevelSession_SetRequiredGems(gameObject, _requiredGems);
             }
         }
 
@@ -472,39 +472,42 @@ namespace Cirrus.Circuit.Networking
 
             return false;
         }        
-
-        public BaseObject Spawn(BaseObject template, Vector3Int pos)
+        
+        public void Cmd_Spawn(Spawnable spawnable, Vector3Int pos)
         {
-            BaseObject obj = template.Create(Level.GridToWorld(pos), transform);
+            CommandClient.Instance.Cmd_LevelSession_Spawn(
+                gameObject, 
+                spawnable.Id, pos);
+        }        
 
-            //obj.Register(this);
+        [ClientRpc]
+        public void Rpc_Spawn(GameObject sessionObj, int spawnId, Vector3Int pos)
+        {
+            ObjectSession session = null;
 
-            obj.TrySetState(BaseObject.State.Idle);
-
-            return obj;
-        }
-
-
-        public void Cmd_Spawn(GameObject template, Vector3Int pos)
-        {        
-            GameObject obj = template.Create(Level.GridToWorld(pos), transform);
-
-            if (CustomNetworkManager.IsServer)
+            if ((session = sessionObj.GetComponent<ObjectSession>()) != null)
             {
-                //obj.
+                _Spawn(
+                    session,
+                    ObjectLibrary.Instance.Get(spawnId),
+                    pos);
             }
-
-            //return obj;
         }
 
-        public void Rpc_Spawn(int objId)
+        public void _Spawn(ObjectSession session, Spawnable template, Vector3Int pos)
         {
+            GameObject gobj = template.gameObject.Create(
+                Level.GridToWorld(pos), 
+                transform);
 
-        }
-
-        public void _Spawn(GameObject template, Vector3Int pos)
-        {
-
+            if(gobj.TryGetComponent(out BaseObject obj))            
+            {
+                session._object = obj;
+                obj._session = session;
+                obj._levelSession = this;
+                (obj.Transform.position, obj._gridPosition) = RegisterObject(obj);
+                obj.TrySetState(BaseObject.State.Idle);
+            }            
         }
 
 
@@ -516,9 +519,9 @@ namespace Cirrus.Circuit.Networking
                 Level.Dimension.y - 1,
                 UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.z - Level.Offset.z - 1));
 
-            int gemId = UnityEngine.Random.Range(0, ObjectLibrary.Instance.Objects.Length);
+            int gemId = UnityEngine.Random.Range(0, ObjectLibrary.Instance.Objects.Count);
 
-            ClientPlayer.Instance.Cmd_LevelSession_OnRainTimeout(gameObject, position, gemId);
+            CommandClient.Instance.Cmd_LevelSession_OnRainTimeout(gameObject, position, gemId);
             
         }
 
@@ -531,7 +534,7 @@ namespace Cirrus.Circuit.Networking
         public void _OnRainTimeout(Vector3Int pos, int gemId)
         {
             var template = ObjectLibrary.Instance.Objects[gemId];
-            Spawn(template, pos);
+            //Cmd_Spawn(gameObject, pos);
         }
 
         public void OnRoundStarted(int id)

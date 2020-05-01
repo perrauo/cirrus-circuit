@@ -10,19 +10,19 @@ using System.Threading;
 namespace Cirrus.Circuit.Networking
 {
     // Serves to sync the connection
-    public class ClientPlayer : NetworkBehaviour
+    public class CommandClient : NetworkBehaviour
     {
         public static void AssertGameObjectNull(GameObject gameObject) => Utils.DebugUtils.Assert(gameObject != null, "Cmd GameObject is null. Was the object spawn?");
 
-        public static ClientPlayer _instance;
+        public static CommandClient _instance;
 
-        public static ClientPlayer Instance
+        public static CommandClient Instance
         {
             get
             {
                 if (_instance == null)
                 {
-                    foreach (var player in FindObjectsOfType<ClientPlayer>())
+                    foreach (var player in FindObjectsOfType<CommandClient>())
                     {
                         if (player.hasAuthority)
                         {
@@ -55,11 +55,9 @@ namespace Cirrus.Circuit.Networking
         public void Cmd_CharacterSelectSlot_SetState(GameObject obj, CharacterSelectSlot.State target)
         {
             if (obj == null) return;
-
-            CharacterSelectSlot slot;
-
+            
             //Debug.Log("RPC SELECT OUTER CMD");
-            if ((slot = obj.GetComponent<CharacterSelectSlot>()) != null)
+            if (obj.TryGetComponent(out CharacterSelectSlot slot))
             {
                 //Debug.Log("RPC SELECT INNER CMD");
                 slot.Rpc_TrySetState(target);
@@ -70,9 +68,8 @@ namespace Cirrus.Circuit.Networking
         public void Cmd_CharacterSelectSlot_Scroll(GameObject obj, bool scroll)
         {
             if (obj == null) return;
-
-            CharacterSelectSlot slot;
-            if ((slot = obj.GetComponent<CharacterSelectSlot>()) != null) slot.Rpc_Scroll(scroll);
+            
+            if (obj.TryGetComponent(out CharacterSelectSlot slot)) slot.Rpc_Scroll(scroll);
         }
 
 
@@ -84,51 +81,68 @@ namespace Cirrus.Circuit.Networking
         public void Cmd_PlayerSession_SetCharacterId(GameObject obj, int characterId)
         {
             if (obj == null) return;
-
-            PlayerSession session;
-            if ((session = obj.GetComponent<PlayerSession>()) != null) session._characterId = characterId;
+            
+            if (obj.TryGetComponent(out PlayerSession session)) session._characterId = characterId;
         }
 
         [Command]
         public void Cmd_PlayerSession_SetScore(GameObject obj, float score)
         {
             if (obj == null) return;
-
-            PlayerSession session;
-            if ((session = obj.GetComponent<PlayerSession>()) != null) session._score = score;
+            
+            if (obj.TryGetComponent(out PlayerSession session)) session._score = score;
         }
 
         #endregion
 
         #region Level Session
 
+        // TODO security check valid spawn location
+        [Command]
+        public void Cmd_LevelSession_Spawn(GameObject obj, int spawnId, Vector3Int pos)
+        {
+            if (obj == null) return;
+
+            if (obj.TryGetComponent(out LevelSession session))
+            {
+                if (MirrorExt.ServerUtils.TryCreateNetworkObject(
+                    NetworkingLibrary.Instance.ObjectSession.gameObject, 
+                    out GameObject gobj,
+                    true))
+                {                    
+                    session._objectSessions.Add(gobj);
+                    session.Rpc_Spawn(gobj, spawnId, pos);                    
+                }
+            }
+        }
+
 
         [Command]
         public void Cmd_LevelSession_OnRainTimeout(GameObject obj, Vector3Int pos, int gemId)
         {
             if (obj == null) return;
-
-            LevelSession session;
-            if ((session = obj.GetComponent<LevelSession>()) != null) session.Rpc_OnRainTimeout(pos, gemId);
+           
+            if (obj.TryGetComponent(out LevelSession session)) session.Rpc_OnRainTimeout(pos, gemId);
         }
 
         [Command]
         public void Cmd_LevelSession_SetRequiredGemCount(GameObject obj, int count)
         {
             if (obj == null) return;
-
-            LevelSession session;
-            if ((session = obj.GetComponent<LevelSession>()) != null) session._requiredGemCount = count;
+            
+            if (obj.TryGetComponent(out LevelSession session)) session._requiredGemCount = count;
         }
 
         [Command]
         public void Cmd_LevelSession_SetRequiredGems(GameObject obj, int count)
         {
             if (obj == null) return;
-
-            LevelSession session;
-            if ((session = obj.GetComponent<LevelSession>()) != null) session._requiredGems = count;
+            
+            if (obj.TryGetComponent(out LevelSession session)) session._requiredGems = count;
         }
+
+
+
 
         [Command]
         public void Cmd_LevelSession_SetObjectId(GameObject obj, int idx, BaseObject.ObjectId id)
@@ -342,8 +356,8 @@ namespace Cirrus.Circuit.Networking
             //AssertGameObjectNull(obj);
             if (obj == null) return;
 
-            RoundSession session;
-            if ((session = obj.GetComponent<RoundSession>()) != null)
+            
+            if(obj.TryGetComponent(out RoundSession session))
             {
                 session.Rpc_OnTimeout();
             }
@@ -354,9 +368,8 @@ namespace Cirrus.Circuit.Networking
         {
             //AssertGameObjectNull(obj);
             if (obj == null) return;
-
-            RoundSession session;
-            if ((session = obj.GetComponent<RoundSession>()) != null)
+            
+            if (obj.TryGetComponent(out RoundSession session))
             {
                 session.Rpc_OnTimeout();
             }
@@ -368,9 +381,8 @@ namespace Cirrus.Circuit.Networking
         {
             //AssertGameObjectNull(obj);
             if (obj == null) return;
-
-            RoundSession session;
-            if ((session = obj.GetComponent<RoundSession>()) != null)
+            
+            if (obj.TryGetComponent(out RoundSession session))
             {
                 session.Rpc_OnRoundEnd();
             }

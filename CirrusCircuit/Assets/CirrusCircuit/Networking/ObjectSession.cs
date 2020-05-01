@@ -27,7 +27,7 @@ namespace Cirrus.Circuit.Networking
             get => _index;
             set {
                 _index = value;
-                ClientPlayer.Instance.Cmd_ObjectSession_SetIndex(gameObject, _index);
+                CommandClient.Instance.Cmd_ObjectSession_SetIndex(gameObject, _index);
             }
         }
 
@@ -67,17 +67,17 @@ namespace Cirrus.Circuit.Networking
 
         public void TryMove(Vector3Int step)
         {
-            ClientPlayer.Instance.Cmd_ObjectSession_TryMove(gameObject, step);
+            CommandClient.Instance.Cmd_ObjectSession_TryMove(gameObject, step);
         }
 
         public void TryFall()
         {
-            ClientPlayer.Instance.Cmd_ObjectSession_TryFall(gameObject);
+            CommandClient.Instance.Cmd_ObjectSession_TryFall(gameObject);
         }
 
         public void Interact(BaseObject source)
         {
-            ClientPlayer.Instance.Cmd_ObjectSession_Interact(gameObject, source._session.gameObject);
+            CommandClient.Instance.Cmd_ObjectSession_Interact(gameObject, source._session.gameObject);
         }
 
         public bool IsMoveAllowed(Vector3Int step)

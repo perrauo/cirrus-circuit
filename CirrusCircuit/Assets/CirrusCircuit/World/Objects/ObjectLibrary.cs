@@ -12,6 +12,13 @@ namespace Cirrus.Circuit.World.Objects
         [SerializeField]
         public List<Spawnable> Objects;
 
+        public List<Gem> Gems;
+
+        public Spawnable Get(int id)
+        {
+            return Objects[id];
+        }
+
         public void SortId()
         {
             foreach (var obj in Objects)
@@ -40,6 +47,32 @@ namespace Cirrus.Circuit.World.Objects
                             if (mono.TryGetComponent(out Spawnable spawn))
                             {
                                 Objects.Add(spawn);
+                            }
+                        }
+                        else if (val.GetType().IsArray)
+                        {
+                            if (field.Name == "Objects") continue;
+
+                            foreach (var arval in (Array)val)
+                            {
+                                if (arval is MonoBehaviour)
+                                {
+                                    var mono = (MonoBehaviour)arval;
+
+                                    if (mono.TryGetComponent(out Spawnable spawn))
+                                    {
+                                        Objects.Add(spawn);
+                                    }
+                                }
+                                else if (arval is GameObject)
+                                {
+                                    var mono = (GameObject)arval;
+
+                                    if (mono.TryGetComponent(out Spawnable spawn))
+                                    {
+                                        Objects.Add(spawn);
+                                    }
+                                }
                             }
                         }
                         else if (val is GameObject)

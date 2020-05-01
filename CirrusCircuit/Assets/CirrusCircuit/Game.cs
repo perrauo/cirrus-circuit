@@ -204,7 +204,7 @@ namespace Cirrus.Circuit
 
         public void Cmd_ScrollLevel(int delta)
         {
-            ClientPlayer.Instance.Cmd_Game_ScrollLevel(delta);
+            CommandClient.Instance.Cmd_Game_ScrollLevel(delta);
         }
 
         // TODO change for SyncVar hook
@@ -271,7 +271,7 @@ namespace Cirrus.Circuit
 
         public bool Cmd_SetState(State transition, bool transitionEffect = true)
         {
-            ClientPlayer.Instance.Cmd_Game_SetState(transition, transitionEffect);
+            CommandClient.Instance.Cmd_Game_SetState(transition, transitionEffect);
             return true;
         }
 
