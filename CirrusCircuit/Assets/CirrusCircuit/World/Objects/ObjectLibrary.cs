@@ -12,7 +12,7 @@ namespace Cirrus.Circuit.World.Objects
         [SerializeField]
         public List<Spawnable> Objects;
 
-        public List<Gem> Gems;
+        public Gem[] Gems;
 
         public Spawnable Get(int id)
         {

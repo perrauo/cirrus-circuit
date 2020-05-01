@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc4677bb2766aa44bb839d64c97005cb, type: 3}
   m_Name: ObjectLibrary
   m_EditorClassIdentifier: 
-  SimpleGems:
-  - {fileID: 2893152209011896101, guid: c94a930d4ce87384ca2b0d322542047c, type: 3}
+  Objects: []
+  Gems:
+  - {fileID: 4001282745868766237, guid: bf4551c291cbae542942abbc6d0da8b0, type: 3}
   - {fileID: 2893152209011896101, guid: 772d186bee4d99a4fb26a0bccacf80e8, type: 3}
   - {fileID: 1560775797828269455, guid: daef428e53c17e24099253f4ec95c844, type: 3}
-  DebugObject: {fileID: 7782920105222043963, guid: 4b20efa34b8ccd74ab57aca7e9587bf8,
-    type: 3}
