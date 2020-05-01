@@ -136,6 +136,7 @@ namespace Cirrus.Circuit.Networking
             foreach (var info in PlaceholderInfos)
             {                
                 PlayerSession player = GameSession.Instance.GetPlayer(info.PlayerId);
+                Player localPlayer = PlayerManager.Instance.GetPlayer(player.LocalId);
                 player.Score = 0;
 
                 info.Session._object = 
@@ -150,7 +151,9 @@ namespace Cirrus.Circuit.Networking
                 info.Session._object._gridPosition = info.Position;
                 RegisterObject(info.Session._object);
 
-                PlayerManager.Instance.LocalPlayers[player.LocalId]._character = (Character)info.Session._object;                
+                if (player.ServerId == localPlayer.ServerId)
+                    localPlayer._character = (Character)info.Session._object;
+
             }
 
             foreach (var session in ObjectSessions)
@@ -190,7 +193,7 @@ namespace Cirrus.Circuit.Networking
 
                             if (ServerUtils.TryCreateNetworkObject(
                                 NetworkingLibrary.Instance.ObjectSession.gameObject,
-                                out gobj,
+                                out gobj,                                
                                 false))
                             {
                                 if ((objectSession = gobj.GetComponent<ObjectSession>()) != null)
@@ -199,6 +202,7 @@ namespace Cirrus.Circuit.Networking
                                     levelSession._objectSessions.Add(objectSession.gameObject);
 
                                     NetworkServer.Spawn(gobj, NetworkServer.localConnection);
+
 
                                     if (obj is Gem)
                                     {
@@ -216,7 +220,6 @@ namespace Cirrus.Circuit.Networking
                                         placeholders.Add(info);
                                         levelSession._placeholderInfos.Add(info);
                                     }
-
                                 }
                             }
                         }
@@ -233,15 +236,15 @@ namespace Cirrus.Circuit.Networking
                             PlaceholderInfo info = placeholders.RemoveRandom();
                             info.PlayerId = player.ServerId;
                             info._characterId = player.CharacterId;
-                            
-                            //if (
-                            //    CustomNetworkManager.Instance.ServerHandler.TryGetConnection(
-                            //        player._connectionId, 
-                            //        out ClientPlayer client))
-                            //{
-                            //    info.Session.netIdentity.AssignClientAuthority(
-                            //        client.connectionToClient);
-                            //}
+
+                            if (
+                                CustomNetworkManager.Instance.ServerHandler.TryGetConnection(
+                                    player._connectionId,
+                                    out ClientPlayer client))
+                            {
+                                info.Session.netIdentity.AssignClientAuthority(
+                                    client.connectionToClient);
+                            }
 
                         }
 

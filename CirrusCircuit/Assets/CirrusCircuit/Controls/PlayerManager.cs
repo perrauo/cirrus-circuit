@@ -33,6 +33,11 @@ namespace Cirrus.Circuit.Controls
             return name;
         }
 
+        public Player GetPlayer(int localId)
+        {
+            return LocalPlayers[localId];
+        }
+
         public Color GetColor(int id)
         {
             Color color = Color.white;

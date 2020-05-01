@@ -51,6 +51,8 @@ namespace Cirrus.Circuit.Controls
 
         public int LocalId => _localId;
 
+        public int ServerId => _session.ServerId;
+
         public Player(int localId, Inputs.InputDevice device, Inputs.InputControlScheme scheme)
         {
 
