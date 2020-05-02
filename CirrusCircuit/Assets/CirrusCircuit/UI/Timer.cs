@@ -54,8 +54,7 @@ namespace Cirrus.Circuit.UI
 
         public void Update()
         {
-            if (RoundSession.Instance != null)
-                TimeRemaining = _round.TimeRemaining;
+            if (RoundSession.Instance != null) TimeRemaining = RoundSession.Instance.TimeRemaining;
         }
 
         public void OnRoundStarted()
