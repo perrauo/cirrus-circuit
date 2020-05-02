@@ -155,7 +155,7 @@ namespace Cirrus.Circuit.UI
         {
             base.OnStartLocalPlayer();
             _TrySetState(_state);
-            Scroll(true);
+            Cmd_Scroll(true);
         }
        
 
@@ -163,11 +163,11 @@ namespace Cirrus.Circuit.UI
         {
             base.OnStartAuthority();
             Debug.Log("Selecting Character Slot");
-            TrySetState(State.Selecting);
+            Cmd_TrySetState(State.Selecting);
         }
 
 
-        public void TrySetState(State target)
+        public void Cmd_TrySetState(State target)
         {
             Debug.Log("CHARA SET STATE");
             CommandClient.Instance.Cmd_CharacterSelectSlot_SetState(gameObject, target);
@@ -301,7 +301,7 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-        public void Scroll(bool up)
+        public void Cmd_Scroll(bool up)
         {            
             if (!hasAuthority) return;
 
@@ -317,7 +317,7 @@ namespace Cirrus.Circuit.UI
 
                 case State.Ready:
                     CharacterSelect.Instance.TrySetState(CharacterSelect.State.Select);
-                    TrySetState(State.Selecting);
+                    Cmd_TrySetState(State.Selecting);
                     break;
 
                 case State.Closed:
@@ -333,7 +333,7 @@ namespace Cirrus.Circuit.UI
                     Controls.Player player = (Controls.Player) args[0];
                     Debug.Log("Assigned id: " + CharacterLibrary.Instance.Characters[_selectedIndex].Id);
                     player._session.CharacterId = CharacterLibrary.Instance.Characters[_selectedIndex].Id;
-                    TrySetState(State.Ready);
+                    Cmd_TrySetState(State.Ready);
                     break;                    
 
                 case State.Ready:

@@ -26,12 +26,15 @@ namespace Cirrus.Circuit.Networking
 
         public OnRoundEnd OnRoundEndHandler;
 
-        [SerializeField]        
+        [SerializeField]
+        [SyncVar]
         private Timer _timer;
 
+        [SyncVar]
         [SerializeField]
         private Timer _countDownTimer;
-        
+
+        [SyncVar]
         [SerializeField]
         private Timer _intermissionTimer;
 
@@ -44,10 +47,8 @@ namespace Cirrus.Circuit.Networking
         [SyncVar]
         [SerializeField]        
         private float _intermissionTime = 0; // Where we show the round number
-
-        [SyncVar]
-        [SerializeField]        
-        private int _countDown;
+        
+        private int _countDown => 3;
 
         [SyncVar]
         [SerializeField]

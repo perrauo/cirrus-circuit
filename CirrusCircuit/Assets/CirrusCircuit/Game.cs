@@ -636,7 +636,7 @@ namespace Cirrus.Circuit
                     if (Mathf.Abs(step.z) > 0)
                     {
                         if (player._characterSlot == null) return;
-                        player._characterSlot.Scroll(step.z > 0);
+                        player._characterSlot.Cmd_Scroll(step.z > 0);
                     }
 
                     break;
