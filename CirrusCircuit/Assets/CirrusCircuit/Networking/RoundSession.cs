@@ -119,7 +119,10 @@ namespace Cirrus.Circuit.Networking
                 start: false,
                 repeat: false);
 
-            NetworkServer.Spawn(session.gameObject, NetworkServer.localConnection);
+            NetworkServer.Spawn(
+                session.gameObject, 
+                NetworkServer.localConnection);
+
             return session;
         }
 

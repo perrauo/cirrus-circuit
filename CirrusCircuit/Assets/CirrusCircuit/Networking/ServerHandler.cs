@@ -28,10 +28,6 @@ namespace Cirrus.Circuit.Networking
         {
             base.StartRound();
 
-            ServerUtils.TryCreateNetworkObject(                
-                NetworkingLibrary.Instance.RoundSession.gameObject,
-                out GameObject roundObject);
-
             LevelSession.Create();
 
             RoundSession.Create(
