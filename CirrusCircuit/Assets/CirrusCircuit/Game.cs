@@ -94,6 +94,7 @@ namespace Cirrus.Circuit
         public float _countDownTime = 5f;
         public float CountDownTime => _countDownTime;
 
+        // TODO
         [SerializeField]
         public int _countDown = 3;
         public int CountDown => _countDown;
