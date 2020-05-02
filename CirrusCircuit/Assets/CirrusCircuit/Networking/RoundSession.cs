@@ -100,7 +100,7 @@ namespace Cirrus.Circuit.Networking
             if (ServerUtils.TryCreateNetworkObject(                
                 NetworkingLibrary.Instance.RoundSession.gameObject,
                 out GameObject obj,                
-                true))
+                false))
              {
                 
                 if (obj.TryGetComponent(out RoundSession session))
@@ -124,6 +124,9 @@ namespace Cirrus.Circuit.Networking
                         session._intermissionTime, 
                         start: false, 
                         repeat: false);
+
+
+                    NetworkServer.Spawn(session.gameObject, NetworkServer.localConnection);
 
                     return session;
                 }
