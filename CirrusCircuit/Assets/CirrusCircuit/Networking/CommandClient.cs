@@ -355,11 +355,10 @@ namespace Cirrus.Circuit.Networking
         {
             //AssertGameObjectNull(obj);
             if (obj == null) return;
-
             
             if(obj.TryGetComponent(out RoundSession session))
             {
-                session.Rpc_OnTimeout();
+                session.Rpc_OnIntermissionTimeoutBeginCountdown();
             }
         }
 
