@@ -39,7 +39,7 @@ namespace Cirrus.Circuit.Networking
         [SerializeField]
         private Timer _intermissionTimer;
 
-        public float Time => _roundTime - _timer.Time;
+        public float TimeRemaining => _roundTime - _timer.Time;
 
         [SyncVar]
         [SerializeField]        

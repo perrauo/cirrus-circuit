@@ -62,8 +62,7 @@ namespace Cirrus.Circuit
             WaitingNextRound,
             Podium,
             FinalPodium
-        }
-        
+        }        
 
         [SerializeField]
         public State _state = State.Menu;

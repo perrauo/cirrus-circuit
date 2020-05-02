@@ -13,11 +13,11 @@ namespace Cirrus.Circuit.UI
 
         private RoundSession _round;
 
-        public float Time
+        public float TimeRemaining
         {
             set
             {
-                var span = new TimeSpan(0, 0, (int)value); //Or TimeSpan.FromSeconds(seconds); (see Jakob C´s answer)
+                var span = new TimeSpan(0, 0, (int)value);
                 _text.text = string.Format(span.ToString(@"mm\:ss"));
             }
         }
@@ -54,8 +54,8 @@ namespace Cirrus.Circuit.UI
 
         public void Update()
         {
-            if (_round != null)
-                Time = _round.Time;
+            if (RoundSession.Instance != null)
+                TimeRemaining = _round.TimeRemaining;
         }
 
         public void OnRoundStarted()
