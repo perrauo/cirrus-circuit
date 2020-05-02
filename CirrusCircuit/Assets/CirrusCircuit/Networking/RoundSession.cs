@@ -98,29 +98,28 @@ namespace Cirrus.Circuit.Networking
             float intermissionTime, 
             int id)
         {
-            var template = NetworkingLibrary.Instance.RoundSession;
+            RoundSession session = NetworkingLibrary.Instance.RoundSession.Create(null);
 
-            template._intermissionTime = intermissionTime;
-            template._id = id;
-            template._countDown = countDown;
-            template._roundTime = time;
-            template._countDownTime = countDownTime;
-            template._countDownTimer = new Timer(
+            session._intermissionTime = intermissionTime;
+            session._id = id;
+            session._countDown = countDown;
+            session._roundTime = time;
+            session._countDownTime = countDownTime;
+            session._countDownTimer = new Timer(
                 countDownTime,
                 start: false,
                 repeat: true);
 
-            template._timer = new Timer(
-                template._roundTime,
+            session._timer = new Timer(
+                session._roundTime,
                 start: false);
 
-            template._intermissionTimer = new Timer(
-                template._intermissionTime,
+            session._intermissionTimer = new Timer(
+                session._intermissionTime,
                 start: false,
                 repeat: false);
 
-            RoundSession session = template.Create(null);
-            NetworkServer.Spawn(template.gameObject, NetworkServer.localConnection);
+            NetworkServer.Spawn(session.gameObject, NetworkServer.localConnection);
             return session;
         }
 
