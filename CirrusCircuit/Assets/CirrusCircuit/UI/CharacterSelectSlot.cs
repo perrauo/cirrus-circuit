@@ -220,7 +220,6 @@ namespace Cirrus.Circuit.UI
                     CharacterAsset resource = CharacterLibrary.Instance.Characters[_selectedIndex];
                     Character character =
                         resource.Create(
-                            position,
                             _characterSpotlightAnchor,
                             Quaternion.Euler(new Vector3(0, 180, 0)));
 
