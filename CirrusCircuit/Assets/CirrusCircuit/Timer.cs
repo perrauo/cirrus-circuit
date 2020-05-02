@@ -14,6 +14,8 @@ namespace Cirrus.Circuit
         [SerializeField]
         float _limit = -1;
 
+        public const float DefaultLimit = 0.5f;
+
         [SerializeField]
         float _time = 0f;
 
@@ -45,6 +47,14 @@ namespace Cirrus.Circuit
                 else
                     Clock.Instance.OnUpdateHandler = value;
             }
+        }
+
+        public Timer()
+        {
+            _time = 0;
+            _limit = DefaultLimit;
+            _repeat = false;
+            _isFixedUpdate = false;
         }
 
         public Timer(float limit, bool start = true, bool repeat = false, bool fixedUpdate = false)
