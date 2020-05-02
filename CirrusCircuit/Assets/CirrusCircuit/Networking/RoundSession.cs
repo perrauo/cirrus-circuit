@@ -77,6 +77,8 @@ namespace Cirrus.Circuit.Networking
             base.OnStartClient();            
 
             Game.Instance._SetState(Game.State.Round);
+
+            BeginIntermission();
         }        
 
         public static RoundSession Instance
