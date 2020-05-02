@@ -17,6 +17,7 @@ using System.Reflection;
 using UnityEditor;
 using Cirrus.MirrorExt;
 using Cirrus.Circuit.World;
+using UnityEngine.Experimental.XR.Interaction;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -80,6 +81,10 @@ namespace Cirrus.Circuit.Networking
         public static bool IsServer => Instance._handler is ServerHandler;
         public ClientHandler ClientHandler => IsServer ? null : (ClientHandler)_handler;
         public ServerHandler ServerHandler => IsServer ? (ServerHandler)_handler : null;
+
+        private static bool _isStarted = false;
+
+        public static bool IsStarted => _isStarted;
 
 
         private static CustomNetworkManager _instance = null;
@@ -145,6 +150,7 @@ namespace Cirrus.Circuit.Networking
 
         public void Stop()
         {
+            _isStarted = false;
             _handler.Stop();
         }
 
@@ -153,6 +159,7 @@ namespace Cirrus.Circuit.Networking
             _handler = null;
             _handler = new ServerHandler(this);
             Transport.port = ushort.TryParse(port, out ushort res) ? res : NetworkUtils.DefaultPort;
+            _isStarted = true;
             StartHost();
 
             if (!ServerUtils.TryCreateNetworkObject(
@@ -160,6 +167,7 @@ namespace Cirrus.Circuit.Networking
                 NetworkingLibrary.Instance.GameSession.gameObject,
                 out NetworkIdentity obj))
             {
+                _isStarted = false;
                 StopHost();                
                 return false;
             }
@@ -176,6 +184,7 @@ namespace Cirrus.Circuit.Networking
             {
                 _handler = new ClientHandler(this);
                 Transport.port = port;
+                _isStarted = true;
                 StartClient(NetworkUtils.ToUri(adrs, TelepathyTransport.Scheme));
                 return true;
             }

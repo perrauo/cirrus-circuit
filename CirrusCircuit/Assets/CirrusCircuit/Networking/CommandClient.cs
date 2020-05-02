@@ -12,9 +12,16 @@ namespace Cirrus.Circuit.Networking
     // Serves to sync the connection
     public class CommandClient : NetworkBehaviour
     {
+        public Events.Event OnUpdateHandler;
+
+        public Events.Event OnFixedUpdateHandler;
+
         public static void AssertGameObjectNull(GameObject gameObject) => Utils.DebugUtils.Assert(gameObject != null, "Cmd GameObject is null. Was the object spawn?");
 
         public static CommandClient _instance;
+
+
+        
 
         public static CommandClient Instance
         {
@@ -35,6 +42,32 @@ namespace Cirrus.Circuit.Networking
                 return _instance;
             }
         }
+
+        public virtual void Update()
+        {
+            if(CustomNetworkManager.IsStarted && CustomNetworkManager.IsServer) 
+                OnUpdateHandler?.Invoke();
+        }
+
+        public virtual void FixedUpdate()
+        {
+            if (CustomNetworkManager.IsStarted && CustomNetworkManager.IsServer) 
+                OnFixedUpdateHandler?.Invoke();
+        }
+
+
+        [Command]
+        public void Cmd_Update()
+        {
+            OnUpdateHandler?.Invoke();
+        }
+
+        [Command]
+        public void Cmd_FixedUpdate()
+        {
+            OnFixedUpdateHandler?.Invoke();
+        }
+
 
         [TargetRpc]
         public void TargetReceiveResponse(ServerResponseMessage response)
@@ -388,7 +421,6 @@ namespace Cirrus.Circuit.Networking
         }
 
         #endregion
-
 
     }
 }
