@@ -195,7 +195,7 @@ namespace Cirrus.Circuit.Networking
             else if (_countDown < 0)
             {
                 OnCountdownHandler?.Invoke(_countDown);
-                OnRoundBeginHandler.Invoke(_id);
+                OnRoundBeginHandler?.Invoke(_id);
 
                 if (CustomNetworkManager.IsServer)
                 {
