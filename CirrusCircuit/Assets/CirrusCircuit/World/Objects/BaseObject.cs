@@ -157,8 +157,8 @@ namespace Cirrus.Circuit.World.Objects
                 _nextColorTimer.OnTimeLimitHandler += OnNextColorTimeOut;
             }
 
-            _direction = Transform..forward.ToVector3Int();
-            _targetPosition = Transform..position;
+            _direction = Transform.forward.ToVector3Int();
+            _targetPosition = Transform.position;
             _targetScale = 1f;
 
             FSMAwake();
@@ -358,18 +358,18 @@ namespace Cirrus.Circuit.World.Objects
                 case State.Moving:
                 case State.RampMoving:
 
-                    Transform..position = Vector3.Lerp(
-                        Transform..position, 
+                    Transform.position = Vector3.Lerp(
+                        Transform.position, 
                         _targetPosition, 
                         _stepSpeed);
 
                     float scale = 
                         Mathf.Lerp(
-                            Transform..localScale.x, 
+                            Transform.localScale.x, 
                             _targetScale, 
                             _scaleSpeed);
 
-                    Transform..localScale = 
+                    Transform.localScale = 
                         new Vector3(
                             scale, 
                             scale, 
@@ -399,7 +399,7 @@ namespace Cirrus.Circuit.World.Objects
                 case State.RampMoving:
 
                     if (VectorUtils.IsCloseEnough(
-                        Transform..position, 
+                        Transform.position, 
                         _targetPosition))
                     {
                         if (_destination == null)
@@ -654,7 +654,7 @@ namespace Cirrus.Circuit.World.Objects
                         _destination = destination;
                         _gridPosition = newGridPosition;// _level.GridToWorld(newGridPosition);
                         _targetPosition = _level.GridToWorld(_gridPosition);
-                        Transform..position = _targetPosition; 
+                        Transform.position = _targetPosition; 
 
                         _state = target;
                         result = true;
