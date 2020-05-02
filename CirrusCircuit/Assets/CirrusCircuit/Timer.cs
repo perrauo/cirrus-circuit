@@ -23,8 +23,10 @@ namespace Cirrus.Circuit
         bool active = false;
         public bool IsActive => active;
 
+        [NonSerialized]
         public Events.Event<float> OnTickHandler;
 
+        [NonSerialized]
         public Events.Event OnTimeLimitHandler;
 
         private Events.Event OnClockUpdateHandler
