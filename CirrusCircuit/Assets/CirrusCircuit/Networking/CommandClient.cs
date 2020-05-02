@@ -42,27 +42,25 @@ namespace Cirrus.Circuit.Networking
 
         public virtual void Update()
         {
-            if (CustomNetworkManager.IsStarted && CustomNetworkManager.IsServer)
-                Cmd_Update();
+            if(OnUpdateHandler != null) Cmd_Update();
         }
 
         public virtual void FixedUpdate()
         {
-            if (CustomNetworkManager.IsStarted && CustomNetworkManager.IsServer)
-                Cmd_FixedUpdate();
+            if (OnFixedUpdateHandler != null) Cmd_FixedUpdate();
         }
 
 
         [Command]
         public void Cmd_Update()
         {
-            OnUpdateHandler?.Invoke();
+            OnUpdateHandler.Invoke();
         }
 
         [Command]
         public void Cmd_FixedUpdate()
         {
-            OnFixedUpdateHandler?.Invoke();
+            OnFixedUpdateHandler.Invoke();
         }
 
 
