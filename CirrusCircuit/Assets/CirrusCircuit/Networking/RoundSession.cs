@@ -58,9 +58,9 @@ namespace Cirrus.Circuit.Networking
 
         [SyncVar]
         [SerializeField]
-        private int _id = 0;
+        private int _index = 0;
 
-        public int Id => _id;
+        public int Id => _index;
 
         private static RoundSession _instance;
 
@@ -75,11 +75,13 @@ namespace Cirrus.Circuit.Networking
 
         public override void OnStartClient()
         {
-            base.OnStartClient();            
+            base.OnStartClient();
+
+            Game.Instance.OnRoundInitHandler?.Invoke();
 
             Game.Instance._SetState(Game.State.Round);
 
-            BeginIntermission();
+            StartIntermisison();
         }        
 
         public static RoundSession Instance
@@ -101,7 +103,7 @@ namespace Cirrus.Circuit.Networking
             RoundSession session = NetworkingLibrary.Instance.RoundSession.Create(null);
 
             session._intermissionTime = intermissionTime;
-            session._id = id;
+            session._index = id;
             session._countDown = countDown;
             session._roundTime = time;
             session._countDownTime = countDownTime;
@@ -126,9 +128,9 @@ namespace Cirrus.Circuit.Networking
             return session;
         }
 
-        public void BeginIntermission()
+        public void StartIntermisison()
         {
-            OnIntermissionHandler?.Invoke(_id);
+            OnIntermissionHandler?.Invoke(_index);
             if (CustomNetworkManager.IsServer)
             {
                 _intermissionTimer.Start();
@@ -188,7 +190,7 @@ namespace Cirrus.Circuit.Networking
             else if (_countDown < 0)
             {
                 OnCountdownHandler?.Invoke(_countDown);
-                OnRoundBeginHandler?.Invoke(_id);
+                OnRoundBeginHandler?.Invoke(_index);
 
                 if (CustomNetworkManager.IsServer)
                 {

@@ -24,20 +24,6 @@ namespace Cirrus.Circuit.Networking
             NetworkServer.RegisterHandler<ClientPlayerMessage>(OnPlayerJoinMessage);
         }
 
-        public override void StartRound()
-        {
-            base.StartRound();
-
-            LevelSession.Create();
-
-            RoundSession.Create(
-                Game.Instance.CountDown,
-                Game.Instance.RoundTime,
-                Game.Instance.CountDownTime,
-                Game.Instance.IntermissionTime,
-                GameSession.Instance._roundIndex);                
-        }
-
         public override void Stop()
         {
             _net.StopHost();

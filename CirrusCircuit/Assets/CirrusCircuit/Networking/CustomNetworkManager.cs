@@ -68,11 +68,6 @@ namespace Cirrus.Circuit.Networking
         {
             return false;
         }
-
-        public virtual void StartRound()
-        {
-
-        }
     }
 
 
@@ -187,13 +182,6 @@ namespace Cirrus.Circuit.Networking
 
             return false;
         }
-
-        public void StartRound()
-        {
-            _handler.StartRound();
-        }
-
-
 
 
         #region Editor

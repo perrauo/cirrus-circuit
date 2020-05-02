@@ -18,9 +18,7 @@ namespace Cirrus.Circuit.UI
         }
 
         public int RoundNumber {
-            get {
-                return _number;
-            }
+            get => _number;
 
             set
             {
@@ -36,10 +34,7 @@ namespace Cirrus.Circuit.UI
 
         public string Message
         {
-            get
-            {
-                return _message;
-            }
+            get => _message;           
 
             set
             {
@@ -57,10 +52,7 @@ namespace Cirrus.Circuit.UI
 
         public bool Enabled
         {
-            get
-            {
-                return _enabled;
-            }
+            get => _enabled;            
 
             set
             {
@@ -88,7 +80,7 @@ namespace Cirrus.Circuit.UI
             _timer.OnTimeLimitHandler += OnTimeOut;
 
             GameSession.OnStartClientStaticHandler += OnSessionClientStarted;
-            Game.Instance.OnRoundStartedHandler += OnNewRound;
+            Game.Instance.OnRoundInitHandler += OnRoundInit;
         }
 
         public void OnSessionClientStarted(bool enable)
@@ -96,7 +88,7 @@ namespace Cirrus.Circuit.UI
 
         }
 
-        public void OnNewRound()
+        public void OnRoundInit()
         {
             RoundSession.Instance.OnRoundEndHandler += OnRoundEnd;
             RoundSession.Instance.OnIntermissionHandler += OnIntermission;
