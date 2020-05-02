@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
-
+using Mirror;
 
 namespace Cirrus.Circuit
 {
@@ -11,11 +11,13 @@ namespace Cirrus.Circuit
         [SerializeField]
         bool _repeat = false;
 
+        [SyncVar]
         [SerializeField]
         float _limit = -1;
 
         public const float DefaultLimit = 0.5f;
 
+        [SyncVar]
         [SerializeField]
         float _time = 0f;
 

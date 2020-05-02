@@ -95,28 +95,40 @@ namespace Cirrus.Circuit.Networking
             float intermissionTime, 
             int id)
         {
-            RoundSession session = null;
-
             if (ServerUtils.TryCreateNetworkObject(                
                 NetworkingLibrary.Instance.RoundSession.gameObject,
                 out GameObject obj,                
                 true))
              {
-                session = obj.GetComponent<RoundSession>();
-                if (session != null)
+                
+                if (obj.TryGetComponent(out RoundSession session))
                 {
                     session._intermissionTime = intermissionTime;
                     session._id = id;
                     session._countDown = countDown;
                     session._roundTime = time;
                     session._countDownTime = countDownTime;
-                    session._countDownTimer = new Timer(countDownTime, start: false, repeat: true);
-                    session._timer = new Timer(session._roundTime, start: false);
-                    session._intermissionTimer = new Timer(session._intermissionTime, start: false, repeat: false);
+                    
+                    session._countDownTimer = new Timer(
+                        countDownTime, 
+                        start: false, 
+                        repeat: true);
+                    
+                    session._timer = new Timer(
+                        session._roundTime, 
+                        start: false);
+
+                    session._intermissionTimer = new Timer(
+                        session._intermissionTime, 
+                        start: false, 
+                        repeat: false);
+
+                    return session;
                 }
+
             }
 
-            return session;
+            return null;
         }
 
         public void BeginIntermission()
