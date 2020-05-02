@@ -5,6 +5,7 @@ using Cirrus.Circuit.UI;
 using Mirror;
 //using UnityEngine;
 using Cirrus.MirrorExt;
+using Cirrus.Utils;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -97,49 +98,39 @@ namespace Cirrus.Circuit.Networking
             float intermissionTime, 
             int id)
         {
-            if (ServerUtils.TryCreateNetworkObject(                
-                NetworkingLibrary.Instance.RoundSession.gameObject,
-                out GameObject obj,                
-                false))
-             {
-                
-                if (obj.TryGetComponent(out RoundSession session))
-                {
-                    session._intermissionTime = intermissionTime;
-                    session._id = id;
-                    session._countDown = countDown;
-                    session._roundTime = time;
-                    session._countDownTime = countDownTime;
-                    
-                    session._countDownTimer = new Timer(
-                        countDownTime, 
-                        start: false, 
-                        repeat: true);
-                    
-                    session._timer = new Timer(
-                        session._roundTime, 
-                        start: false);
+            var template = NetworkingLibrary.Instance.RoundSession;
 
-                    session._intermissionTimer = new Timer(
-                        session._intermissionTime, 
-                        start: false, 
-                        repeat: false);
+            template._intermissionTime = intermissionTime;
+            template._id = id;
+            template._countDown = countDown;
+            template._roundTime = time;
+            template._countDownTime = countDownTime;
+            template._countDownTimer = new Timer(
+                countDownTime,
+                start: false,
+                repeat: true);
 
+            template._timer = new Timer(
+                template._roundTime,
+                start: false);
 
-                    NetworkServer.Spawn(session.gameObject, NetworkServer.localConnection);
+            template._intermissionTimer = new Timer(
+                template._intermissionTime,
+                start: false,
+                repeat: false);
 
-                    return session;
-                }
-
-            }
-
-            return null;
+            RoundSession session = template.Create(null);
+            NetworkServer.Spawn(template.gameObject, NetworkServer.localConnection);
+            return session;
         }
 
         public void BeginIntermission()
         {
             OnIntermissionHandler?.Invoke(_id);
-            if(CustomNetworkManager.IsServer) _intermissionTimer.Start();
+            if (CustomNetworkManager.IsServer)
+            {
+                _intermissionTimer.Start();
+            }
         }
 
 
@@ -221,7 +212,7 @@ namespace Cirrus.Circuit.Networking
 
         public void _OnRoundEnd()
         {
-            OnRoundEndHandler.Invoke();
+            OnRoundEndHandler?.Invoke();
         }
 
     }
