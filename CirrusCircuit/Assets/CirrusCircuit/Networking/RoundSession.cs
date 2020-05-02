@@ -29,7 +29,7 @@ namespace Cirrus.Circuit.Networking
 
         [SerializeField]
         [SyncVar]
-        private Timer _timer;
+        private ServerTimer _timer;
 
         [SyncVar]
         [SerializeField]
@@ -112,7 +112,7 @@ namespace Cirrus.Circuit.Networking
                 start: false,
                 repeat: true);
 
-            session._timer = new Timer(
+            session._timer = new ServerTimer(
                 session._roundTime,
                 start: false);
 
