@@ -86,7 +86,16 @@ namespace Cirrus.Circuit.Networking
         public ClientHandler ClientHandler => IsServer ? null : (ClientHandler)_handler;
         public ServerHandler ServerHandler => IsServer ? (ServerHandler)_handler : null;
 
-        public static CustomNetworkManager Instance => (CustomNetworkManager)singleton;
+
+        private static CustomNetworkManager _instance = null;
+        public static CustomNetworkManager Instance
+        {
+            get
+            {
+                if (_instance == null) _instance = FindObjectOfType<CustomNetworkManager>();
+                return _instance;
+            }
+        }
 
 
         public override void OnClientConnect(NetworkConnection conn)
