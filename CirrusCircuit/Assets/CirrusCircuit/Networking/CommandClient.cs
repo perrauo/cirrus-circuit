@@ -18,10 +18,7 @@ namespace Cirrus.Circuit.Networking
 
         public static void AssertGameObjectNull(GameObject gameObject) => Utils.DebugUtils.Assert(gameObject != null, "Cmd GameObject is null. Was the object spawn?");
 
-        public static CommandClient _instance;
-
-
-        
+        public static CommandClient _instance;        
 
         public static CommandClient Instance
         {
@@ -45,14 +42,14 @@ namespace Cirrus.Circuit.Networking
 
         public virtual void Update()
         {
-            if(CustomNetworkManager.IsStarted && CustomNetworkManager.IsServer) 
-                OnUpdateHandler?.Invoke();
+            if (CustomNetworkManager.IsStarted && CustomNetworkManager.IsServer)
+                Cmd_Update();
         }
 
         public virtual void FixedUpdate()
         {
-            if (CustomNetworkManager.IsStarted && CustomNetworkManager.IsServer) 
-                OnFixedUpdateHandler?.Invoke();
+            if (CustomNetworkManager.IsStarted && CustomNetworkManager.IsServer)
+                Cmd_FixedUpdate();
         }
 
 
