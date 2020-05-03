@@ -75,13 +75,6 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
         private bool _wasMovingVertical = false;
 
-        public override void OnRound()
-        {
-            base.OnRound();
-
-            //_controller.SetCallbacks(this);
-        }
-
         public override bool TrySetState(State transition, params object[] args)
         {
             return base.TrySetState(transition, args);
