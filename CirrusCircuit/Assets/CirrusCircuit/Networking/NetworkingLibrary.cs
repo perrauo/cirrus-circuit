@@ -15,6 +15,9 @@ namespace Cirrus.Circuit.Networking
         public CommandClient ClientConnectionPlayer;
 
         [SerializeField]
+        public ServerTimer ServerTimer;
+
+        [SerializeField]
         public GameSession GameSession;
 
         [SerializeField]

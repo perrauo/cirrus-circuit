@@ -27,8 +27,8 @@ namespace Cirrus.Circuit.Networking
 
         public OnRoundEnd OnRoundEndHandler;
 
-        [SerializeField]
         [SyncVar]
+        [SerializeField]
         private ServerTimer _timer;
 
         [SyncVar]
@@ -39,7 +39,7 @@ namespace Cirrus.Circuit.Networking
         [SerializeField]
         private Timer _intermissionTimer;
 
-        public float TimeRemaining => _roundTime - _timer.Time;
+        public float RemainingTime => _remainingTime - _timer.Time;
 
         [SyncVar]
         [SerializeField]        
@@ -54,13 +54,13 @@ namespace Cirrus.Circuit.Networking
 
         [SyncVar]
         [SerializeField]
-        private float _roundTime;
+        private float _remainingTime;
 
         [SyncVar]
         [SerializeField]
         private int _index = 0;
 
-        public int Id => _index;
+        public int Index => _index;
 
         private static RoundSession _instance;
 
@@ -98,23 +98,26 @@ namespace Cirrus.Circuit.Networking
             float time, 
             float countDownTime, 
             float intermissionTime, 
-            int id)
+            int index)
         {
             RoundSession session = NetworkingLibrary.Instance.RoundSession.Create(null);
 
             session._intermissionTime = intermissionTime;
-            session._index = id;
+            session._index = index;
             session._countDown = countDown;
-            session._roundTime = time;
+            session._remainingTime = time;
             session._countDownTime = countDownTime;
             session._countDownTimer = new Timer(
                 countDownTime,
                 start: false,
                 repeat: true);
 
-            session._timer = new ServerTimer(
-                session._roundTime,
-                start: false);
+            if (CustomNetworkManager.IsServer)
+            {
+                session._timer = ServerTimer.Create(
+                    session._remainingTime,
+                    start: false);
+            }
 
             session._intermissionTimer = new Timer(
                 session._intermissionTime,

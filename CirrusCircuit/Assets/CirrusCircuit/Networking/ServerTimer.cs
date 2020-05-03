@@ -3,11 +3,12 @@ using System.Collections;
 using System;
 using Mirror;
 using Cirrus.Circuit.Networking;
+using Cirrus.Utils;
 
 namespace Cirrus.Circuit
 {
     [Serializable]
-    public class ServerTimer
+    public class ServerTimer : NetworkBehaviour
     {
         [SerializeField]
         bool _repeat = false;
@@ -45,42 +46,29 @@ namespace Cirrus.Circuit
 
             set
             {
-                if (_isFixedUpdate)
-                    CommandClient.Instance.OnFixedUpdateHandler = value;
-                else
-                    CommandClient.Instance.OnUpdateHandler = value;
+                if (_isFixedUpdate) CommandClient.Instance.OnFixedUpdateHandler = value;
+                else CommandClient.Instance.OnUpdateHandler = value;
             }
         }
 
-        public ServerTimer()
+        public static ServerTimer Create(float limit, bool start = true, bool repeat = false, bool fixedUpdate = false)
         {
-            _time = 0;
-            _limit = DefaultLimit;
-            _repeat = false;
-            _isFixedUpdate = false;
-        }
+            var timer = NetworkingLibrary.Instance.ServerTimer.Create(null);
+            timer._time = 0;
+            timer._limit = limit;
+            timer._repeat = repeat;
+            timer._isFixedUpdate = fixedUpdate;
 
-        public ServerTimer(float limit, bool start = true, bool repeat = false, bool fixedUpdate = false)
-        {
-            _time = 0;
-            _limit = limit;
-            _repeat = repeat;
-            _isFixedUpdate = fixedUpdate;
-
-            if (start)
-            {
-                Start();
-            }
+            NetworkServer.Spawn(timer.gameObject);
+            if (start) timer.Start();
+            return timer;
         }
 
         public float Time => _time;
 
         public void Reset(float limit = -1)
         {
-            if (limit > 0)
-            {
-                _limit = limit;
-            }
+            if (limit > 0) _limit = limit;
 
             _time = 0;
         }
@@ -89,30 +77,21 @@ namespace Cirrus.Circuit
         {
             Reset(limit);
 
-            if (!active)
-            {
-                OnClockUpdateHandler += OnTicked;
-            }
+            if (!active) OnClockUpdateHandler += OnTicked;
 
             active = true;
         }
 
         public void Resume()
         {
-            if (!active)
-            {
-                OnClockUpdateHandler += OnTicked;
-            }
+            if (!active) OnClockUpdateHandler += OnTicked;            
 
             active = true;
         }
 
         public void Stop()
         {
-            if (active)
-            {
-                OnClockUpdateHandler -= OnTicked;
-            }
+            if (active) OnClockUpdateHandler -= OnTicked;
 
             active = false;
         }
