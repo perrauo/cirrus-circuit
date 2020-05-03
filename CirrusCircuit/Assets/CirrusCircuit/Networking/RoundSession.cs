@@ -225,7 +225,9 @@ namespace Cirrus.Circuit.Networking
 
         public void _OnRoundEnd()
         {
-            OnRoundEndHandler?.Invoke();
+            //OnRoundEndHandler?.Invoke();
+
+            Announcement.Instance.Message = "Time's up!";
         }
 
     }

@@ -38,20 +38,6 @@ namespace Cirrus.Circuit.UI
                 //_playerDisplays[index]?.TrySetState(state);
             }            
         }
-
-        public void Leave(Controls.Player controller)
-        {
-            if (controller.PlayerDisplay)
-            {
-                controller.PlayerDisplay.TrySetState(Player.State.Waiting);
-                _availablePlayerDisplays.Add(controller.PlayerDisplay);
-                controller.PlayerDisplay = null;
-            }
-        }
-
-        public void OnScoreChanged(int player, float score)
-        {
-            _playerDisplays[(int)player].OnScoreChanged(score);
-        }       
+   
     }
 }

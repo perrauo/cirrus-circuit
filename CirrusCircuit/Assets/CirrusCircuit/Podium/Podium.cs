@@ -6,30 +6,16 @@ using Cirrus.Circuit.Networking;
 
 using Mirror;
 using Cirrus.Circuit.World.Objects.Characters;
+using Cirrus.Circuit.UI;
 
 namespace Cirrus.Circuit
 {
     public delegate  void OnPodiumFinished();
 
 
-    public class Podium : NetworkBehaviour
+    public class Podium : BaseSingleton<Podium>
     {
-
-        protected static Podium _instance;
-
-        public static Podium Instance
-        {
-            get
-            {
-                if (_instance == null) _instance = FindObjectOfType<Podium>();
-                return _instance;
-            }
-        }    
-
         public OnPodiumFinished OnPodiumFinishedHandler;
-
-        [SerializeField]
-        private UI.Announcement _announcement;
 
         [SerializeField]
         private Platform _platformTemplate;
@@ -70,16 +56,16 @@ namespace Cirrus.Circuit
 
         private int _platformFinishedCount = 0;
 
-        public virtual void OnValidate()
+        public override void OnValidate()
         {
-            //base.OnValidate();
+            base.OnValidate();
 
-            if (_announcement == null) _announcement = FindObjectOfType<UI.Announcement>();
+           
         }
 
-        public virtual void Awake()
+        public override void Awake()
         {
-            //base.Awake();
+            base.Awake();
 
             _timer = new Timer(_timeTransition, start: false, repeat: false);
             _finalTimer = new Timer(_timeFinal, start: false, repeat: false);
@@ -217,14 +203,10 @@ namespace Cirrus.Circuit
 
                     if (winner != null)
                     {
-                        if (Mathf.Approximately(max, secondMax))
-                        {
-                            _announcement.Message = "Tie.";
-                        }
-                        else
-                        {
-                            _announcement.Message = winner.Name + " wins!";
-                        }
+                        Announcement.Instance.Message = 
+                            Mathf.Approximately(max, secondMax) ? 
+                            "Tie." : 
+                            winner.Name + " wins!";
                     }
 
                     _finalTimer.Start();

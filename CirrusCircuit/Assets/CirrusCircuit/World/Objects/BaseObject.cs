@@ -297,10 +297,7 @@ namespace Cirrus.Circuit.World.Objects
             ref Vector3 offset, 
             BaseObject incoming = null)
         {
-            if (_user != null)
-            {
-                if (_user.TryMove(step, incoming)) return true;
-            }
+            if (_user != null && _user.TryMove(step, incoming)) return true;
 
             return true;
         }
@@ -404,11 +401,9 @@ namespace Cirrus.Circuit.World.Objects
                     {
                         if (_destination == null)
                         {
-                            BaseObject obj;
-
                             if (_levelSession.TryGet(
                                 _gridPosition + Vector3Int.down, 
-                                out obj))
+                                out BaseObject obj))
                             {
                                 TrySetState(State.Idle);
                             }
@@ -668,10 +663,7 @@ namespace Cirrus.Circuit.World.Objects
                         _state = target;
                         result = true;
                     }
-                    else
-                    {
-                        Cmd_TryFall();                              
-                    }
+                    else Cmd_TryFall();
 
                     break;
 

@@ -125,6 +125,7 @@ namespace Cirrus.Circuit.Networking
 
         public void OnRound()
         {
+            Debug.Log("$$$$$$$$$$$$$$$ ON ROUND");
 
             _objects = new BaseObject[Level.Size];
 

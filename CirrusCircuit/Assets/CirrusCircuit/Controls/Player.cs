@@ -42,8 +42,6 @@ namespace Cirrus.Circuit.Controls
         [SerializeField]
         public UI.CharacterSelectSlot _characterSlot;
 
-        public UI.Player PlayerDisplay = null;
-
         public Vector2 AxisLeft => _actionMap.Player.AxesLeft.ReadValue<Vector2>();
 
         [SerializeField]

@@ -10,6 +10,7 @@ using Cirrus.Events;
 using Cirrus.Circuit.World;
 using StartMenu = Cirrus.Circuit.UI.StartMenu;
 using System.Threading;
+using Cirrus.Circuit.UI;
 
 namespace Cirrus.Circuit
 {
@@ -202,7 +203,7 @@ namespace Cirrus.Circuit
             FSMHandleAction0(player);
         }
 
-        public void HandleAction1(Player player)
+        public void HandleAction1(Controls.Player player)
         {
             FSMHandleAction1(player);
         }
@@ -537,6 +538,7 @@ namespace Cirrus.Circuit
 
                     foreach (Level level in _levels)
                     {
+                        if (level == null) continue;
                         level.gameObject.SetActive(true);
                         level.OnLevelSelect();
                     }             
@@ -563,11 +565,8 @@ namespace Cirrus.Circuit
                     foreach (Level level in _levels)
                     {
                         if (level == null) continue;
-                        if (level == GameSession.Instance.SelectedLevel) continue;
                         level.gameObject.SetActive(false);
                     }
-
-                    GameSession.Instance.SelectedLevel.gameObject.SetActive(false);
 
                     if (CustomNetworkManager.IsServer)
                     {
@@ -605,6 +604,7 @@ namespace Cirrus.Circuit
                 case State.Round:
 
                     OnRoundHandler?.Invoke();
+                    Announcement.Instance.RoundIndex = RoundSession.Instance.Index;
 
                     _state = target;
 
@@ -638,7 +638,7 @@ namespace Cirrus.Circuit
 
 
         // TODO: Simulate LeftStick continuous axis with WASD
-        public void FSMHandleAxesLeft(Player player, Vector2 axis)
+        public void FSMHandleAxesLeft(Controls.Player player, Vector2 axis)
         {
             bool isMovingHorizontal = Mathf.Abs(axis.x) > 0.5f;
             bool isMovingVertical = Mathf.Abs(axis.y) > 0.5f;
@@ -711,7 +711,7 @@ namespace Cirrus.Circuit
             }
         }
 
-        public void FSMHandleAction0(Player player)
+        public void FSMHandleAction0(Controls.Player player)
         {
             switch (_state)
             {
@@ -757,7 +757,7 @@ namespace Cirrus.Circuit
             }
         }
 
-        public void FSMHandleAction1(Player player)
+        public void FSMHandleAction1(Controls.Player player)
         {
             switch (_state)
             {
