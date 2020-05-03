@@ -78,10 +78,11 @@ namespace Cirrus.Circuit.Networking
                 session._color = PlayerManager.Instance.GetColor(session._serverId);
                 session._name = PlayerManager.Instance.GetName(session._serverId);                        
                 session._localId = localPlayerId;                        
-                session.netIdentity.AssignClientAuthority(conn);
                 NetworkServer.Spawn(
                     session.gameObject, 
-                    NetworkServer.localConnection);        
+                    NetworkServer.localConnection);
+
+                session.netIdentity.AssignClientAuthority(conn);
 
                 playersPerConnection.Add(localPlayerId);
 
