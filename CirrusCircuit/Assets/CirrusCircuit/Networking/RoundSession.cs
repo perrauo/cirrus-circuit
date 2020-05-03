@@ -224,6 +224,7 @@ namespace Cirrus.Circuit.Networking
             {                
                 NetworkServer.Destroy(_timerGameObject);
                 Destroy(_timerGameObject);
+                _timerGameObject = null;
             }
 
             CommandClient.Instance.Cmd_RoundSession_OnRoundEnd(gameObject);
