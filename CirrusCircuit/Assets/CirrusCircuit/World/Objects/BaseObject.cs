@@ -419,16 +419,11 @@ namespace Cirrus.Circuit.World.Objects
 
                     break;
             }
-        }
+        } 
 
-        public virtual void OnRound()
+        public virtual void OnRoundStart(int idx)
         {
             TrySetState(State.Idle);
-        }
-
-        public virtual void OnRoundBegin()
-        {
-
         }
 
         public virtual void OnRoundEnd()

@@ -151,6 +151,7 @@ namespace Cirrus.Circuit.Networking
                     door.OnScoreValueAddedHandler += OnGemEntered;
                 }
 
+                RoundSession.Instance.OnRoundStartHandler += res.OnRoundStart;
                 res._levelSession = this;
                 res._level = Level;
                 res.Color = PlayerManager.Instance.GetColor(res.ColorId);
@@ -192,7 +193,7 @@ namespace Cirrus.Circuit.Networking
                     obj._session = session;
                     session._object = obj;
 
-                    obj.TrySetState(BaseObject.State.Idle);
+                    obj.TrySetState(BaseObject.State.Disabled);
                 }
             }
         }

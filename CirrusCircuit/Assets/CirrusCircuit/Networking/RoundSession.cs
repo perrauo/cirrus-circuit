@@ -6,26 +6,19 @@ using Mirror;
 //using UnityEngine;
 using Cirrus.MirrorExt;
 using Cirrus.Utils;
+using Cirrus.Events;
 
 namespace Cirrus.Circuit.Networking
 {
-    public delegate void OnIntermission(int count);
-
-    public delegate void OnCountdown(int count);
-
-    public delegate void OnRoundBegin(int roundNumber);
-
-    public delegate void OnRoundEnd();
-
     public class RoundSession : CustomNetworkBehaviour
     {
-        public OnIntermission OnIntermissionHandler;
+        public Event<int> OnIntermissionHandler;
 
-        public OnCountdown OnCountdownHandler;
+        public Event<int> OnCountdownHandler;
 
-        public OnRoundBegin OnRoundStartHandler;
+        public Event<int> OnRoundStartHandler;
 
-        public OnRoundEnd OnRoundEndHandler;
+        public Events.Event OnRoundEndHandler;
 
         [SyncVar]
         [SerializeField]
