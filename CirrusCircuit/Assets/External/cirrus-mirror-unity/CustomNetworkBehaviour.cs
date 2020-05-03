@@ -22,6 +22,18 @@ namespace Cirrus.MirrorExt
 
         public bool IsServerOrClient => isServer || isClient;
 
+        private bool _isClientStarted = false;
+        public bool IsClientStarted => _isClientStarted;
+
+        private bool _isServerStarted = false;
+        public bool IsServerStarted => _isServerStarted;
+
+        private bool _isAuthorityStarted = false;
+        public bool IsAuthorityStarted => _isAuthorityStarted;
+
+        private bool _isLocalPlayerStarted = false;
+        public bool IsLocalPlayerStarted => _isLocalPlayerStarted;
+
         public override void OnStopServer()
         {
             base.OnStopServer();
@@ -55,6 +67,8 @@ namespace Cirrus.MirrorExt
         {
             base.OnStartClient();
 
+            _isClientStarted = true;
+
             OnStartClientHandler?.Invoke();
         }
 
@@ -69,6 +83,8 @@ namespace Cirrus.MirrorExt
         {
             base.OnStopAuthority();
 
+            _isAuthorityStarted = true;
+
             OnStopAuthorityHandler?.Invoke();
         }
 
@@ -76,12 +92,16 @@ namespace Cirrus.MirrorExt
         {
             base.OnStartServer();
 
+            _isServerStarted = true;
+
             OnStartServerHandler?.Invoke();
         }
 
         public override void OnStartLocalPlayer()
         {
             base.OnStartLocalPlayer();
+
+            _isLocalPlayerStarted = true;
 
             OnStartLocalPlayerHandler?.Invoke();
 
