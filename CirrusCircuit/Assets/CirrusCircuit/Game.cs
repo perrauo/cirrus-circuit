@@ -37,7 +37,7 @@ namespace Cirrus.Circuit
 
         public Event<Level, int> OnLevelScrollHandler;
 
-        public Events.Event OnRoundStartedHandler;
+        public Events.Event OnRoundCountdownHandler;
 
         public Events.Event OnRoundInitHandler;
 
@@ -609,7 +609,7 @@ namespace Cirrus.Circuit
 
                 case State.Round:
 
-                    OnRoundStartedHandler?.Invoke();
+                    OnRoundCountdownHandler?.Invoke();
 
                     _state = target;
 

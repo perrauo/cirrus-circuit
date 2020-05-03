@@ -113,7 +113,7 @@ namespace Cirrus.Circuit.Networking
         {
             _mutex = new Mutex(false);
 
-            Game.Instance.OnRoundStartedHandler += OnRoundStarted;
+            Game.Instance.OnRoundInitHandler += OnRoundInit;
 
             if (CustomNetworkManager.IsServer)
             {
@@ -147,11 +147,7 @@ namespace Cirrus.Circuit.Networking
                     transform
                     );
 
-                if (res is Door)
-                {
-                    var door = (Door)res;
-                    door.OnScoreValueAddedHandler += OnGemEntered;
-                }
+                if (res is Door) ((Door)res).OnScoreValueAddedHandler += OnGemEntered;
 
                 res._levelSession = this;
                 res._level = Level;
@@ -178,7 +174,7 @@ namespace Cirrus.Circuit.Networking
                 info.Session._object.ColorId = info.PlayerId;
                 info.Session._object.Color = player.Color;
                 info.Session._object._gridPosition = info.Position;
-                RegisterObject(info.Session._object);
+                (info.Session._object.Transform.position, info.Session._object._gridPosition) = RegisterObject(info.Session._object);
 
                 if (player.ServerId == localPlayer.ServerId)
                     localPlayer._character = (Character)info.Session._object;
@@ -529,10 +525,10 @@ namespace Cirrus.Circuit.Networking
 
         public void OnRoundInit()
         {
-
+            RoundSession.Instance.OnRoundStartHandler += OnRoundStarted;
         }
 
-        public void OnRoundStarted()
+        public void OnRoundStarted(int i)
         {
 
             foreach (var obj in _objects)
