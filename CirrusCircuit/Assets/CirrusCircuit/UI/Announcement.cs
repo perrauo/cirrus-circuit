@@ -81,6 +81,7 @@ namespace Cirrus.Circuit.UI
 
             GameSession.OnStartClientStaticHandler += OnSessionClientStarted;
             Game.Instance.OnRoundInitHandler += OnRoundInit;
+            Game.Instance.OnRoundHandler += OnRound;
         }
 
         public void OnSessionClientStarted(bool enable)
@@ -91,12 +92,11 @@ namespace Cirrus.Circuit.UI
         public void OnRoundInit()
         {
             RoundSession.Instance.OnRoundEndHandler += OnRoundEnd;
-            RoundSession.Instance.OnIntermissionHandler += OnIntermission;
         }
 
-        public void OnIntermission(int count)
+        public void OnRound()
         {
-            RoundNumber = count;
+            RoundNumber = RoundSession.Instance.Index;
         }
 
         public void OnRoundEnd()

@@ -37,7 +37,7 @@ namespace Cirrus.Circuit
 
         public Event<Level, int> OnLevelScrollHandler;
 
-        public Events.Event OnRoundCountdownHandler;
+        public Events.Event OnRoundHandler;
 
         public Events.Event OnRoundInitHandler;
 
@@ -132,7 +132,7 @@ namespace Cirrus.Circuit
 
         private bool[] _wasMovingVertical = new bool[PlayerManager.PlayerMax];
 
-        Threading.CoroutineBarrier _roundInitBarrier;
+        //Threading.CoroutineBarrier _roundInitBarrier;
 
         public override void OnValidate()
         {
@@ -144,12 +144,6 @@ namespace Cirrus.Circuit
         public override void Awake()
         {
             base.Awake();
-
-            _roundInitBarrier = new Threading.CoroutineBarrier(
-                this,
-                () => RoundSession.Instance != null && RoundSession.Instance.IsClientStarted,
-                () => LevelSession.Instance != null && LevelSession.Instance.IsClientStarted);
-            _roundInitBarrier.OnBarrierPassedHandler += OnRoundInitBarrierPassed;
         }
 
         public override void Start()
@@ -185,14 +179,6 @@ namespace Cirrus.Circuit
         {
             FSMFixedUpdate();
         }
-
-        public void OnRoundInitBarrierPassed()
-        {
-            OnRoundInitHandler?.Invoke();
-            _SetState(State.Round);
-            RoundSession.Instance.StartIntermisison();
-        }
-        
 
         public void JoinSession()
         {
@@ -247,7 +233,6 @@ namespace Cirrus.Circuit
         }
 
         #region FSM
-
 
         public void FSMFixedUpdate()
         {
@@ -600,8 +585,18 @@ namespace Cirrus.Circuit
                             GameSession.Instance._roundIndex);
                     }
 
+                    new Threading.CoroutineBarrier(
+                        this,
+                        () => RoundSession.Instance != null && RoundSession.Instance.IsClientStarted,
+                        () => LevelSession.Instance != null && LevelSession.Instance.IsClientStarted)
+                        .Wait(() =>
+                        {
+                            Debug.Log("On Round Begin From Game");
 
-                    _roundInitBarrier.Wait();
+                            OnRoundInitHandler?.Invoke();
+                            _SetState(State.Round);
+                            RoundSession.Instance.StartIntermisison();
+                        });                                                                       
 
                     _state = target;
 
@@ -609,7 +604,7 @@ namespace Cirrus.Circuit
 
                 case State.Round:
 
-                    OnRoundCountdownHandler?.Invoke();
+                    OnRoundHandler?.Invoke();
 
                     _state = target;
 
@@ -771,7 +766,7 @@ namespace Cirrus.Circuit
                     break;
 
                 case State.LevelSelection:
-                    Cmd_SetState(State.InitRound);
+                    Cmd_SetState(State.InitRound, false);
                     break;
 
                 case State.CharacterSelection:

@@ -1,20 +1,16 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using Cirrus.Circuit.World.Objects;
-using Cirrus.Utils;
-using System;
-using System.Threading;
-using Cirrus.Utils;
-using Mirror;
-
-using Cirrus.Circuit.World.Objects;
+﻿using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.World;
+using Cirrus.Circuit.World.Objects;
 using Cirrus.Circuit.World.Objects.Characters;
 using Cirrus.Events;
 using Cirrus.MirrorExt;
+using Cirrus.Utils;
+using Mirror;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using Cirrus.Circuit.Controls;
+using System.Threading;
+using UnityEngine;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -114,6 +110,7 @@ namespace Cirrus.Circuit.Networking
             _mutex = new Mutex(false);
 
             Game.Instance.OnRoundInitHandler += OnRoundInit;
+            Game.Instance.OnRoundHandler += OnRound;
 
             if (CustomNetworkManager.IsServer)
             {
@@ -126,10 +123,8 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-        // TODO multiple object per square
-        public override void OnStartClient()
+        public void OnRound()
         {
-            base.OnStartClient();
 
             _objects = new BaseObject[Level.Size];
 
@@ -193,6 +188,13 @@ namespace Cirrus.Circuit.Networking
                     obj.TrySetState(BaseObject.State.Disabled);
                 }
             }
+        }
+
+        // TODO multiple object per square
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+
         }
 
         public override void Destroy()

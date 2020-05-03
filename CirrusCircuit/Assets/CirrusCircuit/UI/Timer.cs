@@ -44,6 +44,7 @@ namespace Cirrus.Circuit.UI
         {
             GameSession.OnStartClientStaticHandler += OnClientStarted;
             Game.Instance.OnRoundInitHandler += OnRoundInit;
+            Game.Instance.OnRoundHandler += OnRound;
             //Game.Instance.OnR
         }
 
@@ -54,26 +55,22 @@ namespace Cirrus.Circuit.UI
 
         public void Update()
         {
-            if (RoundSession.Instance != null) 
-                TimeRemaining = RoundSession.Instance.RemainingTime;
+            if (RoundSession.Instance != null) TimeRemaining = RoundSession.Instance.RemainingTime;
         }
 
         public void OnRoundInit()
         {            
-            RoundSession.Instance.OnIntermissionHandler += OnIntermission;
+            //RoundSession.Instance.OnIntermissionHandler += OnIntermission;
+        }
+
+        public void OnRound()
+        {
             Enabled = true;
         }
 
         public void OnRoundEnded()
         {            
-            Enabled = true;
+            Enabled = false;
         }
-
-        public void OnIntermission(int count)
-        {
-            Enabled = true;
-        }
-
-
     }
 }

@@ -47,7 +47,7 @@ namespace Cirrus.Circuit
         private List<Platform> _platforms;
 
         [SerializeField]
-        private List<World.Objects.Characters.Character> _characters;
+        private List<Character> _characters;
 
         private Timer _timer;
 
@@ -74,8 +74,7 @@ namespace Cirrus.Circuit
         {
             //base.OnValidate();
 
-            if (_announcement == null)
-                _announcement = FindObjectOfType<UI.Announcement>();
+            if (_announcement == null) _announcement = FindObjectOfType<UI.Announcement>();
         }
 
         public virtual void Awake()
