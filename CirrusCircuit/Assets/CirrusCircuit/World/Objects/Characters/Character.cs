@@ -147,7 +147,21 @@ namespace Cirrus.Circuit.World.Objects.Characters
         // Use the same raycast to show guide
         public void TryMove(Vector2 axis)
         {
-            if(!_moveCoroutineActive) StartCoroutine(MoveCoroutine(axis));
+            switch (_state)
+            {               
+                case State.Moving:
+                case State.Falling:
+                case State.Entering:
+                case State.Idle:
+                case State.RampIdle:
+
+                    if (!_moveCoroutineActive) StartCoroutine(MoveCoroutine(axis));
+                    break;
+
+                default:
+                    break;
+
+            }
         }
 
 

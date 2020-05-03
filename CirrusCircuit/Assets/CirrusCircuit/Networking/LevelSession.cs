@@ -113,6 +113,8 @@ namespace Cirrus.Circuit.Networking
         {
             _mutex = new Mutex(false);
 
+            Game.Instance.OnRoundInitHandler += OnRoundInit;
+
             if (CustomNetworkManager.IsServer)
             {
                 _randomDropRainTimer = new Timer(
@@ -151,7 +153,6 @@ namespace Cirrus.Circuit.Networking
                     door.OnScoreValueAddedHandler += OnGemEntered;
                 }
 
-                RoundSession.Instance.OnRoundStartHandler += res.OnRoundStart;
                 res._levelSession = this;
                 res._level = Level;
                 res.Color = PlayerManager.Instance.GetColor(res.ColorId);
@@ -524,6 +525,19 @@ namespace Cirrus.Circuit.Networking
         public void _OnRainTimeout(Vector3Int pos, int objectId)
         {
             Cmd_Spawn(objectId, pos);
+        }
+
+        public void OnRoundInit()
+        {
+
+            foreach (var obj in _objects)
+            {
+                if (obj == null) continue;
+
+                obj.TrySetState(BaseObject.State.Idle);
+            }
+
+            _randomDropRainTimer.Start();
         }
 
         public void OnRoundStarted(int id)
