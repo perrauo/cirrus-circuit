@@ -146,7 +146,7 @@ namespace Cirrus.Circuit
             base.Awake();
 
             _roundInitBarrier = new Threading.CoroutineBarrier(
-                gameObject,
+                this,
                 () => RoundSession.Instance != null && RoundSession.Instance.IsServerOrClient,
                 () => LevelSession.Instance != null && LevelSession.Instance.IsServerOrClient);
             _roundInitBarrier.OnBarrierPassedHandler += OnRoundInitBarrierPassed;
@@ -593,6 +593,8 @@ namespace Cirrus.Circuit
                             CountDownTime,
                             IntermissionTime,
                             GameSession.Instance._roundIndex);
+
+                        _roundInitBarrier.Wait();
                     }
 
 
