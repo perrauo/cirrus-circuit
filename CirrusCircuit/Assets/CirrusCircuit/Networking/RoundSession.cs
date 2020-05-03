@@ -29,7 +29,17 @@ namespace Cirrus.Circuit.Networking
 
         [SyncVar]
         [SerializeField]
+        private GameObject _timerGameObject;
         private ServerTimer _timer;
+        public ServerTimer Timer
+        {
+            get {
+                if (_timer == null) _timer = _timerGameObject.GetComponent<ServerTimer>();
+                return _timer;
+            }
+        }
+
+
 
         [SyncVar]
         [SerializeField]
@@ -114,9 +124,9 @@ namespace Cirrus.Circuit.Networking
 
             if (CustomNetworkManager.IsServer)
             {
-                session._timer = ServerTimer.Create(
+                session._timerGameObject = ServerTimer.Create(
                     session._remainingTime,
-                    start: false);
+                    start: false).gameObject;
             }
 
             session._intermissionTimer = new Timer(
@@ -156,7 +166,8 @@ namespace Cirrus.Circuit.Networking
 
         public void Terminate()
         {
-            _timer.Stop();
+            if(CustomNetworkManager.IsServer) _timer.Stop();
+
             _countDownTimer.Stop();
             _intermissionTimer.Stop();
             Cmd_OnRoundEnd();
