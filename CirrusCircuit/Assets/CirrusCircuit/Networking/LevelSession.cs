@@ -18,7 +18,7 @@ using Cirrus.Circuit.Controls;
 
 namespace Cirrus.Circuit.Networking
 {
-    public class LevelSession : NetworkBehaviour
+    public class LevelSession : CustomNetworkBehaviour
     {
         [Serializable]
         public class PlaceholderInfo
@@ -195,8 +195,6 @@ namespace Cirrus.Circuit.Networking
                     obj.TrySetState(BaseObject.State.Idle);
                 }
             }
-
-            Game.Instance.RoundInitBarrier.SignalAndWait();
         }
 
         public static LevelSession Create()

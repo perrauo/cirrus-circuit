@@ -132,6 +132,8 @@ namespace Cirrus.Circuit
 
         private bool[] _wasMovingVertical = new bool[PlayerManager.PlayerMax];
 
+        Threading.CoroutineBarrier _roundInitBarrier;
+
         public override void OnValidate()
         {
             base.OnValidate();
@@ -142,6 +144,12 @@ namespace Cirrus.Circuit
         public override void Awake()
         {
             base.Awake();
+
+            _roundInitBarrier = new Threading.CoroutineBarrier(
+                gameObject,
+                () => RoundSession.Instance != null && RoundSession.Instance.isClient,
+                () => LevelSession.Instance != null && LevelSession.Instance.isClient);
+            _roundInitBarrier.OnBarrierPassedHandler += OnRoundInitBarrierPassed;
         }
 
         public override void Start()
@@ -177,6 +185,14 @@ namespace Cirrus.Circuit
         {
             FSMFixedUpdate();
         }
+
+        public void OnRoundInitBarrierPassed()
+        {
+            OnRoundInitHandler?.Invoke();
+            _SetState(State.Round);
+            RoundSession.Instance.StartIntermisison();
+        }
+        
 
         public void JoinSession()
         {
@@ -494,9 +510,8 @@ namespace Cirrus.Circuit
             return false;
         }
 
-        public const int RountInitParticipants = 2;
-
-        public Barrier RoundInitBarrier = new Barrier(RountInitParticipants);
+        // TODO encapsulate into Cirrus Barrier
+        
 
         protected bool TryFinishSetState(State target, params object[] args)
         {
@@ -578,10 +593,6 @@ namespace Cirrus.Circuit
                             CountDownTime,
                             IntermissionTime,
                             GameSession.Instance._roundIndex);
-
-                        OnRoundInitHandler?.Invoke();
-                        _SetState(State.Round);
-                        RoundSession.Instance.StartIntermisison();
                     }
 
 

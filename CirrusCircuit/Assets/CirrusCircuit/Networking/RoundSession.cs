@@ -17,7 +17,7 @@ namespace Cirrus.Circuit.Networking
 
     public delegate void OnRoundEnd();
 
-    public class RoundSession : NetworkBehaviour
+    public class RoundSession : CustomNetworkBehaviour
     {
         public OnIntermission OnIntermissionHandler;
 
@@ -87,9 +87,6 @@ namespace Cirrus.Circuit.Networking
         public override void OnStartClient()
         {
             base.OnStartClient();
-
-            Game.Instance.RoundInitBarrier.SignalAndWait();
-
         }        
 
         public static RoundSession Instance
