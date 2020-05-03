@@ -23,7 +23,7 @@ namespace Cirrus.Circuit.Networking
 
         public OnCountdown OnCountdownHandler;
 
-        public OnRoundBegin OnRoundBeginHandler;
+        public OnRoundBegin OnRoundStartHandler;
 
         public OnRoundEnd OnRoundEndHandler;
 
@@ -88,11 +88,6 @@ namespace Cirrus.Circuit.Networking
         {
             base.OnStartClient();
 
-            Game.Instance.OnRoundInitHandler?.Invoke();
-
-            Game.Instance._SetState(Game.State.Round);
-
-            StartIntermisison();
         }        
 
         public static RoundSession Instance
@@ -200,7 +195,7 @@ namespace Cirrus.Circuit.Networking
             else if (_countDown < 0)
             {
                 OnCountdownHandler?.Invoke(_countDown);
-                OnRoundBeginHandler?.Invoke(_index);
+                OnRoundStartHandler?.Invoke(_index);
 
                 if (CustomNetworkManager.IsServer)
                 {

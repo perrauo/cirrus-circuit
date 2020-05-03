@@ -6,6 +6,7 @@ using UnityEngine;
 using Cirrus.Circuit.World.Objects;
 using System.Linq;
 using System.Threading;
+using Cirrus.Utils;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -133,14 +134,10 @@ namespace Cirrus.Circuit.Networking
 
             if (obj.TryGetComponent(out LevelSession session))
             {
-                if (MirrorExt.ServerUtils.TryCreateNetworkObject(
-                    NetworkingLibrary.Instance.ObjectSession.gameObject, 
-                    out GameObject gobj,
-                    true))
-                {                    
-                    session._objectSessions.Add(gobj);
-                    session.Rpc_Spawn(gobj, spawnId, pos);                    
-                }
+                var gobj = NetworkingLibrary.Instance.ObjectSession.gameObject.Create();
+                NetworkServer.Spawn(gobj, NetworkServer.localConnection);
+                session._objectSessions.Add(gobj);
+                session.Rpc_Spawn(gobj, spawnId, pos);                               
             }
         }
 

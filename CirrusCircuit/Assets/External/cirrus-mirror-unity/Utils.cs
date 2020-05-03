@@ -30,52 +30,6 @@ namespace Cirrus.MirrorExt
             return false;
         }
 
-        public static bool TryCreateNetworkObject(
-            GameObject template,
-            out GameObject obj,
-            bool spawn = true)
-        {
-            return TryCreateNetworkObject(
-                template, 
-                out obj, 
-                NetworkServer.localConnection, 
-                spawn);
-        }
-
-        public static bool TryCreateNetworkObject(            
-            GameObject template,
-            out GameObject obj,
-            NetworkConnection conn,
-            bool spawn= true)
-        {
-            obj = null;
-
-            if (template.GetComponent<NetworkIdentity>() == null) return false;
-
-            obj = template.gameObject.Create();
-
-            if(spawn) NetworkServer.Spawn(obj, conn);
-
-            return true;
-        }
-
-        public static bool TryCreateNetworkObject(
-            NetworkConnection conn,
-            GameObject template,
-            out NetworkIdentity obj,
-            bool clientAuthority = true)
-        {
-            obj = null;
-
-            if (template.GetComponent<NetworkIdentity>() == null) return false;
-
-            obj = template.gameObject.Create().GetComponent<NetworkIdentity>();
-
-            NetworkServer.Spawn(obj.gameObject, clientAuthority ? conn : null);
-
-            return true;
-        }
-
         public static bool TryDestroyNetworkObject(
             GameObject obj)
         {

@@ -72,33 +72,23 @@ namespace Cirrus.Circuit.Networking
 
             if (_connections.TryGetValue(conn.connectionId, out CommandClient clientConnection))
             {
-                if (ServerUtils.TryCreateNetworkObject(
-                    conn, 
-                    NetworkingLibrary.Instance.PlayerSession.gameObject, 
-                    out NetworkIdentity sessionObj,
-                    false))
-                {                    
-                    PlayerSession session;
-                    if ((session = sessionObj.GetComponent<PlayerSession>()) != null)
-                    {
-                        session._connectionId = conn.connectionId;
-                        session._serverId = GameSession.Instance.PlayerCount++;
-                        session._color = PlayerManager.Instance.GetColor(session._serverId);
-                        session._name = PlayerManager.Instance.GetName(session._serverId);                        
-                        session._localId = localPlayerId;                        
-                        session.netIdentity.AssignClientAuthority(conn);
-                        
-                        playersPerConnection.Add(localPlayerId);
+                var session = NetworkingLibrary.Instance.PlayerSession.Create();
+                session._connectionId = conn.connectionId;
+                session._serverId = GameSession.Instance.PlayerCount++;
+                session._color = PlayerManager.Instance.GetColor(session._serverId);
+                session._name = PlayerManager.Instance.GetName(session._serverId);                        
+                session._localId = localPlayerId;                        
+                session.netIdentity.AssignClientAuthority(conn);
+                NetworkServer.Spawn(session.gameObject, NetworkServer.localConnection);        
 
-                        GameSession.Instance._players.Add(session.gameObject);
-                        CharacterSelect.Instance.AssignAuthority(conn, session._serverId);
+                playersPerConnection.Add(localPlayerId);
 
-                        //Debug.Log("Server player ID: " + session._serverId);
-                        //Debug.Log("Local player ID: " + localPlayerId);
-                        return true;
-                    }
-                    else ServerUtils.TryDestroyNetworkObject(sessionObj.gameObject);
-                }
+                GameSession.Instance._players.Add(session.gameObject);
+                CharacterSelect.Instance.AssignAuthority(conn, session._serverId);
+
+                //Debug.Log("Server player ID: " + session._serverId);
+                //Debug.Log("Local player ID: " + localPlayerId);
+                return true;                    
             }
 
             return false;

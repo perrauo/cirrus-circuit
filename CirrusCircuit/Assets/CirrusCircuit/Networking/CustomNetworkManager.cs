@@ -162,15 +162,9 @@ namespace Cirrus.Circuit.Networking
             _isStarted = true;
             StartHost();
 
-            if (!ServerUtils.TryCreateNetworkObject(
-                NetworkServer.localConnection,
-                NetworkingLibrary.Instance.GameSession.gameObject,
-                out NetworkIdentity obj))
-            {
-                _isStarted = false;
-                StopHost();                
-                return false;
-            }
+            NetworkServer.Spawn(
+                NetworkingLibrary.Instance.GameSession.gameObject.Create(),
+                NetworkServer.localConnection);
 
             return true;
         }
