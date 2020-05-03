@@ -7611,7 +7611,7 @@ MonoBehaviour:
   - {fileID: 16847157}
   _distanceLevelSelect: 35
   _cameraSizeSpeed: 0.8
-  _roundTime: 30
+  _roundTime: 5
   _countDownTime: 1
   _countDown: 3
   _roundAmount: 3

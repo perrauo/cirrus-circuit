@@ -145,10 +145,7 @@ namespace Cirrus.Circuit.Networking
         public void StartIntermisison()
         {
             OnIntermissionHandler?.Invoke(_index);
-            if (CustomNetworkManager.IsServer)
-            {
-                _intermissionTimer.Start();
-            }
+            if (CustomNetworkManager.IsServer) _intermissionTimer.Start();
         }
 
 
@@ -164,7 +161,6 @@ namespace Cirrus.Circuit.Networking
             if(CustomNetworkManager.IsServer) _countDownTimer.Start();
         }
 
-
         public void Terminate()
         {
             if(CustomNetworkManager.IsServer) Timer.Stop();
@@ -173,7 +169,6 @@ namespace Cirrus.Circuit.Networking
             _intermissionTimer.Stop();
             Cmd_OnRoundEnd();
         }
-
 
         private void Cmd_OnTimeout()
         {
