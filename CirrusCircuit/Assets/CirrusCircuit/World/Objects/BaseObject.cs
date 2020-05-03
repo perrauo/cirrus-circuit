@@ -134,7 +134,7 @@ namespace Cirrus.Circuit.World.Objects
         private bool _isRegistered = false;
 
         [SerializeField]
-        protected State _state = State.Idle;
+        protected State _state = State.Disabled;
 
         public virtual void OnValidate()
         {
@@ -420,11 +420,6 @@ namespace Cirrus.Circuit.World.Objects
                     break;
             }
         } 
-
-        public virtual void OnRoundStart(int idx)
-        {
-            TrySetState(State.Idle);
-        }
 
         public virtual void OnRoundEnd()
         {

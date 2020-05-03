@@ -113,7 +113,7 @@ namespace Cirrus.Circuit.Networking
         {
             _mutex = new Mutex(false);
 
-            Game.Instance.OnRoundInitHandler += OnRoundInit;
+            Game.Instance.OnRoundStartedHandler += OnRoundStarted;
 
             if (CustomNetworkManager.IsServer)
             {
@@ -313,7 +313,7 @@ namespace Cirrus.Circuit.Networking
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
         {
-            Vector3Int pos = Level.WorldToGrid(obj.transform.position);
+            Vector3Int pos = Level.WorldToGrid(obj.Transform.position);
 
             int i = VectorUtils.ToIndex(pos, Level.Dimension.x, Level.Dimension.y);
 
@@ -530,24 +530,17 @@ namespace Cirrus.Circuit.Networking
         public void OnRoundInit()
         {
 
+        }
+
+        public void OnRoundStarted()
+        {
+
             foreach (var obj in _objects)
             {
                 if (obj == null) continue;
 
                 obj.TrySetState(BaseObject.State.Idle);
             }
-
-            _randomDropRainTimer.Start();
-        }
-
-        public void OnRoundStarted(int id)
-        {
-            //foreach (BaseObject obj in _objects)
-            //{
-            //    if (obj == null) continue;
-
-            //    obj.TrySetState(BaseObject.State.Idle);
-            //}
 
             _randomDropRainTimer.Start();
         }
