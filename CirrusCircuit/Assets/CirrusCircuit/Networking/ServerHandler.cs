@@ -79,7 +79,9 @@ namespace Cirrus.Circuit.Networking
                 session._name = PlayerManager.Instance.GetName(session._serverId);                        
                 session._localId = localPlayerId;                        
                 session.netIdentity.AssignClientAuthority(conn);
-                NetworkServer.Spawn(session.gameObject, NetworkServer.localConnection);        
+                NetworkServer.Spawn(
+                    session.gameObject, 
+                    NetworkServer.localConnection);        
 
                 playersPerConnection.Add(localPlayerId);
 
