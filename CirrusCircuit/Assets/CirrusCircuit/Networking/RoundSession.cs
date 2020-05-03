@@ -59,6 +59,7 @@ namespace Cirrus.Circuit.Networking
         [SerializeField]        
         private float _intermissionTime = 0; // Where we show the round number
         
+        [SyncVar]
         [SerializeField]
         private int _countDown = 3;
 
