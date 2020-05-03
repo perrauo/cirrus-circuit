@@ -49,7 +49,7 @@ namespace Cirrus.Circuit.Networking
         [SerializeField]
         private Timer _intermissionTimer;
 
-        public float RemainingTime => _remainingTime - _timer.Time;
+        public float RemainingTime => _remainingTime - Timer.Time;
 
         [SyncVar]
         [SerializeField]        
@@ -166,7 +166,7 @@ namespace Cirrus.Circuit.Networking
 
         public void Terminate()
         {
-            if(CustomNetworkManager.IsServer) _timer.Stop();
+            if(CustomNetworkManager.IsServer) Timer.Stop();
 
             _countDownTimer.Stop();
             _intermissionTimer.Stop();
@@ -208,8 +208,8 @@ namespace Cirrus.Circuit.Networking
 
                 if (CustomNetworkManager.IsServer)
                 {
-                    _timer.DoStart();
-                    _timer.OnTimeLimitHandler += Cmd_OnRoundEnd;
+                    Timer.DoStart();
+                    Timer.OnTimeLimitHandler += Cmd_OnRoundEnd;
                 }
 
                 return;
