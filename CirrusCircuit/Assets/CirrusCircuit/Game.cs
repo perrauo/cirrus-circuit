@@ -147,8 +147,8 @@ namespace Cirrus.Circuit
 
             _roundInitBarrier = new Threading.CoroutineBarrier(
                 gameObject,
-                () => RoundSession.Instance != null && RoundSession.Instance.isClient,
-                () => LevelSession.Instance != null && LevelSession.Instance.isClient);
+                () => RoundSession.Instance != null && RoundSession.Instance.IsServerOrClient,
+                () => LevelSession.Instance != null && LevelSession.Instance.IsServerOrClient);
             _roundInitBarrier.OnBarrierPassedHandler += OnRoundInitBarrierPassed;
         }
 

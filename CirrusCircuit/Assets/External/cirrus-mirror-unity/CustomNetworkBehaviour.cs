@@ -19,6 +19,8 @@ namespace Cirrus.MirrorExt
         public Events.Event OnStartServerHandler;
         public Events.Event OnStartLocalPlayerHandler;
 
+        public bool IsServerOrClient => isServer || isClient;
+
         public override void OnStopServer()
         {
             base.OnStopServer();
