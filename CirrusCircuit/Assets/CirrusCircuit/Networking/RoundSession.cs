@@ -219,6 +219,12 @@ namespace Cirrus.Circuit.Networking
 
         public void Cmd_OnRoundEnd()
         {
+            if (CustomNetworkManager.IsServer) 
+            {                
+                NetworkServer.Destroy(_timerGameObject);
+                Destroy(_timerGameObject);
+            }
+
             CommandClient.Instance.Cmd_RoundSession_OnRoundEnd(gameObject);
         }
 
