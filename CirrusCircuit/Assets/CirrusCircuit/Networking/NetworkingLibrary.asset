@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ClientConnectionPlayer: {fileID: 1941899616576446143, guid: aad65b14963db5746bbe781df48f9fb4,
     type: 3}
+  ServerTimer: {fileID: 3145556374426338343, guid: 8fbf7f1ddd5252b488d8bae89dbab22d,
+    type: 3}
   GameSession: {fileID: -1935554395622964681, guid: b44a75fa512fe18478c604967c760e36,
     type: 3}
   PlayerSession: {fileID: -5986778335976268260, guid: 4ce147c890cf4ff4485ac613facd015f,
