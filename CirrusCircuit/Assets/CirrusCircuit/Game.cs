@@ -9,6 +9,7 @@ using UnityEngine;
 using Cirrus.Events;
 using Cirrus.Circuit.World;
 using StartMenu = Cirrus.Circuit.UI.StartMenu;
+using System.Threading;
 
 namespace Cirrus.Circuit
 {
@@ -492,7 +493,10 @@ namespace Cirrus.Circuit
             destination = State.Round;
             return false;
         }
-    
+
+        public const int RountInitParticipants = 2;
+
+        public Barrier RoundInitBarrier = new Barrier(RountInitParticipants);
 
         protected bool TryFinishSetState(State target, params object[] args)
         {
@@ -574,6 +578,10 @@ namespace Cirrus.Circuit
                             CountDownTime,
                             IntermissionTime,
                             GameSession.Instance._roundIndex);
+
+                        OnRoundInitHandler?.Invoke();
+                        _SetState(State.Round);
+                        RoundSession.Instance.StartIntermisison();
                     }
 
 

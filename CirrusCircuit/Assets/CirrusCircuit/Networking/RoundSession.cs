@@ -88,6 +88,8 @@ namespace Cirrus.Circuit.Networking
         {
             base.OnStartClient();
 
+            Game.Instance.RoundInitBarrier.SignalAndWait();
+
         }        
 
         public static RoundSession Instance

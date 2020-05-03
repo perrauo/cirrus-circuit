@@ -196,11 +196,7 @@ namespace Cirrus.Circuit.Networking
                 }
             }
 
-            Game.Instance.OnRoundInitHandler?.Invoke();
-
-            Game.Instance._SetState(Game.State.Round);
-
-            RoundSession.Instance.StartIntermisison();
+            Game.Instance.RoundInitBarrier.SignalAndWait();
         }
 
         public static LevelSession Create()
