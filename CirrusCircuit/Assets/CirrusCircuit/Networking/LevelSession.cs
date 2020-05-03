@@ -197,6 +197,12 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
+        public override void Destroy()
+        {
+            base.Destroy();
+            _instance = null;
+        }
+
         public static LevelSession Create()
         {
             int i = 0;

@@ -87,7 +87,12 @@ namespace Cirrus.Circuit.Networking
         public override void OnStartClient()
         {
             base.OnStartClient();
-        }        
+        }
+        public override void Destroy()
+        {
+            base.Destroy();
+            _instance = null;
+        }
 
         public static RoundSession Instance
         {

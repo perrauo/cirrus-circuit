@@ -5,6 +5,7 @@ using Cirrus.Utils;
 using Mirror;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using Cirrus.Circuit.Networking;
 
 namespace Cirrus.MirrorExt
 {
@@ -28,6 +29,17 @@ namespace Cirrus.MirrorExt
             OnStopServerHandler?.Invoke();
 
         }
+
+        public virtual void Destroy()
+        {
+            if (gameObject != null)
+            {
+
+                if (CustomNetworkManager.IsServer) NetworkServer.Destroy(gameObject);
+                Destroy(gameObject);
+            }
+        }
+
 
         public override void OnStartAuthority()
         {

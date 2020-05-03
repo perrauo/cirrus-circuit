@@ -506,7 +506,7 @@ namespace Cirrus.Circuit
                     break;
             }
 
-            destination = State.Round;
+            destination = State.Unknown;
             return false;
         }
 
@@ -586,6 +586,9 @@ namespace Cirrus.Circuit
 
                     if (CustomNetworkManager.IsServer)
                     {
+                        //LevelSession.Instance = null;
+                        //LevelRoun
+
                         LevelSession.Create();
                         RoundSession.Create(
                             CountDown,
@@ -593,10 +596,11 @@ namespace Cirrus.Circuit
                             CountDownTime,
                             IntermissionTime,
                             GameSession.Instance._roundIndex);
-
-                        _roundInitBarrier.Wait();
                     }
 
+
+
+                    _roundInitBarrier.Wait();
 
                     _state = target;
 
