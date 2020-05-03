@@ -60,7 +60,7 @@ namespace Cirrus.Circuit
             timer._isFixedUpdate = fixedUpdate;
 
             NetworkServer.Spawn(timer.gameObject);
-            if (start) timer.Start();
+            if (start) timer.DoStart();
             return timer;
         }
 
@@ -73,7 +73,7 @@ namespace Cirrus.Circuit
             _time = 0;
         }
 
-        public void Start(float limit = -1)
+        public void DoStart(float limit = -1)
         {
             Reset(limit);
 

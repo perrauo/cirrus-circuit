@@ -208,7 +208,7 @@ namespace Cirrus.Circuit.Networking
 
                 if (CustomNetworkManager.IsServer)
                 {
-                    _timer.Start();
+                    _timer.DoStart();
                     _timer.OnTimeLimitHandler += Cmd_OnRoundEnd;
                 }
 
