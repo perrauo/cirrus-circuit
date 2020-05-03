@@ -321,8 +321,7 @@ namespace Cirrus.Circuit.Networking
             //AssertGameObjectNull(obj);
             if (obj == null) return;
 
-            ObjectSession session;
-            if ((session = obj.GetComponent<ObjectSession>()) != null)
+            if (obj.TryGetComponent(out ObjectSession session))
             {
                 Cmd_ObjectSession_TryFall_mutex.WaitOne();
 
