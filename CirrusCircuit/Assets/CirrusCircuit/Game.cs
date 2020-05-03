@@ -588,6 +588,8 @@ namespace Cirrus.Circuit
                     {
                         //LevelSession.Instance = null;
                         //LevelRoun
+                        if (RoundSession.Instance != null) RoundSession.Instance.Destroy();
+                        if (LevelSession.Instance != null) LevelSession.Instance.Destroy();
 
                         LevelSession.Create();
                         RoundSession.Create(
@@ -597,7 +599,6 @@ namespace Cirrus.Circuit
                             IntermissionTime,
                             GameSession.Instance._roundIndex);
                     }
-
 
 
                     _roundInitBarrier.Wait();
