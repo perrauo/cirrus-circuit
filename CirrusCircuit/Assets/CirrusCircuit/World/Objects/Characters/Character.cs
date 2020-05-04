@@ -75,13 +75,6 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
         private bool _wasMovingVertical = false;
 
-        public override void OnRound()
-        {
-            base.OnRound();
-
-            //_controller.SetCallbacks(this);
-        }
-
         public override bool TrySetState(State transition, params object[] args)
         {
             return base.TrySetState(transition, args);
@@ -154,7 +147,21 @@ namespace Cirrus.Circuit.World.Objects.Characters
         // Use the same raycast to show guide
         public void TryMove(Vector2 axis)
         {
-            if(!_moveCoroutineActive) StartCoroutine(MoveCoroutine(axis));
+            switch (_state)
+            {               
+                case State.Moving:
+                case State.Falling:
+                case State.Entering:
+                case State.Idle:
+                case State.RampIdle:
+
+                    if (!_moveCoroutineActive) StartCoroutine(MoveCoroutine(axis));
+                    break;
+
+                default:
+                    break;
+
+            }
         }
 
 
@@ -175,7 +182,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 case State.RampIdle:
                     
                     if (_direction != Vector3.zero)
-                        Transform.transform.rotation = Quaternion.LookRotation(_direction, Transform.transform.up);
+                        Transform.rotation = Quaternion.LookRotation(_direction, Transform.up);
                     break;
 
             }

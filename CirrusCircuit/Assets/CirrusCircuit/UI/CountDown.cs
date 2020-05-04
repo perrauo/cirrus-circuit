@@ -22,7 +22,7 @@ namespace Cirrus.Circuit.UI
         public void Awake()
         {            
             GameSession.OnStartClientStaticHandler += OnClientStarted;
-            Game.Instance.OnRoundStartedHandler += OnNewRound;
+            Game.Instance.OnRoundInitHandler += OnRoundInit;
         }
 
         public void OnClientStarted(bool enable)
@@ -32,7 +32,7 @@ namespace Cirrus.Circuit.UI
         }
 
 
-        private void OnNewRound()
+        private void OnRoundInit()
         {
             RoundSession.Instance.OnCountdownHandler += OnRoundCountdown;
             //RoundSession.Instance.OnIntermissionHandler += OnIntermission;

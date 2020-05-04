@@ -2,11 +2,13 @@
 using System.Collections;
 using System;
 using Mirror;
+using Cirrus.Circuit.Networking;
+using Cirrus.Utils;
 
 namespace Cirrus.Circuit
 {
     [Serializable]
-    public class Timer
+    public class ServerTimer : NetworkBehaviour
     {
         [SerializeField]
         bool _repeat = false;
@@ -38,80 +40,58 @@ namespace Cirrus.Circuit
             get
             {
                 return _isFixedUpdate ?
-                    Clock.Instance.OnFixedUpdateHandler :
-                    Clock.Instance.OnUpdateHandler;
+                    CommandClient.Instance.OnFixedUpdateHandler :
+                    CommandClient.Instance.OnUpdateHandler;
             }
 
             set
             {
-                if (_isFixedUpdate)
-                    Clock.Instance.OnFixedUpdateHandler = value;
-                else
-                    Clock.Instance.OnUpdateHandler = value;
+                if (_isFixedUpdate) CommandClient.Instance.OnFixedUpdateHandler = value;
+                else CommandClient.Instance.OnUpdateHandler = value;
             }
         }
 
-        public Timer()
+        public static ServerTimer Create(float limit, bool start = true, bool repeat = false, bool fixedUpdate = false)
         {
-            _time = 0;
-            _limit = DefaultLimit;
-            _repeat = false;
-            _isFixedUpdate = false;
-        }
+            var timer = NetworkingLibrary.Instance.ServerTimer.Create(null);
+            timer._time = 0;
+            timer._limit = limit;
+            timer._repeat = repeat;
+            timer._isFixedUpdate = fixedUpdate;
 
-        public Timer(float limit, bool start = true, bool repeat = false, bool fixedUpdate = false)
-        {
-            _time = 0;
-            _limit = limit;
-            _repeat = repeat;
-            _isFixedUpdate = fixedUpdate;
-
-            if (start)
-            {
-                Start();
-            }
+            NetworkServer.Spawn(timer.gameObject);
+            if (start) timer.DoStart();
+            return timer;
         }
 
         public float Time => _time;
 
         public void Reset(float limit = -1)
         {
-            if (limit > 0)
-            {
-                _limit = limit;
-            }
+            if (limit > 0) _limit = limit;
 
             _time = 0;
         }
 
-        public void Start(float limit = -1)
+        public void DoStart(float limit = -1)
         {
             Reset(limit);
 
-            if (!active)
-            {
-                OnClockUpdateHandler += OnTicked;
-            }
+            if (!active) OnClockUpdateHandler += OnTicked;
 
             active = true;
         }
 
         public void Resume()
         {
-            if (!active)
-            {
-                OnClockUpdateHandler += OnTicked;
-            }
+            if (!active) OnClockUpdateHandler += OnTicked;            
 
             active = true;
         }
 
         public void Stop()
         {
-            if (active)
-            {
-                OnClockUpdateHandler -= OnTicked;
-            }
+            if (active) OnClockUpdateHandler -= OnTicked;
 
             active = false;
         }
@@ -126,18 +106,12 @@ namespace Cirrus.Circuit
 
                 OnTimeLimitHandler?.Invoke();
 
-                if (_repeat)
-                {
-                    Reset();
-                }
-                else
-                {
-                    Stop();
-                }
+                if (_repeat) Reset();
+                else Stop();
             }
         }
 
-        ~Timer()
+        ~ServerTimer()
         {
             Stop();
         }

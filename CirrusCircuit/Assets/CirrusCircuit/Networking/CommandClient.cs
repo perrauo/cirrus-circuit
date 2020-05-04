@@ -6,15 +6,20 @@ using UnityEngine;
 using Cirrus.Circuit.World.Objects;
 using System.Linq;
 using System.Threading;
+using Cirrus.Utils;
 
 namespace Cirrus.Circuit.Networking
 {
     // Serves to sync the connection
     public class CommandClient : NetworkBehaviour
     {
+        public Events.Event OnUpdateHandler;
+
+        public Events.Event OnFixedUpdateHandler;
+
         public static void AssertGameObjectNull(GameObject gameObject) => Utils.DebugUtils.Assert(gameObject != null, "Cmd GameObject is null. Was the object spawn?");
 
-        public static CommandClient _instance;
+        public static CommandClient _instance;        
 
         public static CommandClient Instance
         {
@@ -35,6 +40,30 @@ namespace Cirrus.Circuit.Networking
                 return _instance;
             }
         }
+
+        public virtual void Update()
+        {
+            if(OnUpdateHandler != null) Cmd_Update();
+        }
+
+        public virtual void FixedUpdate()
+        {
+            if (OnFixedUpdateHandler != null) Cmd_FixedUpdate();
+        }
+
+
+        [Command]
+        public void Cmd_Update()
+        {
+            OnUpdateHandler.Invoke();
+        }
+
+        [Command]
+        public void Cmd_FixedUpdate()
+        {
+            OnFixedUpdateHandler.Invoke();
+        }
+
 
         [TargetRpc]
         public void TargetReceiveResponse(ServerResponseMessage response)
@@ -105,14 +134,10 @@ namespace Cirrus.Circuit.Networking
 
             if (obj.TryGetComponent(out LevelSession session))
             {
-                if (MirrorExt.ServerUtils.TryCreateNetworkObject(
-                    NetworkingLibrary.Instance.ObjectSession.gameObject, 
-                    out GameObject gobj,
-                    true))
-                {                    
-                    session._objectSessions.Add(gobj);
-                    session.Rpc_Spawn(gobj, spawnId, pos);                    
-                }
+                var gobj = NetworkingLibrary.Instance.ObjectSession.gameObject.Create();
+                NetworkServer.Spawn(gobj, NetworkServer.localConnection);
+                session._objectSessions.Add(gobj);
+                session.Rpc_Spawn(gobj, spawnId, pos);                               
             }
         }
 
@@ -293,8 +318,7 @@ namespace Cirrus.Circuit.Networking
             //AssertGameObjectNull(obj);
             if (obj == null) return;
 
-            ObjectSession session;
-            if ((session = obj.GetComponent<ObjectSession>()) != null)
+            if (obj.TryGetComponent(out ObjectSession session))
             {
                 Cmd_ObjectSession_TryFall_mutex.WaitOne();
 
@@ -355,11 +379,10 @@ namespace Cirrus.Circuit.Networking
         {
             //AssertGameObjectNull(obj);
             if (obj == null) return;
-
             
             if(obj.TryGetComponent(out RoundSession session))
             {
-                session.Rpc_OnTimeout();
+                session.Rpc_OnIntermissionTimeoutBeginCountdown();
             }
         }
 
@@ -389,7 +412,6 @@ namespace Cirrus.Circuit.Networking
         }
 
         #endregion
-
 
     }
 }

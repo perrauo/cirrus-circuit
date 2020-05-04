@@ -13,11 +13,11 @@ namespace Cirrus.Circuit.UI
 
         private RoundSession _round;
 
-        public float Time
+        public float TimeRemaining
         {
             set
             {
-                var span = new TimeSpan(0, 0, (int)value); //Or TimeSpan.FromSeconds(seconds); (see Jakob C´s answer)
+                var span = new TimeSpan(0, 0, (int)value);
                 _text.text = string.Format(span.ToString(@"mm\:ss"));
             }
         }
@@ -43,7 +43,8 @@ namespace Cirrus.Circuit.UI
         public void Awake()
         {
             GameSession.OnStartClientStaticHandler += OnClientStarted;
-            Game.Instance.OnRoundStartedHandler += OnRoundStarted;
+            Game.Instance.OnRoundInitHandler += OnRoundInit;
+            Game.Instance.OnRoundHandler += OnRound;
             //Game.Instance.OnR
         }
 
@@ -54,26 +55,22 @@ namespace Cirrus.Circuit.UI
 
         public void Update()
         {
-            if (_round != null)
-                Time = _round.Time;
+            if (RoundSession.Instance != null) TimeRemaining = RoundSession.Instance.RemainingTime;
         }
 
-        public void OnRoundStarted()
+        public void OnRoundInit()
         {            
-            RoundSession.Instance.OnIntermissionHandler += OnIntermission;
+            //RoundSession.Instance.OnIntermissionHandler += OnIntermission;
+        }
+
+        public void OnRound()
+        {
             Enabled = true;
         }
 
         public void OnRoundEnded()
         {            
-            Enabled = true;
+            Enabled = false;
         }
-
-        public void OnIntermission(int count)
-        {
-            Enabled = true;
-        }
-
-
     }
 }

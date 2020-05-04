@@ -143,7 +143,7 @@ namespace Cirrus.Circuit.World
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
         {
-            Vector3Int pos = WorldToGrid(obj.transform.position);
+            Vector3Int pos = WorldToGrid(obj.Transform.position);
 
             int i = VectorUtils.ToIndex(pos, Dimension.x, Dimension.y);
 

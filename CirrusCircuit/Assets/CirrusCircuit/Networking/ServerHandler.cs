@@ -24,24 +24,6 @@ namespace Cirrus.Circuit.Networking
             NetworkServer.RegisterHandler<ClientPlayerMessage>(OnPlayerJoinMessage);
         }
 
-        public override void StartRound()
-        {
-            base.StartRound();
-
-            ServerUtils.TryCreateNetworkObject(                
-                NetworkingLibrary.Instance.RoundSession.gameObject,
-                out GameObject roundObject);
-
-            LevelSession.Create();
-
-            RoundSession.Create(
-                Game.Instance.CountDown,
-                Game.Instance.RoundTime,
-                Game.Instance.CountDownTime,
-                Game.Instance.IntermissionTime,
-                GameSession.Instance._roundIndex);                
-        }
-
         public override void Stop()
         {
             _net.StopHost();
@@ -90,33 +72,26 @@ namespace Cirrus.Circuit.Networking
 
             if (_connections.TryGetValue(conn.connectionId, out CommandClient clientConnection))
             {
-                if (ServerUtils.TryCreateNetworkObject(
-                    conn, 
-                    NetworkingLibrary.Instance.PlayerSession.gameObject, 
-                    out NetworkIdentity sessionObj,
-                    false))
-                {                    
-                    PlayerSession session;
-                    if ((session = sessionObj.GetComponent<PlayerSession>()) != null)
-                    {
-                        session._connectionId = conn.connectionId;
-                        session._serverId = GameSession.Instance.PlayerCount++;
-                        session._color = PlayerManager.Instance.GetColor(session._serverId);
-                        session._name = PlayerManager.Instance.GetName(session._serverId);                        
-                        session._localId = localPlayerId;                        
-                        session.netIdentity.AssignClientAuthority(conn);
-                        
-                        playersPerConnection.Add(localPlayerId);
+                var session = NetworkingLibrary.Instance.PlayerSession.Create();
+                session._connectionId = conn.connectionId;
+                session._serverId = GameSession.Instance.PlayerCount++;
+                session._color = PlayerManager.Instance.GetColor(session._serverId);
+                session._name = PlayerManager.Instance.GetName(session._serverId);                        
+                session._localId = localPlayerId;                        
+                NetworkServer.Spawn(
+                    session.gameObject, 
+                    NetworkServer.localConnection);
 
-                        GameSession.Instance._players.Add(session.gameObject);
-                        CharacterSelect.Instance.AssignAuthority(conn, session._serverId);
+                session.netIdentity.AssignClientAuthority(conn);
 
-                        //Debug.Log("Server player ID: " + session._serverId);
-                        //Debug.Log("Local player ID: " + localPlayerId);
-                        return true;
-                    }
-                    else ServerUtils.TryDestroyNetworkObject(sessionObj.gameObject);
-                }
+                playersPerConnection.Add(localPlayerId);
+
+                GameSession.Instance._players.Add(session.gameObject);
+                CharacterSelect.Instance.AssignAuthority(conn, session._serverId);
+
+                //Debug.Log("Server player ID: " + session._serverId);
+                //Debug.Log("Local player ID: " + localPlayerId);
+                return true;                    
             }
 
             return false;

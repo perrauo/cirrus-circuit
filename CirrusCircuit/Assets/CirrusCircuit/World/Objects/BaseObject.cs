@@ -134,7 +134,7 @@ namespace Cirrus.Circuit.World.Objects
         private bool _isRegistered = false;
 
         [SerializeField]
-        protected State _state = State.Idle;
+        protected State _state = State.Disabled;
 
         public virtual void OnValidate()
         {
@@ -157,8 +157,8 @@ namespace Cirrus.Circuit.World.Objects
                 _nextColorTimer.OnTimeLimitHandler += OnNextColorTimeOut;
             }
 
-            _direction = Transform.transform.forward.ToVector3Int();
-            _targetPosition = Transform.transform.position;
+            _direction = Transform.forward.ToVector3Int();
+            _targetPosition = Transform.position;
             _targetScale = 1f;
 
             FSMAwake();
@@ -297,10 +297,7 @@ namespace Cirrus.Circuit.World.Objects
             ref Vector3 offset, 
             BaseObject incoming = null)
         {
-            if (_user != null)
-            {
-                if (_user.TryMove(step, incoming)) return true;
-            }
+            if (_user != null && _user.TryMove(step, incoming)) return true;
 
             return true;
         }
@@ -358,18 +355,18 @@ namespace Cirrus.Circuit.World.Objects
                 case State.Moving:
                 case State.RampMoving:
 
-                    Transform.transform.position = Vector3.Lerp(
-                        Transform.transform.position, 
+                    Transform.position = Vector3.Lerp(
+                        Transform.position, 
                         _targetPosition, 
                         _stepSpeed);
 
                     float scale = 
                         Mathf.Lerp(
-                            Transform.transform.localScale.x, 
+                            Transform.localScale.x, 
                             _targetScale, 
                             _scaleSpeed);
 
-                    Transform.transform.localScale = 
+                    Transform.localScale = 
                         new Vector3(
                             scale, 
                             scale, 
@@ -399,16 +396,14 @@ namespace Cirrus.Circuit.World.Objects
                 case State.RampMoving:
 
                     if (VectorUtils.IsCloseEnough(
-                        Transform.transform.position, 
+                        Transform.position, 
                         _targetPosition))
                     {
                         if (_destination == null)
                         {
-                            BaseObject obj;
-
                             if (_levelSession.TryGet(
                                 _gridPosition + Vector3Int.down, 
-                                out obj))
+                                out BaseObject obj))
                             {
                                 TrySetState(State.Idle);
                             }
@@ -419,17 +414,7 @@ namespace Cirrus.Circuit.World.Objects
 
                     break;
             }
-        }
-
-        public virtual void OnRound()
-        {
-            TrySetState(State.Idle);
-        }
-
-        public virtual void OnRoundBegin()
-        {
-
-        }
+        } 
 
         public virtual void OnRoundEnd()
         {
@@ -654,7 +639,7 @@ namespace Cirrus.Circuit.World.Objects
                         _destination = destination;
                         _gridPosition = newGridPosition;// _level.GridToWorld(newGridPosition);
                         _targetPosition = _level.GridToWorld(_gridPosition);
-                        Transform.transform.position = _targetPosition; 
+                        Transform.position = _targetPosition; 
 
                         _state = target;
                         result = true;
@@ -678,10 +663,7 @@ namespace Cirrus.Circuit.World.Objects
                         _state = target;
                         result = true;
                     }
-                    else
-                    {
-                        Cmd_TryFall();                              
-                    }
+                    else Cmd_TryFall();
 
                     break;
 

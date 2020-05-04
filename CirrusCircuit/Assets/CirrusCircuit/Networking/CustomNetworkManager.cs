@@ -17,6 +17,7 @@ using System.Reflection;
 using UnityEditor;
 using Cirrus.MirrorExt;
 using Cirrus.Circuit.World;
+using UnityEngine.Experimental.XR.Interaction;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -68,11 +69,6 @@ namespace Cirrus.Circuit.Networking
         {
             return false;
         }
-
-        public virtual void StartRound()
-        {
-
-        }
     }
 
 
@@ -86,7 +82,20 @@ namespace Cirrus.Circuit.Networking
         public ClientHandler ClientHandler => IsServer ? null : (ClientHandler)_handler;
         public ServerHandler ServerHandler => IsServer ? (ServerHandler)_handler : null;
 
-        public static CustomNetworkManager Instance => (CustomNetworkManager)singleton;
+        private static bool _isStarted = false;
+
+        public static bool IsStarted => _isStarted;
+
+
+        private static CustomNetworkManager _instance = null;
+        public static CustomNetworkManager Instance
+        {
+            get
+            {
+                if (_instance == null) _instance = FindObjectOfType<CustomNetworkManager>();
+                return _instance;
+            }
+        }
 
 
         public override void OnClientConnect(NetworkConnection conn)
@@ -141,6 +150,7 @@ namespace Cirrus.Circuit.Networking
 
         public void Stop()
         {
+            _isStarted = false;
             _handler.Stop();
         }
 
@@ -149,16 +159,12 @@ namespace Cirrus.Circuit.Networking
             _handler = null;
             _handler = new ServerHandler(this);
             Transport.port = ushort.TryParse(port, out ushort res) ? res : NetworkUtils.DefaultPort;
+            _isStarted = true;
             StartHost();
 
-            if (!ServerUtils.TryCreateNetworkObject(
-                NetworkServer.localConnection,
-                NetworkingLibrary.Instance.GameSession.gameObject,
-                out NetworkIdentity obj))
-            {
-                StopHost();                
-                return false;
-            }
+            NetworkServer.Spawn(
+                NetworkingLibrary.Instance.GameSession.gameObject.Create(),
+                NetworkServer.localConnection);
 
             return true;
         }
@@ -172,19 +178,13 @@ namespace Cirrus.Circuit.Networking
             {
                 _handler = new ClientHandler(this);
                 Transport.port = port;
+                _isStarted = true;
                 StartClient(NetworkUtils.ToUri(adrs, TelepathyTransport.Scheme));
                 return true;
             }
 
             return false;
         }
-
-        public void StartRound()
-        {
-            _handler.StartRound();
-        }
-
-
 
 
         #region Editor

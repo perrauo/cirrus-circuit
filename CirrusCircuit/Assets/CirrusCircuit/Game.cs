@@ -9,6 +9,8 @@ using UnityEngine;
 using Cirrus.Events;
 using Cirrus.Circuit.World;
 using StartMenu = Cirrus.Circuit.UI.StartMenu;
+using System.Threading;
+using Cirrus.Circuit.UI;
 
 namespace Cirrus.Circuit
 {
@@ -36,7 +38,9 @@ namespace Cirrus.Circuit
 
         public Event<Level, int> OnLevelScrollHandler;
 
-        public Events.Event OnRoundStartedHandler;
+        public Events.Event OnRoundHandler;
+
+        public Events.Event OnRoundInitHandler;
 
 
         public Events.Event OnScreenResizedHandler;
@@ -56,14 +60,13 @@ namespace Cirrus.Circuit
             Session,                            
             CharacterSelection,
             LevelSelection,
-            StartRound,
+            InitRound,
             Round,
             Score,
             WaitingNextRound,
             Podium,
             FinalPodium
-        }
-        
+        }        
 
         [SerializeField]
         public State _state = State.Menu;
@@ -94,6 +97,7 @@ namespace Cirrus.Circuit
         public float _countDownTime = 5f;
         public float CountDownTime => _countDownTime;
 
+        // TODO
         [SerializeField]
         public int _countDown = 3;
         public int CountDown => _countDown;
@@ -128,6 +132,8 @@ namespace Cirrus.Circuit
         public int SelectedLevelIndex => GameSession.Instance.SelectedLevelIndex;
 
         private bool[] _wasMovingVertical = new bool[PlayerManager.PlayerMax];
+
+        //Threading.CoroutineBarrier _roundInitBarrier;
 
         public override void OnValidate()
         {
@@ -197,7 +203,7 @@ namespace Cirrus.Circuit
             FSMHandleAction0(player);
         }
 
-        public void HandleAction1(Player player)
+        public void HandleAction1(Controls.Player player)
         {
             FSMHandleAction1(player);
         }
@@ -229,13 +235,12 @@ namespace Cirrus.Circuit
 
         #region FSM
 
-
         public void FSMFixedUpdate()
         {
             switch (_state)
             {
                 case State.CharacterSelection:
-                case State.StartRound:
+                case State.InitRound:
                 case State.LevelSelection:
                 case State.Round:
                 case State.Score:
@@ -260,7 +265,7 @@ namespace Cirrus.Circuit
                     break;
 
                 case State.CharacterSelection:
-                case State.StartRound:
+                case State.InitRound:
                 case State.LevelSelection:
                 case State.Score:
                 case State.Podium:
@@ -330,7 +335,7 @@ namespace Cirrus.Circuit
                         case State.Menu:
                         case State.Round:
                         case State.CharacterSelection:
-                        case State.StartRound:
+                        case State.InitRound:
                         case State.WaitingNextRound:
                         case State.LevelSelection:
                         case State.Score:
@@ -350,7 +355,7 @@ namespace Cirrus.Circuit
                         case State.Menu:
                         case State.Round:
                         case State.CharacterSelection:
-                        case State.StartRound:
+                        case State.InitRound:
                         case State.WaitingNextRound:
                         case State.LevelSelection:
                         case State.Score:
@@ -370,7 +375,7 @@ namespace Cirrus.Circuit
                         case State.Menu:
                         case State.Round:
                         case State.CharacterSelection:
-                        case State.StartRound:
+                        case State.InitRound:
                         case State.WaitingNextRound:
                         case State.LevelSelection:
                         case State.Score:
@@ -382,14 +387,14 @@ namespace Cirrus.Circuit
                     }
                     break;
 
-                case State.StartRound:
+                case State.InitRound:
 
                     switch (transition)
                     {
                         case State.Menu:
                         case State.Round:
                         case State.CharacterSelection:
-                        case State.StartRound:
+                        case State.InitRound:
                         case State.WaitingNextRound:
                         case State.LevelSelection:
                         case State.Score:
@@ -407,7 +412,7 @@ namespace Cirrus.Circuit
                     {
                         case State.Menu:
                         case State.CharacterSelection:
-                        case State.StartRound:
+                        case State.InitRound:
                         case State.WaitingNextRound:
                         case State.LevelSelection:
                         case State.Score:
@@ -424,7 +429,7 @@ namespace Cirrus.Circuit
                     {
                         case State.Menu:
                         case State.CharacterSelection:
-                        case State.StartRound:
+                        case State.InitRound:
                         case State.WaitingNextRound:
                         case State.LevelSelection:
                         case State.Score:
@@ -443,7 +448,7 @@ namespace Cirrus.Circuit
                         case State.Menu:
                         case State.Round:
                         case State.CharacterSelection:
-                        case State.StartRound:
+                        case State.InitRound:
                         case State.LevelSelection:
                         //case State.Round:
                         case State.Podium:
@@ -458,7 +463,7 @@ namespace Cirrus.Circuit
                     switch (transition)
                     {
                         case State.CharacterSelection:
-                        case State.StartRound:
+                        case State.InitRound:
                         case State.WaitingNextRound:
                         case State.LevelSelection:
                         case State.Round:
@@ -474,7 +479,7 @@ namespace Cirrus.Circuit
                     switch (transition)
                     {
                         case State.CharacterSelection:
-                        case State.StartRound:
+                        case State.InitRound:
                         case State.WaitingNextRound:
                         case State.LevelSelection:
                         case State.Round:
@@ -487,10 +492,12 @@ namespace Cirrus.Circuit
                     break;
             }
 
-            destination = State.Round;
+            destination = State.Unknown;
             return false;
         }
-    
+
+        // TODO encapsulate into Cirrus Barrier
+        
 
         protected bool TryFinishSetState(State target, params object[] args)
         {
@@ -531,6 +538,7 @@ namespace Cirrus.Circuit
 
                     foreach (Level level in _levels)
                     {
+                        if (level == null) continue;
                         level.gameObject.SetActive(true);
                         level.OnLevelSelect();
                     }             
@@ -538,7 +546,7 @@ namespace Cirrus.Circuit
                     return true;
 
 
-                case State.StartRound:
+                case State.InitRound:
 
                     Podium.Instance.Clear();
 
@@ -557,19 +565,46 @@ namespace Cirrus.Circuit
                     foreach (Level level in _levels)
                     {
                         if (level == null) continue;
-                        if (level == GameSession.Instance.SelectedLevel) continue;
                         level.gameObject.SetActive(false);
                     }
 
-                    GameSession.Instance.SelectedLevel.gameObject.SetActive(false);
-                    CustomNetworkManager.Instance.StartRound();
+                    if (CustomNetworkManager.IsServer)
+                    {
+                        //LevelSession.Instance = null;
+                        //LevelRoun
+                        if (RoundSession.Instance != null) RoundSession.Instance.Destroy();
+                        if (LevelSession.Instance != null) LevelSession.Instance.Destroy();
+
+                        LevelSession.Create();
+                        RoundSession.Create(
+                            CountDown,
+                            RoundTime,
+                            CountDownTime,
+                            IntermissionTime,
+                            GameSession.Instance._roundIndex);
+                    }
+
+                    new Threading.CoroutineBarrier(
+                        this,
+                        () => RoundSession.Instance != null && RoundSession.Instance.IsClientStarted,
+                        () => LevelSession.Instance != null && LevelSession.Instance.IsClientStarted)
+                        .Wait(() =>
+                        {
+                            Debug.Log("On Round Begin From Game");
+
+                            OnRoundInitHandler?.Invoke();
+                            _SetState(State.Round);
+                            RoundSession.Instance.StartIntermisison();
+                        });                                                                       
 
                     _state = target;
+
                     return true;
 
                 case State.Round:
 
-                    OnRoundStartedHandler?.Invoke();
+                    OnRoundHandler?.Invoke();
+                    Announcement.Instance.RoundIndex = RoundSession.Instance.Index;
 
                     _state = target;
 
@@ -603,7 +638,7 @@ namespace Cirrus.Circuit
 
 
         // TODO: Simulate LeftStick continuous axis with WASD
-        public void FSMHandleAxesLeft(Player player, Vector2 axis)
+        public void FSMHandleAxesLeft(Controls.Player player, Vector2 axis)
         {
             bool isMovingHorizontal = Mathf.Abs(axis.x) > 0.5f;
             bool isMovingVertical = Mathf.Abs(axis.y) > 0.5f;
@@ -636,7 +671,7 @@ namespace Cirrus.Circuit
                     if (Mathf.Abs(step.z) > 0)
                     {
                         if (player._characterSlot == null) return;
-                        player._characterSlot.Scroll(step.z > 0);
+                        player._characterSlot.Cmd_Scroll(step.z > 0);
                     }
 
                     break;
@@ -676,7 +711,7 @@ namespace Cirrus.Circuit
             }
         }
 
-        public void FSMHandleAction0(Player player)
+        public void FSMHandleAction0(Controls.Player player)
         {
             switch (_state)
             {
@@ -722,7 +757,7 @@ namespace Cirrus.Circuit
             }
         }
 
-        public void FSMHandleAction1(Player player)
+        public void FSMHandleAction1(Controls.Player player)
         {
             switch (_state)
             {
@@ -731,7 +766,7 @@ namespace Cirrus.Circuit
                     break;
 
                 case State.LevelSelection:
-                    Cmd_SetState(State.StartRound);
+                    Cmd_SetState(State.InitRound, false);
                     break;
 
                 case State.CharacterSelection:

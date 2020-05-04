@@ -1,24 +1,20 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using Cirrus.Circuit.World.Objects;
-using Cirrus.Utils;
-using System;
-using System.Threading;
-using Cirrus.Utils;
-using Mirror;
-
-using Cirrus.Circuit.World.Objects;
+﻿using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.World;
+using Cirrus.Circuit.World.Objects;
 using Cirrus.Circuit.World.Objects.Characters;
 using Cirrus.Events;
 using Cirrus.MirrorExt;
+using Cirrus.Utils;
+using Mirror;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using Cirrus.Circuit.Controls;
+using System.Threading;
+using UnityEngine;
 
 namespace Cirrus.Circuit.Networking
 {
-    public class LevelSession : NetworkBehaviour
+    public class LevelSession : CustomNetworkBehaviour
     {
         [Serializable]
         public class PlaceholderInfo
@@ -113,6 +109,9 @@ namespace Cirrus.Circuit.Networking
         {
             _mutex = new Mutex(false);
 
+            Game.Instance.OnRoundInitHandler += OnRoundInit;
+            Game.Instance.OnRoundHandler += OnRound;
+
             if (CustomNetworkManager.IsServer)
             {
                 _randomDropRainTimer = new Timer(
@@ -124,10 +123,9 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-        // TODO multiple object per square
-        public override void OnStartClient()
+        public void OnRound()
         {
-            base.OnStartClient();
+            Debug.Log("$$$$$$$$$$$$$$$ ON ROUND");
 
             _objects = new BaseObject[Level.Size];
 
@@ -145,11 +143,7 @@ namespace Cirrus.Circuit.Networking
                     transform
                     );
 
-                if (res is Door)
-                {
-                    var door = (Door)res;
-                    door.OnScoreValueAddedHandler += OnGemEntered;
-                }
+                if (res is Door) ((Door)res).OnScoreValueAddedHandler += OnGemEntered;
 
                 res._levelSession = this;
                 res._level = Level;
@@ -158,25 +152,25 @@ namespace Cirrus.Circuit.Networking
                 res.gameObject.SetActive(true);
                 (res.Transform.position, res._gridPosition) = RegisterObject(res);
             }
-            
+
             foreach (var info in PlaceholderInfos)
-            {                
+            {
                 PlayerSession player = GameSession.Instance.GetPlayer(info.PlayerId);
                 Player localPlayer = PlayerManager.Instance.GetPlayer(player.LocalId);
                 player.Score = 0;
 
-                info.Session._object = 
+                info.Session._object =
                     info.Character.Create(
                         Level.GridToWorld(info.Position),
                         transform,
-                        info.Rotation);                
+                        info.Rotation);
                 info.Session._object._session = info.Session;
                 info.Session._object._levelSession = this;
                 info.Session._object._level = Level;
                 info.Session._object.ColorId = info.PlayerId;
                 info.Session._object.Color = player.Color;
                 info.Session._object._gridPosition = info.Position;
-                RegisterObject(info.Session._object);
+                (info.Session._object.Transform.position, info.Session._object._gridPosition) = RegisterObject(info.Session._object);
 
                 if (player.ServerId == localPlayer.ServerId)
                     localPlayer._character = (Character)info.Session._object;
@@ -192,100 +186,87 @@ namespace Cirrus.Circuit.Networking
                     obj._session = session;
                     session._object = obj;
 
-                    obj.TrySetState(BaseObject.State.Idle);
+                    obj.TrySetState(BaseObject.State.Disabled);
                 }
             }
         }
 
+        // TODO multiple object per square
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+
+        }
+
+        public override void Destroy()
+        {
+            base.Destroy();
+            _instance = null;
+        }
+
         public static LevelSession Create()
         {
-            GameObject gobj;
-            LevelSession levelSession = null;
-            if (ServerUtils.TryCreateNetworkObject(
-                NetworkingLibrary.Instance.LevelSession.gameObject,
-                out gobj,
-                false))
+            int i = 0;
+            LevelSession levelSession = NetworkingLibrary.Instance.LevelSession.Create();           
+            List<PlaceholderInfo> placeholders = new List<PlaceholderInfo>();
+            foreach (var obj in GameSession.Instance.SelectedLevel.Objects)
             {
-                if ((levelSession = gobj.GetComponent<LevelSession>()) != null)
+                if (obj != null)
                 {
-                    int i = 0;
-                    ObjectSession objectSession;
-                    List<PlaceholderInfo> placeholders = new List<PlaceholderInfo>();
+                    var objectSession = NetworkingLibrary.Instance.ObjectSession.Create();
+                    objectSession.Index = i;
+                    levelSession._objectSessions.Add(objectSession.gameObject);
+                    NetworkServer.Spawn(objectSession.gameObject, NetworkServer.localConnection);
 
-                    foreach (var obj in GameSession.Instance.SelectedLevel.Objects)
+                    if (obj is Gem)
                     {
-                        if (obj != null)
-                        {
-
-                            if (ServerUtils.TryCreateNetworkObject(
-                                NetworkingLibrary.Instance.ObjectSession.gameObject,
-                                out gobj,                                
-                                false))
-                            {
-                                if ((objectSession = gobj.GetComponent<ObjectSession>()) != null)
-                                {
-                                    objectSession.Index = i;
-                                    levelSession._objectSessions.Add(objectSession.gameObject);
-
-                                    NetworkServer.Spawn(gobj, NetworkServer.localConnection);
-
-                                    if (obj is Gem)
-                                    {
-                                        Gem gem = (Gem)obj;
-                                        levelSession.RequiredGems += gem.IsRequired ? 1 : 0;
-                                    }
-                                    else if (obj is Placeholder)
-                                    {
-                                        var info = new PlaceholderInfo()
-                                        {
-                                            _session = gobj,
-                                            Position = obj._gridPosition,
-                                            Rotation = obj.Transform.rotation
-                                        };
-
-                                        placeholders.Add(info);
-                                        levelSession._placeholderInfos.Add(info);
-                                    }
-                                }
-                            }
-                        }
-
-                        i++;
+                        Gem gem = (Gem)obj;
+                        levelSession.RequiredGems += gem.IsRequired ? 1 : 0;
                     }
-
-                    i = 0;
-                    while (!placeholders.IsEmpty())
+                    else if (obj is Placeholder)
                     {
-                        PlayerSession player = null;
-                        if ((player = GameSession.Instance.GetPlayer(i)) != null)
+                        var info = new PlaceholderInfo()
                         {
-                            PlaceholderInfo info = placeholders.RemoveRandom();
-                            info.PlayerId = player.ServerId;
-                            info._characterId = player.CharacterId;
+                            _session = objectSession.gameObject,
+                            Position = obj._gridPosition,
+                            Rotation = obj.Transform.rotation
+                        };
 
-                            //if (
-                            //    CustomNetworkManager.Instance.ServerHandler.TryGetConnection(
-                            //        player._connectionId,
-                            //        out ClientPlayer client))
-                            //{
-                            //    info.Session.netIdentity.AssignClientAuthority(
-                            //        client.connectionToClient);
-                            //}
-
-                        }
-
-                        i++;
+                        placeholders.Add(info);
+                        levelSession._placeholderInfos.Add(info);
                     }
-
-
-                    NetworkServer.Spawn(levelSession.gameObject, NetworkServer.localConnection);
-                    return levelSession;
                 }
 
-
+                i++;
             }
 
-            return null;
+            i = 0;
+            while (!placeholders.IsEmpty())
+            {
+                PlayerSession player = null;
+                if ((player = GameSession.Instance.GetPlayer(i)) != null)
+                {
+                    PlaceholderInfo info = placeholders.RemoveRandom();
+                    info.PlayerId = player.ServerId;
+                    info._characterId = player.CharacterId;
+
+                    //if (
+                    //    CustomNetworkManager.Instance.ServerHandler.TryGetConnection(
+                    //        player._connectionId,
+                    //        out ClientPlayer client))
+                    //{
+                    //    info.Session.netIdentity.AssignClientAuthority(
+                    //        client.connectionToClient);
+                    //}
+
+                }
+
+                i++;
+            }
+
+
+            NetworkServer.Spawn(levelSession.gameObject, NetworkServer.localConnection);
+            return levelSession;
         }
 
         private bool DoIsMoveAllowed(
@@ -331,7 +312,7 @@ namespace Cirrus.Circuit.Networking
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
         {
-            Vector3Int pos = Level.WorldToGrid(obj.transform.position);
+            Vector3Int pos = Level.WorldToGrid(obj.Transform.position);
 
             int i = VectorUtils.ToIndex(pos, Level.Dimension.x, Level.Dimension.y);
 
@@ -471,12 +452,12 @@ namespace Cirrus.Circuit.Networking
             }
 
             return false;
-        }        
-        
+        }
+
         public void Cmd_Spawn(Spawnable spawnable, Vector3Int pos)
         {
             CommandClient.Instance.Cmd_LevelSession_Spawn(
-                gameObject, 
+                gameObject,
                 spawnable.Id, pos);
         }
 
@@ -504,17 +485,17 @@ namespace Cirrus.Circuit.Networking
         public void _Spawn(ObjectSession session, Spawnable template, Vector3Int pos)
         {
             GameObject gobj = template.gameObject.Create(
-                Level.GridToWorld(pos), 
+                Level.GridToWorld(pos),
                 transform);
 
-            if(gobj.TryGetComponent(out BaseObject obj))            
+            if (gobj.TryGetComponent(out BaseObject obj))
             {
                 session._object = obj;
                 obj._session = session;
                 obj._levelSession = this;
                 (obj.Transform.position, obj._gridPosition) = RegisterObject(obj);
                 obj.TrySetState(BaseObject.State.Idle);
-            }            
+            }
         }
 
 
@@ -541,18 +522,24 @@ namespace Cirrus.Circuit.Networking
         }
 
         public void _OnRainTimeout(Vector3Int pos, int objectId)
-        {            
-            Cmd_Spawn(objectId, pos);        
+        {
+            Cmd_Spawn(objectId, pos);
         }
 
-        public void OnRoundStarted(int id)
+        public void OnRoundInit()
         {
-            //foreach (BaseObject obj in _objects)
-            //{
-            //    if (obj == null) continue;
+            RoundSession.Instance.OnRoundStartHandler += OnRoundStarted;
+        }
 
-            //    obj.TrySetState(BaseObject.State.Idle);
-            //}
+        public void OnRoundStarted(int i)
+        {
+
+            foreach (var obj in _objects)
+            {
+                if (obj == null) continue;
+
+                obj.TrySetState(BaseObject.State.Idle);
+            }
 
             _randomDropRainTimer.Start();
         }

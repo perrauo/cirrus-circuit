@@ -4,42 +4,38 @@ using Cirrus.Circuit.Networking;
 
 namespace Cirrus.Circuit.UI
 {
-    public class Announcement : MonoBehaviour
+    public class Announcement : BaseSingleton<Announcement>
     {
         [SerializeField]
         private UnityEngine.UI.Text _text;
 
-        private int _number = 0;
+        private int _index = 0;
 
-        public void OnValidate()
+        public override void OnValidate()
         {
+            base.OnValidate();
+
             //if (Game.Instance == null)
             //    Game.Instance = FindObjectOfType<Game>();
         }
 
-        public int RoundNumber {
-            get {
-                return _number;
-            }
+        public int RoundIndex {
+            get => _index;
 
             set
             {
                 Enabled = true;
-                _number = value;
-                _text.text = "Round " + (_number + 1).ToString();
+                _index = value;
+                _text.text = "Round " + (_index + 1).ToString();
                 _timer.Start();
             }
-
         }
 
         private string _message = "";
 
         public string Message
         {
-            get
-            {
-                return _message;
-            }
+            get => _message;           
 
             set
             {
@@ -57,10 +53,7 @@ namespace Cirrus.Circuit.UI
 
         public bool Enabled
         {
-            get
-            {
-                return _enabled;
-            }
+            get => _enabled;            
 
             set
             {
@@ -69,48 +62,21 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-        private float _time = 2f;
+        [SerializeField]
+        private float _time = 1f;
 
         private Circuit.Timer _timer;
 
 
-        private Circuit.Timer _timesUpTimer;
-
-        [SerializeField]
-        private float _timesUpTime = 2f;
-
-        public void Awake()
+        public override void Awake()
         {
-            _timesUpTimer = new Circuit.Timer(_timesUpTime, start: false, repeat: false);
-            _timesUpTimer.OnTimeLimitHandler += OnTimesUpTimeOut;
+            base.Awake();
 
-            _timer = new Circuit.Timer(_time, start: false, repeat: false);
+            _timer = new Circuit.Timer(
+                _time, 
+                start: false, 
+                repeat: false);
             _timer.OnTimeLimitHandler += OnTimeOut;
-
-            GameSession.OnStartClientStaticHandler += OnSessionClientStarted;
-            Game.Instance.OnRoundStartedHandler += OnNewRound;
-        }
-
-        public void OnSessionClientStarted(bool enable)
-        {
-
-        }
-
-        public void OnNewRound()
-        {
-            RoundSession.Instance.OnRoundEndHandler += OnRoundEnd;
-            RoundSession.Instance.OnIntermissionHandler += OnIntermission;
-        }
-
-        public void OnIntermission(int count)
-        {
-            RoundNumber = count;
-        }
-
-        public void OnRoundEnd()
-        {
-            Enabled = true;
-            _timesUpTimer.Start();
         }
 
         public void OnTimeOut()
@@ -118,9 +84,5 @@ namespace Cirrus.Circuit.UI
             Enabled = false;
         }
 
-        private void OnTimesUpTimeOut()
-        {
-            Enabled = false;
-        }
     }
 }

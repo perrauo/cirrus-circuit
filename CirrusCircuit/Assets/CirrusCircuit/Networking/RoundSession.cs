@@ -5,37 +5,44 @@ using Cirrus.Circuit.UI;
 using Mirror;
 //using UnityEngine;
 using Cirrus.MirrorExt;
+using Cirrus.Utils;
+using Cirrus.Events;
 
 namespace Cirrus.Circuit.Networking
 {
-    public delegate void OnIntermission(int count);
-
-    public delegate void OnCountdown(int count);
-
-    public delegate void OnRoundBegin(int roundNumber);
-
-    public delegate void OnRoundEnd();
-
-    public class RoundSession : NetworkBehaviour
+    public class RoundSession : CustomNetworkBehaviour
     {
-        public OnIntermission OnIntermissionHandler;
+        public Event<int> OnIntermissionHandler;
 
-        public OnCountdown OnCountdownHandler;
+        public Event<int> OnCountdownHandler;
 
-        public OnRoundBegin OnRoundBeginHandler;
+        public Event<int> OnRoundStartHandler;
 
-        public OnRoundEnd OnRoundEndHandler;
+        public Events.Event OnRoundEndHandler;
 
-        [SerializeField]        
-        private Timer _timer;
+        [SyncVar]
+        [SerializeField]
+        private GameObject _timerGameObject;
+        private ServerTimer _timer;
+        public ServerTimer Timer
+        {
+            get {
+                if (_timer == null) _timer = _timerGameObject.GetComponent<ServerTimer>();
+                return _timer;
+            }
+        }
 
+
+
+        [SyncVar]
         [SerializeField]
         private Timer _countDownTimer;
-        
+
+        [SyncVar]
         [SerializeField]
         private Timer _intermissionTimer;
 
-        public float Time => _roundTime - _timer.Time;
+        public float RemainingTime => _remainingTime - Timer.Time;
 
         [SyncVar]
         [SerializeField]        
@@ -44,20 +51,20 @@ namespace Cirrus.Circuit.Networking
         [SyncVar]
         [SerializeField]        
         private float _intermissionTime = 0; // Where we show the round number
-
+        
         [SyncVar]
-        [SerializeField]        
-        private int _countDown;
+        [SerializeField]
+        private int _countDown = 3;
 
         [SyncVar]
         [SerializeField]
-        private float _roundTime;
+        private float _remainingTime;
 
         [SyncVar]
         [SerializeField]
-        private int _id = 0;
+        private int _index = 0;
 
-        public int Id => _id;
+        public int Index => _index;
 
         private static RoundSession _instance;
 
@@ -72,10 +79,13 @@ namespace Cirrus.Circuit.Networking
 
         public override void OnStartClient()
         {
-            base.OnStartClient();            
-
-            Game.Instance._SetState(Game.State.Round);
-        }        
+            base.OnStartClient();
+        }
+        public override void Destroy()
+        {
+            base.Destroy();
+            _instance = null;
+        }
 
         public static RoundSession Instance
         {
@@ -91,36 +101,43 @@ namespace Cirrus.Circuit.Networking
             float time, 
             float countDownTime, 
             float intermissionTime, 
-            int id)
+            int index)
         {
-            RoundSession session = null;
+            RoundSession session = NetworkingLibrary.Instance.RoundSession.Create(null);
 
-            if (ServerUtils.TryCreateNetworkObject(                
-                NetworkingLibrary.Instance.RoundSession.gameObject,
-                out GameObject obj,                
-                true))
-             {
-                session = obj.GetComponent<RoundSession>();
-                if (session != null)
-                {
-                    session._intermissionTime = intermissionTime;
-                    session._id = id;
-                    session._countDown = countDown;
-                    session._roundTime = time;
-                    session._countDownTime = countDownTime;
-                    session._countDownTimer = new Timer(countDownTime, start: false, repeat: true);
-                    session._timer = new Timer(session._roundTime, start: false);
-                    session._intermissionTimer = new Timer(session._intermissionTime, start: false, repeat: false);
-                }
+            session._intermissionTime = intermissionTime;
+            session._index = index;
+            session._countDown = countDown;
+            session._remainingTime = time;
+            session._countDownTime = countDownTime;
+            session._countDownTimer = new Timer(
+                countDownTime,
+                start: false,
+                repeat: true);
+
+            if (CustomNetworkManager.IsServer)
+            {
+                session._timerGameObject = ServerTimer.Create(
+                    session._remainingTime,
+                    start: false).gameObject;
             }
+
+            session._intermissionTimer = new Timer(
+                session._intermissionTime,
+                start: false,
+                repeat: false);
+
+            NetworkServer.Spawn(
+                session.gameObject, 
+                NetworkServer.localConnection);
 
             return session;
         }
 
-        public void BeginIntermission()
+        public void StartIntermisison()
         {
-            OnIntermissionHandler?.Invoke(_id);
-            if(CustomNetworkManager.IsServer) _intermissionTimer.Start();
+            OnIntermissionHandler?.Invoke(_index);
+            if (CustomNetworkManager.IsServer) _intermissionTimer.Start();
         }
 
 
@@ -136,15 +153,14 @@ namespace Cirrus.Circuit.Networking
             if(CustomNetworkManager.IsServer) _countDownTimer.Start();
         }
 
-
         public void Terminate()
         {
-            _timer.Stop();
+            if(CustomNetworkManager.IsServer) Timer.Stop();
+
             _countDownTimer.Stop();
             _intermissionTimer.Stop();
             Cmd_OnRoundEnd();
         }
-
 
         private void Cmd_OnTimeout()
         {
@@ -176,12 +192,12 @@ namespace Cirrus.Circuit.Networking
             else if (_countDown < 0)
             {
                 OnCountdownHandler?.Invoke(_countDown);
-                OnRoundBeginHandler.Invoke(_id);
+                OnRoundStartHandler?.Invoke(_index);
 
                 if (CustomNetworkManager.IsServer)
                 {
-                    _timer.Start();
-                    _timer.OnTimeLimitHandler += Cmd_OnRoundEnd;
+                    Timer.DoStart();
+                    Timer.OnTimeLimitHandler += Cmd_OnRoundEnd;
                 }
 
                 return;
@@ -191,6 +207,13 @@ namespace Cirrus.Circuit.Networking
 
         public void Cmd_OnRoundEnd()
         {
+            if (CustomNetworkManager.IsServer) 
+            {                
+                NetworkServer.Destroy(_timerGameObject);
+                Destroy(_timerGameObject);
+                _timerGameObject = null;
+            }
+
             CommandClient.Instance.Cmd_RoundSession_OnRoundEnd(gameObject);
         }
 
@@ -202,7 +225,9 @@ namespace Cirrus.Circuit.Networking
 
         public void _OnRoundEnd()
         {
-            OnRoundEndHandler.Invoke();
+            //OnRoundEndHandler?.Invoke();
+
+            Announcement.Instance.Message = "Time's up!";
         }
 
     }

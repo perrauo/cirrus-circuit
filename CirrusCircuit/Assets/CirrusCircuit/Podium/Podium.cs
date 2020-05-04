@@ -6,30 +6,16 @@ using Cirrus.Circuit.Networking;
 
 using Mirror;
 using Cirrus.Circuit.World.Objects.Characters;
+using Cirrus.Circuit.UI;
 
 namespace Cirrus.Circuit
 {
     public delegate  void OnPodiumFinished();
 
 
-    public class Podium : NetworkBehaviour
+    public class Podium : BaseSingleton<Podium>
     {
-
-        protected static Podium _instance;
-
-        public static Podium Instance
-        {
-            get
-            {
-                if (_instance == null) _instance = FindObjectOfType<Podium>();
-                return _instance;
-            }
-        }    
-
         public OnPodiumFinished OnPodiumFinishedHandler;
-
-        [SerializeField]
-        private UI.Announcement _announcement;
 
         [SerializeField]
         private Platform _platformTemplate;
@@ -47,7 +33,7 @@ namespace Cirrus.Circuit
         private List<Platform> _platforms;
 
         [SerializeField]
-        private List<World.Objects.Characters.Character> _characters;
+        private List<Character> _characters;
 
         private Timer _timer;
 
@@ -70,17 +56,16 @@ namespace Cirrus.Circuit
 
         private int _platformFinishedCount = 0;
 
-        public virtual void OnValidate()
+        public override void OnValidate()
         {
-            //base.OnValidate();
+            base.OnValidate();
 
-            if (_announcement == null)
-                _announcement = FindObjectOfType<UI.Announcement>();
+           
         }
 
-        public virtual void Awake()
+        public override void Awake()
         {
-            //base.Awake();
+            base.Awake();
 
             _timer = new Timer(_timeTransition, start: false, repeat: false);
             _finalTimer = new Timer(_timeFinal, start: false, repeat: false);
@@ -105,14 +90,14 @@ namespace Cirrus.Circuit
                 _positionSpeed);
 
             for(int i = 0; i < _characters.Count; i++) {
-                _characters[i].Transform.transform.position =
+                _characters[i].Transform.position =
                 Vector3.Lerp(
-                    _characters[i].Transform.transform.position,
+                    _characters[i].Transform.position,
                     _platforms[i]._characterAnchor.transform.position,
                     _timer.Time/_timeTransitionFrom);
 
-                _characters[i].Transform.transform.rotation = Quaternion.Lerp(
-                    _characters[i].Transform.transform.rotation, 
+                _characters[i].Transform.rotation = Quaternion.Lerp(
+                    _characters[i].Transform.rotation, 
                     _platforms[i]._visual.Parent.transform.rotation,
                     _timer.Time / _timeTransitionFrom);
             }
@@ -218,14 +203,10 @@ namespace Cirrus.Circuit
 
                     if (winner != null)
                     {
-                        if (Mathf.Approximately(max, secondMax))
-                        {
-                            _announcement.Message = "Tie.";
-                        }
-                        else
-                        {
-                            _announcement.Message = winner.Name + " wins!";
-                        }
+                        Announcement.Instance.Message = 
+                            Mathf.Approximately(max, secondMax) ? 
+                            "Tie." : 
+                            winner.Name + " wins!";
                     }
 
                     _finalTimer.Start();
