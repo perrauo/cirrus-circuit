@@ -491,6 +491,7 @@ namespace Cirrus.Circuit.Networking
             if (gobj.TryGetComponent(out BaseObject obj))
             {
                 session._object = obj;
+                obj._level = Level;
                 obj._session = session;
                 obj._levelSession = this;
                 (obj.Transform.position, obj._gridPosition) = RegisterObject(obj);
