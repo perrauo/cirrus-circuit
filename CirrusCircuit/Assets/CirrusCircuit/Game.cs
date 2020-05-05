@@ -155,7 +155,7 @@ namespace Cirrus.Circuit
             _initialVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30)); // I used 30 as my camera z is -30
 
             Transitions.Transition.Instance.OnTransitionTimeoutHandler += OnTransitionTimeOut;
-            UI.CharacterSelect.Instance.OnCharacterSelectReadyHandler += OnCharacterSelected;
+            CharacterSelect.Instance.OnCharacterSelectReadyHandler += OnCharacterSelected;
 
             _SetState(State.Menu, false);            
         }
@@ -188,9 +188,29 @@ namespace Cirrus.Circuit
 
         public void OnCharacterSelected(int playerCount)
         {
-            Cmd_SetState(State.LevelSelection);
+            if (CustomNetworkManager.IsServer)
+            {
+                Cmd_SetState(State.LevelSelection);
+            }
         }
 
+        public void OnRoundEnd()
+        {
+            if (CustomNetworkManager.IsServer)
+            {
+                GameSession.Instance.RoundIndex++;
+
+                if (GameSession.Instance.RoundIndex < RoundAmount)
+                {
+                    Cmd_SetState(State.Podium);
+                }
+                else
+                {
+                    GameSession.Instance.RoundIndex++;
+                    Cmd_SetState(State.Podium);
+                }
+            }
+        }
 
         // TODO: Simulate LeftStick continuous axis with WASD
         public void HandleAxesLeft(Player player, Vector2 axis)
@@ -517,16 +537,22 @@ namespace Cirrus.Circuit
                     return true;
         
                 case State.Podium:
+                    if (RoundSession.Instance != null) RoundSession.Instance.Destroy();
+                    if (LevelSession.Instance != null) LevelSession.Instance.Destroy();
                     Podium.Instance.gameObject.SetActive(true);
                     OnPodiumHandler?.Invoke();
                     _state = target;
                     return true;
 
                 case State.FinalPodium:
+                    if (RoundSession.Instance != null) RoundSession.Instance.Destroy();
+                    if (LevelSession.Instance != null) LevelSession.Instance.Destroy();
                     Podium.Instance.gameObject.SetActive(true);
                     OnFinalPodiumHandler?.Invoke();
                     _state = target;
                     return true;
+
+
 
                 case State.LevelSelection:
 
@@ -678,6 +704,8 @@ namespace Cirrus.Circuit
 
                 case State.LevelSelection:
 
+                    if (!CustomNetworkManager.IsServer) break;
+
                     if (Mathf.Abs(step.x) > 0)
                     {
                         int prev = SelectedLevelIndex;
@@ -766,8 +794,13 @@ namespace Cirrus.Circuit
                     break;
 
                 case State.LevelSelection:
-                    Cmd_SetState(State.InitRound, false);
+
+                    if (CustomNetworkManager.IsServer)
+                    {
+                        Cmd_SetState(State.InitRound, false);
+                    }
                     break;
+
 
                 case State.CharacterSelection:
 

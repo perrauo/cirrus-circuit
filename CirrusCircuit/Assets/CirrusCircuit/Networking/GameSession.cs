@@ -78,6 +78,16 @@ namespace Cirrus.Circuit.Networking
         [SyncVar]
         [SerializeField]
         public int _roundIndex;
+        public int RoundIndex
+        {
+            get => _roundIndex;
+            set
+            {
+                _roundIndex = value < 0 ? 0 : value;
+                CommandClient.Instance.Cmd_GameSession_SetCharacterSelectOpenCount(gameObject, _characterSelectOpenCount);
+            }
+        }
+
 
         [SerializeField]
         public List<Player> LocalPlayers = new List<Player>();

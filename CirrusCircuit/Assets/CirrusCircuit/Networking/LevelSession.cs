@@ -37,6 +37,7 @@ namespace Cirrus.Circuit.Networking
         [SyncVar]
         [SerializeField]
         public GameObjectSyncList _objectSessions = new GameObjectSyncList();
+
         public IEnumerable<ObjectSession> ObjectSessions => _objectSessions.Select(x => x.GetComponent<ObjectSession>());
 
         [SyncVar]
@@ -66,8 +67,6 @@ namespace Cirrus.Circuit.Networking
         public Vector3 TargetPosition;
 
         private Timer _randomDropRainTimer;
-
-        private Timer _randomDropSpawnTimer;
 
 
         public Level Level => GameSession.Instance.SelectedLevel;
@@ -200,7 +199,34 @@ namespace Cirrus.Circuit.Networking
 
         public override void Destroy()
         {
-            base.Destroy();
+            _randomDropRainTimer.OnTimeLimitHandler -= Cmd_OnRainTimeout;
+
+            foreach (var obj in _objects)
+            {
+                if (obj != null)
+                {
+                    Destroy(obj.gameObject);
+                }
+            }
+            
+            if (CustomNetworkManager.IsServer)
+            {
+                foreach (var sess in ObjectSessions)
+                {
+                    if (sess != null)
+                    {
+                        NetworkServer.Destroy(sess.gameObject);
+                        Destroy(sess.gameObject);
+                    }
+                }
+            }
+
+            if (gameObject != null)
+            {
+                if (CustomNetworkManager.IsServer) NetworkServer.Destroy(gameObject);
+                Destroy(gameObject);
+            }
+
             _instance = null;
         }
 
@@ -264,6 +290,12 @@ namespace Cirrus.Circuit.Networking
                 i++;
             }
 
+            levelSession.OnScoreValueAddedHandler +=
+                (Gem gem, int player, float value) =>
+                {
+                    GameSession.Instance.GetPlayer(player).Score += value;
+                };
+            
 
             NetworkServer.Spawn(levelSession.gameObject, NetworkServer.localConnection);
             return levelSession;
@@ -302,7 +334,9 @@ namespace Cirrus.Circuit.Networking
         }
 
         // https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid
-        public void SetObject(Vector3Int pos, BaseObject obj)
+        public void SetObject(
+            Vector3Int pos, 
+            BaseObject obj)
         {
             int i = VectorUtils.ToIndex(pos, Level.Dimension.x, Level.Dimension.y);
 
@@ -329,7 +363,9 @@ namespace Cirrus.Circuit.Networking
         }
 
 
-        public bool TryGet(Vector3Int pos, out BaseObject obj)
+        public bool TryGet(
+            Vector3Int pos, 
+            out BaseObject obj)
         {
             obj = null;
             if (!Level.IsWithinBounds(pos)) return false;
@@ -343,8 +379,13 @@ namespace Cirrus.Circuit.Networking
             return obj != null;
         }
 
-
-        private bool DoTryMove(BaseObject source, Vector3Int position, Vector3Int direction, ref Vector3 offset, out BaseObject pushed, out BaseObject destination)
+        private bool DoTryMove(
+            BaseObject source, 
+            Vector3Int position, 
+            Vector3Int direction, 
+            ref Vector3 offset, 
+            out BaseObject pushed, 
+            out BaseObject destination)
         {
             pushed = null;
             destination = null;
@@ -454,6 +495,8 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
 
+        #region Spawn
+
         public void Cmd_Spawn(Spawnable spawnable, Vector3Int pos)
         {
             CommandClient.Instance.Cmd_LevelSession_Spawn(
@@ -500,6 +543,10 @@ namespace Cirrus.Circuit.Networking
         }
 
 
+        #endregion
+
+
+        #region On Rain Timeout
 
         public void Cmd_OnRainTimeout()
         {
@@ -526,6 +573,10 @@ namespace Cirrus.Circuit.Networking
         {
             Cmd_Spawn(objectId, pos);
         }
+
+
+        #endregion
+
 
         public void OnRoundInit()
         {

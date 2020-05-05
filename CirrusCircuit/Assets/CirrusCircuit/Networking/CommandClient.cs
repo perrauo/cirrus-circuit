@@ -126,6 +126,22 @@ namespace Cirrus.Circuit.Networking
 
         #region Level Session
 
+        [Command]
+        public void Cmd_LevelSession_UpdateObjectSessions(GameObject obj)
+        {
+            if (obj == null) return;
+
+            if (obj.TryGetComponent(out LevelSession session))
+            {
+                var gobj = NetworkingLibrary.Instance.ObjectSession.gameObject.Create();
+                NetworkServer.Spawn(gobj, NetworkServer.localConnection);
+                for (int i = 0; i < session._objectSessions.Count; i++)
+                {
+                    session._objectSessions.Add(session._objectSessions[i]);
+                }
+            }
+        }
+
         // TODO security check valid spawn location
         [Command]
         public void Cmd_LevelSession_Spawn(GameObject obj, int spawnId, Vector3Int pos)
@@ -218,6 +234,13 @@ namespace Cirrus.Circuit.Networking
         {
             GameSession session;
             if ((session = obj.GetComponent<GameSession>()) != null) session._characterSelectOpenCount = count;
+        }
+
+        [Command]
+        public void Cmd_GameSession_SetRoundIndex(GameObject obj, int idx)
+        {
+            GameSession session;
+            if ((session = obj.GetComponent<GameSession>()) != null) session._roundIndex = idx;
         }
 
 
@@ -374,27 +397,53 @@ namespace Cirrus.Circuit.Networking
 
         #region Round Session
 
+        //[Command]
+        //public void Cmd_OnEndIntermissionTimeout(GameObject obj)
+        //{
+        //    //AssertGameObjectNull(obj);
+        //    if (obj == null) return;
+
+        //    if (obj.TryGetComponent(out RoundSession session))
+        //    {
+        //        session.Rpc_OnEndIntermissionTimeout();
+        //    }
+        //}
+
         [Command]
-        public void Cmd_OnIntermissionTimeoutBeginCountdown(GameObject obj)
+        public void Cmd_OnStartIntermissionTimeout(GameObject obj)
         {
             //AssertGameObjectNull(obj);
             if (obj == null) return;
             
             if(obj.TryGetComponent(out RoundSession session))
             {
-                session.Rpc_OnIntermissionTimeoutBeginCountdown();
+                session.Rpc_OnStartIntermissionTimeout();
             }
         }
 
+
         [Command]
-        public void Cmd_RoundSession_OnTimeout(GameObject obj)
+        public void Cmd_RoundSession_OnRoundTimeout(GameObject obj)
+        {
+            //AssertGameObjectNull(obj);
+            if (obj == null) return;
+
+            if (obj.TryGetComponent(out RoundSession session))
+            {
+                session.Rpc_OnRoundTimeout();
+            }
+        }
+
+
+        [Command]
+        public void Cmd_RoundSession_OnCountdownTimeout(GameObject obj)
         {
             //AssertGameObjectNull(obj);
             if (obj == null) return;
             
             if (obj.TryGetComponent(out RoundSession session))
             {
-                session.Rpc_OnTimeout();
+                session.Rpc_OnCountDownTimeout();
             }
         }
 

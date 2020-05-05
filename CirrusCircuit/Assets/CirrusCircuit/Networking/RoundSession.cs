@@ -7,6 +7,7 @@ using Mirror;
 using Cirrus.MirrorExt;
 using Cirrus.Utils;
 using Cirrus.Events;
+using System;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -27,22 +28,23 @@ namespace Cirrus.Circuit.Networking
         public ServerTimer Timer
         {
             get {
-                if (_timer == null) _timer = _timerGameObject.GetComponent<ServerTimer>();
+                if (_timerGameObject == null) return null;
+                else if (_timer == null) _timer = _timerGameObject.GetComponent<ServerTimer>();
                 return _timer;
             }
         }
 
-
-
-        [SyncVar]
         [SerializeField]
         private Timer _countDownTimer;
 
-        [SyncVar]
-        [SerializeField]
-        private Timer _intermissionTimer;
 
-        public float RemainingTime => _remainingTime - Timer.Time;
+        [SerializeField]
+        private Timer _startIntermissionTimer;
+
+        [SerializeField]
+        private Timer _endIntermissionTimer;
+
+        public float RemainingTime => Timer == null ? 0 : _remainingTime - Timer.Time;
 
         [SyncVar]
         [SerializeField]        
@@ -50,8 +52,12 @@ namespace Cirrus.Circuit.Networking
 
         [SyncVar]
         [SerializeField]        
-        private float _intermissionTime = 0; // Where we show the round number
-        
+        private float _startIntermissionTime = 1; // Where we show the round number
+
+        [SyncVar]
+        [SerializeField]
+        private float _endIntermissionTime = 1; // Where we show "Time's up!"
+
         [SyncVar]
         [SerializeField]
         private int _countDown = 3;
@@ -72,9 +78,16 @@ namespace Cirrus.Circuit.Networking
         {
             base.OnStartServer();
 
-            _countDownTimer.OnTimeLimitHandler += Cmd_OnTimeout;
-            _intermissionTimer.OnTimeLimitHandler += Cmd_OnIntermissionTimeoutBeginCountdown;
+            _countDownTimer.OnTimeLimitHandler += Cmd_OnCountDownTimeout;
+            _startIntermissionTimer.OnTimeLimitHandler += Cmd_OnStartIntermissionTimeout;
 
+            //_endIntermissionTimer.OnTimeLimitHandler += Cmd_OnEndIntermissionTimeout;
+            _endIntermissionTimer.OnTimeLimitHandler += Cmd_OnRoundEnd;
+
+            foreach (var player in GameSession.Instance.Players)
+            {
+                player.Score = 0;
+            }
         }
 
         public override void OnStartClient()
@@ -84,6 +97,10 @@ namespace Cirrus.Circuit.Networking
         public override void Destroy()
         {
             base.Destroy();
+            _countDownTimer.OnTimeLimitHandler += Cmd_OnCountDownTimeout;
+            _startIntermissionTimer.OnTimeLimitHandler += Cmd_OnStartIntermissionTimeout;
+            _endIntermissionTimer.OnTimeLimitHandler += Cmd_OnRoundEnd;
+
             _instance = null;
         }
 
@@ -105,7 +122,7 @@ namespace Cirrus.Circuit.Networking
         {
             RoundSession session = NetworkingLibrary.Instance.RoundSession.Create(null);
 
-            session._intermissionTime = intermissionTime;
+            session._startIntermissionTime = intermissionTime;
             session._index = index;
             session._countDown = countDown;
             session._remainingTime = time;
@@ -120,10 +137,11 @@ namespace Cirrus.Circuit.Networking
                 session._timerGameObject = ServerTimer.Create(
                     session._remainingTime,
                     start: false).gameObject;
+                session.Timer.OnRoundTimeLimitHandler += session.Cmd_OnRoundTimeout;
             }
 
-            session._intermissionTimer = new Timer(
-                session._intermissionTime,
+            session._startIntermissionTimer = new Timer(
+                session._startIntermissionTime,
                 start: false,
                 repeat: false);
 
@@ -134,52 +152,84 @@ namespace Cirrus.Circuit.Networking
             return session;
         }
 
+
+        #region On Start Intermission
+
         public void StartIntermisison()
         {
             OnIntermissionHandler?.Invoke(_index);
-            if (CustomNetworkManager.IsServer) _intermissionTimer.Start();
+            if (CustomNetworkManager.IsServer) _startIntermissionTimer.Start();
+        }
+
+
+        public void Cmd_OnStartIntermissionTimeout()
+        {
+            CommandClient.Instance.Cmd_OnStartIntermissionTimeout(gameObject);
         }
 
 
         [ClientRpc]
-        public void Rpc_OnIntermissionTimeoutBeginCountdown()
+        public void Rpc_OnStartIntermissionTimeout()
         {
-            _OnIntermissionTimeoutBeginCountdown();
+            _OnStartIntermissionTimeout();
         }
 
-        public void _OnIntermissionTimeoutBeginCountdown()
+
+        public void _OnStartIntermissionTimeout()
         {
             OnCountdownHandler?.Invoke(_countDown);
             if(CustomNetworkManager.IsServer) _countDownTimer.Start();
         }
 
-        public void Terminate()
+
+        #endregion
+
+
+
+        #region On Round Timeout
+
+        private void Cmd_OnRoundTimeout()
         {
-            if(CustomNetworkManager.IsServer) Timer.Stop();
-
-            _countDownTimer.Stop();
-            _intermissionTimer.Stop();
-            Cmd_OnRoundEnd();
-        }
-
-        private void Cmd_OnTimeout()
-        {
-            CommandClient.Instance.Cmd_RoundSession_OnTimeout(gameObject);
-        }
-
-
-        public void Cmd_OnIntermissionTimeoutBeginCountdown()
-        {
-            CommandClient.Instance.Cmd_OnIntermissionTimeoutBeginCountdown(gameObject);
+            CommandClient.Instance.Cmd_RoundSession_OnRoundTimeout(gameObject);
         }
 
         [ClientRpc]
-        public void Rpc_OnTimeout()
+        public void Rpc_OnRoundTimeout()
         {
-            _OnTimeOut();
+            _OnRoundTimeout();
         }
 
-        private void _OnTimeOut()
+        public void _OnRoundTimeout()
+        {
+            if (CustomNetworkManager.IsServer)
+            {
+                NetworkServer.Destroy(_timerGameObject);
+                Destroy(_timerGameObject);
+                _timerGameObject = null;
+                _timer = null;
+            }
+
+            Announcement.Instance.Message = "Time's up!";
+            if (CustomNetworkManager.IsServer) _endIntermissionTimer.Start(_endIntermissionTime);
+        }
+
+        #endregion
+
+
+        #region On Countdown Timeout
+
+        private void Cmd_OnCountDownTimeout()
+        {
+            CommandClient.Instance.Cmd_RoundSession_OnCountdownTimeout(gameObject);
+        }
+
+        [ClientRpc]
+        public void Rpc_OnCountDownTimeout()
+        {
+            _OnCountdownTimeOut();
+        }
+
+        private void _OnCountdownTimeOut()
         {
             _countDown--;
 
@@ -197,7 +247,6 @@ namespace Cirrus.Circuit.Networking
                 if (CustomNetworkManager.IsServer)
                 {
                     Timer.DoStart();
-                    Timer.OnTimeLimitHandler += Cmd_OnRoundEnd;
                 }
 
                 return;
@@ -205,15 +254,12 @@ namespace Cirrus.Circuit.Networking
             else OnCountdownHandler?.Invoke(_countDown);
         }
 
+        #endregion
+
+        #region On Round End
+
         public void Cmd_OnRoundEnd()
         {
-            if (CustomNetworkManager.IsServer) 
-            {                
-                NetworkServer.Destroy(_timerGameObject);
-                Destroy(_timerGameObject);
-                _timerGameObject = null;
-            }
-
             CommandClient.Instance.Cmd_RoundSession_OnRoundEnd(gameObject);
         }
 
@@ -225,10 +271,14 @@ namespace Cirrus.Circuit.Networking
 
         public void _OnRoundEnd()
         {
-            //OnRoundEndHandler?.Invoke();
+            _countDownTimer.Stop();
+            _startIntermissionTimer.Stop();
 
-            Announcement.Instance.Message = "Time's up!";
+            OnRoundEndHandler?.Invoke();
+            Game.Instance.OnRoundEnd();
         }
+
+        #endregion
 
     }
 }

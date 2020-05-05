@@ -33,7 +33,7 @@ namespace Cirrus.Circuit
         public Events.Event<float> OnTickHandler;
 
         [NonSerialized]
-        public Events.Event OnTimeLimitHandler;
+        public Events.Event OnRoundTimeLimitHandler;
 
         private Events.Event OnClockUpdateHandler
         {
@@ -104,7 +104,7 @@ namespace Cirrus.Circuit
             {
                 _time = _limit;
 
-                OnTimeLimitHandler?.Invoke();
+                OnRoundTimeLimitHandler?.Invoke();
 
                 if (_repeat) Reset();
                 else Stop();
