@@ -19,7 +19,7 @@ namespace Cirrus.Circuit.Networking
 
         public static void AssertGameObjectNull(GameObject gameObject) => Utils.DebugUtils.Assert(gameObject != null, "Cmd GameObject is null. Was the object spawn?");
 
-        public static CommandClient _instance;        
+        public static CommandClient _instance;
 
         public static CommandClient Instance
         {
@@ -43,7 +43,7 @@ namespace Cirrus.Circuit.Networking
 
         public virtual void Update()
         {
-            if(OnUpdateHandler != null) Cmd_Update();
+            if (OnUpdateHandler != null) Cmd_Update();
         }
 
         public virtual void FixedUpdate()
@@ -66,7 +66,7 @@ namespace Cirrus.Circuit.Networking
 
 
         [TargetRpc]
-        public void TargetReceiveResponse(ServerResponseMessage response)
+        public void Target_ReceiveResponse(ServerResponseMessage response)
         {
             switch (response.Id)
             {
@@ -75,7 +75,6 @@ namespace Cirrus.Circuit.Networking
 
                 default: return;
             }
-
         }
 
         #region Character Select Slot
@@ -84,7 +83,7 @@ namespace Cirrus.Circuit.Networking
         public void Cmd_CharacterSelectSlot_SetState(GameObject obj, CharacterSelectSlot.State target)
         {
             if (obj == null) return;
-            
+
             //Debug.Log("RPC SELECT OUTER CMD");
             if (obj.TryGetComponent(out CharacterSelectSlot slot))
             {
@@ -97,7 +96,7 @@ namespace Cirrus.Circuit.Networking
         public void Cmd_CharacterSelectSlot_Scroll(GameObject obj, bool scroll)
         {
             if (obj == null) return;
-            
+
             if (obj.TryGetComponent(out CharacterSelectSlot slot)) slot.Rpc_Scroll(scroll);
         }
 
@@ -110,7 +109,7 @@ namespace Cirrus.Circuit.Networking
         public void Cmd_PlayerSession_SetCharacterId(GameObject obj, int characterId)
         {
             if (obj == null) return;
-            
+
             if (obj.TryGetComponent(out PlayerSession session)) session._characterId = characterId;
         }
 
@@ -118,7 +117,7 @@ namespace Cirrus.Circuit.Networking
         public void Cmd_PlayerSession_SetScore(GameObject obj, float score)
         {
             if (obj == null) return;
-            
+
             if (obj.TryGetComponent(out PlayerSession session)) session._score = score;
         }
 
@@ -153,7 +152,7 @@ namespace Cirrus.Circuit.Networking
                 var gobj = NetworkingLibrary.Instance.ObjectSession.gameObject.Create();
                 NetworkServer.Spawn(gobj, NetworkServer.localConnection);
                 session._objectSessions.Add(gobj);
-                session.Rpc_Spawn(gobj, spawnId, pos);                               
+                session.Rpc_Spawn(gobj, spawnId, pos);
             }
         }
 
@@ -162,7 +161,7 @@ namespace Cirrus.Circuit.Networking
         public void Cmd_LevelSession_OnRainTimeout(GameObject obj, Vector3Int pos, int objectId)
         {
             if (obj == null) return;
-           
+
             if (obj.TryGetComponent(out LevelSession session)) session.Rpc_OnRainTimeout(pos, objectId);
         }
 
@@ -170,7 +169,7 @@ namespace Cirrus.Circuit.Networking
         public void Cmd_LevelSession_SetRequiredGemCount(GameObject obj, int count)
         {
             if (obj == null) return;
-            
+
             if (obj.TryGetComponent(out LevelSession session)) session._requiredGemCount = count;
         }
 
@@ -178,7 +177,7 @@ namespace Cirrus.Circuit.Networking
         public void Cmd_LevelSession_SetRequiredGems(GameObject obj, int count)
         {
             if (obj == null) return;
-            
+
             if (obj.TryGetComponent(out LevelSession session)) session._requiredGems = count;
         }
 
@@ -207,7 +206,7 @@ namespace Cirrus.Circuit.Networking
         }
 
         #endregion
-    
+
         #region Game Session
 
         [Command]
@@ -246,7 +245,7 @@ namespace Cirrus.Circuit.Networking
 
         [Command]
         public void Cmd_GameSession_SetSelectedLevelIndex(GameObject obj, int index)
-        {            
+        {
             GameSession session;
             if ((session = obj.GetComponent<GameSession>()) != null)
             {
@@ -310,10 +309,10 @@ namespace Cirrus.Circuit.Networking
 
         #region Object Session
 
-        private Mutex Cmd_ObjectSession_Interact_mutex = new Mutex();
+        private Mutex Cmd_ObjectSession_TryInteract_mutex = new Mutex();
 
         [Command]
-        public void Cmd_ObjectSession_Interact(GameObject obj, GameObject sourceObj)
+        public void Cmd_ObjectSession_TryInteract(GameObject obj, GameObject sourceObj)
         {
             //AssertGameObjectNull(obj);
             if (obj == null) return;
@@ -321,19 +320,35 @@ namespace Cirrus.Circuit.Networking
             ObjectSession session;
             if ((session = obj.GetComponent<ObjectSession>()) != null)
             {
-                Cmd_ObjectSession_Interact_mutex.WaitOne();
+                Cmd_ObjectSession_TryInteract_mutex.WaitOne();
 
                 // Server holds the truth
                 //if (session.IsFallAllowed())
                 {
-                    session.Rpc_Interact(sourceObj);
+                    session.Rpc_TryInteract(sourceObj);
                 }
 
-                Cmd_ObjectSession_Interact_mutex.ReleaseMutex();
+                Cmd_ObjectSession_TryInteract_mutex.ReleaseMutex();
             }
-        }    
+        }
 
         private Mutex Cmd_ObjectSession_TryFall_mutex = new Mutex();
+
+        [Command]
+        public void Cmd_ObjectSession_LevelSession_TryFallThrough(
+            GameObject gobj,
+            Vector3Int step)            
+        {
+            if (gobj.TryGetComponent(out ObjectSession obj))
+            {
+                obj.Rpc_ObjectSession_LevelSession_TryFallThrough(
+                    step,
+                    LevelSession.Instance.GetFallThroughPosition()
+                    );
+            }
+
+        }
+
 
         [Command]
         public void Cmd_ObjectSession_TryFall(GameObject obj)
@@ -354,7 +369,6 @@ namespace Cirrus.Circuit.Networking
                 Cmd_ObjectSession_TryFall_mutex.ReleaseMutex();
             }
         }
-
 
         private Mutex Cmd_ObjectSession_TryMove_mutex = new Mutex();
 
@@ -391,6 +405,53 @@ namespace Cirrus.Circuit.Networking
                 session._index = idx;
             }
         }
+
+
+
+        // TODO remove
+        /////////////////////////
+        
+        [Command]
+        public void Cmd_ObjectSession_Request(GameObject obj, ObjectSession.CommandRequest req)
+        {
+            if (obj.TryGetComponent(out ObjectSession session))
+            {
+                var res = new ObjectSession.CommandResponse { Id = req.Id };
+                switch (res.Id)
+                {
+                    case ObjectSession.CommandId.LevelSession_IsMoveAllowed:
+                        res.Success = session
+                            ._object
+                            ._levelSession
+                            .IsMoveAllowed(
+                                session._object,
+                                req.step);
+                        break;
+
+                    case ObjectSession.CommandId.LevelSession_IsFallThroughAllowed:
+                        res.Success = session
+                            ._object
+                            ._levelSession
+                            .IsFallThroughAllowed(
+                                session._object,
+                                req.step);
+                        break;
+
+                }
+
+                Target_ObjectSession_Response(obj, res);
+            }
+        }
+
+
+        [TargetRpc]
+        public void Target_ObjectSession_Response(
+            GameObject obj,
+            ObjectSession.CommandResponse res)
+        {
+            if (obj.TryGetComponent(out ObjectSession session)) session.Target_Response(res);
+        }
+
 
         #endregion
 

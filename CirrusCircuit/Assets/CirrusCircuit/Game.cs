@@ -536,9 +536,7 @@ namespace Cirrus.Circuit
             destination = State.Unknown;
             return false;
         }
-
-        // TODO encapsulate into Cirrus Barrier
-        
+       
 
         protected bool TryFinishSetState(State target, params object[] args)
         {

@@ -8,6 +8,7 @@ using Cirrus.Utils;
 using System;
 using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.Networking;
+using static Cirrus.Circuit.Networking.CommandClient;
 //using Cirrus.DH.Conditions;
 //using Cirrus.DH.Objects.Actions;
 
@@ -29,7 +30,8 @@ namespace Cirrus.Circuit.World.Objects
             Idle,
             RampIdle,
             Moving,
-            RampMoving
+            RampMoving,
+            AwaitingServerResponse
         }
 
         public enum ObjectId
@@ -192,24 +194,49 @@ namespace Cirrus.Circuit.World.Objects
             FSMUpdate();
         }
 
-        public virtual void Cmd_Interact(BaseObject source)
+        public virtual void Cmd_TryInteract(BaseObject source)
         {
-            _session.Interact(source);
+            _session.Cmd_TryInteract(source);
         }
 
+        public virtual void Cmd_LevelSession_TryFallThrough(Vector3Int step)
+        {
+            _session.Cmd_LevelSession_TryFallThrough(step);
+        }
 
         public virtual void Cmd_TryFall()
         {
-            _session.TryFall();
+            _session.Cmd_TryFall();
         }
 
         public virtual void Cmd_TryMove(Vector3Int step)
         {
-            _session.TryMove(step);
+            _session.Cmd_TryMove(step);
+        }
+        
+
+        public virtual void _LevelSession_TryFallThrough(
+            Vector3Int position,
+            Vector3Int step)
+        {
+            Vector3 offset = new Vector3();
+
+            if (LevelSession.Instance.DoTryMove(
+                this,
+                position,
+                step,
+                ref offset,
+                out BaseObject pushed,
+                out BaseObject destination))
+            {
+                _destination = destination;
+                _gridPosition = position;// _level.GridToWorld(newGridPosition);
+                _targetPosition = _level.GridToWorld(_gridPosition);
+                Transform.position = _targetPosition;
+            }
         }
 
-
-        public virtual void _Interact(BaseObject source)
+        public virtual void _TryInteract(BaseObject source)
         {
             if (ColorId >= PlayerManager.PlayerMax)
             {
@@ -296,6 +323,22 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
+        // TODO remove
+        public void _Response(ObjectSession.CommandResponse res)
+        {
+            switch (res.Id)
+            {
+                case ObjectSession.CommandId.LevelSession_IsFallThroughAllowed:
+
+
+                    break;
+
+                case ObjectSession.CommandId.LevelSession_IsMoveAllowed:
+
+                    break;
+            }
+        }
+
         public virtual void Accept(BaseObject incoming)
         {
             //incoming.TrySetState
@@ -309,6 +352,8 @@ namespace Cirrus.Circuit.World.Objects
             _nextColorIndex = MathUtils.Wrap(_nextColorIndex, 0, GameSession.Instance.PlayerCount);
             _nextColor = PlayerManager.Instance.GetColor(_nextColorIndex);
         }
+
+
 
 
         #endregion
@@ -622,17 +667,11 @@ namespace Cirrus.Circuit.World.Objects
                         _state = target;
                         result = true;
                     }
-                    else if (_levelSession.TryFallThrough(
+                    else if (_levelSession.IsFallThroughAllowed(
                         this,
-                        step,
-                        ref offset,
-                        out newGridPosition,
-                        out destination))
+                        step))
                     {
-                        _destination = destination;
-                        _gridPosition = newGridPosition;// _level.GridToWorld(newGridPosition);
-                        _targetPosition = _level.GridToWorld(_gridPosition);
-                        Transform.position = _targetPosition; 
+                        Cmd_LevelSession_TryFallThrough(step);
 
                         _state = target;
                         result = true;
@@ -695,7 +734,7 @@ namespace Cirrus.Circuit.World.Objects
                         out pushed, 
                         out destination))
                     {
-                        if (pushed) pushed.Cmd_Interact(this);
+                        if (pushed) pushed.Cmd_TryInteract(this);
                         _destination = destination;
                         _gridPosition = newGridPosition;
                         _targetPosition = _level.GridToWorld(_gridPosition);
@@ -720,7 +759,7 @@ namespace Cirrus.Circuit.World.Objects
                         out destination))
                     {
                         //destination.
-                        if(pushed) pushed.Cmd_Interact(this);                        
+                        if(pushed) pushed.Cmd_TryInteract(this);                        
 
                         _destination = destination;
                         _gridPosition = newGridPosition;

@@ -16,6 +16,13 @@ namespace Cirrus.Circuit.Networking
 {
     public class LevelSession : CustomNetworkBehaviour
     {
+        public class MoveInfo
+        {
+            public Vector3Int Position;
+            public Vector3Int Direction;
+            public Vector3 Offset;
+        }
+
         [Serializable]
         public class PlaceholderInfo
         {
@@ -312,13 +319,22 @@ namespace Cirrus.Circuit.Networking
             Vector3Int position,
             Vector3Int direction)
         {
-            BaseObject pushed = null;
-
-            if (TryGet(position, out pushed))
+            if (
+                TryGet(
+                    position, 
+                    out BaseObject pushed))
             {
-                if (pushed.IsMoveAllowed(direction, source)) return true;
+                if (
+                    pushed.IsMoveAllowed(
+                        direction, 
+                        source)) 
+                    return true;
 
-                else if (pushed.IsEnterAllowed(direction, source)) return true;
+                else if (
+                    pushed.IsEnterAllowed(
+                        direction, 
+                        source)) 
+                    return true;
             }
             else return true;
 
@@ -327,17 +343,29 @@ namespace Cirrus.Circuit.Networking
 
         public bool IsMoveAllowed(
             BaseObject source,
-            Vector3Int step)
+            Vector3Int direction)
         {
-            Vector3Int direction = step;//.SetXYZ(step.x, 0, step.z);
+            Vector3Int position = source._gridPosition + direction;
 
-            Vector3Int position = source._gridPosition + step;
-
-            if (Level.IsWithinBounds(position))
-                return DoIsMoveAllowed(source, position, direction);
+            if (Level.IsWithinBounds(position)) return DoIsMoveAllowed(source, position, direction);
 
             return false;
         }
+
+        //public bool IsMoveAllowed(
+        //    BaseObject source,
+        //    Vector3Int step)
+        //{
+        //    Vector3Int direction = step;//.SetXYZ(step.x, 0, step.z);
+
+        //    Vector3Int position = source._gridPosition + step;
+
+        //    if (Level.IsWithinBounds(position))
+        //        return DoIsMoveAllowed(source, position, direction);
+
+        //    return false;
+        //}
+
 
         // https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid
         public void SetObject(
@@ -385,7 +413,7 @@ namespace Cirrus.Circuit.Networking
             return obj != null;
         }
 
-        private bool DoTryMove(
+        public bool DoTryMove(
             BaseObject source, 
             Vector3Int position, 
             Vector3Int direction, 
@@ -460,10 +488,49 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
 
+        public bool IsFallThroughAllowed(
+            BaseObject source,
+            Vector3Int step)
+        {
+            var position = source._gridPosition + step;
+
+            return !Level.IsWithinBoundsY(position.y);
+        }
+
+        public Vector3Int GetFallThroughPosition()
+        {
+            var info = new MoveInfo { };
+
+            for (int k = 0; k < FallTrials; k++)
+            {
+                Vector3Int pos = new Vector3Int(
+                    UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.x - Level.Offset.x),
+                    Level.Dimension.y - 1,
+                    UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.z - Level.Offset.z));
+
+                for (int i = 0; i < Level.Dimension.y; i++)
+                {
+                    if (TryGet(
+                        info.Position.Copy().SetY(info.Position.y - i), 
+                        out BaseObject target))
+                    {
+                        if (target is Gem) continue;
+                        if (target is Character) continue;
+                        if (target is Door) continue;
+
+                        return pos;
+                    }
+                }
+            }
+
+            Debug.Assert(false);
+            return Vector3Int.zero;
+        }
+
         public bool TryFallThrough(
             BaseObject source,
-            Vector3Int step, ref
-            Vector3 offset,
+            Vector3Int step, 
+            ref Vector3 offset,
             out Vector3Int position,
             out BaseObject destination)
         {
@@ -484,8 +551,6 @@ namespace Cirrus.Circuit.Networking
 
                     for (int i = 0; i < Level.Dimension.y; i++)
                     {
-                        //Spawn(_objectResources.DebugObject, position.Copy().SetY(position.y - i));
-
                         if (TryGet(position.Copy().SetY(position.y - i), out BaseObject target))
                         {
                             if (target is Gem) continue;
