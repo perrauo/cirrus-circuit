@@ -51,6 +51,7 @@ namespace Cirrus.Circuit
         [SerializeField]
         public float _positionSpeed = 0.4f;
 
+        public bool IsEmpty => _platforms.Count == 0;
 
         private bool _isFinal = false;
 
@@ -70,7 +71,7 @@ namespace Cirrus.Circuit
             _timer = new Timer(_timeTransition, start: false, repeat: false);
             _finalTimer = new Timer(_timeFinal, start: false, repeat: false);
 
-            _finalTimer.OnTimeLimitHandler += OnFinalTimeout;
+            _finalTimer.OnTimeLimitHandler += () => OnPodiumFinishedHandler?.Invoke();
 
             GameSession.OnStartClientStaticHandler += OnClientStarted;
             Game.Instance.OnPodiumHandler += OnPodium;
@@ -101,14 +102,6 @@ namespace Cirrus.Circuit
                     _platforms[i]._visual.Parent.transform.rotation,
                     _timer.Time / _timeTransitionFrom);
             }
-        }
-
-        public bool IsEmpty => _platforms.Count == 0;
-
-
-        public void OnRound(RoundSession round)
-        {
-            //round.OnRoundEndHandler += OnRoundEnd;
         }
 
         public void OnPodium()
@@ -147,14 +140,15 @@ namespace Cirrus.Circuit
                 _platformsParent.transform.position + Vector3.right * _platforms.Count * _platformOffset,
                 _platformsParent.transform,
                 player);
-
-            _timer.OnTimeLimitHandler += platform.OnTransitionToTimeOut;
-            _platforms.Add(platform);
             platform.OnPlatformFinishedHandler += OnPlatformFinished;
+            _platforms.Add(platform);
+            _timer.OnTimeLimitHandler += platform.OnTransitionToTimeOut;
 
-            World.Objects.Characters.Character character = 
-                characterResource.Create(platform._characterAnchor.transform.position, 
-                platform._characterAnchor.transform);
+            Character character = 
+                characterResource.Create(
+                    platform._characterAnchor.transform.position, 
+                    platform._characterAnchor.transform);
+            
             _characters.Add(character);
             character.transform.rotation = platform._visual.Parent.transform.rotation;
             platform.Character = character;
@@ -164,15 +158,12 @@ namespace Cirrus.Circuit
 
         }
 
-        public void OnFinalTimeout()
-        {
-            OnPodiumFinishedHandler?.Invoke();
-        }
-
         public void OnPlatformFinished()
         {
             _platformFinishedCount++;
-            if (_platformFinishedCount >= _platforms.Count)
+            if (
+                _platformFinishedCount >= 
+                _platforms.Count)
             {
                 if (_isFinal)
                 {
@@ -180,7 +171,9 @@ namespace Cirrus.Circuit
                     float secondMax = -99999999f;
                     PlayerSession winner = null;
                     float max = -99999999f;
-                    foreach (PlayerSession player in GameSession.Instance.Players)
+                    foreach (
+                        PlayerSession player in 
+                        GameSession.Instance.Players)
                     {
                         if (player.Score > max)
                         {
@@ -211,11 +204,7 @@ namespace Cirrus.Circuit
 
                     _finalTimer.Start();
                 }
-                else
-                {
-
-                    OnPodiumFinishedHandler?.Invoke();
-                }
+                else OnPodiumFinishedHandler?.Invoke();
             }
         }
 

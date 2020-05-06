@@ -122,37 +122,11 @@ MonoBehaviour:
   _dimension: {x: 20, y: 20, z: 20}
   _objects: []
   _name: Level
-  _characters:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  _gems:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  _doors:
-  - {fileID: 0}
-  _characterPlaceholders:
-  - {fileID: 2046637105509946169}
-  - {fileID: 1500129034114847461}
   DistanceLevelSelection: 35
   CameraSize: 10
   TargetPosition: {x: 0, y: 0, z: 0}
   _positionSpeed: 0.4
   _randomDropRainTime: 4
-  _randomDropSpawnTime: 0
-  _objectResources: {fileID: 11400000, guid: 5b5543423aea2f845848e1600153025d, type: 2}
 --- !u!1 &471735033090732927
 GameObject:
   m_ObjectHideFlags: 0
@@ -1896,18 +1870,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c7f5fffffa2b5814985244abbb930b7e, type: 3}
---- !u!114 &1500129034114847461 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 152362557645008317, guid: c7f5fffffa2b5814985244abbb930b7e,
-    type: 3}
-  m_PrefabInstance: {fileID: 1642911821237747544}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7806d0482a4aee74f9a3b57728dea1fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &124723118929814240 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1691049556776410552, guid: c7f5fffffa2b5814985244abbb930b7e,
@@ -2983,18 +2945,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a8046ffcaa9ff504bb1eba0c859e6397, type: 3}
---- !u!114 &2046637105509946169 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 152362557645008317, guid: a8046ffcaa9ff504bb1eba0c859e6397,
-    type: 3}
-  m_PrefabInstance: {fileID: 2196157287352893060}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7806d0482a4aee74f9a3b57728dea1fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &652320414712767292 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1691049556776410552, guid: a8046ffcaa9ff504bb1eba0c859e6397,

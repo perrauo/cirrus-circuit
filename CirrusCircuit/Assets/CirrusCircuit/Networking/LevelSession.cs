@@ -101,7 +101,10 @@ namespace Cirrus.Circuit.Networking
 
         public void FixedUpdate()
         {
-            transform.position = Vector3.Lerp(transform.position, TargetPosition, Level._positionSpeed);
+            transform.position = Vector3.Lerp(
+                transform.position, 
+                TargetPosition, 
+                Level._positionSpeed);
         }
 
         public void Awake()
@@ -124,8 +127,6 @@ namespace Cirrus.Circuit.Networking
 
         public void OnRound()
         {
-            Debug.Log("$$$$$$$$$$$$$$$ ON ROUND");
-
             _objects = new BaseObject[Level.Size];
 
             List<Placeholder> placeholders = new List<Placeholder>();
@@ -201,13 +202,7 @@ namespace Cirrus.Circuit.Networking
         {
             _randomDropRainTimer.OnTimeLimitHandler -= Cmd_OnRainTimeout;
 
-            foreach (var obj in _objects)
-            {
-                if (obj != null)
-                {
-                    Destroy(obj.gameObject);
-                }
-            }
+            foreach (var obj in _objects) if (obj != null) Destroy(obj.gameObject);
             
             if (CustomNetworkManager.IsServer)
             {
@@ -219,12 +214,15 @@ namespace Cirrus.Circuit.Networking
                         Destroy(sess.gameObject);
                     }
                 }
-            }
 
-            if (gameObject != null)
-            {
-                if (CustomNetworkManager.IsServer) NetworkServer.Destroy(gameObject);
-                Destroy(gameObject);
+                if (gameObject != null)
+                {
+                    Game.Instance.OnRoundInitHandler -= OnRoundInit;
+                    Game.Instance.OnRoundHandler -= OnRound;
+
+                    NetworkServer.Destroy(gameObject);
+                    Destroy(gameObject);
+                }                
             }
 
             _instance = null;
@@ -235,14 +233,22 @@ namespace Cirrus.Circuit.Networking
             int i = 0;
             LevelSession levelSession = NetworkingLibrary.Instance.LevelSession.Create();           
             List<PlaceholderInfo> placeholders = new List<PlaceholderInfo>();
-            foreach (var obj in GameSession.Instance.SelectedLevel.Objects)
+
+            var objs = GameSession.Instance.SelectedLevel.Objects.Where(x => x != null).FirstOrDefault();
+
+            foreach (
+                var obj in 
+                GameSession.Instance.SelectedLevel.Objects)
             {
                 if (obj != null)
                 {
                     var objectSession = NetworkingLibrary.Instance.ObjectSession.Create();
                     objectSession.Index = i;
                     levelSession._objectSessions.Add(objectSession.gameObject);
-                    NetworkServer.Spawn(objectSession.gameObject, NetworkServer.localConnection);
+                    
+                    NetworkServer.Spawn(
+                        objectSession.gameObject, 
+                        NetworkServer.localConnection);
 
                     if (obj is Gem)
                     {

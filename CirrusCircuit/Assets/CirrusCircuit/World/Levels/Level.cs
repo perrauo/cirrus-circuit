@@ -9,6 +9,7 @@ using System;
 using System.Threading;
 using Cirrus.Utils;
 using Cirrus.Circuit.Networking;
+using UnityEditor;
 
 namespace Cirrus.Circuit.World
 {
@@ -86,7 +87,7 @@ namespace Cirrus.Circuit.World
 
         public void Awake()
         {            
-            _objects = new BaseObject[Dimension.x * Dimension.y * Dimension.z];         
+            
         }   
 
         public Vector3Int WorldToGrid(Vector3 pos)
@@ -137,8 +138,7 @@ namespace Cirrus.Circuit.World
         {            
             int i = VectorUtils.ToIndex(pos, Dimension.x, Dimension.y);
 
-            _objects[i] = obj;
-            
+            _objects[i] = obj;            
         }    
 
         public (Vector3, Vector3Int) RegisterObject(BaseObject obj)
@@ -148,14 +148,25 @@ namespace Cirrus.Circuit.World
             int i = VectorUtils.ToIndex(pos, Dimension.x, Dimension.y);
 
             _objects[i] = obj;
+
             return (GridToWorld(pos), pos);
         }
 
-        public void UnregisterObject(BaseObject obj)
+        public void UpdateObjectReference()
         {
-            Set(obj._gridPosition, null);
+            _objects = new BaseObject[Dimension.x * Dimension.y * Dimension.z];
+            foreach (var obj in gameObject.GetComponentsInChildren<BaseObject>(true))
+            {
+                if (obj == null) continue;
+                obj.Register(this);
+            }
+
+#if UNITY_EDITOR
+            EditorUtility.SetDirty(this);
+            AssetDatabase.SaveAssets();
+#endif
         }
-        
+
         public void OnLevelSelect()
         {
             foreach (BaseObject obj in _objects)
@@ -167,4 +178,35 @@ namespace Cirrus.Circuit.World
             }
         }
     }
+
+    #region Editor
+#if UNITY_EDITOR
+    [UnityEditor.CustomEditor(typeof(Level))]
+    public class LevelEditor : UnityEditor.Editor
+    {
+        private Level _man;
+
+        public virtual void OnEnable()
+        {
+            _man = serializedObject.targetObject as Level;
+
+        }
+
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+
+            //Called whenever the inspector is drawn for this object.
+            //DrawDefaultInspector();
+
+            if (GUILayout.Button("Update object references"))
+            {
+                _man.UpdateObjectReference();
+            }
+        }
+    }
+
+#endif
+
+    #endregion
 }

@@ -138,8 +138,6 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void OnValidate()
         {
-            if (_level == null) _level = GetComponentInParent<Level>();
-
             if (PlayerManager.Instance != null)
             {
                 Color = PlayerManager.Instance.GetColor(ColorId);
@@ -167,20 +165,15 @@ namespace Cirrus.Circuit.World.Objects
         // TODO remove
         public void Register(Level level)
         {
-            if (_isRegistered)
-                return;
-
             _level = level;
+            if (_level == null) return;
 
-            if (_level != null) (transform.position, _gridPosition) = _level.RegisterObject(this);
-
-            _isRegistered = true;
+            (transform.position, _gridPosition) = _level.RegisterObject(this);
+            Transform.position = transform.position;            
         }
 
         public virtual void Start()
         {
-            Register(_level);
-
             FSMStart();
         }
 

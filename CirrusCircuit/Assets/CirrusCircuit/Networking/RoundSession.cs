@@ -97,9 +97,19 @@ namespace Cirrus.Circuit.Networking
         public override void Destroy()
         {
             base.Destroy();
-            _countDownTimer.OnTimeLimitHandler += Cmd_OnCountDownTimeout;
-            _startIntermissionTimer.OnTimeLimitHandler += Cmd_OnStartIntermissionTimeout;
-            _endIntermissionTimer.OnTimeLimitHandler += Cmd_OnRoundEnd;
+            _countDownTimer.OnTimeLimitHandler -= Cmd_OnCountDownTimeout;
+            _startIntermissionTimer.OnTimeLimitHandler -= Cmd_OnStartIntermissionTimeout;
+            _endIntermissionTimer.OnTimeLimitHandler -= Cmd_OnRoundEnd;
+
+
+
+            //OnIntermissionHandler -=
+
+            //OnCountdownHandler;
+
+            //OnRoundStartHandler;
+
+            //OnRoundEndHandler;
 
             _instance = null;
         }
@@ -184,8 +194,6 @@ namespace Cirrus.Circuit.Networking
 
         #endregion
 
-
-
         #region On Round Timeout
 
         private void Cmd_OnRoundTimeout()
@@ -214,7 +222,6 @@ namespace Cirrus.Circuit.Networking
         }
 
         #endregion
-
 
         #region On Countdown Timeout
 

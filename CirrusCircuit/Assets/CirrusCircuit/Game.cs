@@ -94,8 +94,8 @@ namespace Cirrus.Circuit
         public float RoundTime => _roundTime;
 
         [SerializeField]
-        public float _countDownTime = 5f;
-        public float CountDownTime => _countDownTime;
+        public float _countdownTime = 5f;
+        public float CountdownTime => _countdownTime;
 
         // TODO
         [SerializeField]
@@ -103,8 +103,8 @@ namespace Cirrus.Circuit
         public int CountDown => _countDown;
     
         [SerializeField]
-        private int _roundAmount = 3;
-        public int RoundAmount => _roundAmount;
+        private int _numRounds = 3;
+        public int NumRounds => _numRounds;
     
         [SerializeField]
         public float _podiumTransitionSpeed = 0.2f;
@@ -139,12 +139,14 @@ namespace Cirrus.Circuit
         {
             base.OnValidate();
 
-            _levels = GetComponentsInChildren<World.Level>(true);
+            _levels = GetComponentsInChildren<Level>(true);
         }
 
         public override void Awake()
         {
             base.Awake();
+
+            Podium.Instance.OnPodiumFinishedHandler += OnPodiumFinished;
         }
 
         public override void Start()
@@ -181,17 +183,24 @@ namespace Cirrus.Circuit
             FSMFixedUpdate();
         }
 
+        private void OnPodiumFinished()
+        {
+            if (CustomNetworkManager.IsServer)
+            {
+                if (_state == State.FinalPodium) Cmd_SetState(State.LevelSelection);
+
+                else Cmd_SetState(State.InitRound);
+            }
+        }
+
         public void JoinSession()
         {
             _SetState(State.CharacterSelection);
         }
 
         public void OnCharacterSelected(int playerCount)
-        {
-            if (CustomNetworkManager.IsServer)
-            {
-                Cmd_SetState(State.LevelSelection);
-            }
+        {            
+            Cmd_SetState(State.LevelSelection);            
         }
 
         public void OnRoundEnd()
@@ -200,14 +209,12 @@ namespace Cirrus.Circuit
             {
                 GameSession.Instance.RoundIndex++;
 
-                if (GameSession.Instance.RoundIndex < RoundAmount)
-                {
-                    Cmd_SetState(State.Podium);
-                }
+                if (GameSession.Instance.RoundIndex < NumRounds) Cmd_SetState(State.Podium);
+
                 else
                 {
-                    GameSession.Instance.RoundIndex++;
-                    Cmd_SetState(State.Podium);
+                    GameSession.Instance.RoundIndex = 0;
+                    Cmd_SetState(State.FinalPodium);
                 }
             }
         }
@@ -230,7 +237,10 @@ namespace Cirrus.Circuit
 
         public void Cmd_ScrollLevel(int delta)
         {
-            CommandClient.Instance.Cmd_Game_ScrollLevel(delta);
+            if (CustomNetworkManager.IsServer)
+            {
+                CommandClient.Instance.Cmd_Game_ScrollLevel(delta);
+            }
         }
 
         // TODO change for SyncVar hook
@@ -296,8 +306,14 @@ namespace Cirrus.Circuit
 
         public bool Cmd_SetState(State transition, bool transitionEffect = true)
         {
-            CommandClient.Instance.Cmd_Game_SetState(transition, transitionEffect);
-            return true;
+            if (CustomNetworkManager.IsServer)
+            {
+                CommandClient.Instance.Cmd_Game_SetState(transition, transitionEffect);
+                return true;
+
+            }
+            return false;
+
         }
 
         public void _SetState(State transition, bool transitionEffect=true)
@@ -338,6 +354,11 @@ namespace Cirrus.Circuit
 
                 case State.CharacterSelection:
                     OnCharacterSelectHandler?.Invoke(false);
+                    break;
+
+                case State.FinalPodium:
+                case State.Podium:
+                    Podium.Instance.gameObject.SetActive(false);
                     break;
 
                 default: break;
@@ -552,9 +573,9 @@ namespace Cirrus.Circuit
                     _state = target;
                     return true;
 
-
-
                 case State.LevelSelection:
+                    if (RoundSession.Instance != null) RoundSession.Instance.Destroy();
+                    if (LevelSession.Instance != null) LevelSession.Instance.Destroy();
 
                     OnLevelSelectHandler?.Invoke(true);
 
@@ -605,23 +626,22 @@ namespace Cirrus.Circuit
                         RoundSession.Create(
                             CountDown,
                             RoundTime,
-                            CountDownTime,
+                            CountdownTime,
                             IntermissionTime,
                             GameSession.Instance._roundIndex);
                     }
 
-                    new Threading.CoroutineBarrier(
+                    Threading.CoroutineBarrier.Wait(
                         this,
-                        () => RoundSession.Instance != null && RoundSession.Instance.IsClientStarted,
-                        () => LevelSession.Instance != null && LevelSession.Instance.IsClientStarted)
-                        .Wait(() =>
+                        () =>
                         {
-                            Debug.Log("On Round Begin From Game");
-
                             OnRoundInitHandler?.Invoke();
                             _SetState(State.Round);
                             RoundSession.Instance.StartIntermisison();
-                        });                                                                       
+                        },
+                        () => RoundSession.Instance != null && RoundSession.Instance.IsClientStarted,
+                        () => LevelSession.Instance != null && LevelSession.Instance.IsClientStarted
+                        );
 
                     _state = target;
 
@@ -794,11 +814,8 @@ namespace Cirrus.Circuit
                     break;
 
                 case State.LevelSelection:
-
-                    if (CustomNetworkManager.IsServer)
-                    {
                         Cmd_SetState(State.InitRound, false);
-                    }
+                    
                     break;
 
 

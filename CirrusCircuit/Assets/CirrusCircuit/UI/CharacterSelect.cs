@@ -44,7 +44,6 @@ namespace Cirrus.Circuit.UI
         {
             base.Awake();
 
-            GameSession.OnStartClientStaticHandler += OnClientStarted;
             Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
         }
 
