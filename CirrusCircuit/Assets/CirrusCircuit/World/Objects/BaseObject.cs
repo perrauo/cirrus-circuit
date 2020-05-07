@@ -653,7 +653,8 @@ namespace Cirrus.Circuit.World.Objects
 
                     step = (Vector3Int)args[0];
 
-                    if (_levelSession.TryMove(
+                    if (
+                        _levelSession.TryMove(
                         this,
                         step,
                         ref offset,
@@ -667,7 +668,8 @@ namespace Cirrus.Circuit.World.Objects
                         _state = target;
                         result = true;
                     }
-                    else if (_levelSession.IsFallThroughAllowed(
+                    else if (
+                        _levelSession.IsFallThroughAllowed(
                         this,
                         step))
                     {

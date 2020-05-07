@@ -518,6 +518,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Level.Medium.Custom (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 3053538426482242438, guid: 9c1f8282644cf3c419221945876b74e9,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3081975675439710101, guid: 9c1f8282644cf3c419221945876b74e9,
         type: 3}
       propertyPath: sceneId
@@ -1644,6 +1649,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Level.Medium.Custom (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3053538426482242438, guid: 9c1f8282644cf3c419221945876b74e9,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3081975675439710101, guid: 9c1f8282644cf3c419221945876b74e9,
         type: 3}
@@ -5611,6 +5621,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Level.Medium.Custom
+      objectReference: {fileID: 0}
+    - target: {fileID: 3053538426482242438, guid: 9c1f8282644cf3c419221945876b74e9,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3081975675439710101, guid: 9c1f8282644cf3c419221945876b74e9,
         type: 3}

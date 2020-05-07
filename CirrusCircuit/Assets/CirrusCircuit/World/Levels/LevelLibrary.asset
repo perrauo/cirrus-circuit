@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: LevelLibrary
   m_EditorClassIdentifier: 
   Levels: []
+  EditorMaterial: {fileID: 2100000, guid: f29412a2904d92a41bfa529dec707646, type: 2}

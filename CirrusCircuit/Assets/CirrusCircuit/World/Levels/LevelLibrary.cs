@@ -9,5 +9,8 @@ namespace Cirrus.Circuit.World
         [SerializeField]
         public Level[] Levels;
 
+        [SerializeField]
+        public Material EditorMaterial;
+
     }
 }

@@ -23,8 +23,7 @@ namespace Cirrus.Circuit.World
             RequiredGemsCollected,
         }
 
-        [SerializeField]
-        public static int CellSize = 2;
+        public const int CellSize = 2;
 
         [SerializeField]
         private Vector3Int _offset = new Vector3Int(2, 2, 2);
@@ -88,22 +87,24 @@ namespace Cirrus.Circuit.World
         public void Awake()
         {            
             
-        }   
+        }
 
         public Vector3Int WorldToGrid(Vector3 pos)
         {
-            return new Vector3Int(
-                Mathf.RoundToInt(pos.x / CellSize) + _offset.x,
-                Mathf.RoundToInt(pos.y / CellSize) + _offset.y,
-                Mathf.RoundToInt(pos.z / CellSize) + _offset.z);
+            return
+                new Vector3Int(
+                    Mathf.RoundToInt(pos.x / CellSize) - _offset.x,
+                    Mathf.RoundToInt(pos.y / CellSize) - _offset.y,
+                    Mathf.RoundToInt(pos.z / CellSize) - _offset.z);
         }
 
         public Vector3 GridToWorld(Vector3Int pos)
         {
-            return new Vector3Int(
-                (pos.x - _offset.x) * CellSize,
-                (pos.y - _offset.y) * CellSize,
-                (pos.z - _offset.z) * CellSize);
+            return
+                new Vector3(
+                (pos.x + _offset.x) * CellSize,
+                (pos.y + _offset.y) * CellSize,
+                (pos.z + _offset.z) * CellSize);
         }
 
         public bool IsWithinBounds(Vector3Int pos)
@@ -177,6 +178,10 @@ namespace Cirrus.Circuit.World
                 obj.TrySetState(BaseObject.State.LevelSelect);
             }
         }
+
+        [HideInInspector]
+        [SerializeField]
+        public bool _levelDimensionsVisible = false;
     }
 
     #region Editor
@@ -184,12 +189,52 @@ namespace Cirrus.Circuit.World
     [UnityEditor.CustomEditor(typeof(Level))]
     public class LevelEditor : UnityEditor.Editor
     {
-        private Level _man;
+        private Level _level;
 
         public virtual void OnEnable()
         {
-            _man = serializedObject.targetObject as Level;
+            _level = serializedObject.targetObject as Level;
 
+            var prop = serializedObject.FindProperty("_objects");
+            
+            if(prop != null) prop.isExpanded = false;
+        }
+
+        public void OnSceneGUI()
+        {
+
+            if (!_level._levelDimensionsVisible) return;
+
+            int cellSize = Level.CellSize;
+
+
+            var mesh = GraphicsUtils.CreateCube(
+                _level.Dimension.x * cellSize,
+                _level.Dimension.y * cellSize,
+                _level.Dimension.z * cellSize);
+
+            Graphics.DrawMesh(
+                mesh,
+                _level.transform.position +
+
+                new Vector3(1, 0, 0) * (_level.Dimension.x * cellSize) / 2 -
+                new Vector3(1, 0, 0) * cellSize / 2 +
+
+                new Vector3(0, 1, 0) * (_level.Dimension.y * cellSize) / 2 -
+                new Vector3(0, 1, 0) * cellSize / 2 +
+
+                new Vector3(0, 0, 1) * (_level.Dimension.z * cellSize) / 2 -
+                new Vector3(0, 0, 1) * cellSize / 2 +
+                
+                _level.Offset * cellSize,                                
+
+                Quaternion.identity,
+                LevelLibrary.Instance.EditorMaterial,
+                0
+                );
+
+            //delete meshes of previous frame and draw new meshes
+            EditorUtility.SetDirty(target);
         }
 
         public override void OnInspectorGUI()
@@ -201,7 +246,13 @@ namespace Cirrus.Circuit.World
 
             if (GUILayout.Button("Update object references"))
             {
-                _man.UpdateObjectReference();
+                _level.UpdateObjectReference();
+            }
+
+            if (GUILayout.Button("Show/Hide Level Dimensions"))
+            {
+                _level._levelDimensionsVisible = !_level._levelDimensionsVisible;
+                EditorUtility.SetDirty(target);
             }
         }
     }

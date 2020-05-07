@@ -474,7 +474,9 @@ namespace Cirrus.Circuit.Networking
             Vector3Int direction = step;
             position = source._gridPosition + step;
 
-            if (Level.IsWithinBounds(position))
+            if (
+                Level.IsWithinBounds(position)
+                )
             {
                 return DoTryMove(
                     source,

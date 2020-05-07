@@ -118,7 +118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 564df8f876e8952419dca6ce525ca8cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _offset: {x: 2, y: 2, z: 2}
+  _offset: {x: -2, y: -2, z: -2}
   _dimension: {x: 20, y: 20, z: 20}
   _objects: []
   _name: Level
@@ -127,6 +127,7 @@ MonoBehaviour:
   TargetPosition: {x: 0, y: 0, z: 0}
   _positionSpeed: 0.4
   _randomDropRainTime: 4
+  _levelDimsEnabled: 0
 --- !u!1 &471735033090732927
 GameObject:
   m_ObjectHideFlags: 0
