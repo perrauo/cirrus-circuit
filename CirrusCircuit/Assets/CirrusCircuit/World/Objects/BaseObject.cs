@@ -135,6 +135,8 @@ namespace Cirrus.Circuit.World.Objects
 
         private bool _isRegistered = false;
 
+        private bool _hasArrived = false;
+
         [SerializeField]
         protected State _state = State.Disabled;
 
@@ -161,7 +163,7 @@ namespace Cirrus.Circuit.World.Objects
             _targetPosition = Transform.position;
             _targetScale = 1f;
 
-            FSMAwake();
+            FSM_Awake();
         }
 
         // TODO remove
@@ -176,7 +178,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void Start()
         {
-            FSMStart();
+            FSM_Start();
         }
 
         public virtual void OnEnable()
@@ -186,12 +188,12 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void FixedUpdate()
         {
-            FSMFixedUpdate();
+            FSM_FixedUpdate();
         }
 
         public virtual void Update()
         {
-            FSMUpdate();
+            FSM_Update();
         }
 
         public virtual void Cmd_TryInteract(BaseObject source)
@@ -215,7 +217,7 @@ namespace Cirrus.Circuit.World.Objects
         }
         
 
-        public virtual void _LevelSession_TryFallThrough(
+        public virtual void Local_LevelSession_TryFallThrough(
             Vector3Int position,
             Vector3Int step)
         {
@@ -236,7 +238,7 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
-        public virtual void _TryInteract(BaseObject source)
+        public virtual void Local_TryInteract(BaseObject source)
         {
             if (ColorId >= PlayerManager.PlayerMax)
             {
@@ -245,12 +247,12 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
-        public virtual void _TryFall()
+        public virtual void Local_TryFall()
         {
             TryFall(null);
         }
 
-        public virtual void _TryMove(
+        public virtual void Local_TryMove(
             Vector3Int step, 
             BaseObject incoming)
         {
@@ -324,7 +326,7 @@ namespace Cirrus.Circuit.World.Objects
 
 
         // TODO remove
-        public void _Response(ObjectSession.CommandResponse res)
+        public void Local_Response(ObjectSession.CommandResponse res)
         {
             switch (res.Id)
             {
@@ -360,17 +362,17 @@ namespace Cirrus.Circuit.World.Objects
 
         #region FSM
 
-        public virtual void FSMAwake()
+        public virtual void FSM_Awake()
         {
             TrySetState(State.Disabled);
         }
 
-        public virtual void FSMStart()
+        public virtual void FSM_Start()
         {
             //TrySetState(State.Disabled);
         }
 
-        public virtual void FSMFixedUpdate()
+        public virtual void FSM_FixedUpdate()
         {
             switch (_state)
             {
@@ -414,7 +416,7 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
-        public virtual void FSMUpdate()
+        public virtual void FSM_Update()
         {
             switch (_state)
             {
@@ -433,10 +435,14 @@ namespace Cirrus.Circuit.World.Objects
                 case State.Moving:
                 case State.RampMoving:
 
+                    if (_hasArrived) break;
+
                     if (VectorUtils.IsCloseEnough(
                         Transform.position, 
                         _targetPosition))
                     {
+                        _hasArrived = true;
+
                         if (_destination == null)
                         {
                             if (_levelSession.TryGet(
@@ -463,7 +469,7 @@ namespace Cirrus.Circuit.World.Objects
             State transition, 
             params object[] args)
         {            
-            if (TryTransition(
+              if (TryTransition(
                 transition, 
                 out State destination))
             {
@@ -624,6 +630,8 @@ namespace Cirrus.Circuit.World.Objects
             BaseObject above;
             bool result = false;
 
+            #region Main
+
             switch (target)
             {
                 case State.Disabled:
@@ -664,12 +672,13 @@ namespace Cirrus.Circuit.World.Objects
                     {
                         _destination = destination;
                         _gridPosition = newGridPosition;
+                        Debug.Log(Name +" "+ _gridPosition);
                         _targetPosition = _level.GridToWorld(_gridPosition);
+
                         _state = target;
                         result = true;
                     }
-                    else if (
-                        _levelSession.IsFallThroughAllowed(
+                    else if (_levelSession.IsFallThroughAllowed(
                         this,
                         step))
                     {
@@ -780,6 +789,27 @@ namespace Cirrus.Circuit.World.Objects
                     break;
             }
 
+            #endregion
+
+            #region Has Arrived
+
+            switch (_state)
+            {
+                case State.Falling:
+                case State.RampMoving:
+                case State.Moving:
+                case State.Entering:
+                    _hasArrived = false;
+                    break;
+                default: 
+                    _hasArrived = true;
+                    break;
+            }
+
+            #endregion
+
+            #region Object Above
+
             if (result && incoming == null)
             {
                 // Determine if object above to make it fall
@@ -798,6 +828,8 @@ namespace Cirrus.Circuit.World.Objects
                         break;
                 }
             }
+
+            #endregion
 
 
             return result;

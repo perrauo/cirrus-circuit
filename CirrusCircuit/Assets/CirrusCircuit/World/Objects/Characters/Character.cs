@@ -165,9 +165,9 @@ namespace Cirrus.Circuit.World.Objects.Characters
         }
 
 
-        public override void FSMUpdate()
+        public override void FSM_Update()
         {
-            base.FSMUpdate();
+            base.FSM_Update();
 
 
             switch (_state)

@@ -145,7 +145,7 @@ namespace Cirrus.Circuit.Networking
 
         void Awake()
         {
-            if (Game.Instance.IsSeedRandomized) Random.InitState(Environment.TickCount);
+            
         }
 
         public virtual void Start()

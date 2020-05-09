@@ -40,12 +40,12 @@ namespace Cirrus.Circuit.World.Objects
             base.Start();
         }
 
-        public override void FSMFixedUpdate()
+        public override void FSM_FixedUpdate()
         {
 
         }
 
-        public override void FSMUpdate()
+        public override void FSM_Update()
         {
 
         }

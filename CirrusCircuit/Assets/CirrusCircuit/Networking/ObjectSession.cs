@@ -40,31 +40,38 @@ namespace Cirrus.Circuit.Networking
         public BaseObject _object;
 
         [SyncVar]
-        [SerializeField]        
+        [SerializeField]
         public int _index = -1;
 
         private Mutex _mutex = new Mutex();
 
-        public int Index {
+        public int Index
+        {
             get => _index;
-            set {
+            set
+            {
                 _index = value;
-                CommandClient.Instance.Cmd_ObjectSession_SetIndex(gameObject, _index);
+                CommandClient
+                    .Instance
+                    .Cmd_ObjectSession_SetIndex(
+                        gameObject,
+                        _index);
             }
         }
 
         [ClientRpc]
-        public void Rpc_TryInteract(GameObject sourceObject)
+        public void Rpc_TryInteract(GameObject sourceGameObject)
         {
-            ObjectSession sourceSession = null;
-            if ((sourceSession = sourceObject.GetComponent<ObjectSession>()) != null)
+            if (sourceGameObject
+                    .TryGetComponent(
+                        out ObjectSession sourceSession))
             {
                 _mutex.WaitOne();
 
-                _object._TryInteract(sourceSession._object);
+                _object.Local_TryInteract(sourceSession._object);
 
                 _mutex.ReleaseMutex();
-            }            
+            }
         }
 
         [ClientRpc]
@@ -72,7 +79,7 @@ namespace Cirrus.Circuit.Networking
         {
             _mutex.WaitOne();
 
-            _object._TryFall();
+            _object.Local_TryFall();
 
             _mutex.ReleaseMutex();
         }
@@ -82,24 +89,36 @@ namespace Cirrus.Circuit.Networking
         {
             _mutex.WaitOne();
 
-            _object._TryMove(step, null);
+            _object.Local_TryMove(step, null);
 
             _mutex.ReleaseMutex();
         }
 
         public void Cmd_TryMove(Vector3Int step)
         {
-            CommandClient.Instance.Cmd_ObjectSession_TryMove(gameObject, step);
+            CommandClient
+                .Instance
+                .Cmd_ObjectSession_TryMove(
+                    gameObject,
+                    step);
         }
 
         public void Cmd_TryFall()
         {
-            CommandClient.Instance.Cmd_ObjectSession_TryFall(gameObject);
+            CommandClient
+                .Instance
+                .Cmd_ObjectSession_TryFall(gameObject);
         }
 
         public void Cmd_TryInteract(BaseObject source)
         {
-            CommandClient.Instance.Cmd_ObjectSession_TryInteract(gameObject, source._session.gameObject);
+            CommandClient
+                .Instance
+                .Cmd_ObjectSession_TryInteract(
+                    gameObject,
+                    source
+                    ._session
+                    .gameObject);
         }
 
         public bool IsMoveAllowed(Vector3Int step)
@@ -116,16 +135,19 @@ namespace Cirrus.Circuit.Networking
         {
             CommandClient.Instance
                 .Cmd_ObjectSession_LevelSession_TryFallThrough(
-                    gameObject, 
+                    gameObject,
                     step);
         }
 
         [ClientRpc]
         public void Rpc_ObjectSession_LevelSession_TryFallThrough(
             Vector3Int step,
-            Vector3Int position)            
+            Vector3Int position)
         {
-            _object._LevelSession_TryFallThrough(step, position);
+            _object
+                .Local_LevelSession_TryFallThrough(
+                    step,
+                    position);
         }
 
 
@@ -134,12 +156,16 @@ namespace Cirrus.Circuit.Networking
         ///
         public void Cmd_ObjectSession_Request(CommandRequest req)
         {
-            CommandClient.Instance.Cmd_ObjectSession_Request(gameObject, req);
+            CommandClient
+                .Instance
+                .Cmd_ObjectSession_Request(
+                    gameObject,
+                    req);
         }
 
         public void Target_Response(CommandResponse res)
         {
-            _object._Response(res);
+            _object.Local_Response(res);
         }
     }
 }

@@ -44,7 +44,9 @@ namespace Cirrus.Circuit.UI
         {
             base.Awake();
 
-            Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
+            Game
+                .Instance
+                .OnCharacterSelectHandler += OnCharacterSelect;
         }
 
         public void OnCharacterSelect(bool enable)
@@ -79,12 +81,20 @@ namespace Cirrus.Circuit.UI
                 case State.Ready:
                     if (_state == State.Ready)
                     {
-                        OnCharacterSelectReadyHandler?.Invoke(GameSession.Instance.CharacterSelectReadyCount);
+                        OnCharacterSelectReadyHandler
+                            ?.Invoke(GameSession
+                            .Instance
+                            .CharacterSelectReadyCount);
+
                         return false;
                     }
 
-                    if (GameSession.Instance.CharacterSelectReadyCount == 1 ||
-                        GameSession.Instance.CharacterSelectReadyCount != GameSession.Instance.CharacterSelectOpenCount)
+                    if (GameSession
+                        .Instance
+                        .CharacterSelectReadyCount == 1 ||
+                        GameSession
+                        .Instance
+                        .CharacterSelectReadyCount != GameSession.Instance.CharacterSelectOpenCount)
                     {
                         return false;
                     }

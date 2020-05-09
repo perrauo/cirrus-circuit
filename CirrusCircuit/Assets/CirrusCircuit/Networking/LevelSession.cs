@@ -307,8 +307,7 @@ namespace Cirrus.Circuit.Networking
                 (Gem gem, int player, float value) =>
                 {
                     GameSession.Instance.GetPlayer(player).Score += value;
-                };
-            
+                };            
 
             NetworkServer.Spawn(levelSession.gameObject, NetworkServer.localConnection);
             return levelSession;
@@ -319,21 +318,18 @@ namespace Cirrus.Circuit.Networking
             Vector3Int position,
             Vector3Int direction)
         {
-            if (
-                TryGet(
-                    position, 
+            if (TryGet(
+                    position,
                     out BaseObject pushed))
             {
-                if (
-                    pushed.IsMoveAllowed(
-                        direction, 
-                        source)) 
+                if (pushed.IsMoveAllowed(
+                    direction,
+                    source))
                     return true;
 
-                else if (
-                    pushed.IsEnterAllowed(
-                        direction, 
-                        source)) 
+                else if (pushed.IsEnterAllowed(
+                    direction,
+                    source))
                     return true;
             }
             else return true;

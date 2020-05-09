@@ -154,7 +154,7 @@ namespace Cirrus.Circuit.UI
         public override void OnStartClient()
         {
             base.OnStartLocalPlayer();
-            _TrySetState(_state);
+            Local_TrySetState(_state);
             Cmd_Scroll(true);
         }
        
@@ -171,7 +171,7 @@ namespace Cirrus.Circuit.UI
             CommandClient.Instance.Cmd_CharacterSelectSlot_SetState(gameObject, target);
         }
 
-        public void _TrySetState(State target)
+        public void Local_TrySetState(State target)
         {
             switch (target)
             {
@@ -239,7 +239,7 @@ namespace Cirrus.Circuit.UI
         [ClientRpc]
         public void Rpc_TrySetState(State target)
         {
-            _TrySetState(target);
+            Local_TrySetState(target);
         }
         
         public IEnumerator PunchScale(bool previous)

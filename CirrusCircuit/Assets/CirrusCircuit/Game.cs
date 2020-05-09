@@ -11,6 +11,7 @@ using Cirrus.Circuit.World;
 using StartMenu = Cirrus.Circuit.UI.StartMenu;
 using System.Threading;
 using Cirrus.Circuit.UI;
+using Random = UnityEngine.Random;
 
 namespace Cirrus.Circuit
 {
@@ -146,6 +147,7 @@ namespace Cirrus.Circuit
         {
             base.Awake();
 
+            if (IsSeedRandomized) Random.InitState(Environment.TickCount);
             Podium.Instance.OnPodiumFinishedHandler += OnPodiumFinished;
         }
 
@@ -175,12 +177,12 @@ namespace Cirrus.Circuit
                 OnScreenResizedHandler?.Invoke();
             }
 
-            FSMUpdate();
+            FSM_Update();
         }
 
         public void FixedUpdate()
         {
-            FSMFixedUpdate();
+            FSM_FixedUpdate();
         }
 
         private void OnPodiumFinished()
@@ -222,17 +224,17 @@ namespace Cirrus.Circuit
         // TODO: Simulate LeftStick continuous axis with WASD
         public void HandleAxesLeft(Player player, Vector2 axis)
         {
-            FSMHandleAxesLeft(player, axis);
+            FSMH_andleAxesLeft(player, axis);
         }
 
         public void HandleAction0(Player player)
         {
-            FSMHandleAction0(player);
+            FSM_HandleAction0(player);
         }
 
         public void HandleAction1(Controls.Player player)
         {
-            FSMHandleAction1(player);
+            FSM_HandleAction1(player);
         }
 
         public void Cmd_ScrollLevel(int delta)
@@ -265,7 +267,7 @@ namespace Cirrus.Circuit
 
         #region FSM
 
-        public void FSMFixedUpdate()
+        public void FSM_FixedUpdate()
         {
             switch (_state)
             {
@@ -286,7 +288,7 @@ namespace Cirrus.Circuit
             }
         }
 
-        public void FSMUpdate()
+        public void FSM_Update()
         {
             switch (_state)
             {
@@ -682,7 +684,7 @@ namespace Cirrus.Circuit
 
 
         // TODO: Simulate LeftStick continuous axis with WASD
-        public void FSMHandleAxesLeft(Controls.Player player, Vector2 axis)
+        public void FSMH_andleAxesLeft(Player player, Vector2 axis)
         {
             bool isMovingHorizontal = Mathf.Abs(axis.x) > 0.5f;
             bool isMovingVertical = Mathf.Abs(axis.y) > 0.5f;
@@ -757,7 +759,7 @@ namespace Cirrus.Circuit
             }
         }
 
-        public void FSMHandleAction0(Controls.Player player)
+        public void FSM_HandleAction0(Player player)
         {
             switch (_state)
             {
@@ -803,7 +805,7 @@ namespace Cirrus.Circuit
             }
         }
 
-        public void FSMHandleAction1(Controls.Player player)
+        public void FSM_HandleAction1(Controls.Player player)
         {
             switch (_state)
             {
