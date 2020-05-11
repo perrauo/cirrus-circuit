@@ -157,8 +157,7 @@ namespace Cirrus.Circuit
         {
             base.Awake();
 
-            if (IsSeedRandomized) Random.InitState(Environment.TickCount);
-            Podium.Instance.OnPodiumFinishedHandler += OnPodiumFinished;
+            if (IsSeedRandomized) Random.InitState(Environment.TickCount);          
         }
 
         public override void Start()
@@ -172,6 +171,8 @@ namespace Cirrus.Circuit
             CharacterSelect.Instance.OnCharacterSelectReadyHandler += OnCharacterSelected;
 
             Screen.fullScreen = IsFullScreen;
+
+            Podium.Instance.OnPodiumFinishedHandler += OnPodiumFinished;
 
             Local_SetState(State.Menu, false);            
         }

@@ -66,10 +66,8 @@ namespace Cirrus.Circuit.UI
         public void OnHostClicked()
         {
             if(CustomNetworkManager.Instance.TryStartHost(_joinInput.text)) Game.Instance.JoinSession();
-
             else Debug.Log("Unable to host");
         }
-
 
         public void OnJoinClicked()
         {
