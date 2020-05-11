@@ -78,7 +78,13 @@ namespace Cirrus.Circuit
         [SerializeField]
         private bool _randomizeSeed = false;
         public bool IsSeedRandomized => _randomizeSeed;
-       
+
+
+        [SerializeField]
+        private bool _isRainEnabled = false;
+        public bool IsRainEnabled => _isRainEnabled;
+
+
         [SerializeField]
         public Level[] _levels;
 
@@ -110,6 +116,10 @@ namespace Cirrus.Circuit
         [SerializeField]
         public float _podiumTransitionSpeed = 0.2f;
         public float PodiumTransitionSpeed => _podiumTransitionSpeed;
+
+        [SerializeField]
+        private bool _isFullScreen = false;
+        public bool IsFullScreen => _isFullScreen;
 
         [SerializeField]
         private float _intermissionTime = 2f;
@@ -161,7 +171,9 @@ namespace Cirrus.Circuit
             Transitions.Transition.Instance.OnTransitionTimeoutHandler += OnTransitionTimeOut;
             CharacterSelect.Instance.OnCharacterSelectReadyHandler += OnCharacterSelected;
 
-            _SetState(State.Menu, false);            
+            Screen.fullScreen = IsFullScreen;
+
+            Local_SetState(State.Menu, false);            
         }
 
 
@@ -176,6 +188,8 @@ namespace Cirrus.Circuit
             {
                 OnScreenResizedHandler?.Invoke();
             }
+
+            if (Input.GetKeyDown(KeyCode.F)) Screen.fullScreen = !Screen.fullScreen;
 
             FSM_Update();
         }
@@ -197,7 +211,7 @@ namespace Cirrus.Circuit
 
         public void JoinSession()
         {
-            _SetState(State.CharacterSelection);
+            Local_SetState(State.CharacterSelection);
         }
 
         public void OnCharacterSelected(int playerCount)
@@ -224,7 +238,7 @@ namespace Cirrus.Circuit
         // TODO: Simulate LeftStick continuous axis with WASD
         public void HandleAxesLeft(Player player, Vector2 axis)
         {
-            FSMH_andleAxesLeft(player, axis);
+            FSM_HandleAxesLeft(player, axis);
         }
 
         public void HandleAction0(Player player)
@@ -232,7 +246,7 @@ namespace Cirrus.Circuit
             FSM_HandleAction0(player);
         }
 
-        public void HandleAction1(Controls.Player player)
+        public void HandleAction1(Player player)
         {
             FSM_HandleAction1(player);
         }
@@ -246,7 +260,7 @@ namespace Cirrus.Circuit
         }
 
         // TODO change for SyncVar hook
-        public void _SelectLevel(int index)
+        public void Local_SelectLevel(int index)
         {            
             for (int i = 0; i < _levels.Length; i++)
             {
@@ -260,9 +274,12 @@ namespace Cirrus.Circuit
             OnLevelSelectedHandler?.Invoke(_levels[index], index);
         }
 
-        public void _ScrollLevel(int step)
+        public void Local_ScrollLevel(int step)
         {
-            OnLevelScrollHandler?.Invoke(GameSession.Instance.SelectedLevel, step);
+            OnLevelScrollHandler
+                ?.Invoke(
+                    GameSession.Instance.SelectedLevel, 
+                    step);
         }
 
         #region FSM
@@ -278,11 +295,16 @@ namespace Cirrus.Circuit
                 case State.Score:
                 case State.Podium:
                 case State.FinalPodium:
-                    CameraManager.Instance.Camera.orthographicSize =
-                        Mathf.Lerp(
-                            CameraManager.Instance.Camera.orthographicSize,
-                            _targetSizeCamera,
-                            CameraSizeSpeed);
+                    CameraManager
+                        .Instance
+                        .Camera.orthographicSize =
+                            Mathf.Lerp(
+                                CameraManager
+                                    .Instance
+                                    .Camera
+                                    .orthographicSize,
+                                _targetSizeCamera,
+                                CameraSizeSpeed);
 
                     break;
             }
@@ -292,7 +314,6 @@ namespace Cirrus.Circuit
         {
             switch (_state)
             {
-
                 case State.Round:
                     break;
 
@@ -306,7 +327,9 @@ namespace Cirrus.Circuit
             }
         }
 
-        public bool Cmd_SetState(State transition, bool transitionEffect = true)
+        public bool Cmd_SetState(
+            State transition, 
+            bool transitionEffect = true)
         {
             if (CustomNetworkManager.IsServer)
             {
@@ -315,17 +338,23 @@ namespace Cirrus.Circuit
 
             }
             return false;
-
         }
 
-        public void _SetState(State transition, bool transitionEffect=true)
+        public void Local_SetState(
+            State transition, 
+            bool transitionEffect=true)
         {
             if (transitionEffect)
             {
                 _nextState = transition;
-                Transitions.Transition.Instance.Perform();
+                Transitions
+                    .Transition
+                    .Instance
+                    .Perform();
             }
-            else if (TryTransition(transition, out State destination))
+            else if (TryTransition(
+                transition, 
+                out State destination))
             {
                 ExitState(destination);
                 TryFinishSetState(destination);
@@ -335,7 +364,9 @@ namespace Cirrus.Circuit
 
         private void OnTransitionTimeOut()
         {
-            if (TryTransition(_nextState, out State destination))
+            if (TryTransition(
+                _nextState, 
+                out State destination))
             {
                 ExitState(destination);
                 TryFinishSetState(destination);
@@ -360,14 +391,20 @@ namespace Cirrus.Circuit
 
                 case State.FinalPodium:
                 case State.Podium:
-                    Podium.Instance.gameObject.SetActive(false);
+                    Podium
+                        .Instance
+                        .gameObject
+                        .SetActive(false);
                     break;
 
                 default: break;
             }
         }
 
-        private bool TryTransition(State transition, out State destination, params object[] args)
+        private bool TryTransition(
+            State transition, 
+            out State destination, 
+            params object[] args)
         {
             switch (_state)
             {
@@ -540,7 +577,9 @@ namespace Cirrus.Circuit
         }
        
 
-        protected bool TryFinishSetState(State target, params object[] args)
+        protected bool TryFinishSetState(
+            State target, 
+            params object[] args)
         {
             switch (target)
             {
@@ -636,7 +675,7 @@ namespace Cirrus.Circuit
                         () =>
                         {
                             OnRoundInitHandler?.Invoke();
-                            _SetState(State.Round);
+                            Local_SetState(State.Round);
                             RoundSession.Instance.StartIntermisison();
                         },
                         () => RoundSession.Instance != null && RoundSession.Instance.IsClientStarted,
@@ -684,7 +723,7 @@ namespace Cirrus.Circuit
 
 
         // TODO: Simulate LeftStick continuous axis with WASD
-        public void FSMH_andleAxesLeft(Player player, Vector2 axis)
+        public void FSM_HandleAxesLeft(Player player, Vector2 axis)
         {
             bool isMovingHorizontal = Mathf.Abs(axis.x) > 0.5f;
             bool isMovingVertical = Mathf.Abs(axis.y) > 0.5f;
@@ -695,7 +734,7 @@ namespace Cirrus.Circuit
 
             if (isMovingVertical && isMovingHorizontal)
             {
-                //moving in both directions, prioritize later
+                // Moving in both directions, prioritize later
                 if (_wasMovingVertical[player.LocalId]) step = stepHorizontal;
                 else step = stepVertical;
             }

@@ -8,16 +8,9 @@ using Cirrus.Circuit.Controls;
 using Cirrus.Utils;
 using Mirror;
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Mirror;
-using Cirrus.Circuit.UI;
 using System.Reflection;
 using UnityEditor;
-using Cirrus.MirrorExt;
-using Cirrus.Circuit.World;
-using UnityEngine.Experimental.XR.Interaction;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -83,7 +76,6 @@ namespace Cirrus.Circuit.Networking
         public ServerHandler ServerHandler => IsServer ? (ServerHandler)_handler : null;
 
         private static bool _isStarted = false;
-
         public static bool IsStarted => _isStarted;
 
 

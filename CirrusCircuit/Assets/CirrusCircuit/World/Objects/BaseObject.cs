@@ -8,14 +8,9 @@ using Cirrus.Utils;
 using System;
 using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.Networking;
-using static Cirrus.Circuit.Networking.CommandClient;
-//using Cirrus.DH.Conditions;
-//using Cirrus.DH.Objects.Actions;
 
 namespace Cirrus.Circuit.World.Objects
 {
-    //public delegate void OnMoved();
-
     public abstract partial class BaseObject : MonoBehaviour
     {
         #region Object
@@ -27,6 +22,7 @@ namespace Cirrus.Circuit.World.Objects
             LevelSelect,
             Entering,
             Falling,
+            FallingThrough,
             Idle,
             RampIdle,
             Moving,
@@ -60,7 +56,7 @@ namespace Cirrus.Circuit.World.Objects
 
         [SerializeField]
         public Transform _transform;
-        public Transform Transform => _transform;        
+        public Transform Transform => _transform;
 
         [SerializeField]
         public int _stepSize = 1;
@@ -79,7 +75,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public BaseObject _destination = null;
 
-        public BaseObject _user = null;
+        public BaseObject _visitor = null;
 
         public Vector3Int _direction;
 
@@ -88,11 +84,12 @@ namespace Cirrus.Circuit.World.Objects
         public Vector3Int _gridPosition;
 
         public float _targetScale = 1;
-        
-        public int ColorId {
-            set => _colorId = (Number)value;       
-            get  => (int) _colorId;             
-        } 
+
+        public int ColorId
+        {
+            set => _colorId = (Number)value;
+            get => (int)_colorId;
+        }
 
         [SerializeField]
         private Number _colorId;
@@ -108,7 +105,7 @@ namespace Cirrus.Circuit.World.Objects
             {
                 _color = value;
 
-                if(_visual != null) _visual.Color = _color;
+                if (_visual != null) _visual.Color = _color;
             }
         }
 
@@ -144,7 +141,10 @@ namespace Cirrus.Circuit.World.Objects
         {
             if (PlayerManager.Instance != null)
             {
-                Color = PlayerManager.Instance.GetColor(ColorId);
+                Color = PlayerManager
+                    .Instance
+                    .GetColor(ColorId);
+
                 _nextColor = Color;
             }
         }
@@ -173,7 +173,7 @@ namespace Cirrus.Circuit.World.Objects
             if (_level == null) return;
 
             (transform.position, _gridPosition) = _level.RegisterObject(this);
-            Transform.position = transform.position;            
+            Transform.position = transform.position;
         }
 
         public virtual void Start()
@@ -196,47 +196,7 @@ namespace Cirrus.Circuit.World.Objects
             FSM_Update();
         }
 
-        public virtual void Cmd_TryInteract(BaseObject source)
-        {
-            _session.Cmd_TryInteract(source);
-        }
-
-        public virtual void Cmd_LevelSession_TryFallThrough(Vector3Int step)
-        {
-            _session.Cmd_LevelSession_TryFallThrough(step);
-        }
-
-        public virtual void Cmd_TryFall()
-        {
-            _session.Cmd_TryFall();
-        }
-
-        public virtual void Cmd_TryMove(Vector3Int step)
-        {
-            _session.Cmd_TryMove(step);
-        }
-        
-
-        public virtual void Local_LevelSession_TryFallThrough(
-            Vector3Int position,
-            Vector3Int step)
-        {
-            Vector3 offset = new Vector3();
-
-            if (LevelSession.Instance.DoTryMove(
-                this,
-                position,
-                step,
-                ref offset,
-                out BaseObject pushed,
-                out BaseObject destination))
-            {
-                _destination = destination;
-                _gridPosition = position;// _level.GridToWorld(newGridPosition);
-                _targetPosition = _level.GridToWorld(_gridPosition);
-                Transform.position = _targetPosition;
-            }
-        }
+        #region Interact
 
         public virtual void Local_TryInteract(BaseObject source)
         {
@@ -247,32 +207,31 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
-        public virtual void Local_TryFall()
+
+        public virtual void Cmd_TryInteract(BaseObject source)
         {
-            TryFall(null);
+            _session.Cmd_TryInteract(source);
         }
 
-        public virtual void Local_TryMove(
-            Vector3Int step, 
-            BaseObject incoming)
+        #endregion
+
+        #region Fall Through
+
+        public virtual void Cmd_TryFallThrough(Vector3Int step)
         {
-            TryMove(step, incoming);
+            _session.Cmd_TryFallThrough(step);
         }
 
-        // TODO State move argument
-        public virtual bool IsMoveAllowed(
-            Vector3Int step, 
-            BaseObject incoming = null)
+        public virtual void Local_TryFallThrough(
+            Vector3Int step,
+            Vector3Int position)
         {
-            if (TryTransition(
-                State.Moving, 
-                out State dest))
-            {
-                if (_levelSession.IsMoveAllowed(this, step)) return true;
-            }
-
-            return false;                
+            TrySetState(State.FallingThrough, step, position);
         }
+
+        #endregion
+
+        #region Fall
 
         // TODO State move argument
         public virtual bool IsFallAllowed(
@@ -286,43 +245,85 @@ namespace Cirrus.Circuit.World.Objects
             }
 
             return false;
+        }
 
-        }
-    
-        public virtual bool TryFall(
-            BaseObject incoming)
+
+        public virtual void Cmd_TryFall()
         {
-            return TrySetState(State.Falling, Vector3Int.down);
+            _session.Cmd_TryFall();
         }
+
+        public virtual void Local_TryFall()
+        {
+            TrySetState(State.Falling, Vector3Int.down);
+        }
+
+
+        #endregion
+
+        #region Move
 
         public virtual bool TryMove(
-            Vector3Int step, 
-            BaseObject incoming)
+    Vector3Int step,
+    BaseObject incoming)
         {
             return TrySetState(
-                State.Moving, 
-                step, 
+                State.Moving,
+                step,
                 incoming);
         }
 
-        public virtual bool IsEnterAllowed(
-            Vector3Int step, 
+        public virtual void Cmd_TryMove(Vector3Int step)
+        {
+            _session.Cmd_TryMove(step);
+        }
+
+        public virtual void Local_TryMove(
+            Vector3Int step,
+            BaseObject incoming)
+        {
+            TryMove(step, incoming);
+        }
+
+        // TODO State move argument
+        public virtual bool IsMoveAllowed(
+            Vector3Int step,
             BaseObject incoming = null)
         {
-            if (_user != null) return _user.IsMoveAllowed(step, incoming);
+            if (TryTransition(
+                State.Moving,
+                out State dest))
+            {
+                if (_levelSession.IsMoveAllowed(this, step)) return true;
+            }
 
-            else return true;            
+            return false;
+        }
+
+        #endregion
+
+        #region Enter
+
+        public virtual bool IsEnterAllowed(
+            Vector3Int step,
+            BaseObject incoming = null)
+        {
+            if (_visitor != null) return _visitor.IsMoveAllowed(step, incoming);
+
+            else return true;
         }
 
         public virtual bool TryEnter(
-            Vector3Int step, 
-            ref Vector3 offset, 
+            Vector3Int step,
+            ref Vector3 offset,
             BaseObject incoming = null)
         {
-            if (_user != null && _user.TryMove(step, incoming)) return true;
+            if (_visitor != null && _visitor.TryMove(step, incoming)) return true;
 
             return true;
         }
+
+        #endregion
 
 
         // TODO remove
@@ -378,7 +379,7 @@ namespace Cirrus.Circuit.World.Objects
             {
                 case State.Disabled:
                     break;
-                
+
                 case State.LevelSelect:
 
                     if (ColorId < PlayerManager.PlayerMax)
@@ -393,23 +394,24 @@ namespace Cirrus.Circuit.World.Objects
                 case State.Idle:
                 case State.RampIdle:
                 case State.Moving:
+                case State.FallingThrough:
                 case State.RampMoving:
 
                     Transform.position = Vector3.Lerp(
-                        Transform.position, 
-                        _targetPosition, 
+                        Transform.position,
+                        _targetPosition,
                         _stepSpeed);
 
-                    float scale = 
+                    float scale =
                         Mathf.Lerp(
-                            Transform.localScale.x, 
-                            _targetScale, 
+                            Transform.localScale.x,
+                            _targetScale,
                             _scaleSpeed);
 
-                    Transform.localScale = 
+                    Transform.localScale =
                         new Vector3(
-                            scale, 
-                            scale, 
+                            scale,
+                            scale,
                             scale);
 
                     break;
@@ -425,40 +427,39 @@ namespace Cirrus.Circuit.World.Objects
                 case State.LevelSelect:
                     return;
 
-                case State.Entering:
-
                 case State.Idle:
                 case State.RampIdle:
                     return;
 
+                case State.Entering:
                 case State.Falling:
                 case State.Moving:
                 case State.RampMoving:
+                case State.FallingThrough:
 
                     if (_hasArrived) break;
 
                     if (VectorUtils.IsCloseEnough(
-                        Transform.position, 
+                        Transform.position,
                         _targetPosition))
                     {
                         _hasArrived = true;
 
                         if (_destination == null)
                         {
-                            if (_levelSession.TryGet(
-                                _gridPosition + Vector3Int.down, 
-                                out BaseObject obj))
-                            {
-                                TrySetState(State.Idle);
-                            }
+                            if (!_level.IsWithinBoundsY(_gridPosition.y - 1))
+                                Cmd_TryFallThrough(_gridPosition + Vector3Int.down);
+                            else if (_levelSession.TryGet(
+                                _gridPosition + Vector3Int.down,
+                                out BaseObject obj)) TrySetState(State.Idle);
                             else Cmd_TryFall();
                         }
-                        else _destination.Accept(this);                        
+                        else _destination.Accept(this);
                     }
 
                     break;
             }
-        } 
+        }
 
         public virtual void OnRoundEnd()
         {
@@ -466,12 +467,12 @@ namespace Cirrus.Circuit.World.Objects
         }
 
         public virtual bool TrySetState(
-            State transition, 
+            State transition,
             params object[] args)
-        {            
-              if (TryTransition(
-                transition, 
-                out State destination))
+        {
+            if (TryTransition(
+              transition,
+              out State destination))
             {
                 return TryFinishSetState(destination, args);
             }
@@ -480,16 +481,34 @@ namespace Cirrus.Circuit.World.Objects
         }
 
         protected virtual bool TryTransition(
-            State transition, 
-            out State destination, 
+            State transition,
+            out State destination,
             params object[] args)
         {
             switch (_state)
             {
+                case State.FallingThrough:
+
+                    switch (transition)
+                    {
+                        case State.FallingThrough:
+                        case State.Disabled:
+                        case State.LevelSelect:
+                        case State.Entering:
+                        case State.Falling:
+                        case State.Idle:
+                        case State.RampIdle:
+                        case State.Moving:
+                            destination = transition;
+                            return true;
+                    }
+                    break;
+
                 case State.Disabled:
 
                     switch (transition)
                     {
+                        case State.FallingThrough:
                         case State.Disabled:
                         case State.LevelSelect:
                         case State.Entering:
@@ -506,6 +525,7 @@ namespace Cirrus.Circuit.World.Objects
 
                     switch (transition)
                     {
+                        case State.FallingThrough:
                         case State.Disabled:
                         case State.LevelSelect:
                         case State.Entering:
@@ -523,6 +543,7 @@ namespace Cirrus.Circuit.World.Objects
 
                     switch (transition)
                     {
+                        case State.FallingThrough:
                         case State.Disabled:
                         case State.LevelSelect:
                         case State.Entering:
@@ -538,6 +559,7 @@ namespace Cirrus.Circuit.World.Objects
                 case State.Falling:
                     switch (transition)
                     {
+                        case State.FallingThrough:
                         case State.Disabled:
                         case State.LevelSelect:
                         case State.Entering:
@@ -552,14 +574,15 @@ namespace Cirrus.Circuit.World.Objects
 
                 case State.Idle:
                     switch (transition)
-                    {
+                    {                        
                         case State.Disabled:
                         case State.LevelSelect:
-                        case State.Entering:
-                        case State.Falling:
+                        case State.Entering:                        
+                        case State.Moving:
                         case State.Idle:
                         case State.RampIdle:
-                        case State.Moving:
+                        case State.FallingThrough:
+                        case State.Falling:
                             destination = transition;
                             return true;
                     }
@@ -582,13 +605,14 @@ namespace Cirrus.Circuit.World.Objects
 
                 case State.Moving:
                     switch (transition)
-                    {
+                    {                        
                         case State.Disabled:
                         case State.LevelSelect:
                         case State.Entering:
-                        case State.Falling:
                         case State.Idle:
                         case State.RampIdle:
+                        case State.FallingThrough:
+                        case State.Falling:                        
                             //case State.Moving:
                             destination = transition;
                             return true;
@@ -597,13 +621,14 @@ namespace Cirrus.Circuit.World.Objects
 
                 case State.RampMoving:
                     switch (transition)
-                    {
+                    {                        
                         case State.Disabled:
                         case State.LevelSelect:
                         case State.Entering:
-                        case State.Falling:
                         case State.Idle:
                         case State.RampIdle:
+                        case State.FallingThrough:
+                        case State.Falling:                        
                             //case State.Moving:
                             destination = transition;
                             return true;
@@ -615,27 +640,32 @@ namespace Cirrus.Circuit.World.Objects
             return false;
         }
 
+        // TODO
+        // End set state
+        // common after every state
+        // TODO remove state specific logic
         protected virtual bool TryFinishSetState(
-            State target, 
+            State target,
             params object[] args)
         {
             Vector3Int previousGridPosition = _gridPosition;
-            Vector3Int newGridPosition = Vector3Int.zero;
+            Vector3Int nextGridPosition = Vector3Int.zero;
             Vector3Int step;
+            Vector3Int fallThroughPosition;
             Vector3 offset = Vector3.zero;
             Vector3Int stepOffset = Vector3Int.zero;
-            BaseObject incoming  = null;
+            BaseObject incoming = null;
             BaseObject destination;
             BaseObject pushed;
             BaseObject above;
-            bool result = false;
+            bool success = false;
 
             #region Main
 
             switch (target)
             {
                 case State.Disabled:
-                    result = true;
+                    success = true;
                     _state = target;
                     break;
 
@@ -647,50 +677,74 @@ namespace Cirrus.Circuit.World.Objects
                         _nextColorTimer.Start();
                     }
 
-                    result = true;
+                    success = true;
                     _state = target;
                     break;
 
                 case State.Entering:
                     _targetScale = 0;
                     _state = target;
-                    result = true;
+                    success = true;
+                    break;
+
+                case State.FallingThrough:
+
+                    step = (Vector3Int)args[0];
+                    fallThroughPosition = (Vector3Int)args[1];
+                    offset = new Vector3();
+
+                    if (LevelSession.Instance.DoTryMove(
+                        this,
+                        fallThroughPosition,
+                        step,
+                        ref offset,
+                        out pushed,
+                        out destination))
+                    {
+                        _destination = destination;
+                        _gridPosition = fallThroughPosition;
+                        _targetPosition = _level.GridToWorld(_gridPosition);
+                        Transform.position = _targetPosition;
+
+                        _state = target;
+                        success = true;
+                    }
+
                     break;
 
                 case State.Falling:
 
                     step = (Vector3Int)args[0];
 
-                    if (
-                        _levelSession.TryMove(
+                    if (_levelSession.TryMove(
                         this,
                         step,
                         ref offset,
-                        out newGridPosition,
+                        out nextGridPosition,
                         out destination,
                         out pushed))
                     {
                         _destination = destination;
-                        _gridPosition = newGridPosition;
-                        Debug.Log(Name +" "+ _gridPosition);
+                        _gridPosition = nextGridPosition;
+                        Debug.Log(Name + " " + _gridPosition);
                         _targetPosition = _level.GridToWorld(_gridPosition);
 
                         _state = target;
-                        result = true;
+                        success = true;
                     }
                     else if (_levelSession.IsFallThroughAllowed(
                         this,
                         step))
                     {
-                        Cmd_LevelSession_TryFallThrough(step);
+                        Cmd_TryFallThrough(step);
 
                         _state = target;
-                        result = true;
+                        success = true;
                     }
                     else
                     {
                         _state = State.Idle;
-                        result = false;
+                        success = false;
                     }
 
                     break;
@@ -700,11 +754,11 @@ namespace Cirrus.Circuit.World.Objects
 
                     // TODO: Redundant
                     if (_levelSession.TryGet(
-                        _gridPosition + Vector3Int.down, 
+                        _gridPosition + Vector3Int.down,
                         out destination))
                     {
                         _state = target;
-                        result = true;
+                        success = true;
                     }
                     else Cmd_TryFall();
 
@@ -714,7 +768,7 @@ namespace Cirrus.Circuit.World.Objects
                     //_collider.enabled = false;
 
                     _state = target;
-                    result = true;
+                    success = true;
                     break;
 
                 case State.RampMoving:
@@ -732,27 +786,27 @@ namespace Cirrus.Circuit.World.Objects
                     }
                     // Opposing direction (look down)
                     else if (step == _destination._direction * -1)
-                    { 
+                    {
                         stepOffset += Vector3Int.up;
                         //offset -= Vector3.up * (Level.GridSize / 2);
                     }
 
                     if (_levelSession.TryMove(
-                        this, 
-                        step + stepOffset, 
-                        ref offset, 
-                        out newGridPosition, 
-                        out pushed, 
+                        this,
+                        step + stepOffset,
+                        ref offset,
+                        out nextGridPosition,
+                        out pushed,
                         out destination))
                     {
                         if (pushed) pushed.Cmd_TryInteract(this);
                         _destination = destination;
-                        _gridPosition = newGridPosition;
+                        _gridPosition = nextGridPosition;
                         _targetPosition = _level.GridToWorld(_gridPosition);
                         _targetPosition += offset;
                         _direction = step;
                         _state = target;
-                        result = true;
+                        success = true;
                     }
 
                     break;
@@ -762,30 +816,30 @@ namespace Cirrus.Circuit.World.Objects
                     incoming = (BaseObject)args[1];
 
                     if (_levelSession.TryMove(
-                        this, 
-                        step, 
-                        ref offset, 
-                        out newGridPosition, 
-                        out pushed, 
+                        this,
+                        step,
+                        ref offset,
+                        out nextGridPosition,
+                        out pushed,
                         out destination))
                     {
                         //destination.
-                        if(pushed) pushed.Cmd_TryInteract(this);                        
+                        if (pushed) pushed.Cmd_TryInteract(this);
 
                         _destination = destination;
-                        _gridPosition = newGridPosition;
+                        _gridPosition = nextGridPosition;
                         _targetPosition = _level.GridToWorld(_gridPosition);
                         _targetPosition += offset;
                         _direction = step;
 
                         _state = target;
-                        result = true;                        
+                        success = true;
                     }
 
                     break;
 
                 default:
-                    result = false;
+                    success = false;
                     break;
             }
 
@@ -796,12 +850,13 @@ namespace Cirrus.Circuit.World.Objects
             switch (_state)
             {
                 case State.Falling:
+                case State.FallingThrough:
                 case State.RampMoving:
                 case State.Moving:
                 case State.Entering:
                     _hasArrived = false;
                     break;
-                default: 
+                default:
                     _hasArrived = true;
                     break;
             }
@@ -810,7 +865,7 @@ namespace Cirrus.Circuit.World.Objects
 
             #region Object Above
 
-            if (result && incoming == null)
+            if (success && incoming == null)
             {
                 // Determine if object above to make it fall
                 switch (target)
@@ -832,7 +887,7 @@ namespace Cirrus.Circuit.World.Objects
             #endregion
 
 
-            return result;
+            return success;
         }
 
         #endregion

@@ -25,7 +25,7 @@ namespace Cirrus.Circuit.World.Objects
             {
                 if (base.TryEnter(step, ref offset, incoming))
                 {
-                    _user = incoming;
+                    _visitor = incoming;
                     offset += Vector3.up * Level.CellSize / 2;
                     return true;
                 }

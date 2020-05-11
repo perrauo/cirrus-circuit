@@ -62,7 +62,7 @@ namespace Cirrus.Circuit.World.Objects
         [SerializeField]
         private float _punchScaleTime = 1f;
   
-        IEnumerator PunchScale()
+        IEnumerator PunchScaleCoroutine()
         {
             iTween.Stop(_visual.Parent.gameObject);
             _visual.Parent.gameObject.transform.localScale = new Vector3(1, 1, 1);
@@ -122,7 +122,7 @@ namespace Cirrus.Circuit.World.Objects
                         iTween.Stop(_visual.Parent.gameObject);
 
                         _visual.Parent.gameObject.transform.localScale = new Vector3(1, 1, 1);
-                        StartCoroutine(PunchScale());
+                        StartCoroutine(PunchScaleCoroutine());
 
                         OnGemEntered(incoming as Gem);
 
@@ -141,15 +141,23 @@ namespace Cirrus.Circuit.World.Objects
             return false;
         }
 
-
-        public override bool TryFall(BaseObject incoming = null)
+        public override void Cmd_TryFall()
         {
-            return false;
+            
         }
 
+        public override void Cmd_TryFallThrough(Vector3Int step)
+        {
+            
+        }
+
+        public override void Local_TryFall()
+        {
+
+        }
 
         public override void Accept(BaseObject incoming)
-        {
+        {            
             switch (incoming.Id)
             {
                 case ObjectId.Gem:
@@ -167,7 +175,7 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
-        IEnumerator PunchValue()
+        IEnumerator PunchValueCoroutine()
         {
             iTween.Stop(_textValue.gameObject);
             _textValue.gameObject.transform.localScale = new Vector3(1, 1, 1);
@@ -182,7 +190,7 @@ namespace Cirrus.Circuit.World.Objects
             yield return null;
         }
 
-        IEnumerator PunchMultiplier()
+        IEnumerator PunchMultiplierCoroutine()
         {
             iTween.Stop(_textMultiplier.gameObject);
             _textMultiplier.gameObject.transform.localScale = new Vector3(1, 1, 1);
@@ -221,7 +229,7 @@ namespace Cirrus.Circuit.World.Objects
 
             _valueTimer.Start();
 
-            StartCoroutine(PunchValue());
+            StartCoroutine(PunchValueCoroutine());
 
             OnScoreValueAddedHandler?.Invoke(gem, ColorId, Value);
 
@@ -235,7 +243,7 @@ namespace Cirrus.Circuit.World.Objects
                 iTween.Stop(_textMultiplier.gameObject);
                 _textMultiplier.gameObject.transform.localScale = new Vector3(1, 1, 1);
 
-                StartCoroutine(PunchMultiplier());
+                StartCoroutine(PunchMultiplierCoroutine());
             }
         }
 

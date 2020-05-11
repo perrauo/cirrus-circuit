@@ -68,7 +68,10 @@ namespace Cirrus.Circuit.Networking
             {
                 _mutex.WaitOne();
 
-                _object.Local_TryInteract(sourceSession._object);
+                _object
+                    .Local_TryInteract(
+                        sourceSession
+                        ._object);
 
                 _mutex.ReleaseMutex();
             }
@@ -87,11 +90,16 @@ namespace Cirrus.Circuit.Networking
         [ClientRpc]
         public void Rpc_TryMove(Vector3Int step)
         {
-            _mutex.WaitOne();
+            _mutex
+                .WaitOne();
 
-            _object.Local_TryMove(step, null);
+            _object
+                .Local_TryMove(
+                    step, 
+                    null);
 
-            _mutex.ReleaseMutex();
+            _mutex
+                .ReleaseMutex();
         }
 
         public void Cmd_TryMove(Vector3Int step)
@@ -128,24 +136,26 @@ namespace Cirrus.Circuit.Networking
 
         public bool IsFallAllowed()
         {
-            return _object.IsFallAllowed();
+            return _object
+                .IsFallAllowed();
         }
 
-        public void Cmd_LevelSession_TryFallThrough(Vector3Int step)
+        public void Cmd_TryFallThrough(Vector3Int step)
         {
-            CommandClient.Instance
-                .Cmd_ObjectSession_LevelSession_TryFallThrough(
+            CommandClient
+                .Instance
+                .Cmd_ObjectSession_TryFallThrough(
                     gameObject,
                     step);
         }
 
         [ClientRpc]
-        public void Rpc_ObjectSession_LevelSession_TryFallThrough(
+        public void Rpc_TryFallThrough(
             Vector3Int step,
             Vector3Int position)
         {
             _object
-                .Local_LevelSession_TryFallThrough(
+                .Local_TryFallThrough(
                     step,
                     position);
         }
@@ -154,7 +164,7 @@ namespace Cirrus.Circuit.Networking
         // TODO
         ///////
         ///
-        public void Cmd_ObjectSession_Request(CommandRequest req)
+        public void Cmd_Request(CommandRequest req)
         {
             CommandClient
                 .Instance
@@ -165,7 +175,8 @@ namespace Cirrus.Circuit.Networking
 
         public void Target_Response(CommandResponse res)
         {
-            _object.Local_Response(res);
+            _object
+                .Local_Response(res);
         }
     }
 }

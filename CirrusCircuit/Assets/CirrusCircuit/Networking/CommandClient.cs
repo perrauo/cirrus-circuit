@@ -289,20 +289,20 @@ namespace Cirrus.Circuit.Networking
         [ClientRpc]
         public void Rpc_Game_SetState(Game.State transition, bool transitionEffect)
         {
-            Game.Instance._SetState(transition, transitionEffect);
+            Game.Instance.Local_SetState(transition, transitionEffect);
         }
 
         [ClientRpc]
         public void Rpc_Game_SelectLevel(int index)
         {
             Debug.Log("RPC SELECT LEVEL: " + index);
-            Game.Instance._SelectLevel(index);
+            Game.Instance.Local_SelectLevel(index);
         }
 
         [ClientRpc]
         public void Rpc_Game_ScrollLevel(int step)
         {
-            Game.Instance._ScrollLevel(step);
+            Game.Instance.Local_ScrollLevel(step);
         }
 
         #endregion
@@ -335,13 +335,13 @@ namespace Cirrus.Circuit.Networking
         private Mutex Cmd_ObjectSession_TryFall_mutex = new Mutex();
 
         [Command]
-        public void Cmd_ObjectSession_LevelSession_TryFallThrough(
+        public void Cmd_ObjectSession_TryFallThrough(
             GameObject gobj,
             Vector3Int step)            
         {
             if (gobj.TryGetComponent(out ObjectSession obj))
             {
-                obj.Rpc_ObjectSession_LevelSession_TryFallThrough(
+                obj.Rpc_TryFallThrough(
                     step,
                     LevelSession.Instance.GetFallThroughPosition()
                     );

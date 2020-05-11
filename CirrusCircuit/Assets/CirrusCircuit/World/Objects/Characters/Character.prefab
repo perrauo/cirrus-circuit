@@ -54,7 +54,7 @@ MonoBehaviour:
   _fallDistance: 100
   _scaleSpeed: 0.6
   _destination: {fileID: 0}
-  _user: {fileID: 0}
+  _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
   _targetPosition: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 0, y: 0, z: 0}

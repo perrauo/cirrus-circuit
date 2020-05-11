@@ -125,10 +125,13 @@ namespace Cirrus.Circuit.Networking
             {
                 _randomDropRainTimer = new Timer(
                     Level.RandomDropRainTime,
-                    start: false,
-                    repeat: true);
+                        start: false,
+                        repeat: true);
 
-                _randomDropRainTimer.OnTimeLimitHandler += Cmd_OnRainTimeout;
+                if (Game.Instance.IsRainEnabled)
+                {
+                    _randomDropRainTimer.OnTimeLimitHandler += Cmd_OnRainTimeout;
+                }
             }
         }
 
@@ -427,7 +430,7 @@ namespace Cirrus.Circuit.Networking
                     // Only set occupying tile if not visiting
                     // Only set occupying tile if not visiting
                     if (source._destination == null) SetObject(source._gridPosition, null);
-                    else source._destination._user = null;
+                    else source._destination._visitor = null;
 
                     SetObject(position, source);
                     return true;
@@ -439,7 +442,7 @@ namespace Cirrus.Circuit.Networking
 
                     // Only set occupying tile if not visiting
                     if (source._destination == null) SetObject(source._gridPosition, null);
-                    else source._destination._user = null;
+                    else source._destination._visitor = null;
 
                     return true;
                 }
@@ -448,7 +451,7 @@ namespace Cirrus.Circuit.Networking
             {
                 // Only set occupying tile if not visiting
                 if (source._destination == null) SetObject(source._gridPosition, null);
-                else source._destination._user = null;
+                else source._destination._visitor = null;
 
                 SetObject(position, source);
                 return true;
@@ -470,9 +473,7 @@ namespace Cirrus.Circuit.Networking
             Vector3Int direction = step;
             position = source._gridPosition + step;
 
-            if (
-                Level.IsWithinBounds(position)
-                )
+            if (Level.IsWithinBounds(position))
             {
                 return DoTryMove(
                     source,
@@ -497,8 +498,6 @@ namespace Cirrus.Circuit.Networking
 
         public Vector3Int GetFallThroughPosition()
         {
-            var info = new MoveInfo { };
-
             for (int k = 0; k < FallTrials; k++)
             {
                 Vector3Int pos = new Vector3Int(
@@ -506,15 +505,16 @@ namespace Cirrus.Circuit.Networking
                     Level.Dimension.y - 1,
                     UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.z - Level.Offset.z));
 
+                // Check for valid surface to fall on
                 for (int i = 0; i < Level.Dimension.y; i++)
                 {
                     if (TryGet(
-                        info.Position.Copy().SetY(info.Position.y - i), 
+                        pos.Copy().SetY(pos.y - i), 
                         out BaseObject target))
                     {
                         if (target is Gem) continue;
                         if (target is Character) continue;
-                        if (target is Door) continue;
+                        if (target is Door) continue;                       
 
                         return pos;
                     }
@@ -587,14 +587,14 @@ namespace Cirrus.Circuit.Networking
 
             if ((session = sessionObj.GetComponent<ObjectSession>()) != null)
             {
-                _Spawn(
+                Local_Spawn(
                     session,
                     ObjectLibrary.Instance.Get(spawnId),
                     pos);
             }
         }
 
-        public void _Spawn(ObjectSession session, Spawnable template, Vector3Int pos)
+        public void Local_Spawn(ObjectSession session, Spawnable template, Vector3Int pos)
         {
             GameObject gobj = template.gameObject.Create(
                 Level.GridToWorld(pos),
@@ -635,10 +635,10 @@ namespace Cirrus.Circuit.Networking
         [ClientRpc]
         public void Rpc_OnRainTimeout(Vector3Int pos, int objectId)
         {
-            _OnRainTimeout(pos, objectId);
+            Local_OnRainTimeout(pos, objectId);
         }
 
-        public void _OnRainTimeout(Vector3Int pos, int objectId)
+        public void Local_OnRainTimeout(Vector3Int pos, int objectId)
         {
             Cmd_Spawn(objectId, pos);
         }

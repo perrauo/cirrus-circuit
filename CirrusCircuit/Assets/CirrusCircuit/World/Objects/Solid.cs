@@ -18,11 +18,6 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
-        public override bool TryFall(BaseObject incoming = null)
-        {
-            return false;
-        }
-
         public override bool TryEnter(Vector3Int step, ref Vector3 offset, BaseObject incoming = null)
         {
             return false;
@@ -33,6 +28,27 @@ namespace Cirrus.Circuit.World.Objects
         {
             base.Start();
         }
+
+        public override void Cmd_TryFall()
+        {
+        
+        }
+
+        public override void Cmd_TryFallThrough(Vector3Int step)
+        {
+            
+        }
+
+        public override void Cmd_TryInteract(BaseObject source)
+        {
+            
+        }
+
+        public override void Cmd_TryMove(Vector3Int step)
+        {
+            
+        }
+
 
         public override void FSM_FixedUpdate()
         {
