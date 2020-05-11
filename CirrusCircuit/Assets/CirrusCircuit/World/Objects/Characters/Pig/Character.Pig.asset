@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f21faec92f36290499d6ccb4e3637b8e, type: 3}
-  m_Name: Character.SheepGirl
+  m_Name: Character.Pig
   m_EditorClassIdentifier: 
-  Portrait: {fileID: 21300000, guid: 910dbc32c0b6e4dfeb263d39b89dc023, type: 3}
-  CharacterTemplate: {fileID: 9174488506507766027, guid: efa8dd727bfde458c86e294c28a1a01e,
+  Portrait: {fileID: 21300000, guid: 648d408302b4c4e82b87543dd63c0a09, type: 3}
+  CharacterTemplate: {fileID: 9174488506507766027, guid: e164541ebc892427dae6eae74f41e5a9,
     type: 3}
