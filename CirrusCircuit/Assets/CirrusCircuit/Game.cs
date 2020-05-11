@@ -167,14 +167,11 @@ namespace Cirrus.Circuit
             _initialVectorBottomLeft = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
             _initialVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30)); // I used 30 as my camera z is -30
 
-            Transitions.Transition.Instance.OnTransitionTimeoutHandler += OnTransitionTimeOut;
-            CharacterSelect.Instance.OnCharacterSelectReadyHandler += OnCharacterSelected;
+            Screen.fullScreen = IsFullScreen; 
 
-            Screen.fullScreen = IsFullScreen;
-
-            Podium.Instance.OnPodiumFinishedHandler += OnPodiumFinished;
-
-            Local_SetState(State.Menu, false);            
+            Local_SetState(
+                State.Menu, 
+                false);            
         }
 
 
@@ -200,7 +197,7 @@ namespace Cirrus.Circuit
             FSM_FixedUpdate();
         }
 
-        private void OnPodiumFinished()
+        public void OnPodiumFinished()
         {
             if (CustomNetworkManager.IsServer)
             {
@@ -362,7 +359,7 @@ namespace Cirrus.Circuit
         }
 
 
-        private void OnTransitionTimeOut()
+        public void OnTransitionTimeOut()
         {
             if (TryTransition(
                 _nextState, 

@@ -76,6 +76,7 @@ namespace Cirrus.Circuit
             GameSession.OnStartClientStaticHandler += OnClientStarted;
             Game.Instance.OnPodiumHandler += OnPodium;
             Game.Instance.OnFinalPodiumHandler += OnFinalPodium;
+            OnPodiumFinishedHandler += Game.Instance.OnPodiumFinished;
         }
 
         public void OnClientStarted(bool enable)
@@ -155,7 +156,6 @@ namespace Cirrus.Circuit
 
             character.ColorId = player.ServerId;
             character.Color = player.Color;
-
         }
 
         public void OnPlatformFinished()

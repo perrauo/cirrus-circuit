@@ -44,9 +44,9 @@ namespace Cirrus.Circuit.UI
         {
             base.Awake();
 
-            Game
-                .Instance
-                .OnCharacterSelectHandler += OnCharacterSelect;
+            Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
+
+            OnCharacterSelectReadyHandler += Game.Instance.OnCharacterSelected;
         }
 
         public void OnCharacterSelect(bool enable)
