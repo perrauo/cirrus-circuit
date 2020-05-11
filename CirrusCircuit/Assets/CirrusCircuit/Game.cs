@@ -335,7 +335,6 @@ namespace Cirrus.Circuit
             {
                 CommandClient.Instance.Cmd_Game_SetState(transition, transitionEffect);
                 return true;
-
             }
             return false;
         }
