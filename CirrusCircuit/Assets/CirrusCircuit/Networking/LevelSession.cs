@@ -654,7 +654,6 @@ namespace Cirrus.Circuit.Networking
 
         public void OnRoundStarted(int i)
         {
-
             foreach (var obj in _objects)
             {
                 if (obj == null) continue;
@@ -662,7 +661,10 @@ namespace Cirrus.Circuit.Networking
                 obj.TrySetState(BaseObject.State.Idle);
             }
 
-            _randomDropRainTimer.Start();
+            if (CustomNetworkManager.IsServer)
+            {
+                _randomDropRainTimer.Start();
+            }
         }
 
         public void OnRoundEnd()
