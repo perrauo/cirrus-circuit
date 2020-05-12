@@ -358,7 +358,6 @@ namespace Cirrus.Circuit
             }
         }
 
-
         public void OnTransitionTimeOut()
         {
             if (TryTransition(
