@@ -502,7 +502,7 @@ namespace Cirrus.Circuit.Networking
             {
                 Vector3Int pos = new Vector3Int(
                     UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.x - Level.Offset.x),
-                    Level.Dimension.y - 1,
+                    Level.Dimension.y - Level.Offset.y - 1,
                     UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.z - Level.Offset.z));
 
                 // Check for valid surface to fall on
@@ -555,7 +555,13 @@ namespace Cirrus.Circuit.Networking
                             if (target is Character) continue;
                             if (target is Door) continue;
 
-                            return DoTryMove(source, position, direction, ref offset, out BaseObject pushed, out destination);
+                            return DoTryMove(
+                                source, 
+                                position, 
+                                direction, 
+                                ref offset, 
+                                out BaseObject pushed, 
+                                out destination);
                         }
                     }
                 }
@@ -577,15 +583,17 @@ namespace Cirrus.Circuit.Networking
         {
             CommandClient.Instance.Cmd_LevelSession_Spawn(
                 gameObject,
-                spawnId, pos);
+                spawnId, 
+                pos);
         }
 
         [ClientRpc]
-        public void Rpc_Spawn(GameObject sessionObj, int spawnId, Vector3Int pos)
+        public void Rpc_Spawn(
+            GameObject sessionObj, 
+            int spawnId, 
+            Vector3Int pos)
         {
-            ObjectSession session = null;
-
-            if ((session = sessionObj.GetComponent<ObjectSession>()) != null)
+            if (sessionObj.TryGetComponent(out ObjectSession session))
             {
                 Local_Spawn(
                     session,
@@ -594,7 +602,10 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-        public void Local_Spawn(ObjectSession session, Spawnable template, Vector3Int pos)
+        public void Local_Spawn(
+            ObjectSession session, 
+            Spawnable template, 
+            Vector3Int pos)
         {
             GameObject gobj = template.gameObject.Create(
                 Level.GridToWorld(pos),
