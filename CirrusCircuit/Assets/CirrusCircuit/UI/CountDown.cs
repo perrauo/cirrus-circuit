@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using Cirrus.Circuit.Networking;
 
 namespace Cirrus.Circuit.UI
 {
@@ -19,24 +20,29 @@ namespace Cirrus.Circuit.UI
         }
 
         public void Awake()
-        {
-            Game.Instance.OnNewRoundHandler += OnNewRound;
-            //Game.Instance.On
+        {            
+            GameSession.OnStartClientStaticHandler += OnClientStarted;
+            Game.Instance.OnRoundInitHandler += OnRoundInit;
         }
 
-        private void OnNewRound(Round round)
+        public void OnClientStarted(bool enable)
         {
-            round.OnCountdownHandler += OnRoundCountdown;
-            //round.OnIntermissionHandler += OnIntermission;
+
+
+        }
+
+
+        private void OnRoundInit()
+        {
+            RoundSession.Instance.OnCountdownHandler += OnRoundCountdown;
+            //RoundSession.Instance.OnIntermissionHandler += OnIntermission;
         }
 
 
         public int Number
         {
-            get
-            {
-                return _value;
-            }
+            get => _value;
+            
 
             set
             {
@@ -81,10 +87,5 @@ namespace Cirrus.Circuit.UI
                 transform.GetChild(0).gameObject.SetActive(_enabled);
             }
         }
-
-
-
-
-
     }
 }

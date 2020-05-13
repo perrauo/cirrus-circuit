@@ -8,6 +8,8 @@ namespace Cirrus.Circuit.World.Objects
 {
     public class Door : BaseObject
     {
+        public override ObjectId Id => ObjectId.Door;
+
         public delegate void OnScoreValueAdded(
         Gem gem,
         int playerNumber,
@@ -17,7 +19,7 @@ namespace Cirrus.Circuit.World.Objects
         public OnScoreValueAdded OnScoreValueAddedHandler;
 
         [SerializeField]
-        private Cirrus.UI.ProgressBars.BaseProgressBar _progressBar;
+        private Cirrus.UI.ProgressBars.ProgressBar _progressBar;
 
         [SerializeField]
         private int _comboRequired = 2;
@@ -60,7 +62,7 @@ namespace Cirrus.Circuit.World.Objects
         [SerializeField]
         private float _punchScaleTime = 1f;
   
-        IEnumerator PunchScale()
+        IEnumerator PunchScaleCoroutine()
         {
             iTween.Stop(_visual.Parent.gameObject);
             _visual.Parent.gameObject.transform.localScale = new Vector3(1, 1, 1);
@@ -120,12 +122,12 @@ namespace Cirrus.Circuit.World.Objects
                         iTween.Stop(_visual.Parent.gameObject);
 
                         _visual.Parent.gameObject.transform.localScale = new Vector3(1, 1, 1);
-                        StartCoroutine(PunchScale());
+                        StartCoroutine(PunchScaleCoroutine());
 
                         OnGemEntered(incoming as Gem);
 
                         incoming._targetScale = 0;
-                        offset += Vector3.up * World.Level.GridSize / 2;
+                        offset += Vector3.up * Level.CellSize / 2;
 
                         return true;
 
@@ -139,20 +141,28 @@ namespace Cirrus.Circuit.World.Objects
             return false;
         }
 
-
-        public override bool TryFall(BaseObject incoming = null)
+        public override void Cmd_TryFall()
         {
-            return false;
+            
         }
 
+        public override void Cmd_TryFallThrough(Vector3Int step)
+        {
+            
+        }
+
+        public override void Local_TryFall()
+        {
+
+        }
 
         public override void Accept(BaseObject incoming)
-        {
+        {            
             switch (incoming.Id)
             {
                 case ObjectId.Gem:
-                    iTween.Init(Object);
-                    iTween.Stop(Object);
+                    iTween.Init(Transform.gameObject);
+                    iTween.Stop(Transform.gameObject);
                     
                     //_visual.Parent.transform.localScale = new Vector3(1, 1, 1);
                     //StartCoroutine(PunchScale());
@@ -165,7 +175,7 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
-        IEnumerator PunchValue()
+        IEnumerator PunchValueCoroutine()
         {
             iTween.Stop(_textValue.gameObject);
             _textValue.gameObject.transform.localScale = new Vector3(1, 1, 1);
@@ -180,7 +190,7 @@ namespace Cirrus.Circuit.World.Objects
             yield return null;
         }
 
-        IEnumerator PunchMultiplier()
+        IEnumerator PunchMultiplierCoroutine()
         {
             iTween.Stop(_textMultiplier.gameObject);
             _textMultiplier.gameObject.transform.localScale = new Vector3(1, 1, 1);
@@ -198,7 +208,7 @@ namespace Cirrus.Circuit.World.Objects
         public void OnGemEntered(Gem gem)
         {
             if (_previousGem != null &&
-                gem.Number == Number &&
+                gem.ColorId == ColorId &&
                 gem.Type == _previousGem.Type)
             {
                 _multiplierTimer.Start();
@@ -215,13 +225,13 @@ namespace Cirrus.Circuit.World.Objects
             iTween.Stop(_textValue.gameObject);
             _textValue.gameObject.transform.localScale = new Vector3(1, 1, 1);
 
-            Value = gem.Number == Number ? gem.Value * _multiplier : -gem.Value;
+            Value = gem.ColorId == ColorId ? gem.Value * _multiplier : -gem.Value;
 
             _valueTimer.Start();
 
-            StartCoroutine(PunchValue());
+            StartCoroutine(PunchValueCoroutine());
 
-            OnScoreValueAddedHandler?.Invoke(gem, Number, Value);
+            OnScoreValueAddedHandler?.Invoke(gem, ColorId, Value);
 
             _previousGem = gem;
 
@@ -233,7 +243,7 @@ namespace Cirrus.Circuit.World.Objects
                 iTween.Stop(_textMultiplier.gameObject);
                 _textMultiplier.gameObject.transform.localScale = new Vector3(1, 1, 1);
 
-                StartCoroutine(PunchMultiplier());
+                StartCoroutine(PunchMultiplierCoroutine());
             }
         }
 

@@ -5,98 +5,183 @@ using Cirrus.Circuit.World.Objects.Characters;
 using Cirrus.Utils;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using Mirror;
+
+using Cirrus.Circuit.Networking;
 
 namespace Cirrus.Circuit.UI
 {
-    public class CharacterSelectSlot : MonoBehaviour
+    public class CharacterSelectSlot : NetworkBehaviour
     {
-        [SerializeField]
-        private World.Objects.Characters.Resources _characterResources;
-
-        [SerializeField]
+        [SerializeField]        
         private Image _imageTemplate;
 
         [SerializeField]
         private List<Image> _images;
 
-        [SerializeField]
+        [SerializeField]        
         private RectTransform _rect;
 
         [SerializeField]
         private RectTransform _maskRect;
 
         [SerializeField]
+        [SyncVar]
         private float _offset = -512;
 
         [SerializeField]
+        [SyncVar]
         private float _height = 256;
 
         [SerializeField]
+        [SyncVar]
         private float _bound = 0;
 
-        [SerializeField]
-        private CharacterSelect _characterSelect;
-
-        [SerializeField]
+        [SerializeField]        
         private GameObject _selection;
 
-        [SerializeField]
+        [SerializeField]        
         private Text _statusText;
 
-        [SerializeField]
+        [SerializeField]        
         private Text _up;
 
-        [SerializeField]
+        [SerializeField]        
         private Text _down;
 
         [SerializeField]
+        [SyncVar]
         private float _speed = 0.5f;
 
         [SerializeField]
+        [SyncVar]
         private float _selectPunchScale = 0.5f;
 
         [SerializeField]
+        [SyncVar]
         private float _selectPunchScaleTime = 1f;
 
+        [SerializeField]
+        [SyncVar]
         private Vector3 _startPosition;
 
+        [SerializeField]
+        [SyncVar]
         private Vector3 _targetPosition;
 
         [SerializeField]
         private Transform _characterSpotlightAnchor;
 
         [SerializeField]
+        [SyncVar]
         private float _characterSpotlightSize = 10f;
 
         [SerializeField]
+        [SyncVar]
         private float _characterSpotlightRotateSpeed = 20f;
 
 
         [SerializeField]
+        [SyncVar]
         private int _selectedIndex = 0;
 
         [SerializeField]
+        [SyncVar]
         private float _disabledArrowAlpha = 0.35f;
 
+        [System.Serializable]
         public enum State
         {
+            Closed,
             Ready,
             Selecting,
-            Closed
         }
 
         [SerializeField]
-        private State _state;
+        [SyncVar]
+        private State _state = State.Closed;
 
         [SerializeField]
         private CameraManager _camera;
 
+        private void OnValidate()
+        {
+            if (_camera == null) _camera = FindObjectOfType<CameraManager>();
+            if (_rect == null) _rect = _selection.GetComponent<RectTransform>();
 
-        public void TryChangeState(State target)
+        }
+
+        public void Awake()
+        {
+            if (_imageTemplate == null) DebugUtils.Assert(false, "Portrait template is null");
+            else _imageTemplate.gameObject.SetActive(true);
+
+            _images = new List<Image>();
+            foreach (var res in CharacterLibrary.Instance.Characters)
+            {
+                if (res == null) continue;
+
+                var portrait = _imageTemplate.gameObject.Create(_imageTemplate.transform.parent)?.GetComponent<Image>();
+                if (portrait != null)
+                {
+                    portrait.sprite = res.Portrait;
+                    _images.Add(portrait);
+                }
+            }
+
+            if (_imageTemplate != null)
+            {
+                _imageTemplate.gameObject.SetActive(false);
+                _height = _imageTemplate.transform.parent.GetComponent<RectTransform>().rect.height / _images.Count;
+            }
+            _bound = (_height * _images.Count) / 2;
+        }
+
+        public virtual void Start()
+        {
+            _startPosition = _rect.localPosition - Vector3.up * _offset;
+        }
+
+        public void FixedUpdate()
+        {
+            _rect.localPosition = Vector3.Lerp(_rect.localPosition, _targetPosition, _speed);
+
+            if (_characterSpotlightAnchor.childCount != 0)
+                _characterSpotlightAnchor.GetChild(0)
+                    .Rotate(Vector3.up * Time.deltaTime * _characterSpotlightRotateSpeed);
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartLocalPlayer();
+            Local_TrySetState(_state);
+            Cmd_Scroll(true);
+        }
+       
+
+        public override void OnStartAuthority()
+        {
+            base.OnStartAuthority();
+            Cmd_TrySetState(State.Selecting);
+        }
+
+
+        public void Cmd_TrySetState(State target)
+        {            
+            CommandClient.Instance.Cmd_CharacterSelectSlot_SetState(gameObject, target);
+        }
+
+        public void Local_TrySetState(State target)
         {
             switch (target)
             {
                 case State.Closed:
+                    if (_state != State.Closed)
+                        GameSession.Instance.CharacterSelectOpenCount =
+                            GameSession.Instance.CharacterSelectOpenCount == 0 ?
+                            0 :
+                            GameSession.Instance.CharacterSelectOpenCount - 1;
+
                     _up.gameObject.SetActive(false);
                     _down.gameObject.SetActive(false);
                     _maskRect.gameObject.SetActive(false);
@@ -104,28 +189,35 @@ namespace Cirrus.Circuit.UI
                     break;
 
                 case State.Selecting:
-                    if (_state == State.Ready) _characterSelect._readyCount--;                
+                    if (_state == State.Closed)
+                        GameSession.Instance.CharacterSelectOpenCount =
+                            GameSession.Instance.CharacterSelectOpenCount >= Controls.PlayerManager.PlayerMax ?
+                                Controls.PlayerManager.PlayerMax :
+                                GameSession.Instance.CharacterSelectOpenCount + 1;
+
+                    if (_state == State.Ready)
+                        GameSession.Instance.CharacterSelectReadyCount--;
+
                     if (_characterSpotlightAnchor.transform.childCount != 0)
                         Destroy(_characterSpotlightAnchor.GetChild(0).gameObject);
 
                     _up.gameObject.SetActive(true);
                     _down.gameObject.SetActive(true);
-                    _maskRect.gameObject.SetActive(true);                    
+                    _maskRect.gameObject.SetActive(true);
                     _statusText.text = "";
                     break;
 
                 case State.Ready:
-                    _characterSelect._readyCount++;
+                    if (_state != State.Ready) GameSession.Instance.CharacterSelectReadyCount++;
 
                     Vector3 position =
                     CameraManager.Instance.Camera.ScreenToWorldPoint(
                         _characterSpotlightAnchor.position);
 
                     // TODO maybe select locked character??
-                    CharacterAsset resource = _characterResources.Characters[_selectedIndex];
+                    CharacterAsset resource = CharacterLibrary.Instance.Characters[_selectedIndex];
                     Character character =
                         resource.Create(
-                            position,
                             _characterSpotlightAnchor,
                             Quaternion.Euler(new Vector3(0, 180, 0)));
 
@@ -144,56 +236,12 @@ namespace Cirrus.Circuit.UI
             _state = target;
         }
 
-        private void OnValidate()
+        [ClientRpc]
+        public void Rpc_TrySetState(State target)
         {
-            if (_characterSelect == null)
-                _characterSelect = GetComponentInParent<CharacterSelect>();
-            if (_camera == null) _camera = FindObjectOfType<CameraManager>();
-            if (_rect == null) _rect = _selection.GetComponent<RectTransform>();
-
-
-#if UNITY_EDITOR
-            if (_characterResources == null)            
-                Editor.AssetDatabase.FindObjectOfType<World.Objects.Characters.Resources>();
-#endif
-      
+            Local_TrySetState(target);
         }
-
-        public void Awake()
-        {
-            if (_imageTemplate == null) DebugUtils.Assert(false, "Portrait template is null");
-            else _imageTemplate.gameObject.SetActive(true);
-
-            _images = new List<Image>();
-            foreach (var res in _characterResources.Characters)
-            {
-                if (res == null) continue;
-
-                var portrait = _imageTemplate.gameObject.Create(_imageTemplate.transform.parent)?.GetComponent<Image>();
-                if (portrait != null)
-                {
-                    portrait.sprite = res.Portrait;
-                    _images.Add(portrait);                    
-                }
-            }
-
-            if (_imageTemplate != null)
-            {
-                _imageTemplate.gameObject.SetActive(false);
-                _height = _imageTemplate.transform.parent.GetComponent<RectTransform>().rect.height / _images.Count;
-            }
-            _bound = (_height * _images.Count)/2;
-        }
-
-        private void Start()
-        {
-            _startPosition = _rect.localPosition - Vector3.up * _offset;
-
-            TryChangeState(State.Closed);
-
-            Scroll(true);
-        }
-
+        
         public IEnumerator PunchScale(bool previous)
         {
             iTween.Stop(_up.gameObject);
@@ -206,7 +254,6 @@ namespace Cirrus.Circuit.UI
 
             if (previous)
             {
-
                 iTween.PunchScale(
                     _up.gameObject,
                     new Vector3(_selectPunchScale,
@@ -222,11 +269,12 @@ namespace Cirrus.Circuit.UI
                         _selectPunchScaleTime);
             }
         }
-
-        public void Scroll(bool up)
-        {            
+        
+        [ClientRpc]
+        public void Rpc_Scroll(bool up)
+        {
             _selectedIndex = up ? _selectedIndex - 1 : _selectedIndex + 1;
-            _selectedIndex = Mathf.Clamp(_selectedIndex, 0, _characterResources.Characters.Length-1);
+            _selectedIndex = Mathf.Clamp(_selectedIndex, 0, CharacterLibrary.Instance.Characters.Length - 1);
             _offset = up ? _offset - _height : _offset + _height;
             _offset = Mathf.Clamp(_offset, -_bound, _bound - _height);
             _targetPosition = _startPosition + Vector3.up * _offset;
@@ -236,9 +284,9 @@ namespace Cirrus.Circuit.UI
                 _up.color = _up.color.SetA(_disabledArrowAlpha);
                 if (!up) StartCoroutine(PunchScale(false));
             }
-            else if (_selectedIndex == _characterResources.Characters.Length - 1)
+            else if (_selectedIndex == CharacterLibrary.Instance.Characters.Length - 1)
             {
-                if (up) StartCoroutine(PunchScale(true));      
+                if (up) StartCoroutine(PunchScale(true));
                 _down.color = _down.color.SetA(_disabledArrowAlpha);
             }
             else
@@ -251,6 +299,13 @@ namespace Cirrus.Circuit.UI
             }
         }
 
+        public void Cmd_Scroll(bool up)
+        {            
+            if (!hasAuthority) return;
+
+            CommandClient.Instance.Cmd_CharacterSelectSlot_Scroll(gameObject, up);
+        }
+
         public void HandleAction0()
         {
             switch (_state)
@@ -259,8 +314,8 @@ namespace Cirrus.Circuit.UI
                     break;
 
                 case State.Ready:
-                    _characterSelect.TryChangeState(CharacterSelect.State.Select);
-                    TryChangeState(State.Selecting);
+                    CharacterSelect.Instance.TrySetState(CharacterSelect.State.Select);
+                    Cmd_TrySetState(State.Selecting);
                     break;
 
                 case State.Closed:
@@ -273,28 +328,20 @@ namespace Cirrus.Circuit.UI
             switch (_state)
             {
                 case State.Selecting:
-                    Controls.Player ctrl = (Controls.Player) args[0];
-                    ctrl._characterResource = _characterResources.Characters[_selectedIndex];
-                    TryChangeState(State.Ready);
+                    Controls.Player player = (Controls.Player) args[0];
+                    Debug.Log("Assigned id: " + CharacterLibrary.Instance.Characters[_selectedIndex].Id);
+                    player._session.CharacterId = CharacterLibrary.Instance.Characters[_selectedIndex].Id;
+                    Cmd_TrySetState(State.Ready);
                     break;                    
 
                 case State.Ready:
-                    _characterSelect.TryChangeState(CharacterSelect.State.Ready);
+                    // Try to change the state of the select screen, not the slot
+                    CharacterSelect.Instance.TrySetState(CharacterSelect.State.Ready);
                     break;
 
                 case State.Closed:
                     break;
             }            
-        }      
-
-        public void FixedUpdate()
-        {
-            _rect.localPosition = Vector3.Lerp(_rect.localPosition, _targetPosition, _speed);
-
-            if(_characterSpotlightAnchor.childCount != 0)
-                _characterSpotlightAnchor.GetChild(0)
-                    .Rotate(Vector3.up * Time.deltaTime * _characterSpotlightRotateSpeed);
-
-        }
+        }              
     }
 }

@@ -1,45 +1,29 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Cirrus.Circuit.Controls;
+using Cirrus.Circuit.Networking;
 
 namespace Cirrus.Circuit.UI
 {
     public delegate void OnCharacterSelectReady(int numPlayers);
 
-    public class CharacterSelect : MonoBehaviour
-    {
+    public class CharacterSelect : BaseSingleton<CharacterSelect>
+    {        
         public OnCharacterSelectReady OnCharacterSelectReadyHandler;
 
         [SerializeField]
-        private CharacterSelectSlot[] slots;
+        [UnityEngine.Serialization.FormerlySerializedAs("slots")]        
+        public CharacterSelectSlot[] _slots;
 
-        [SerializeField]
+        [SerializeField]        
         private UnityEngine.UI.Text _readyText;
 
-        public int _readyCount = 0;
-
-        public void OnValidate()
-        {
-            if (slots.Length == 0)
-                slots = GetComponentsInChildren<CharacterSelectSlot>();
-        }
-
-        public void Awake()
-        {
-            Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
-            Game.Instance.OnControllerJoinHandler += OnControllerJoin;
-            Game.Instance.OnLevelSelectHandler += OnLevelSelect;
-            Game.Instance.OnLevelSelectHandler += OnMenu;
-        }
 
         private bool _enabled = false;
 
         public bool Enabled
         {
-            get
-            {
-                return _enabled;
-            }
+            get => _enabled;
 
             set
             {
@@ -48,20 +32,33 @@ namespace Cirrus.Circuit.UI
             }
         }
 
-        public void OnCharacterSelect(bool enabled)
+
+        public override void OnValidate()
         {
-            Enabled = true;
+            base.OnValidate();
+
+            if (_slots.Length == 0) _slots = GetComponentsInChildren<CharacterSelectSlot>();
         }
 
-        public void OnLevelSelect(bool enabled)
+        public override void Awake()
         {
-            Enabled = false;
+            base.Awake();
+
+            Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
+
+            OnCharacterSelectReadyHandler += Game.Instance.OnCharacterSelected;
         }
 
-        public void OnMenu(bool enabled)
+        public void OnCharacterSelect(bool enable)
         {
-            Enabled = false;
+            Enabled = enable;
         }
+
+        public void OnClientStarted(bool enable)
+        {
+
+        }
+        
 
 
         public enum State
@@ -72,8 +69,8 @@ namespace Cirrus.Circuit.UI
         }
 
         private State _state;
-
-        public bool TryChangeState(State target)
+       
+        public bool TrySetState(State target)
         {
             switch (target)
             {
@@ -84,11 +81,20 @@ namespace Cirrus.Circuit.UI
                 case State.Ready:
                     if (_state == State.Ready)
                     {
-                        OnCharacterSelectReadyHandler?.Invoke(_readyCount);
+                        OnCharacterSelectReadyHandler
+                            ?.Invoke(GameSession
+                            .Instance
+                            .CharacterSelectReadyCount);
+
                         return false;
                     }
 
-                    if (_readyCount < 2)
+                    if (GameSession
+                        .Instance
+                        .CharacterSelectReadyCount == 1 ||
+                        GameSession
+                        .Instance
+                        .CharacterSelectReadyCount != GameSession.Instance.CharacterSelectOpenCount)
                     {
                         return false;
                     }
@@ -96,7 +102,6 @@ namespace Cirrus.Circuit.UI
                     _readyText.text = "Ready?";
                     _state = target;
                     return true;
-
 
                 case State.Select:
                     _readyText.text = "";
@@ -118,11 +123,15 @@ namespace Cirrus.Circuit.UI
 
         }
 
+        //public void OnLocalCharacterScroll(int playerId, bool scroll)
+        //{
+        //    _slots[playerId].CmdScroll(scroll);
+        //}
 
-        public void OnControllerJoin(Controls.Player controller)
+
+        public void AssignAuthority(Mirror.NetworkConnection conn, int serverPlayerId)
         {
-            controller._characterSlot = slots[controller.Number];
-            slots[controller.Number].TryChangeState(CharacterSelectSlot.State.Selecting);
+            _slots[serverPlayerId].netIdentity.AssignClientAuthority(conn);                    
         }
     }
 }

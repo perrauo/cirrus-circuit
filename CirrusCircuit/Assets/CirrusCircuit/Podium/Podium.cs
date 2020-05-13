@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Cirrus.Circuit.Networking;
+
+using Mirror;
+using Cirrus.Circuit.World.Objects.Characters;
+using Cirrus.Circuit.UI;
+
 namespace Cirrus.Circuit
 {
     public delegate  void OnPodiumFinished();
 
 
-    public class Podium : MonoBehaviour
+    public class Podium : BaseSingleton<Podium>
     {
         public OnPodiumFinished OnPodiumFinishedHandler;
-
-        [SerializeField]
-        private UI.Announcement _announcement;
 
         [SerializeField]
         private Platform _platformTemplate;
@@ -30,7 +33,7 @@ namespace Cirrus.Circuit
         private List<Platform> _platforms;
 
         [SerializeField]
-        private List<World.Objects.Characters.Character> _characters;
+        private List<Character> _characters;
 
         private Timer _timer;
 
@@ -48,57 +51,58 @@ namespace Cirrus.Circuit
         [SerializeField]
         public float _positionSpeed = 0.4f;
 
+        public bool IsEmpty => _platforms.Count == 0;
 
         private bool _isFinal = false;
 
         private int _platformFinishedCount = 0;
 
-        public void OnValidate()
+        public override void OnValidate()
         {
-            if (_announcement == null)
-                _announcement = FindObjectOfType<UI.Announcement>();
+            base.OnValidate();
+
+           
         }
 
-        public void Awake()
+        public override void Awake()
         {
+            base.Awake();
+
             _timer = new Timer(_timeTransition, start: false, repeat: false);
             _finalTimer = new Timer(_timeFinal, start: false, repeat: false);
 
-            _finalTimer.OnTimeLimitHandler += OnFinalTimeout;
+            _finalTimer.OnTimeLimitHandler += () => OnPodiumFinishedHandler?.Invoke();
 
+            GameSession.OnStartClientStaticHandler += OnClientStarted;
             Game.Instance.OnPodiumHandler += OnPodium;
             Game.Instance.OnFinalPodiumHandler += OnFinalPodium;
+            OnPodiumFinishedHandler += Game.Instance.OnPodiumFinished;
+        }
+
+        public void OnClientStarted(bool enable)
+        {
+
         }
 
         public void FixedUpdate()
         {
-            transform.position = Vector3.Lerp(transform.position, TargetPosition, _positionSpeed);
+            transform.position = Vector3.Lerp(
+                transform.position, 
+                TargetPosition, 
+                _positionSpeed);
 
             for(int i = 0; i < _characters.Count; i++) {
-                _characters[i].Object.transform.position =
+                _characters[i].Transform.position =
                 Vector3.Lerp(
-                    _characters[i].Object.transform.position,
+                    _characters[i].Transform.position,
                     _platforms[i]._characterAnchor.transform.position,
                     _timer.Time/_timeTransitionFrom);
 
-                _characters[i].Object.transform.rotation = Quaternion.Lerp(
-                    _characters[i].Object.transform.rotation, 
+                _characters[i].Transform.rotation = Quaternion.Lerp(
+                    _characters[i].Transform.rotation, 
                     _platforms[i]._visual.Parent.transform.rotation,
                     _timer.Time / _timeTransitionFrom);
             }
-        }
-
-        public bool IsEmpty {
-
-            get
-            {
-                return _platforms.Count == 0;
-            }
-        }
-
-        public void OnRound(Round round)
-        {
-            //round.OnRoundEndHandler += OnRoundEnd;
         }
 
         public void OnPodium()
@@ -119,8 +123,7 @@ namespace Cirrus.Circuit
         {
             foreach (var p in _platforms)
             {
-                if (p == null)
-                    continue;
+                if (p == null) continue;
 
                 _timer.OnTimeLimitHandler -= p.OnTransitionToTimeOut;
                 Destroy(p.gameObject);
@@ -130,48 +133,49 @@ namespace Cirrus.Circuit
             _characters.Clear();
         }
 
-        public void Add(Controls.Player ctrl, World.Objects.Characters.CharacterAsset characterResource)
+        public void Add(
+            PlayerSession player, 
+            CharacterAsset characterResource)
         {
             Platform platform = _platformTemplate.Create(
                 _platformsParent.transform.position + Vector3.right * _platforms.Count * _platformOffset,
                 _platformsParent.transform,
-                ctrl);
-
-            _timer.OnTimeLimitHandler += platform.OnTransitionToTimeOut;
-            _platforms.Add(platform);
+                player);
             platform.OnPlatformFinishedHandler += OnPlatformFinished;
+            _platforms.Add(platform);
+            _timer.OnTimeLimitHandler += platform.OnTransitionToTimeOut;
 
-            World.Objects.Characters.Character character = 
-                characterResource.Create(platform._characterAnchor.transform.position, 
-                platform._characterAnchor.transform);
+            Character character = 
+                characterResource.Create(
+                    platform._characterAnchor.transform.position, 
+                    platform._characterAnchor.transform);
+            
             _characters.Add(character);
             character.transform.rotation = platform._visual.Parent.transform.rotation;
             platform.Character = character;
 
-            character.Number = ctrl.Number;
-            character.Color = ctrl.Color;
-
-        }
-
-        public void OnFinalTimeout()
-        {
-            OnPodiumFinishedHandler?.Invoke();
+            character.ColorId = player.ServerId;
+            character.Color = player.Color;
         }
 
         public void OnPlatformFinished()
         {
             _platformFinishedCount++;
-            if (_platformFinishedCount >= _platforms.Count)
+            if (
+                _platformFinishedCount >= 
+                _platforms.Count)
             {
                 if (_isFinal)
                 {
-                    Controls.Player second = null;
+                    PlayerSession second = null;
                     float secondMax = -99999999f;
-                    Controls.Player winner = null;
+                    PlayerSession winner = null;
                     float max = -99999999f;
-                    foreach (Controls.Player ctrl in Game.Instance._controllers)
+                    foreach (
+                        PlayerSession player in 
+                        GameSession.Instance.Players)
                     {
-                        if (ctrl.Score > max)
+                        if (player.Score > max)
                         {
                             if (second == null)
                             {
@@ -179,36 +183,28 @@ namespace Cirrus.Circuit
                                 secondMax = max;
                             }
 
-                            winner = ctrl;
-                            max = ctrl.Score;
+                            winner = player;
+                            max = player.Score;
 
                         }
-                        else if (ctrl.Score > secondMax)
+                        else if (player.Score > secondMax)
                         {
-                            second = ctrl;
-                            secondMax = ctrl.Score;
+                            second = player;
+                            secondMax = player.Score;
                         }
                     }
 
                     if (winner != null)
                     {
-                        if (Mathf.Approximately(max, secondMax))
-                        {
-                            _announcement.Message = "Tie.";
-                        }
-                        else
-                        {
-                            _announcement.Message = winner.Name + " wins!";
-                        }
+                        Announcement.Instance.Message = 
+                            Mathf.Approximately(max, secondMax) ? 
+                            "Tie." : 
+                            winner.Name + " wins!";
                     }
 
                     _finalTimer.Start();
                 }
-                else
-                {
-
-                    OnPodiumFinishedHandler?.Invoke();
-                }
+                else OnPodiumFinishedHandler?.Invoke();
             }
         }
 

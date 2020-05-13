@@ -32,7 +32,7 @@ namespace Cirrus.Circuit
         //        _controller = value;
         //    }
         //}
-        private Controls.Player _controller;
+        private Networking.PlayerSession _player;
 
         [SerializeField]
         public GameObject _characterAnchor;
@@ -84,17 +84,17 @@ namespace Cirrus.Circuit
 
         public void FixedUpdate()
         {
-            _character.Object.transform.position = _characterAnchor.transform.position;        
+            _character.Transform.position = _characterAnchor.transform.position;        
         }
 
         public void OnTransitionToTimeOut()
         {
-            _maxScore += _controller.Score;
+            _maxScore += _player.Score;
             _finishedTimer.Start();
             Grow();
         }
 
-        public Platform Create(Vector3 position, Transform parent, Controls.Player controller)
+        public Platform Create(Vector3 position, Transform parent, Networking.PlayerSession controller)
         {
             var val = Instantiate(
                 gameObject,
@@ -103,7 +103,7 @@ namespace Cirrus.Circuit
                 parent).GetComponent<Platform>();
 
             //val._maxScore = score;
-            val._controller = controller;
+            val._player = controller;
             return val;
         }
 
@@ -111,17 +111,17 @@ namespace Cirrus.Circuit
         {
             iTween.ScaleAdd(
                 _visual.Parent.gameObject, 
-                new Vector3(0, _controller.Score * _growthFactor, 0), 
+                new Vector3(0, _player.Score * _growthFactor, 0), 
                 _growthTime);
 
             iTween.MoveAdd(
                 _visual.Parent.gameObject, 
-                new Vector3(0, _controller.Score * _growthFactor, 0), 
+                new Vector3(0, _player.Score * _growthFactor, 0), 
                 _growthTime);
 
             iTween.MoveAdd(
                 _characterAnchor.gameObject, 
-                new Vector3(0, _controller.Score * 2 * _growthFactor, 0), 
+                new Vector3(0, _player.Score * 2 * _growthFactor, 0), 
                 _growthTime);
         }
 

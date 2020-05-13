@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5916538679130842025}
   - component: {fileID: 3397547235741876883}
   - component: {fileID: 3267260838187469434}
+  - component: {fileID: 4703252539940480126}
   m_Layer: 0
   m_Name: Podium
   m_TagString: Untagged
@@ -65,7 +66,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3b9262a1e1980344bdfc60654cf09d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Game.Instance: {fileID: 0}
+  syncMode: 0
+  syncInterval: 0.1
+  _announcement: {fileID: 0}
   _platformTemplate: {fileID: 5811594321620954908, guid: ce65645fb5fa86741872a91c9941d909,
     type: 3}
   _platformOffset: 2
@@ -74,8 +77,24 @@ MonoBehaviour:
   _platforms: []
   _characters: []
   _timeTransition: 2
+  _timeFinal: 3
   _timeTransitionFrom: 2
   _positionSpeed: 0.4
+--- !u!114 &4703252539940480126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3590222537608319144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  serverOnly: 0
+  m_AssetId: 
 --- !u!1 &6085920029123701764
 GameObject:
   m_ObjectHideFlags: 0

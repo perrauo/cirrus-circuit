@@ -44,28 +44,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 097fa209f8d04b540898c2c0897484c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _session: {fileID: 0}
   _visual: {fileID: 4590825821992199521}
   _fallbackColors: []
-  _object: {fileID: 1075740447395865748}
+  _transform: {fileID: 2260829504269684254}
   _stepSize: 1
   _stepSpeed: 0.6
   _fallSpeed: 0.6
   _fallDistance: 100
   _scaleSpeed: 0.6
   _destination: {fileID: 0}
-  _user: {fileID: 0}
+  _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
   _targetPosition: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 0, y: 0, z: 0}
   _targetScale: 1
-  Number: 0
+  _colorId: 0
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorTime: 2
   _nextColorIndex: 0
   _nextColorSpeed: 0.05
   _level: {fileID: 0}
+  _levelSession: {fileID: 0}
   _state: 0
+  _controller:
+    _session: {fileID: 0}
+    _character: {fileID: 0}
+    _characterSlot: {fileID: 0}
+    _localId: 0
   _guide: {fileID: 7203719092928459714}
   _moveDelay: 0.05
   _rotationSpeed: 0.6
@@ -395,7 +402,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &8506653363148755848
@@ -535,10 +542,30 @@ PrefabInstance:
       propertyPath: _object
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2412776674566497558, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 2260829504269684254}
     - target: {fileID: 3524197668237725644, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
       propertyPath: m_Center.y
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3879943829750087826, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: _netIdentity
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3879943829750087826, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: _netTransform
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4147202209724150997, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: m_AssetId
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 4984592530192599545, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}

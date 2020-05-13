@@ -38,16 +38,9 @@ namespace Cirrus.Circuit.World.Objects.Characters.Controls
 
         }
 
-
         public void Jump()
         {
             //State.Jump();
         }
-
-
- 
-
-
-
     }
 }

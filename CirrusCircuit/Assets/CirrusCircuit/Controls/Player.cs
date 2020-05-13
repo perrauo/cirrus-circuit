@@ -10,6 +10,7 @@ using UnityInput = UnityEngine.InputSystem;
 //using Cirrus.Circuit.Playable;
 
 using Inputs = UnityEngine.InputSystem;
+using Cirrus.Circuit.Networking;
 
 // Controls Navmesh Navigation
 
@@ -19,16 +20,11 @@ using Inputs = UnityEngine.InputSystem;
 
 namespace Cirrus.Circuit.Controls
 {
-    //[System.Serializable]
+    [System.Serializable]
     public class Player : ActionMap.IPlayerActions
     {
-        private float _score = 0;
-
-        public float Score
-        {
-            get => _score;
-            set => _score = value < 0 ? 0 : value;
-        }
+        [SerializeField]
+        public PlayerSession _session;
 
         public delegate void OnReady(Player ctrl);
 
@@ -39,38 +35,26 @@ namespace Cirrus.Circuit.Controls
         private Inputs.InputDevice _device;
 
         private Inputs.InputControlScheme _scheme;
+        
+        [SerializeField]
+        public World.Objects.Characters.Character _character;        
 
-        // TODO: Rework ? replace by mult action map
-
-        public World.Objects.Characters.Character _character;
-
-        public World.Objects.Characters.CharacterAsset _characterResource;
-
-        public UI.CharacterSelectSlot _characterSlot;      
-
-        public UI.Player PlayerDisplay = null;
-
-        public Color _color;
-
-        public Color Color => _color;
-
-        public string _name;
-
-        public string Name => _name;        
-
-        public int _number = 0;
-
-        public int Number => _number;
-
-        public int _assignedNumber = 0;
+        [SerializeField]
+        public UI.CharacterSelectSlot _characterSlot;
 
         public Vector2 AxisLeft => _actionMap.Player.AxesLeft.ReadValue<Vector2>();
 
-        public Player(int number, string name, Color color, Inputs.InputDevice device, Inputs.InputControlScheme scheme)
+        [SerializeField]
+        public int _localId = 0;
+
+        public int LocalId => _localId;
+
+        public int ServerId => _session.ServerId;
+
+        public Player(int localId, Inputs.InputDevice device, Inputs.InputControlScheme scheme)
         {
-            _name = name;
-            _color = color;
-            _number = number;
+
+            _localId = localId;
             _device = device;
             //_user = Inputs.Users.InputUser.CreateUserWithoutPairedDevices();
             //Inputs.Users.InputUser.PerformPairingWithDevice(_device, _user);
@@ -81,7 +65,7 @@ namespace Cirrus.Circuit.Controls
             // bind to whatever devices are available locally).
             _scheme = scheme;
             _actionMap = new ActionMap();
-            _actionMap.bindingMask = new Inputs.InputBinding { groups = _scheme.bindingGroup };            
+            _actionMap.bindingMask = new Inputs.InputBinding { groups = _scheme.bindingGroup };
             Enable();
         }
 
@@ -109,24 +93,37 @@ namespace Cirrus.Circuit.Controls
 
         // TODO: Simulate LeftStick continuous axis with WASD
         public void OnAxesLeft(UnityInput.InputAction.CallbackContext context)
-        {
+        {            
             var axis = Vector2.ClampMagnitude(context.ReadValue<Vector2>(), 1);
+
             Game.Instance.HandleAxesLeft(this, axis);
+
+            if (GameSession.IsNull) return;
+
+            //GameSession.Instance.HandleAxesLeft(this, axis);
         }
 
         // Cancel
         public void OnAction0(UnityInput.InputAction.CallbackContext context)
         {
-            if(!context.performed)
-                Game.Instance.HandleAction0(this);
+            if (context.performed) return;
+
+            Game.Instance.HandleAction0(this);
+
+            //if (GameSession.IsNull) return;            
         }
 
         // Accept
         public void OnAction1(UnityInput.InputAction.CallbackContext context)
         {
             //context.
-            if(!context.performed)
-                Game.Instance.HandleAction1(this);
+            if (context.performed) return;
+
+            //TODO control game menu
+
+            Game.Instance.HandleAction1(this);
+
+            //if (GameSession.IsNull) return;
         }
     }
 }

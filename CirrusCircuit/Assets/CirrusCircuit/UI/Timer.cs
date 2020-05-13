@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using Cirrus.Circuit.Networking;
 
 namespace Cirrus.Circuit.UI
 {
@@ -10,13 +11,13 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private UnityEngine.UI.Text _text;
 
-        private Round _round;
+        private RoundSession _round;
 
-        public float Time
+        public float TimeRemaining
         {
             set
             {
-                var span = new TimeSpan(0, 0, (int)value); //Or TimeSpan.FromSeconds(seconds); (see Jakob C´s answer)
+                var span = new TimeSpan(0, 0, (int)value);
                 _text.text = string.Format(span.ToString(@"mm\:ss"));
             }
         }
@@ -41,34 +42,35 @@ namespace Cirrus.Circuit.UI
 
         public void Awake()
         {
-            Game.Instance.OnNewRoundHandler += OnNewRound;
-            Game.Instance.OnNewRoundHandler += OnRound;
-            //_on
+            GameSession.OnStartClientStaticHandler += OnClientStarted;
+            Game.Instance.OnRoundInitHandler += OnRoundInit;
+            Game.Instance.OnRoundHandler += OnRound;
+            //Game.Instance.OnR
+        }
+
+        public void OnClientStarted(bool enable)
+        {
+
         }
 
         public void Update()
         {
-            if (_round != null)
-                Time = _round.Time;
+            if (RoundSession.Instance != null) TimeRemaining = RoundSession.Instance.RemainingTime;
         }
 
-        public void OnNewRound(Round round)
-        {
-            _round = round;
-            _round.OnIntermissionHandler += OnIntermission;
+        public void OnRoundInit()
+        {            
+            //RoundSession.Instance.OnIntermissionHandler += OnIntermission;
         }
 
-        public void OnRound(Round round)
+        public void OnRound()
         {
             Enabled = true;
         }
 
-        public void OnIntermission(int count)
-        {
-            Enabled = true;
+        public void OnRoundEnded()
+        {            
+            Enabled = false;
         }
-
-
-
     }
 }

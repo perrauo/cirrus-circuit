@@ -8,6 +8,8 @@ namespace Cirrus.Circuit.World.Objects
 {
     public class Ramp : BaseObject
     {
+        public override ObjectId Id => ObjectId.Ramp;
+
         public override bool TryMove(Vector3Int step, BaseObject incoming = null)
         {
             switch (incoming.Id)
@@ -23,8 +25,8 @@ namespace Cirrus.Circuit.World.Objects
             {
                 if (base.TryEnter(step, ref offset, incoming))
                 {
-                    _user = incoming;
-                    offset += Vector3.up * Level.GridSize / 2;
+                    _visitor = incoming;
+                    offset += Vector3.up * Level.CellSize / 2;
                     return true;
                 }
             }
@@ -38,19 +40,19 @@ namespace Cirrus.Circuit.World.Objects
             base.Start();
         }
 
-        public override void FSMFixedUpdate()
+        public override void FSM_FixedUpdate()
         {
 
         }
 
-        public override void FSMUpdate()
+        public override void FSM_Update()
         {
 
         }
 
         public override void Accept(BaseObject incoming)
         {
-            incoming.TryChangeState(BaseObject.State.RampIdle);
+            incoming.TrySetState(BaseObject.State.RampIdle);
         }
     }
 }

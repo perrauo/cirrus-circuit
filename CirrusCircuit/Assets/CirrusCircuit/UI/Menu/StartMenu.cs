@@ -2,32 +2,38 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Cirrus.Circuit.Networking;
+
 namespace Cirrus.Circuit.UI
 {
-    public class StartMenu : MonoBehaviour
+    public class StartMenu : BaseSingleton<StartMenu>
     {
-        [SerializeField]
-        private UnityEngine.UI.Button _buttonPlay;
+        //[SerializeField]
+        //private UnityEngine.UI.Button _playButton;
 
         [SerializeField]
-        private UnityEngine.UI.Button _buttonExit;
+        private UnityEngine.UI.Button _exitButton;
+
+        [SerializeField]
+        private UnityEngine.UI.Button _hostButton;
+
+        [SerializeField]
+        private UnityEngine.UI.Button _joinButton;
+
+        [SerializeField]
+        private UnityEngine.UI.InputField _joinInput;
 
 
-
-
-        public void OnValidate()
+        public override void OnValidate()
         {
-
+            base.OnValidate();
         }
 
         private bool _enabled = false;
 
         public bool Enabled
         {
-            get
-            {
-                return _enabled;
-            }
+            get => _enabled;
 
             set
             {
@@ -37,22 +43,45 @@ namespace Cirrus.Circuit.UI
         }
 
 
-        public void Awake()
+        public override void Awake()
         {
-            _buttonExit.onClick.AddListener(OnExitClick);
-            _buttonPlay.onClick.AddListener(Game.Instance.OnStartClicked);
-            Game.Instance.OnCharacterSelectHandler += OnCharacterSelect;
+            base.Awake();
+
+            _exitButton.onClick.AddListener(OnExitClick);
+            //_playButton.onClick.AddListener(() => Game.Instance.StartLocal());
+            _joinButton.onClick.AddListener(OnJoinClicked);
+            _hostButton.onClick.AddListener(OnHostClicked);
+
+           
+            //GameSession.OnStartClientStaticHandler += OnSessionStart;
         }
 
+        public override void Start()
+        {
+            base.Start();
+
+            Game.Instance.OnMenuHandler += (x) => Enabled = x;
+        }
+
+        public void OnHostClicked()
+        {
+            if(CustomNetworkManager.Instance.TryStartHost(_joinInput.text)) Game.Instance.JoinSession();
+            else Debug.Log("Unable to host");
+        }
+
+        public void OnJoinClicked()
+        {
+            // TODO erro
+            if (_joinInput == null) return;
+            if (string.IsNullOrEmpty(_joinInput.text)) return;
+
+            if (CustomNetworkManager.Instance.TryStartClient(_joinInput.text)) Game.Instance.JoinSession();
+            else Debug.Log("Unable to join");
+        }
+        
         public void OnExitClick()
         {
 
-        }
-
-
-        public void OnCharacterSelect(bool enabled)
-        {
-            Enabled = false;
         }
 
     }

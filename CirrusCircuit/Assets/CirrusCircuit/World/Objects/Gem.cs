@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cirrus.Circuit.Controls;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,13 +7,12 @@ namespace Cirrus.Circuit.World.Objects
 {
     public class Gem : BaseObject
     {
-        public override ObjectId Id { get { return ObjectId.Gem; } }
+        public override ObjectId Id => ObjectId.Gem;
 
         public enum GemType
         {
             Small,
             Large,
-
         }
 
         [SerializeField]
@@ -31,13 +31,13 @@ namespace Cirrus.Circuit.World.Objects
         //    return Instantiate(gameObject, position, Quaternion.identity, parent).GetComponent<Gem>();
         //}
 
-        public override void Interact(BaseObject source)
+        public override void Cmd_TryInteract(BaseObject source)
         {
-            base.Interact(source);
+            base.Cmd_TryInteract(source);
 
-            if (Number >= 4)
+            if (ColorId >= PlayerManager.PlayerMax)
             {
-                Number = source.Number;
+                ColorId = source.ColorId;
                 Color = source.Color;
             }
         }
@@ -46,8 +46,7 @@ namespace Cirrus.Circuit.World.Objects
         {
             base.Awake();
 
-            if(Number >= 4)
-                _visual.MakeUnique();
+            if(ColorId >= PlayerManager.PlayerMax) _visual.MakeUnique();
         }
 
         // Update is called once per frame

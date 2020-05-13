@@ -48,15 +48,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 2961242913462294473}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db7d39469f9ddd646b3dd1e191e0e777, type: 3}
+  m_Script: {fileID: 11500000, guid: 9690e59770aade349a0b2a838056722e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  valuePercentage: 1
-  animateBar: 1
-  animationType: 0
-  animTime: 0.25
-  minAnimDelta: 1
-  views:
+  _valuePercentage: 1
+  _animateBar: 1
+  _animationType: 0
+  _animTime: 0.25
+  _minAnimDelta: 1
+  _views:
   - {fileID: 2922214213944527953}
   - {fileID: 8876961969099374038}
 --- !u!114 &2922442874005819219
@@ -297,11 +297,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80464b1a2eaa11a4da17f81a4d773f66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  graphic: {fileID: 2921984407562008899}
-  canOverrideColor: 1
-  defaultColor: {r: 0.990566, g: 0.2569865, b: 0.2569865, a: 1}
-  useGradient: 0
-  barGradient:
+  _graphic: {fileID: 2921984407562008899}
+  _canOverrideColor: 1
+  _defaultColor: {r: 0.990566, g: 0.2569865, b: 0.2569865, a: 1}
+  _useGradient: 0
+  _barGradient:
     serializedVersion: 2
     key0: {r: 1, g: 1, b: 1, a: 1}
     key1: {r: 1, g: 1, b: 1, a: 1}
@@ -330,11 +330,11 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  flashOnGain: 0
-  gainColor: {r: 1, g: 1, b: 1, a: 1}
-  flashOnLoss: 0
-  lossColor: {r: 1, g: 1, b: 1, a: 1}
-  flashTime: 0.2
+  _flashOnGain: 0
+  _gainColor: {r: 1, g: 1, b: 1, a: 1}
+  _flashOnLoss: 0
+  _lossColor: {r: 1, g: 1, b: 1, a: 1}
+  _flashTime: 0.2
 --- !u!114 &8876961969099374038
 MonoBehaviour:
   m_ObjectHideFlags: 0

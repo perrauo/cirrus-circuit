@@ -3,10 +3,16 @@ using System.Collections;
 
 namespace Cirrus.Circuit.Transitions
 {
-    public class Transition : MonoBehaviour
+    public class Transition : BaseSingleton<Transition>
     {
+        [SerializeField]
+        private float _transitionTime = 5f;
+        public float TransitionTime => _transitionTime;
 
+        private Timer _transitionTimer = null;
 
+        public Events.Event OnTransitionTimeoutHandler { get => _transitionTimer.OnTimeLimitHandler; set => _transitionTimer.OnTimeLimitHandler = value; }
+        
         [SerializeField]
         private UnityEngine.UI.Image _image;
 
@@ -37,11 +43,25 @@ namespace Cirrus.Circuit.Transitions
         [SerializeField]
         private RectTransform _canvasRectTransform;
 
-
         private Vector3 _startPosition;
 
-        public void OnValidate()
+        private bool _enabled = false;
+
+        public bool Enabled
         {
+            get => _enabled;            
+
+            set
+            {
+                _enabled = value;
+                transform.GetChild(0).gameObject.SetActive(_enabled);
+            }
+        }
+
+        public override void OnValidate()
+        {
+            base.OnValidate();
+
             if (_canvas == null)
                 _canvas = GetComponentInParent<Canvas>();
 
@@ -52,20 +72,25 @@ namespace Cirrus.Circuit.Transitions
 
         //public void OnS
 
-        public void Awake()
+        public override void Awake()
         {
+            base.Awake();
+
+            _transitionTimer = new Timer(_transitionTime, start: false, repeat: false);
+
             // Callback screen resolution
             _startPosition = Vector3.zero + new Vector3(Screen.width/2, Screen.height / 2);
             _distanceAway = Screen.height;
 
-            Game.Instance.OnScreenResizedHandler += OnScreenResize;
-            
+            Game.Instance.OnScreenResizedHandler += OnScreenResize;            
+
             //_canvas.
             //_distanceAway = _canvas.rec
         }
 
-        public void Start()
+        public override void Start()
         {
+            base.Start();
             //StartCoroutine(DoStart());
         }
 
@@ -78,23 +103,6 @@ namespace Cirrus.Circuit.Transitions
             _canvasRectTransform.sizeDelta = new Vector2(Screen.width, Screen.height);
         }
 
-
-
-        private bool _enabled = false;
-
-        public bool Enabled
-        {
-            get
-            {
-                return _enabled;
-            }
-
-            set
-            {
-                _enabled = value;
-                transform.GetChild(0).gameObject.SetActive(_enabled);
-            }
-        }
 
         public IEnumerator DoTransition()
         {
@@ -130,16 +138,15 @@ namespace Cirrus.Circuit.Transitions
             iTween.MoveTo(_image.gameObject, _startPosition + Vector3.up * _distanceAway, _transitionUpTime);
 
             yield return null;
-
-
         }
 
         public void Perform()
         {
+            Debug.Log("Perform transition");
+            OnTransitionTimeoutHandler += Game.Instance.OnTransitionTimeOut;
+
+            _transitionTimer.Start(_transitionTime);
             StartCoroutine(DoTransition());
         }
-
-
-
     }
 }

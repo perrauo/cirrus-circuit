@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 namespace Cirrus.Circuit.World.Objects.Characters
 {
@@ -10,8 +11,27 @@ namespace Cirrus.Circuit.World.Objects.Characters
         public Sprite Portrait;
 
         [SerializeField]
-        private Character CharacterTemplate;
+        [UnityEngine.Serialization.FormerlySerializedAs("CharacterTemplate")]
+        private Character Character;
 
+        public int _id = -1;
+
+        public int Id {
+
+            get
+            {
+                if(_id < 0) _id = Array.IndexOf(CharacterLibrary.Instance.Characters, this);
+
+                return _id;
+            }
+        }
+        
+
+        public void OnValidate()
+        {
+            if (_id < 0) _id = Id;
+        }
+    
         public string Name
         {
             get
@@ -26,18 +46,30 @@ namespace Cirrus.Circuit.World.Objects.Characters
         public Character Create(Vector3 position, Transform parent)
         {
             return Instantiate(
-                CharacterTemplate.gameObject,
+                Character.gameObject,
                 position,
                 Quaternion.identity,
                 parent)
                 .GetComponent<Character>();
         }
 
+
+        public Character Create(Transform parent, Quaternion rotation)
+        {
+            return Instantiate(
+                Character.gameObject,
+                parent.position,
+                rotation,
+                parent)
+                .GetComponent<Character>();
+        }
+
+
         public Character Create(Vector3 position, Transform parent, Quaternion rotation)
         {
             return Instantiate(
-                CharacterTemplate.gameObject,
-                parent.position,
+                Character.gameObject,
+                position,
                 rotation,
                 parent)
                 .GetComponent<Character>();

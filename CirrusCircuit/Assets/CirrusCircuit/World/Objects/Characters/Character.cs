@@ -25,7 +25,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
     public class Character : BaseObject
     {
-        public override ObjectId Id { get { return ObjectId.Character; } }
+        public override ObjectId Id => ObjectId.Character;
 
         public Player _controller;
 
@@ -75,16 +75,9 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
         private bool _wasMovingVertical = false;
 
-        public override void OnRound()
+        public override bool TrySetState(State transition, params object[] args)
         {
-            base.OnRound();
-
-            //_controller.SetCallbacks(this);
-        }
-
-        public override bool TryChangeState(State transition, params object[] args)
-        {
-            return base.TryChangeState(transition, args);
+            return base.TrySetState(transition, args);
         }
 
         public override void OnRoundEnd()
@@ -120,24 +113,28 @@ namespace Cirrus.Circuit.World.Objects.Characters
             if (isMovingVertical && isMovingHorizontal)
             {
                 //moving in both directions, prioritize later
-                if (_wasMovingVertical && base.TryMove(stepHorizontal)) _guide.Show(stepHorizontal);
-                else if (base.TryMove(stepVertical)) _guide.Show(stepVertical);
+                if (_wasMovingVertical)
+                {
+                    base.Cmd_TryMove(stepHorizontal);
+                    _guide.Show(stepHorizontal);
+                }
+                else
+                {
+                    base.Cmd_TryMove(stepVertical);
+                    _guide.Show(stepVertical);
+                }
             }
             else if (isMovingHorizontal)
             {
-                if (base.TryMove(stepHorizontal))
-                {
-                    _guide.Show(stepHorizontal);
-                    _wasMovingVertical = false;
-                }
+                Cmd_TryMove(stepHorizontal);                
+                _guide.Show(stepHorizontal);
+                _wasMovingVertical = false;                
             }
             else if (isMovingVertical)
             {
-                if (base.TryMove(stepVertical))
-                {
-                    _guide.Show(stepVertical);
-                    _wasMovingVertical = true;
-                }
+                Cmd_TryMove(stepVertical);                
+                _guide.Show(stepVertical);
+                _wasMovingVertical = true;                
             }
 
             yield return new WaitForSeconds(_moveDelay);
@@ -150,14 +147,27 @@ namespace Cirrus.Circuit.World.Objects.Characters
         // Use the same raycast to show guide
         public void TryMove(Vector2 axis)
         {
-            if(!_moveCoroutineActive)
-                StartCoroutine(MoveCoroutine(axis));                        
+            switch (_state)
+            {               
+                case State.Moving:
+                case State.Falling:
+                case State.Entering:
+                case State.Idle:
+                case State.RampIdle:
+
+                    if (!_moveCoroutineActive) StartCoroutine(MoveCoroutine(axis));
+                    break;
+
+                default:
+                    break;
+
+            }
         }
 
 
-        public override void FSMUpdate()
+        public override void FSM_Update()
         {
-            base.FSMUpdate();
+            base.FSM_Update();
 
 
             switch (_state)
@@ -172,7 +182,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 case State.RampIdle:
                     
                     if (_direction != Vector3.zero)
-                        Object.transform.rotation = Quaternion.LookRotation(_direction, Object.transform.up);
+                        Transform.rotation = Quaternion.LookRotation(_direction, Transform.up);
                     break;
 
             }
