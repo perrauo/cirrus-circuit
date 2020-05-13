@@ -12,27 +12,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c828eaddb44da53459118299ab503ee1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _session: {fileID: 0}
   _visual: {fileID: 8797730653149646002}
   _fallbackColors: []
-  _object: {fileID: 7782920105222043963}
+  _transform: {fileID: 1137915838277110330}
   _stepSize: 1
   _stepSpeed: 0.2
   _fallSpeed: 0.6
   _fallDistance: 100
   _scaleSpeed: 0.6
   _destination: {fileID: 0}
-  _user: {fileID: 0}
+  _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
   _targetPosition: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 0, y: 0, z: 0}
   _targetScale: 1
-  Number: 5
-  _color: {r: 1, g: 1, b: 1, a: 1}
-  _nextColor: {r: 1, g: 1, b: 1, a: 1}
+  _colorId: 0
+  _color: {r: 1, g: 0, b: 0, a: 1}
+  _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorTime: 2
   _nextColorIndex: 0
   _nextColorSpeed: 0.05
   _level: {fileID: 0}
+  _levelSession: {fileID: 0}
   _state: 0
 --- !u!114 &8797730653149646002
 MonoBehaviour:
