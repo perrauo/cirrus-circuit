@@ -456,10 +456,15 @@ namespace Cirrus.Circuit.World.Objects
                         if (_destination == null)
                         {
                             if (!_level.IsWithinBoundsY(_gridPosition.y - 1))
+                            {
                                 Cmd_TryFallThrough(_gridPosition + Vector3Int.down);
+                            }
                             else if (_levelSession.TryGet(
                                 _gridPosition + Vector3Int.down,
-                                out BaseObject obj)) TrySetState(State.Idle);
+                                out BaseObject obj))
+                            {
+                                Local_TryIdle();
+                            }
                             else Cmd_TryFall();
                         }
                         else _destination.Accept(this);
@@ -468,6 +473,12 @@ namespace Cirrus.Circuit.World.Objects
                     break;
             }
         }
+
+        public virtual void Local_TryIdle()
+        {
+            TrySetState(State.Idle);
+        }
+
 
         public virtual void OnRoundEnd()
         {

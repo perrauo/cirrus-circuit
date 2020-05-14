@@ -23,7 +23,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
         public Vector2 Right;
     }
 
-    public class Character : BaseObject
+    public class Character : BaseObject, ICharacterAnimatorWrapper
     {
         public override ObjectId Id => ObjectId.Character;
 
@@ -44,6 +44,8 @@ namespace Cirrus.Circuit.World.Objects.Characters
         [SerializeField]
         public Animator Animator;
 
+        private CharacterAnimatorWrapper _animatorWrapper;
+
         public override Color Color {
 
             get => _color;            
@@ -58,9 +60,13 @@ namespace Cirrus.Circuit.World.Objects.Characters
             }
         }
 
+        public float BaseLayerLayerWeight { set => throw new NotImplementedException(); }
+
         protected override void Awake()
         {
-            base.Awake(); 
+            base.Awake();
+
+            _animatorWrapper = new CharacterAnimatorWrapper(Animator);
         }
 
         public override void Start()
@@ -78,6 +84,13 @@ namespace Cirrus.Circuit.World.Objects.Characters
         public override bool TrySetState(State transition, params object[] args)
         {
             return base.TrySetState(transition, args);
+        }
+
+        public override void Local_TryIdle()
+        {
+            base.Local_TryIdle();
+
+            Play(CharacterAnimation.Character_Idle);
         }
 
         public override void OnRoundEnd()
@@ -98,12 +111,10 @@ namespace Cirrus.Circuit.World.Objects.Characters
             //Game.Instance.HandleAction1(this);
         }
 
-        private bool _moveCoroutineActive = false;
+        private Coroutine _moveCoroutine = null;
 
         public IEnumerator MoveCoroutine(Vector2 axis)
-        {
-            _moveCoroutineActive = true;
-
+        {            
             bool isMovingHorizontal = Mathf.Abs(axis.x) > 0.5f;
             bool isMovingVertical = Mathf.Abs(axis.y) > 0.5f;
 
@@ -126,23 +137,23 @@ namespace Cirrus.Circuit.World.Objects.Characters
             }
             else if (isMovingHorizontal)
             {
+                Play(CharacterAnimation.Character_Walking);
                 Cmd_TryMove(stepHorizontal);                
                 _guide.Show(stepHorizontal);
                 _wasMovingVertical = false;                
             }
             else if (isMovingVertical)
             {
+                Play(CharacterAnimation.Character_Walking);
                 Cmd_TryMove(stepVertical);                
                 _guide.Show(stepVertical);
                 _wasMovingVertical = true;                
             }
 
             yield return new WaitForSeconds(_moveDelay);
-            _moveCoroutineActive = false;
+            _moveCoroutine = null;
             yield return null;
         }
-
-        private IEnumerator _moveCoroutine;
 
         // Use the same raycast to show guide
         public void TryMove(Vector2 axis)
@@ -155,7 +166,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 case State.Idle:
                 case State.RampIdle:
 
-                    if (!_moveCoroutineActive) StartCoroutine(MoveCoroutine(axis));
+                    if (_moveCoroutine != null) _moveCoroutine = StartCoroutine(MoveCoroutine(axis));
                     break;
 
                 default:
@@ -198,6 +209,21 @@ namespace Cirrus.Circuit.World.Objects.Characters
         public void TryAction1()
         {
             //throw new NotImplementedException();
+        }
+
+        public float GetStateSpeed(CharacterAnimation state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Play(CharacterAnimation animation, float normalizedTime)
+        {
+            _animatorWrapper.Play(animation, normalizedTime);
+        }
+
+        public void Play(CharacterAnimation animation)
+        {
+            _animatorWrapper.Play(animation);
         }
     }
 
