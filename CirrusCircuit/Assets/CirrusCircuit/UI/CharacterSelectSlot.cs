@@ -17,7 +17,7 @@ namespace Cirrus.Circuit.UI
         private Image _imageTemplate;
 
         [SerializeField]
-        private List<Image> _images;
+        private List<Image> _portraits;
 
         [SerializeField]        
         private RectTransform _rect;
@@ -32,6 +32,9 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         [SyncVar]
         private float _portraitHeight = 256;
+
+        [SyncVar]
+        [SerializeField] float _totalHeight = 0;
 
         [SerializeField]
         [SyncVar]
@@ -116,7 +119,7 @@ namespace Cirrus.Circuit.UI
             if (_imageTemplate == null) DebugUtils.Assert(false, "Portrait template is null");
             else _imageTemplate.gameObject.SetActive(true);
 
-            _images = new List<Image>();
+            _portraits = new List<Image>();
             foreach (var res in CharacterLibrary.Instance.Characters)
             {
                 if (res == null) continue;
@@ -125,21 +128,29 @@ namespace Cirrus.Circuit.UI
                 if (portrait != null)
                 {
                     portrait.sprite = res.Portrait;
-                    _images.Add(portrait);
+                    _portraits.Add(portrait);
                 }
             }
 
             if (_imageTemplate != null)
             {
+                _portraitHeight = _portraits[0].GetComponent<LayoutElement>().preferredHeight;
+                _totalHeight = _portraitHeight * _portraits.Count;
+                _offset = 0;
                 _imageTemplate.gameObject.SetActive(false);
-                _portraitHeight = _imageTemplate.GetComponent<RectTransform>().rect.height;
             }
-            _bound = (_portraitHeight * _images.Count) / 2;
+            //_bound = (_portraitHeight * _images.Count) / 2;
+        }
+
+        public void OnEnable()
+        {
+            _startPosition = Vector3.up * (_portraitHeight/2);
+            _targetPosition = _startPosition;
         }
 
         public virtual void Start()
         {
-            _startPosition = _rect.localPosition - Vector3.up * _offset;
+            
         }
 
         public void FixedUpdate()
@@ -276,7 +287,7 @@ namespace Cirrus.Circuit.UI
             _selectedIndex = up ? _selectedIndex - 1 : _selectedIndex + 1;
             _selectedIndex = Mathf.Clamp(_selectedIndex, 0, CharacterLibrary.Instance.Characters.Length - 1);
             _offset = up ? _offset - _portraitHeight : _offset + _portraitHeight;
-            _offset = Mathf.Clamp(_offset, -_bound, _bound - _portraitHeight);
+            _offset = Mathf.Clamp(_offset, 0, _totalHeight - _portraitHeight);
             _targetPosition = _startPosition + Vector3.up * _offset;
 
             if (_selectedIndex == 0)
