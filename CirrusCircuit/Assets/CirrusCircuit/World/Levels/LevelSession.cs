@@ -11,8 +11,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using UnityEngine;
+using Cirrus.Circuit.Networking;
 
-namespace Cirrus.Circuit.Networking
+namespace Cirrus.Circuit.World
 {
     public class LevelSession : CustomNetworkBehaviour
     {
@@ -351,22 +352,6 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
 
-        //public bool IsMoveAllowed(
-        //    BaseObject source,
-        //    Vector3Int step)
-        //{
-        //    Vector3Int direction = step;//.SetXYZ(step.x, 0, step.z);
-
-        //    Vector3Int position = source._gridPosition + step;
-
-        //    if (Level.IsWithinBounds(position))
-        //        return DoIsMoveAllowed(source, position, direction);
-
-        //    return false;
-        //}
-
-
-        // https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid
         public void SetObject(
             Vector3Int pos, 
             BaseObject obj)
@@ -381,7 +366,10 @@ namespace Cirrus.Circuit.Networking
         {
             Vector3Int pos = Level.WorldToGrid(obj.Transform.position);
 
-            int i = VectorUtils.ToIndex(pos, Level.Dimension.x, Level.Dimension.y);
+            int i = VectorUtils.ToIndex(
+                pos, 
+                Level.Dimension.x, 
+                Level.Dimension.y);
 
             //Debug.Log("Registered: " + obj);
             _objects[i] = obj;
@@ -496,27 +484,36 @@ namespace Cirrus.Circuit.Networking
             return !Level.IsWithinBoundsY(position.y);
         }
 
-        public Vector3Int GetFallThroughPosition()
+        public Vector3Int GetFallThroughPosition(bool isLandingGuaranteed=true)
         {
             for (int k = 0; k < FallTrials; k++)
             {
-                Vector3Int pos = new Vector3Int(
-                    UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.x - Level.Offset.x),
-                    Level.Dimension.y - Level.Offset.y - 1,
-                    UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.z - Level.Offset.z));
+                Vector3Int position = new Vector3Int(
+                    
+                    UnityEngine.Random.Range(
+                        0,
+                        Level.Dimension.x),
+                    
+                    Level.Dimension.y - 1,
+                    
+                    UnityEngine.Random.Range(
+                        0,
+                        Level.Dimension.z));
+
+                if (!isLandingGuaranteed) return position;
 
                 // Check for valid surface to fall on
                 for (int i = 0; i < Level.Dimension.y; i++)
                 {
                     if (TryGet(
-                        pos.Copy().SetY(pos.y - i), 
+                        position.Copy().SetY(position.y - i), 
                         out BaseObject target))
                     {
                         if (target is Gem) continue;
                         if (target is Character) continue;
                         if (target is Door) continue;                       
 
-                        return pos;
+                        return position;
                     }
                 }
             }
@@ -539,32 +536,27 @@ namespace Cirrus.Circuit.Networking
             //bool once = false;
 
             if (!Level.IsWithinBoundsY(position.y))
-            {
-                for (int k = 0; k < FallTrials; k++)
+            {      
+                position = GetFallThroughPosition();
+
+                for (int i = 0; i < Level.Dimension.y; i++)
                 {
-                    position = new Vector3Int(
-                        UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.x - Level.Offset.x),
-                        Level.Dimension.y - 1,
-                        UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.z - Level.Offset.z));
-
-                    for (int i = 0; i < Level.Dimension.y; i++)
+                    if (TryGet(position.Copy().SetY(position.y - i), out BaseObject target))
                     {
-                        if (TryGet(position.Copy().SetY(position.y - i), out BaseObject target))
-                        {
-                            if (target is Gem) continue;
-                            if (target is Character) continue;
-                            if (target is Door) continue;
+                        if (target is Gem) continue;
+                        if (target is Character) continue;
+                        if (target is Door) continue;
 
-                            return DoTryMove(
-                                source, 
-                                position, 
-                                direction, 
-                                ref offset, 
-                                out BaseObject pushed, 
-                                out destination);
-                        }
+                        return DoTryMove(
+                            source, 
+                            position, 
+                            direction, 
+                            ref offset, 
+                            out BaseObject pushed, 
+                            out destination);
                     }
                 }
+                
             }
 
             return false;
@@ -574,9 +566,7 @@ namespace Cirrus.Circuit.Networking
 
         public void Cmd_Spawn(Spawnable spawnable, Vector3Int pos)
         {
-            CommandClient.Instance.Cmd_LevelSession_Spawn(
-                gameObject,
-                spawnable.Id, pos);
+            Cmd_Spawn(spawnable.Id, pos);  
         }
 
         public void Cmd_Spawn(int spawnId, Vector3Int pos)
@@ -630,12 +620,12 @@ namespace Cirrus.Circuit.Networking
 
         public void Cmd_OnRainTimeout()
         {
-            Vector3Int position = new Vector3Int(
-                UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.x - Level.Offset.x - 1),
-                Level.Dimension.y - 1,
-                UnityEngine.Random.Range(Level.Offset.x, Level.Dimension.z - Level.Offset.z - 1));
+            Vector3Int position = GetFallThroughPosition();
 
-            Gem gem = ObjectLibrary.Instance.Gems[UnityEngine.Random.Range(0, ObjectLibrary.Instance.Gems.Length)];
+            Gem gem = ObjectLibrary.Instance.Gems[
+                UnityEngine.Random.Range(
+                    0, 
+                    ObjectLibrary.Instance.Gems.Length)];
 
             if (gem.TryGetComponent(out Spawnable spawn))
             {

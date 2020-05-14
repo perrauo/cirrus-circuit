@@ -1,5 +1,7 @@
 ﻿using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.UI;
+using Cirrus.Circuit.World;
+using Cirrus.Circuit.World.Objects;
 using Cirrus.Utils;
 using Mirror;
 using System.Collections.Generic;

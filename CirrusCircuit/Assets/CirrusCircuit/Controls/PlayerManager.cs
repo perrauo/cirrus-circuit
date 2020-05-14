@@ -26,6 +26,8 @@ namespace Cirrus.Circuit.Controls
         
         public const int PlayerMax = 4;
 
+        public static bool IsValidPlayerId(int id) => id >= 0 && id < PlayerMax;
+
         public string GetName(int id)
         {
             string name = DefaultName;
@@ -40,9 +42,7 @@ namespace Cirrus.Circuit.Controls
 
         public Color GetColor(int id)
         {
-            Color color = Color.white;
-            if (id < PlayerMax) color = Colors[id];
-            return color;
+            return (id >= 0 && id < PlayerMax) ? Colors[id] : Color.white;                       
         }
 
         public override void Awake()

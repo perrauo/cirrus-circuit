@@ -17,7 +17,8 @@ using Cirrus.Circuit.World;
 
 using Random = UnityEngine.Random;
 
-namespace Cirrus.Circuit.Networking
+
+namespace Cirrus.Circuit
 {    
     public class GameSession : NetworkBehaviour
     {

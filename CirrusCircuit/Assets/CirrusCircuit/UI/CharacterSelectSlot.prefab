@@ -303,10 +303,10 @@ MonoBehaviour:
   m_IgnoreLayout: 0
   m_MinWidth: -1
   m_MinHeight: -1
-  m_PreferredWidth: 100
-  m_PreferredHeight: 100
+  m_PreferredWidth: -1
+  m_PreferredHeight: 128
   m_FlexibleWidth: 1
-  m_FlexibleHeight: 1
+  m_FlexibleHeight: -1
   m_LayoutPriority: 1
 --- !u!114 &3462516894117315972
 MonoBehaviour:
@@ -497,8 +497,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  _characterResources: {fileID: 11400000, guid: 595b452cadb8b494ba67e882381ea603,
-    type: 2}
   _imageTemplate: {fileID: 3462516894117315972}
   _images:
   - {fileID: 3462516894117315972}
@@ -510,7 +508,6 @@ MonoBehaviour:
   _offset: -512
   _height: 256
   _bound: 512
-  _characterSelect: {fileID: 0}
   _selection: {fileID: 8441759748608348089}
   _statusText: {fileID: 5985715594680511602}
   _up: {fileID: 799246497779607701}
@@ -542,6 +539,7 @@ MonoBehaviour:
   sceneId: 0
   serverOnly: 0
   m_AssetId: 
+  hasSpawned: 0
 --- !u!114 &5101400148114607104
 MonoBehaviour:
   m_ObjectHideFlags: 0

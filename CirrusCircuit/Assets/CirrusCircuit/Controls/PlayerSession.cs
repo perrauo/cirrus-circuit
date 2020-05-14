@@ -26,8 +26,9 @@ using Cirrus.Circuit.Networking;
 using Mirror;
 using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.UI;
+using Cirrus.Circuit.Networking;
 
-namespace Cirrus.Circuit.Networking
+namespace Cirrus.Circuit.Controls
 {
     public class PlayerSession : NetworkBehaviour
     {

@@ -7,6 +7,7 @@ using Cirrus.Circuit.Networking;
 using Mirror;
 using Cirrus.Circuit.World.Objects.Characters;
 using Cirrus.Circuit.UI;
+using Cirrus.Circuit.Controls;
 
 namespace Cirrus.Circuit
 {

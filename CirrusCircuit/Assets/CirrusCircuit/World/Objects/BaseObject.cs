@@ -152,11 +152,19 @@ namespace Cirrus.Circuit.World.Objects
         // TODO: will not be called on disabled level
         protected virtual void Awake()
         {
-            if (ColorId < PlayerManager.PlayerMax)
+            if (PlayerManager.IsValidPlayerId(ColorId))
             {
                 _nextColorIndex = ColorId;
                 _nextColorTimer = new Timer(_nextColorTime, start: false, repeat: true);
                 _nextColorTimer.OnTimeLimitHandler += OnNextColorTimeOut;
+            }
+            else
+            {
+                _visual.MakeMaterialsUnique();
+                
+                Color = PlayerManager
+                    .Instance
+                    .GetColor(ColorId);
             }
 
             _direction = Transform.forward.ToVector3Int();
@@ -200,7 +208,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void Local_TryInteract(BaseObject source)
         {
-            if (ColorId >= PlayerManager.PlayerMax)
+            if (!PlayerManager.IsValidPlayerId(ColorId))
             {
                 ColorId = source.ColorId;
                 Color = source.Color;
@@ -574,10 +582,10 @@ namespace Cirrus.Circuit.World.Objects
 
                 case State.Idle:
                     switch (transition)
-                    {                        
+                    {
                         case State.Disabled:
                         case State.LevelSelect:
-                        case State.Entering:                        
+                        case State.Entering:
                         case State.Moving:
                         case State.Idle:
                         case State.RampIdle:
@@ -605,14 +613,14 @@ namespace Cirrus.Circuit.World.Objects
 
                 case State.Moving:
                     switch (transition)
-                    {                        
+                    {
                         case State.Disabled:
                         case State.LevelSelect:
                         case State.Entering:
                         case State.Idle:
                         case State.RampIdle:
                         case State.FallingThrough:
-                        case State.Falling:                        
+                        case State.Falling:
                             //case State.Moving:
                             destination = transition;
                             return true;
@@ -621,14 +629,14 @@ namespace Cirrus.Circuit.World.Objects
 
                 case State.RampMoving:
                     switch (transition)
-                    {                        
+                    {
                         case State.Disabled:
                         case State.LevelSelect:
                         case State.Entering:
                         case State.Idle:
                         case State.RampIdle:
                         case State.FallingThrough:
-                        case State.Falling:                        
+                        case State.Falling:
                             //case State.Moving:
                             destination = transition;
                             return true;
@@ -671,7 +679,7 @@ namespace Cirrus.Circuit.World.Objects
 
                 case State.LevelSelect:
 
-                    if (ColorId < PlayerManager.PlayerMax)
+                    if (PlayerManager.IsValidPlayerId(ColorId))
                     {
                         OnNextColorTimeOut();
                         _nextColorTimer.Start();

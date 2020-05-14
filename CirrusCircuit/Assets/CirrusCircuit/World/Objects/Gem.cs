@@ -31,22 +31,10 @@ namespace Cirrus.Circuit.World.Objects
         //    return Instantiate(gameObject, position, Quaternion.identity, parent).GetComponent<Gem>();
         //}
 
-        public override void Cmd_TryInteract(BaseObject source)
-        {
-            base.Cmd_TryInteract(source);
-
-            if (ColorId >= PlayerManager.PlayerMax)
-            {
-                ColorId = source.ColorId;
-                Color = source.Color;
-            }
-        }
 
         protected override void Awake()
         {
             base.Awake();
-
-            if(ColorId >= PlayerManager.PlayerMax) _visual.MakeUnique();
         }
 
         // Update is called once per frame

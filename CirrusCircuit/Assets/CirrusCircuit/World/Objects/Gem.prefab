@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &2925202201668641964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6146626724538502216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11cb58a77689c2748a36f048caf726ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: 0
 --- !u!114 &4001282745868766237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22,7 +35,7 @@ MonoBehaviour:
   _fallDistance: 100
   _scaleSpeed: 0.6
   _destination: {fileID: 0}
-  _user: {fileID: 0}
+  _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
   _targetPosition: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 0, y: 0, z: 0}
@@ -60,19 +73,6 @@ MonoBehaviour:
   _texts: []
   _outlines: []
   _barcolors: []
---- !u!114 &2925202201668641964
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6146626724538502216}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11cb58a77689c2748a36f048caf726ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _id: -1
 --- !u!1 &3848309428402309546
 GameObject:
   m_ObjectHideFlags: 0
@@ -131,7 +131,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2ec64a7a88c86d645a1a780cdd9bec63, type: 2}
+  - {fileID: 2100000, guid: aad6be46181bf6e409449ed74f834a7e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

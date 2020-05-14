@@ -8,8 +8,9 @@ using Cirrus.MirrorExt;
 using Cirrus.Utils;
 using Cirrus.Events;
 using System;
+using Cirrus.Circuit.Networking;
 
-namespace Cirrus.Circuit.Networking
+namespace Cirrus.Circuit
 {
     public class RoundSession : CustomNetworkBehaviour
     {

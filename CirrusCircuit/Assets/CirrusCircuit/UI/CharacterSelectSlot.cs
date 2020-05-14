@@ -31,7 +31,7 @@ namespace Cirrus.Circuit.UI
 
         [SerializeField]
         [SyncVar]
-        private float _height = 256;
+        private float _portraitHeight = 256;
 
         [SerializeField]
         [SyncVar]
@@ -132,9 +132,9 @@ namespace Cirrus.Circuit.UI
             if (_imageTemplate != null)
             {
                 _imageTemplate.gameObject.SetActive(false);
-                _height = _imageTemplate.transform.parent.GetComponent<RectTransform>().rect.height / _images.Count;
+                _portraitHeight = _imageTemplate.GetComponent<RectTransform>().rect.height;
             }
-            _bound = (_height * _images.Count) / 2;
+            _bound = (_portraitHeight * _images.Count) / 2;
         }
 
         public virtual void Start()
@@ -275,8 +275,8 @@ namespace Cirrus.Circuit.UI
         {
             _selectedIndex = up ? _selectedIndex - 1 : _selectedIndex + 1;
             _selectedIndex = Mathf.Clamp(_selectedIndex, 0, CharacterLibrary.Instance.Characters.Length - 1);
-            _offset = up ? _offset - _height : _offset + _height;
-            _offset = Mathf.Clamp(_offset, -_bound, _bound - _height);
+            _offset = up ? _offset - _portraitHeight : _offset + _portraitHeight;
+            _offset = Mathf.Clamp(_offset, -_bound, _bound - _portraitHeight);
             _targetPosition = _startPosition + Vector3.up * _offset;
 
             if (_selectedIndex == 0)

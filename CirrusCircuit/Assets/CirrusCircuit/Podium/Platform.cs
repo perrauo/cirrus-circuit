@@ -32,7 +32,7 @@ namespace Cirrus.Circuit
         //        _controller = value;
         //    }
         //}
-        private Networking.PlayerSession _player;
+        private Controls.PlayerSession _player;
 
         [SerializeField]
         public GameObject _characterAnchor;
@@ -94,7 +94,7 @@ namespace Cirrus.Circuit
             Grow();
         }
 
-        public Platform Create(Vector3 position, Transform parent, Networking.PlayerSession controller)
+        public Platform Create(Vector3 position, Transform parent, Controls.PlayerSession controller)
         {
             var val = Instantiate(
                 gameObject,

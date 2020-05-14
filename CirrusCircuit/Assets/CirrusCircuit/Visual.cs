@@ -71,7 +71,7 @@ namespace Cirrus.Circuit
             }
         }
 
-        public void MakeUnique()
+        public void MakeMaterialsUnique()
         {
             foreach (var rend in _meshRenderers)
             {

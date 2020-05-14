@@ -7,6 +7,7 @@ using Cirrus.Circuit.World.Objects;
 using System.Linq;
 using System.Threading;
 using Cirrus.Utils;
+using Cirrus.Circuit.World;
 
 namespace Cirrus.Circuit.Networking
 {

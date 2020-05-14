@@ -138,7 +138,7 @@ MonoBehaviour:
   _fallDistance: 100
   _scaleSpeed: 0.6
   _destination: {fileID: 0}
-  _user: {fileID: 0}
+  _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
   _targetPosition: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 0, y: 0, z: 0}
@@ -254,7 +254,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: aad6be46181bf6e409449ed74f834a7e, type: 2}
+  - {fileID: 2100000, guid: 51c49c6ee3a826b4a8e5faff39069ea4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

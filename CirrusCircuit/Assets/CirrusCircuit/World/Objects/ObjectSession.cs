@@ -5,12 +5,13 @@ using Mirror;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using Cirrus.Circuit.Networking;
 
 using Cirrus.Circuit.World;
 using System;
 using Cirrus.Circuit.World.Objects;
 
-namespace Cirrus.Circuit.Networking
+namespace Cirrus.Circuit.World.Objects
 {
     public class ObjectSession : NetworkBehaviour
     {

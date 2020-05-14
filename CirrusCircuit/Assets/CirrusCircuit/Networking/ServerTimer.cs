@@ -5,7 +5,7 @@ using Mirror;
 using Cirrus.Circuit.Networking;
 using Cirrus.Utils;
 
-namespace Cirrus.Circuit
+namespace Cirrus.Circuit.Networking
 {
     [Serializable]
     public class ServerTimer : NetworkBehaviour
