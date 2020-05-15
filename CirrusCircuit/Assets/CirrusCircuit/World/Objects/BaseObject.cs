@@ -8,6 +8,7 @@ using Cirrus.Utils;
 using System;
 using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.Networking;
+//using System.Numerics;
 
 namespace Cirrus.Circuit.World.Objects
 {
@@ -38,6 +39,7 @@ namespace Cirrus.Circuit.World.Objects
             CharacterPlaceholder,
             Gem,
             Door,
+            Portal,
             Solid,
             Ramp,
             Breakable
@@ -365,6 +367,27 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
+        public virtual void TryExit(BaseObject source, Vector3Int pos, Vector3Int step)
+        {
+            Vector3 offset = new Vector3();
+
+            if (LevelSession.Instance.DoTryMove(
+                this,
+                pos,
+                step,
+                ref offset,
+                out BaseObject pushed,
+                out BaseObject destination))
+            {
+                _destination = destination;
+                _gridPosition = _gridPosition + step;
+                _targetPosition = _level.GridToWorld(_gridPosition + step);
+                Transform.position = Transform.position;
+
+                _state = State.Moving;
+                //success = true;
+            }
+        }
 
 
         #endregion

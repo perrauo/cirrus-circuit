@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading;
 using UnityEngine;
 using Cirrus.Circuit.Networking;
+using UnityEditor.Experimental.GraphView;
 
 namespace Cirrus.Circuit.World
 {
@@ -35,6 +36,8 @@ namespace Cirrus.Circuit.World
             public Vector3Int Position;
             public Quaternion Rotation;
         }
+
+        private Dictionary<int, Tuple<Portal, Portal>> _portals = new Dictionary<int, Tuple<Portal, Portal>>();
 
         [Serializable]
         public class PlaceholderInfoSyncList : SyncList<PlaceholderInfo> { }
@@ -136,6 +139,21 @@ namespace Cirrus.Circuit.World
             }
         }
 
+        public bool TryGetOtherPortal(Portal portal, out Portal other)
+        {
+            other = null;
+
+            if (_portals.TryGetValue(
+                portal.Connection, 
+                out Tuple<Portal, Portal> tuple))
+            {
+                other = portal == tuple.Item1 ? tuple.Item2 : tuple.Item1;
+                return true;
+            }
+
+            return false;
+        }
+
         public void OnRound()
         {
             _objects = new BaseObject[Level.Size];
@@ -155,6 +173,21 @@ namespace Cirrus.Circuit.World
                     );
 
                 if (res is Door) ((Door)res).OnScoreValueAddedHandler += OnGemEntered;
+
+                if (res is Portal)
+                {
+                    var portal = (Portal)res;
+                    if (_portals.TryGetValue(portal.Connection, out Tuple<Portal, Portal> tuple))
+                    {
+                        _portals[portal.Connection] =
+                            new Tuple<Portal, Portal>(
+                                tuple.Item1,
+                                portal);
+                    }
+                    else _portals.Add(
+                        portal.Connection,
+                        new Tuple<Portal, Portal>(portal, portal));                    
+                }
 
                 res._levelSession = this;
                 res._level = Level;
