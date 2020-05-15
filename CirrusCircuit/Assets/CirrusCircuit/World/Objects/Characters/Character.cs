@@ -44,6 +44,11 @@ namespace Cirrus.Circuit.World.Objects.Characters
         [SerializeField]
         public Animator Animator;
 
+        [SerializeField]
+        private float _moveIdleTransitionTime = 0.6f;
+
+        private Timer _moveIdleTransitionTimer;
+
         private CharacterAnimatorWrapper _animatorWrapper;
 
         public override Color Color {
@@ -66,6 +71,8 @@ namespace Cirrus.Circuit.World.Objects.Characters
         {
             base.Awake();
 
+            _moveIdleTransitionTimer = new Timer(_moveIdleTransitionTime, start: false, repeat: false);
+            _moveIdleTransitionTimer.OnTimeLimitHandler += OnMoveIdleTransitionTimeout;
             _animatorWrapper = new CharacterAnimatorWrapper(Animator);
         }
 
@@ -90,8 +97,36 @@ namespace Cirrus.Circuit.World.Objects.Characters
         {
             base.Local_TryIdle();
 
+            _moveIdleTransitionTimer.Start();
+        }
+
+        public override void Local_TryFall()
+        {
+            base.Local_TryFall();
+
+            Play(CharacterAnimation.Character_Falling);
+        }
+
+        public override void Local_TryFallThrough(Vector3Int step, Vector3Int position)
+        {
+            base.Local_TryFallThrough(step, position);
+
+            Play(CharacterAnimation.Character_Falling);
+        }
+
+        public override void Local_TryLand()
+        {
+            base.Local_TryLand();
+
+            Play(CharacterAnimation.Character_Landing);
+        }
+
+
+        public void OnMoveIdleTransitionTimeout()
+        {
             Play(CharacterAnimation.Character_Idle);
         }
+
 
         public override void OnRoundEnd()
         {
@@ -122,7 +157,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
             Vector3Int stepVertical = new Vector3Int(0, 0, _stepSize * Math.Sign(axis.y));
 
             if (isMovingVertical && isMovingHorizontal)
-            {
+            {                
                 //moving in both directions, prioritize later
                 if (_wasMovingVertical)
                 {
@@ -137,14 +172,14 @@ namespace Cirrus.Circuit.World.Objects.Characters
             }
             else if (isMovingHorizontal)
             {
-                Play(CharacterAnimation.Character_Walking);
+                Play(CharacterAnimation.Character_Walking, false);
                 Cmd_TryMove(stepHorizontal);                
                 _guide.Show(stepHorizontal);
                 _wasMovingVertical = false;                
             }
             else if (isMovingVertical)
             {
-                Play(CharacterAnimation.Character_Walking);
+                Play(CharacterAnimation.Character_Walking, false);
                 Cmd_TryMove(stepVertical);                
                 _guide.Show(stepVertical);
                 _wasMovingVertical = true;                
@@ -165,8 +200,9 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 case State.Entering:
                 case State.Idle:
                 case State.RampIdle:
+                    
+                    if (_moveCoroutine == null) _moveCoroutine = StartCoroutine(MoveCoroutine(axis));
 
-                    if (_moveCoroutine != null) _moveCoroutine = StartCoroutine(MoveCoroutine(axis));
                     break;
 
                 default:
@@ -216,14 +252,14 @@ namespace Cirrus.Circuit.World.Objects.Characters
             throw new NotImplementedException();
         }
 
-        public void Play(CharacterAnimation animation, float normalizedTime)
+        public void Play(CharacterAnimation animation, float normalizedTime, bool reset = true)
         {
-            _animatorWrapper.Play(animation, normalizedTime);
+            _animatorWrapper.Play(animation, normalizedTime, reset);
         }
 
-        public void Play(CharacterAnimation animation)
+        public void Play(CharacterAnimation animation, bool reset = true)
         {
-            _animatorWrapper.Play(animation);
+            _animatorWrapper.Play(animation, reset);
         }
     }
 

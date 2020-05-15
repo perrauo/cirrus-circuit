@@ -75,11 +75,12 @@ MonoBehaviour:
     _localId: 0
   _guide: {fileID: 7203719092928459714}
   _moveDelay: 0.05
-  _rotationSpeed: 0.6
+  _rotationSpeed: 0.2
   Axes:
     Left: {x: 0, y: 0}
     Right: {x: 0, y: 0}
   Animator: {fileID: 0}
+  _moveIdleTransitionTime: 0.6
 --- !u!114 &4590825821992199521
 MonoBehaviour:
   m_ObjectHideFlags: 0

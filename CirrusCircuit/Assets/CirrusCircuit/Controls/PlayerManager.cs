@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine;
-using Inputs = UnityEngine.InputSystem;
+using UnityEngine.InputSystem;
 using System.Collections.Generic;
 
 namespace Cirrus.Circuit.Controls
@@ -9,7 +9,7 @@ namespace Cirrus.Circuit.Controls
     public class PlayerManager : BaseSingleton<PlayerManager>
     {
         [SerializeField]
-        private Inputs.InputActionAsset _inputActionAsset;
+        private InputActionAsset _inputActionAsset;
 
         [SerializeField]
         public string[] Names = { "Red", "Blue", "Yellow", "Green" };
@@ -51,7 +51,7 @@ namespace Cirrus.Circuit.Controls
 
             LocalPlayers = new Player[PlayerMax];
 
-            var devices = Inputs.InputDevice.all;
+            var devices = InputSystem.devices;
 
             // TODO: do not assume one player per device?
             // TODO detect when devices connected
@@ -59,11 +59,11 @@ namespace Cirrus.Circuit.Controls
             {
                 if (device != null)
                 {
-                    if (device is Inputs.Keyboard ||
-                        device is Inputs.Gamepad)
+                    if (device is Keyboard ||
+                        device is Gamepad)
                     {
                         //InputActionAsset actions;
-                        foreach (Inputs.InputControlScheme scheme in _inputActionAsset.controlSchemes)
+                        foreach (InputControlScheme scheme in _inputActionAsset.controlSchemes)
                         {
                             if (scheme.SupportsDevice(device))
                             {
@@ -93,11 +93,11 @@ namespace Cirrus.Circuit.Controls
 
 
         // TODO
-        public void OnUnpairedInputDeviceUsed(Inputs.InputControl control)
+        public void OnUnpairedInputDeviceUsed(InputControl control)
         {
-            if (control.device is Inputs.Gamepad)
+            if (control.device is Gamepad)
             {
-                //for(var i = 0; i < _users.Length; i++)
+                //for (var i = 0; i < _users.Length; i++)
                 //{
                 //    // find a user without a paired device
                 //    if (_users[i].pairedDevices.Count == 0)
@@ -108,7 +108,7 @@ namespace Cirrus.Circuit.Controls
                 //    }
                 //}
             }
-            else if (control.device is Inputs.Keyboard)
+            else if (control.device is Keyboard)
             {
 
             }

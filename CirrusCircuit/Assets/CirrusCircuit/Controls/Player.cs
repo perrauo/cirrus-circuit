@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.AI;
 //using Cirrus.Circuit.World.Objects.Characters.Actions;
 //using Cirrus.Circuit.Controls;
-using UnityInput = UnityEngine.InputSystem;
+using UnityEngine.InputSystem;
 //using Cirrus.Circuit.Playable;
 
 using Inputs = UnityEngine.InputSystem;
@@ -32,9 +32,9 @@ namespace Cirrus.Circuit.Controls
 
         private ActionMap _actionMap;
 
-        private Inputs.InputDevice _device;
+        private InputDevice _device;
 
-        private Inputs.InputControlScheme _scheme;
+        private InputControlScheme _scheme;
         
         [SerializeField]
         public World.Objects.Characters.Character _character;        
@@ -42,7 +42,7 @@ namespace Cirrus.Circuit.Controls
         [SerializeField]
         public UI.CharacterSelectSlot _characterSlot;
 
-        public Vector2 AxisLeft => _actionMap.Player.AxesLeft.ReadValue<Vector2>();
+        public Vector2 AxisLeft => _actionMap.Player.AxesLeft.ReadValue<Vector2>();        
 
         [SerializeField]
         public int _localId = 0;
@@ -51,7 +51,7 @@ namespace Cirrus.Circuit.Controls
 
         public int ServerId => _session.ServerId;
 
-        public Player(int localId, Inputs.InputDevice device, Inputs.InputControlScheme scheme)
+        public Player(int localId, InputDevice device, InputControlScheme scheme)
         {
 
             _localId = localId;
@@ -65,7 +65,7 @@ namespace Cirrus.Circuit.Controls
             // bind to whatever devices are available locally).
             _scheme = scheme;
             _actionMap = new ActionMap();
-            _actionMap.bindingMask = new Inputs.InputBinding { groups = _scheme.bindingGroup };
+            _actionMap.bindingMask = new InputBinding { groups = _scheme.bindingGroup };
             Enable();
         }
 
@@ -83,7 +83,7 @@ namespace Cirrus.Circuit.Controls
             }
             else
             {
-                //_actionMap.Player.SetCallbacks(null);
+                _actionMap.Player.SetCallbacks(null);
                 _actionMap.Player.Disable();
                 _actionMap.Disable();
                 _actionMap.Player.AxesLeft.Disable();
@@ -91,39 +91,41 @@ namespace Cirrus.Circuit.Controls
             }
         }
 
+        public bool IsAxesLeft => _actionMap.Player.AxesLeft.phase == InputActionPhase.Performed;
+
+
         // TODO: Simulate LeftStick continuous axis with WASD
-        public void OnAxesLeft(UnityInput.InputAction.CallbackContext context)
+        public void OnAxesLeft(InputAction.CallbackContext context)
         {            
             var axis = Vector2.ClampMagnitude(context.ReadValue<Vector2>(), 1);
+
+            Debug.Log(axis);
 
             Game.Instance.HandleAxesLeft(this, axis);
 
             if (GameSession.IsNull) return;
 
-            //GameSession.Instance.HandleAxesLeft(this, axis);
         }
 
         // Cancel
-        public void OnAction0(UnityInput.InputAction.CallbackContext context)
+        public void OnAction0(InputAction.CallbackContext context)
         {
             if (context.performed) return;
 
-            Game.Instance.HandleAction0(this);
+            if (context.canceled) return;            
 
-            //if (GameSession.IsNull) return;            
+            Game.Instance.HandleAction0(this);
         }
 
         // Accept
-        public void OnAction1(UnityInput.InputAction.CallbackContext context)
+        public void OnAction1(InputAction.CallbackContext context)
         {
             //context.
             if (context.performed) return;
 
-            //TODO control game menu
+            if (context.canceled) return;            
 
-            Game.Instance.HandleAction1(this);
-
-            //if (GameSession.IsNull) return;
+            Game.Instance.HandleAction1(this);            
         }
     }
 }

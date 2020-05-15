@@ -463,6 +463,8 @@ namespace Cirrus.Circuit.World.Objects
                                 _gridPosition + Vector3Int.down,
                                 out BaseObject obj))
                             {
+                                if (_state == State.Falling || _state == State.FallingThrough) Local_TryLand();
+
                                 Local_TryIdle();
                             }
                             else Cmd_TryFall();
@@ -479,6 +481,10 @@ namespace Cirrus.Circuit.World.Objects
             TrySetState(State.Idle);
         }
 
+        public virtual void Local_TryLand()
+        {
+
+        }
 
         public virtual void OnRoundEnd()
         {
@@ -745,7 +751,7 @@ namespace Cirrus.Circuit.World.Objects
                     {
                         _destination = destination;
                         _gridPosition = nextGridPosition;
-                        Debug.Log(Name + " " + _gridPosition);
+                        //Debug.Log(Name + " " + _gridPosition);
                         _targetPosition = _level.GridToWorld(_gridPosition);
 
                         _state = target;

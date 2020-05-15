@@ -1,5 +1,6 @@
 // GENERATED AUTOMATICALLY FROM 'Assets/CirrusCircuit/Controls/ActionMap.inputactions'
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
@@ -7,10 +8,10 @@ using UnityEngine.InputSystem.Utilities;
 
 namespace Cirrus.Circuit.Controls
 {
-    public class ActionMap : IInputActionCollection
+    public class @ActionMap : IInputActionCollection, IDisposable
     {
-        private InputActionAsset asset;
-        public ActionMap()
+        public InputActionAsset asset { get; }
+        public @ActionMap()
         {
             asset = InputActionAsset.FromJson(@"{
     ""name"": ""ActionMap"",
@@ -25,7 +26,7 @@ namespace Cirrus.Circuit.Controls
                     ""id"": ""149cc932-d56a-4338-b185-94fd9471a705"",
                     ""expectedControlType"": ""Axis"",
                     ""processors"": """",
-                    ""interactions"": """"
+                    ""interactions"": ""Hold""
                 },
                 {
                     ""name"": ""Action.0"",
@@ -49,7 +50,7 @@ namespace Cirrus.Circuit.Controls
                     ""name"": ""Gamepad.Dpad "",
                     ""id"": ""35b4b9fd-490b-46b2-a0b8-2a1e08a73ac4"",
                     ""path"": ""2DVector"",
-                    ""interactions"": ""Hold"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Axes.Left"",
@@ -104,7 +105,7 @@ namespace Cirrus.Circuit.Controls
                     ""name"": ""Keyboard.Arrows"",
                     ""id"": ""c0a6a62a-d82f-4ab9-bbb9-78ced9b3dcbe"",
                     ""path"": ""2DVector"",
-                    ""interactions"": ""Hold(duration=10)"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Axes.Left"",
@@ -159,7 +160,7 @@ namespace Cirrus.Circuit.Controls
                     ""name"": ""Keyboard.WASD"",
                     ""id"": ""57c9370e-1587-4b31-8cc9-fb84501c7c10"",
                     ""path"": ""2DVector"",
-                    ""interactions"": ""Hold(duration=10)"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Axes.Left"",
@@ -316,13 +317,13 @@ namespace Cirrus.Circuit.Controls
     ]
 }");
             // Player
-            m_Player = asset.GetActionMap("Player");
-            m_Player_AxesLeft = m_Player.GetAction("Axes.Left");
-            m_Player_Action0 = m_Player.GetAction("Action.0");
-            m_Player_Action1 = m_Player.GetAction("Action.1");
+            m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
+            m_Player_AxesLeft = m_Player.FindAction("Axes.Left", throwIfNotFound: true);
+            m_Player_Action0 = m_Player.FindAction("Action.0", throwIfNotFound: true);
+            m_Player_Action1 = m_Player.FindAction("Action.1", throwIfNotFound: true);
         }
 
-        ~ActionMap()
+        public void Dispose()
         {
             UnityEngine.Object.Destroy(asset);
         }
@@ -374,8 +375,8 @@ namespace Cirrus.Circuit.Controls
         private readonly InputAction m_Player_Action1;
         public struct PlayerActions
         {
-            private ActionMap m_Wrapper;
-            public PlayerActions(ActionMap wrapper) { m_Wrapper = wrapper; }
+            private @ActionMap m_Wrapper;
+            public PlayerActions(@ActionMap wrapper) { m_Wrapper = wrapper; }
             public InputAction @AxesLeft => m_Wrapper.m_Player_AxesLeft;
             public InputAction @Action0 => m_Wrapper.m_Player_Action0;
             public InputAction @Action1 => m_Wrapper.m_Player_Action1;
@@ -388,28 +389,28 @@ namespace Cirrus.Circuit.Controls
             {
                 if (m_Wrapper.m_PlayerActionsCallbackInterface != null)
                 {
-                    AxesLeft.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAxesLeft;
-                    AxesLeft.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAxesLeft;
-                    AxesLeft.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAxesLeft;
-                    Action0.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction0;
-                    Action0.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction0;
-                    Action0.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction0;
-                    Action1.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction1;
-                    Action1.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction1;
-                    Action1.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction1;
+                    @AxesLeft.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAxesLeft;
+                    @AxesLeft.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAxesLeft;
+                    @AxesLeft.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAxesLeft;
+                    @Action0.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction0;
+                    @Action0.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction0;
+                    @Action0.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction0;
+                    @Action1.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction1;
+                    @Action1.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction1;
+                    @Action1.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction1;
                 }
                 m_Wrapper.m_PlayerActionsCallbackInterface = instance;
                 if (instance != null)
                 {
-                    AxesLeft.started += instance.OnAxesLeft;
-                    AxesLeft.performed += instance.OnAxesLeft;
-                    AxesLeft.canceled += instance.OnAxesLeft;
-                    Action0.started += instance.OnAction0;
-                    Action0.performed += instance.OnAction0;
-                    Action0.canceled += instance.OnAction0;
-                    Action1.started += instance.OnAction1;
-                    Action1.performed += instance.OnAction1;
-                    Action1.canceled += instance.OnAction1;
+                    @AxesLeft.started += instance.OnAxesLeft;
+                    @AxesLeft.performed += instance.OnAxesLeft;
+                    @AxesLeft.canceled += instance.OnAxesLeft;
+                    @Action0.started += instance.OnAction0;
+                    @Action0.performed += instance.OnAction0;
+                    @Action0.canceled += instance.OnAction0;
+                    @Action1.started += instance.OnAction1;
+                    @Action1.performed += instance.OnAction1;
+                    @Action1.canceled += instance.OnAction1;
                 }
             }
         }
@@ -419,7 +420,7 @@ namespace Cirrus.Circuit.Controls
         {
             get
             {
-                if (m_KeyboardArrowsSchemeIndex == -1) m_KeyboardArrowsSchemeIndex = asset.GetControlSchemeIndex("Keyboard.Arrows");
+                if (m_KeyboardArrowsSchemeIndex == -1) m_KeyboardArrowsSchemeIndex = asset.FindControlSchemeIndex("Keyboard.Arrows");
                 return asset.controlSchemes[m_KeyboardArrowsSchemeIndex];
             }
         }
@@ -428,7 +429,7 @@ namespace Cirrus.Circuit.Controls
         {
             get
             {
-                if (m_GamepadDpadSchemeIndex == -1) m_GamepadDpadSchemeIndex = asset.GetControlSchemeIndex("Gamepad.Dpad");
+                if (m_GamepadDpadSchemeIndex == -1) m_GamepadDpadSchemeIndex = asset.FindControlSchemeIndex("Gamepad.Dpad");
                 return asset.controlSchemes[m_GamepadDpadSchemeIndex];
             }
         }
@@ -437,7 +438,7 @@ namespace Cirrus.Circuit.Controls
         {
             get
             {
-                if (m_KeyboardWASDSchemeIndex == -1) m_KeyboardWASDSchemeIndex = asset.GetControlSchemeIndex("Keyboard.WASD");
+                if (m_KeyboardWASDSchemeIndex == -1) m_KeyboardWASDSchemeIndex = asset.FindControlSchemeIndex("Keyboard.WASD");
                 return asset.controlSchemes[m_KeyboardWASDSchemeIndex];
             }
         }

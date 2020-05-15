@@ -296,7 +296,7 @@ namespace Cirrus.Circuit.Networking
         [ClientRpc]
         public void Rpc_Game_SelectLevel(int index)
         {
-            Debug.Log("RPC SELECT LEVEL: " + index);
+            //Debug.Log("RPC SELECT LEVEL: " + index);
             Game.Instance.Local_SelectLevel(index);
         }
 

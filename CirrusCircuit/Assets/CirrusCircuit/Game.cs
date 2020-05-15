@@ -312,10 +312,21 @@ namespace Cirrus.Circuit
         {
             switch (_state)
             {
+
                 case State.Round:
+
+                    foreach (var player in PlayerManager.Instance.LocalPlayers)
+                    {
+                        if (player == null) continue;
+
+                        if (player._character == null) continue;
+
+                        if (player.IsAxesLeft) player._character.TryMove(player.AxisLeft);
+                        
+                        
+                    }
                     break;
 
-                case State.CharacterSelection:
                 case State.InitRound:
                 case State.LevelSelection:
                 case State.Score:
@@ -840,7 +851,7 @@ namespace Cirrus.Circuit
             }
         }
 
-        public void FSM_HandleAction1(Controls.Player player)
+        public void FSM_HandleAction1(Player player)
         {
             switch (_state)
             {

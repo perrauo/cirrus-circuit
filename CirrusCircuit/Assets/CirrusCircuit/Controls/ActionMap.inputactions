@@ -11,7 +11,7 @@
                     "id": "149cc932-d56a-4338-b185-94fd9471a705",
                     "expectedControlType": "Axis",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "Hold"
                 },
                 {
                     "name": "Action.0",
@@ -35,7 +35,7 @@
                     "name": "Gamepad.Dpad ",
                     "id": "35b4b9fd-490b-46b2-a0b8-2a1e08a73ac4",
                     "path": "2DVector",
-                    "interactions": "Hold",
+                    "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Axes.Left",
@@ -90,7 +90,7 @@
                     "name": "Keyboard.Arrows",
                     "id": "c0a6a62a-d82f-4ab9-bbb9-78ced9b3dcbe",
                     "path": "2DVector",
-                    "interactions": "Hold(duration=10)",
+                    "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Axes.Left",
@@ -145,7 +145,7 @@
                     "name": "Keyboard.WASD",
                     "id": "57c9370e-1587-4b31-8cc9-fb84501c7c10",
                     "path": "2DVector",
-                    "interactions": "Hold(duration=10)",
+                    "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Axes.Left",
