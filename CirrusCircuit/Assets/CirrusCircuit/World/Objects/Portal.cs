@@ -69,7 +69,7 @@ namespace Cirrus.Circuit.World.Objects
 
                         if(LevelSession.Instance.TryGetOtherPortal(this, out Portal other))
                         {
-                            other.TryExitFrom(incoming);
+                            //other.TryExitFrom(incoming);
                         }
 
                         incoming._targetScale = 0;
