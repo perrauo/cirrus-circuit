@@ -110,7 +110,7 @@
 //            //StartCoroutine(PunchValue());
 //        }
 
-//        public bool TrySetState(State state, params object[] args)
+//        public bool SetState(State state, params object[] args)
 //        {
 //            _state = state;
 

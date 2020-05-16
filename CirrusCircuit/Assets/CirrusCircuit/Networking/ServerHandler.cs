@@ -27,7 +27,7 @@ namespace Cirrus.Circuit.Networking
         public override void Stop()
         {
             _net.StopHost();
-            ServerUtils.TryDestroyNetworkObject(GameSession.Instance.gameObject);
+            ServerUtils.DestroyNetworkObject(GameSession.Instance.gameObject);
         }
 
         public override void OnClientConnect(NetworkConnection conn)
@@ -37,7 +37,7 @@ namespace Cirrus.Circuit.Networking
             // If local connection            
             if (NetworkServer.localConnection.connectionId == conn.connectionId)
             {
-                if (ServerUtils.TryCreatePlayer(
+                if (ServerUtils.CreatePlayer(
                     NetworkServer.localConnection, 
                     NetworkingLibrary.Instance.ClientConnectionPlayer.gameObject,
                     out NetworkBehaviour player))
@@ -47,13 +47,13 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-        public bool TryGetConnection(int connectionId, out CommandClient client)
+        public bool GetConnection(int connectionId, out CommandClient client)
         {
             return _connections.TryGetValue(connectionId, out client);
         }
 
 
-        public bool DoTryPlayerJoin(NetworkConnection conn, int localPlayerId)
+        public bool DoPlayerJoin(NetworkConnection conn, int localPlayerId)
         {
             if (GameSession.Instance.PlayerCount == PlayerManager.PlayerMax) return false;
 
@@ -98,24 +98,24 @@ namespace Cirrus.Circuit.Networking
         public override bool RequestPlayerJoin(int localPlayerId)
         {
             // Debug.Log("On network player created");
-            return DoTryPlayerJoin(NetworkServer.localConnection, localPlayerId);
+            return DoPlayerJoin(NetworkServer.localConnection, localPlayerId);
         }
 
         public override bool RequestPlayerLeave(int localPlayerId)
         {
             return false;
             //// Debug.Log("On network player created");
-            //return DoTryPlayerJoin(NetworkServer.localConnection, localPlayerId);
+            //return DoPlayerJoin(NetworkServer.localConnection, localPlayerId);
         }
 
         public void OnPlayerJoinMessage(NetworkConnection conn, ClientPlayerMessage message)
         {
-            DoTryPlayerJoin(conn, message.LocalPlayerId);
+            DoPlayerJoin(conn, message.LocalPlayerId);
         }
 
         public void OnClientConnectedMessage(NetworkConnection conn, ClientConnectedMessage message)
         {
-            if (ServerUtils.TryCreatePlayer(
+            if (ServerUtils.CreatePlayer(
                 conn, 
                 NetworkingLibrary.Instance.ClientConnectionPlayer.gameObject, 
                 out NetworkBehaviour client))

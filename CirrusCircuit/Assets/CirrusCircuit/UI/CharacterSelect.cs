@@ -70,7 +70,7 @@ namespace Cirrus.Circuit.UI
 
         private State _state;
        
-        public bool TrySetState(State target)
+        public bool SetState(State target)
         {
             switch (target)
             {

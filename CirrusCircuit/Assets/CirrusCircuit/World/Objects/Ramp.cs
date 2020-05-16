@@ -8,24 +8,41 @@ namespace Cirrus.Circuit.World.Objects
 {
     public class Ramp : BaseObject
     {
-        public override ObjectId Id => ObjectId.Ramp;
+        public override ObjectType Type => ObjectType.Ramp;
 
-        public override bool TryMove(Vector3Int step, BaseObject incoming = null)
+        public override bool Move(Vector3Int step, BaseObject source = null)
         {
-            switch (incoming.Id)
+            switch (source.Type)
             {
                 default:
                     return false;
             }
         }
 
-        public override bool TryEnter(Vector3Int step, ref Vector3 offset, BaseObject incoming = null)
+        public override bool Enter(
+            Vector3Int step,
+            BaseObject source,
+            out Vector3 offset,
+            out Vector3Int gridDest,
+            out Vector3Int stepDest,
+            out BaseObject dest)
         {
+            offset = Vector3.zero;
+            stepDest = step;
+            gridDest = source._gridPosition;
+            dest = this;
+
             if (step == _direction)
             {
-                if (base.TryEnter(step, ref offset, incoming))
+                if (base.Enter(
+                    step, 
+                    source, 
+                    out offset,
+                    out gridDest,
+                    out stepDest,
+                    out dest))
                 {
-                    _visitor = incoming;
+                    _visitor = source;
                     offset += Vector3.up * Level.CellSize / 2;
                     return true;
                 }
@@ -50,9 +67,9 @@ namespace Cirrus.Circuit.World.Objects
 
         }
 
-        public override void Accept(BaseObject incoming)
+        public override void Accept(BaseObject source)
         {
-            incoming.TrySetState(BaseObject.State.RampIdle);
+            source.RampIdle();
         }
     }
 }

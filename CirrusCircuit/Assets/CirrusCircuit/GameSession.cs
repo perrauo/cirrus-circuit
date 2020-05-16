@@ -207,13 +207,13 @@ namespace Cirrus.Circuit
         private void OnPodiumFinished()
         {
             //if (_state == State.FinalPodium)
-            //    TrySetState(State.LevelSelection);
+            //    SetState(State.LevelSelection);
             
-            //else TrySetState(State.Round);
+            //else SetState(State.Round);
             
         }
 
-        public bool TryJoin(Player player)
+        public bool Join(Player player)
         {
             //if (_controllers.Count >= _selectedLevelIndex.CharacterCount)
             //    return false;
@@ -223,7 +223,7 @@ namespace Cirrus.Circuit
             return false;
         }
 
-        public bool TryLeave(Player player)
+        public bool Leave(Player player)
         {
             //if (_controllers.Count >= _selectedLevelIndex.CharacterCount)
             //    return false;
@@ -233,14 +233,14 @@ namespace Cirrus.Circuit
             return false;
         }
 
-        public void Join(Player player)
-        {
-            //switch (_state)
-            //{
-            //    case State.LevelSelection:
-            //        break;
-            //}
-        }
+        //public void Join(Player player)
+        //{
+        //    //switch (_state)
+        //    //{
+        //    //    case State.LevelSelection:
+        //    //        break;
+        //    //}
+        //}
         
     }
 }

@@ -7,19 +7,30 @@ namespace Cirrus.Circuit.World.Objects
 {
     public class Solid : BaseObject
     {
-        public override ObjectId Id => ObjectId.Solid;
+        public override ObjectType Type => ObjectType.Solid;
 
-        public override bool TryMove(Vector3Int step, BaseObject incoming = null)
+        public override bool Move(Vector3Int step, BaseObject source = null)
         {
-            switch (incoming.Id)
+            switch (source.Type)
             {
                 default:
                     return false;
             }
         }
 
-        public override bool TryEnter(Vector3Int step, ref Vector3 offset, BaseObject incoming = null)
+        public override bool Enter(
+            Vector3Int step,
+            BaseObject source,
+            out Vector3 offset,
+            out Vector3Int gridDest,
+            out Vector3Int stepDest,
+            out BaseObject dest)
         {
+            gridDest = source._gridPosition;
+            stepDest = step;
+            offset = Vector3.zero;
+            dest = this;
+
             return false;
         }
 
@@ -29,22 +40,22 @@ namespace Cirrus.Circuit.World.Objects
             base.Start();
         }
 
-        public override void Cmd_TryFall()
+        public override void Cmd_Fall()
         {
         
         }
 
-        public override void Cmd_TryFallThrough(Vector3Int step)
+        public override void Cmd_FallThrough(Vector3Int step)
         {
             
         }
 
-        public override void Cmd_TryInteract(BaseObject source)
+        public override void Cmd_Interact(BaseObject source)
         {
             
         }
 
-        public override void Cmd_TryMove(Vector3Int step)
+        public override void Cmd_Move(Vector3Int step)
         {
             
         }

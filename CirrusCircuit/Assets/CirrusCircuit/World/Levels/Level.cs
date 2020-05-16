@@ -175,7 +175,7 @@ namespace Cirrus.Circuit.World
                 if (obj == null)
                     continue;
 
-                obj.TrySetState(BaseObject.State.LevelSelect);
+                obj.InitState(BaseObject.State.LevelSelect, null);
             }
         }
 

@@ -169,7 +169,7 @@ namespace Cirrus.Circuit
 
             Screen.fullScreen = IsFullScreen; 
 
-            Local_SetState(
+            SetState(
                 State.Menu, 
                 false);            
         }
@@ -209,7 +209,7 @@ namespace Cirrus.Circuit
 
         public void JoinSession()
         {
-            Local_SetState(State.CharacterSelection);
+            SetState(State.CharacterSelection);
         }
 
         public void OnCharacterSelected(int playerCount)
@@ -258,7 +258,7 @@ namespace Cirrus.Circuit
         }
 
         // TODO change for SyncVar hook
-        public void Local_SelectLevel(int index)
+        public void SelectLevel(int index)
         {            
             for (int i = 0; i < _levels.Length; i++)
             {
@@ -272,7 +272,7 @@ namespace Cirrus.Circuit
             OnLevelSelectedHandler?.Invoke(_levels[index], index);
         }
 
-        public void Local_ScrollLevel(int step)
+        public void ScrollLevel(int step)
         {
             OnLevelScrollHandler
                 ?.Invoke(
@@ -321,7 +321,7 @@ namespace Cirrus.Circuit
 
                         if (player._character == null) continue;
 
-                        if (player.IsAxesLeft) player._character.TryMove(player.AxisLeft);
+                        if (player.IsAxesLeft) player._character.Move(player.AxisLeft);
                         
                         
                     }
@@ -348,7 +348,7 @@ namespace Cirrus.Circuit
             return false;
         }
 
-        public void Local_SetState(
+        public void SetState(
             State transition, 
             bool transitionEffect=true)
         {
@@ -360,23 +360,23 @@ namespace Cirrus.Circuit
                     .Instance
                     .Perform();
             }
-            else if (TryTransition(
+            else if (GetAllowedTransition(
                 transition, 
                 out State destination))
             {
                 ExitState(destination);
-                TryFinishSetState(destination);
+                InitState(destination);
             }
         }
 
         public void OnTransitionTimeOut()
         {
-            if (TryTransition(
+            if (GetAllowedTransition(
                 _nextState, 
                 out State destination))
             {
                 ExitState(destination);
-                TryFinishSetState(destination);
+                InitState(destination);
             }
         }
 
@@ -408,7 +408,7 @@ namespace Cirrus.Circuit
             }
         }
 
-        private bool TryTransition(
+        private bool GetAllowedTransition(
             State transition, 
             out State destination, 
             params object[] args)
@@ -584,7 +584,7 @@ namespace Cirrus.Circuit
         }
        
 
-        protected bool TryFinishSetState(
+        protected bool InitState(
             State target, 
             params object[] args)
         {
@@ -682,7 +682,7 @@ namespace Cirrus.Circuit
                         () =>
                         {
                             OnRoundInitHandler?.Invoke();
-                            Local_SetState(State.Round);
+                            SetState(State.Round);
                             RoundSession.Instance.StartIntermisison();
                         },
                         () => RoundSession.Instance != null && RoundSession.Instance.IsClientStarted,
@@ -793,7 +793,7 @@ namespace Cirrus.Circuit
                     break;
 
                 case State.Round:
-                    if (player._character != null) player._character?.TryMove(axis);
+                    if (player._character != null) player._character?.Move(axis);
 
                     break;
 
@@ -836,13 +836,13 @@ namespace Cirrus.Circuit
                     //else
                     //{
                     //    foreach (Player other in PlayerManager.Instance.LocalPlayers) if (other == null) continue;
-                    //    TrySetState(State.LevelSelection);
+                    //    SetState(State.LevelSelection);
                     //}
 
                     break;
 
                 case State.Round:
-                    if (player._character) player._character?.TryAction0();
+                    if (player._character) player._character?.DoAction0();
 
                     break;
 
@@ -877,7 +877,7 @@ namespace Cirrus.Circuit
                     break;
 
                 case State.Round:
-                    if (player._character) player._character?.TryAction1();
+                    if (player._character) player._character?.DoAction1();
                     break;
 
                 case State.Score:

@@ -182,11 +182,11 @@ namespace Cirrus.Circuit
         [ClientRpc]
         public void Rpc_OnStartIntermissionTimeout()
         {
-            Local_OnStartIntermissionTimeout();
+            OnStartIntermissionTimeout();
         }
 
 
-        public void Local_OnStartIntermissionTimeout()
+        public void OnStartIntermissionTimeout()
         {
             OnCountdownHandler?.Invoke(_countDown);
             if(CustomNetworkManager.IsServer) _countDownTimer.Start();
@@ -205,10 +205,10 @@ namespace Cirrus.Circuit
         [ClientRpc]
         public void Rpc_OnRoundTimeout()
         {
-            Local_OnRoundTimeout();
+            OnRoundTimeout();
         }
 
-        public void Local_OnRoundTimeout()
+        public void OnRoundTimeout()
         {
             if (CustomNetworkManager.IsServer)
             {
@@ -234,10 +234,10 @@ namespace Cirrus.Circuit
         [ClientRpc]
         public void Rpc_OnCountDownTimeout()
         {
-            Local_OnCountdownTimeOut();
+            OnCountdownTimeOut();
         }
 
-        private void Local_OnCountdownTimeOut()
+        private void OnCountdownTimeOut()
         {
             _countDown--;
 
@@ -274,10 +274,10 @@ namespace Cirrus.Circuit
         [ClientRpc]
         public void Rpc_OnRoundEnd()
         {
-            Local_OnRoundEnd();
+            OnRoundEnd();
         }
 
-        public void Local_OnRoundEnd()
+        public void OnRoundEnd()
         {
             _countDownTimer.Stop();
             _startIntermissionTimer.Stop();

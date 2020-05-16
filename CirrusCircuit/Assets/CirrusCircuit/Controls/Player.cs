@@ -99,7 +99,7 @@ namespace Cirrus.Circuit.Controls
         {            
             var axis = Vector2.ClampMagnitude(context.ReadValue<Vector2>(), 1);
 
-            Debug.Log(axis);
+            // Debug.Log(axis);
 
             Game.Instance.HandleAxesLeft(this, axis);
 

@@ -24,7 +24,7 @@ namespace Cirrus.Circuit
             //Game
         }
 
-        public void TrySetState(State state)
+        public void SetState(State state)
         {
 
         }

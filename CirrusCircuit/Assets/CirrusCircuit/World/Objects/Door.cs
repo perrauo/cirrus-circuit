@@ -8,7 +8,7 @@ namespace Cirrus.Circuit.World.Objects
 {
     public class Door : BaseObject
     {
-        public override ObjectId Id => ObjectId.Door;
+        public override ObjectType Type => ObjectType.Door;
 
         public delegate void OnScoreValueAdded(
         Gem gem,
@@ -102,21 +102,33 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
-        public override bool TryMove(Vector3Int step, BaseObject incoming = null)
+        public override bool Move(Vector3Int step, BaseObject source = null)
         {
             return false;
         }
 
 
-        public override bool TryEnter(Vector3Int step, ref Vector3 offset, BaseObject incoming = null)
+        public override bool Enter(
+            Vector3Int step,
+            BaseObject source,
+            out Vector3 offset,
+            out Vector3Int gridDest,
+            out Vector3Int stepDest,
+            out BaseObject dest)
         {
-            if (base.TryEnter(step, ref offset, incoming))
+            if (base.Enter(
+                step,
+                source,
+                out offset,
+                out gridDest,
+                out stepDest,
+                out dest))
             {
-                //_user = incoming;
+                //_user = source;
 
-                switch (incoming.Id)
+                switch (source.Type)
                 {
-                    case ObjectId.Gem:
+                    case ObjectType.Gem:
 
                         iTween.Init(_visual.Parent.gameObject);
                         iTween.Stop(_visual.Parent.gameObject);
@@ -124,14 +136,14 @@ namespace Cirrus.Circuit.World.Objects
                         _visual.Parent.gameObject.transform.localScale = new Vector3(1, 1, 1);
                         StartCoroutine(PunchScaleCoroutine());
 
-                        OnGemEntered(incoming as Gem);
+                        OnGemEntered(source as Gem);
 
-                        incoming._targetScale = 0;
+                        source._targetScale = 0;
                         offset += Vector3.up * Level.CellSize / 2;
 
                         return true;
 
-                    case ObjectId.Character:
+                    case ObjectType.Character:
                         return false;
                     default:
                         return false;
@@ -141,32 +153,32 @@ namespace Cirrus.Circuit.World.Objects
             return false;
         }
 
-        public override void Cmd_TryFall()
+        public override void Cmd_Fall()
         {
             
         }
 
-        public override void Cmd_TryFallThrough(Vector3Int step)
+        public override void Cmd_FallThrough(Vector3Int step)
         {
             
         }
 
-        public override void Local_TryFall()
+        public override void Fall()
         {
 
         }
 
-        public override void Accept(BaseObject incoming)
+        public override void Accept(BaseObject source)
         {            
-            switch (incoming.Id)
+            switch (source.Type)
             {
-                case ObjectId.Gem:
+                case ObjectType.Gem:
                     iTween.Init(Transform.gameObject);
                     iTween.Stop(Transform.gameObject);
                     
                     //_visual.Parent.transform.localScale = new Vector3(1, 1, 1);
                     //StartCoroutine(PunchScale());
-                    //incoming._targetScale = 0;
+                    //source._targetScale = 0;
 
                     return;
                 default:

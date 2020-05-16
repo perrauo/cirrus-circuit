@@ -57,6 +57,7 @@ MonoBehaviour:
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
   _targetPosition: {x: 0, y: 0, z: 0}
+  _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 0, y: 0, z: 0}
   _targetScale: 1
   _colorId: 0
@@ -67,6 +68,7 @@ MonoBehaviour:
   _nextColorSpeed: 0.05
   _level: {fileID: 0}
   _levelSession: {fileID: 0}
+  _exitScaleTime: 0.4
   _state: 0
   _controller:
     _session: {fileID: 0}

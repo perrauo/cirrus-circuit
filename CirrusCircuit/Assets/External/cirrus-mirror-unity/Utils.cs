@@ -14,7 +14,7 @@ namespace Cirrus.MirrorExt
 
     public static class ServerUtils
     {
-        public static bool TryCreatePlayer(
+        public static bool CreatePlayer(
             NetworkConnection conn,
             GameObject playerTemplate,
             out NetworkBehaviour player)
@@ -30,7 +30,7 @@ namespace Cirrus.MirrorExt
             return false;
         }
 
-        public static bool TryDestroyNetworkObject(
+        public static bool DestroyNetworkObject(
             GameObject obj)
         {
             if (obj.GetComponent<NetworkIdentity>() == null) return false;

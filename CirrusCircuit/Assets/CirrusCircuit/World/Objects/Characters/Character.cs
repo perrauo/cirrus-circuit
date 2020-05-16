@@ -25,7 +25,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
     public class Character : BaseObject, ICharacterAnimatorWrapper
     {
-        public override ObjectId Id => ObjectId.Character;
+        public override ObjectType Type => ObjectType.Character;
 
         public Player _controller;
 
@@ -88,35 +88,30 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
         private bool _wasMovingVertical = false;
 
-        public override bool TrySetState(State transition, params object[] args)
+        public override void Idle()
         {
-            return base.TrySetState(transition, args);
-        }
-
-        public override void Local_TryIdle()
-        {
-            base.Local_TryIdle();
+            base.Idle();
 
             _moveIdleTransitionTimer.Start();
         }
 
-        public override void Local_TryFall()
+        public override void Fall()
         {
-            base.Local_TryFall();
+            base.Fall();
 
             Play(CharacterAnimation.Character_Falling);
         }
 
-        public override void Local_TryFallThrough(Vector3Int step, Vector3Int position)
+        public override void FallThrough(Vector3Int step, Vector3Int position)
         {
-            base.Local_TryFallThrough(step, position);
+            base.FallThrough(step, position);
 
             Play(CharacterAnimation.Character_Falling);
         }
 
-        public override void Local_TryLand()
+        public override void Land()
         {
-            base.Local_TryLand();
+            base.Land();
 
             Play(CharacterAnimation.Character_Landing);
         }
@@ -161,26 +156,26 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 //moving in both directions, prioritize later
                 if (_wasMovingVertical)
                 {
-                    base.Cmd_TryMove(stepHorizontal);
+                    base.Cmd_Move(stepHorizontal);
                     _guide.Show(stepHorizontal);
                 }
                 else
                 {
-                    base.Cmd_TryMove(stepVertical);
+                    base.Cmd_Move(stepVertical);
                     _guide.Show(stepVertical);
                 }
             }
             else if (isMovingHorizontal)
             {
                 Play(CharacterAnimation.Character_Walking, false);
-                Cmd_TryMove(stepHorizontal);                
+                Cmd_Move(stepHorizontal);                
                 _guide.Show(stepHorizontal);
                 _wasMovingVertical = false;                
             }
             else if (isMovingVertical)
             {
                 Play(CharacterAnimation.Character_Walking, false);
-                Cmd_TryMove(stepVertical);                
+                Cmd_Move(stepVertical);                
                 _guide.Show(stepVertical);
                 _wasMovingVertical = true;                
             }
@@ -191,7 +186,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
         }
 
         // Use the same raycast to show guide
-        public void TryMove(Vector2 axis)
+        public void Move(Vector2 axis)
         {
             switch (_state)
             {               
@@ -237,12 +232,12 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
         }
 
-        public void TryAction0()
+        public void DoAction0()
         {
             //throw new NotImplementedException();
         }
 
-        public void TryAction1()
+        public void DoAction1()
         {
             //throw new NotImplementedException();
         }

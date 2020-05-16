@@ -2,21 +2,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Cirrus.Circuit.World.Objects
 {
+    public enum GemType
+    {
+        Small,
+        Large,
+    }
+
+
     public class Gem : BaseObject
     {
-        public override ObjectId Id => ObjectId.Gem;
-
-        public enum GemType
-        {
-            Small,
-            Large,
-        }
+        public override ObjectType Type => ObjectType.Gem;
 
         [SerializeField]
-        public GemType Type;
+        [FormerlySerializedAs("Type")]
+        public GemType GemType;
 
         [SerializeField]
         public float Value = 1f;
@@ -45,8 +48,19 @@ namespace Cirrus.Circuit.World.Objects
             _visual.Parent.transform.Rotate(Vector3.right * Time.deltaTime * _rotateSpeed);
         }
 
-        public override bool TryEnter(Vector3Int step, ref Vector3 offset, BaseObject incoming = null)
+        public override bool Enter(
+            Vector3Int step,
+            BaseObject source,
+            out Vector3 offset,
+            out Vector3Int gridDest,
+            out Vector3Int stepDest,
+            out BaseObject dest)
         {
+            offset = Vector3.zero;
+            gridDest = Vector3Int.zero;
+            stepDest = step;
+            dest = this;
+
             return false;
         }
 

@@ -113,8 +113,8 @@ namespace Cirrus.Circuit.World
         public void FixedUpdate()
         {
             transform.position = Vector3.Lerp(
-                transform.position, 
-                TargetPosition, 
+                transform.position,
+                TargetPosition,
                 Level._positionSpeed);
         }
 
@@ -139,12 +139,12 @@ namespace Cirrus.Circuit.World
             }
         }
 
-        public bool TryGetOtherPortal(Portal portal, out Portal other)
+        public bool GetOtherPortal(Portal portal, out Portal other)
         {
             other = null;
 
             if (_portals.TryGetValue(
-                portal.Connection, 
+                portal.Connection,
                 out Tuple<Portal, Portal> tuple))
             {
                 other = portal == tuple.Item1 ? tuple.Item2 : tuple.Item1;
@@ -186,7 +186,7 @@ namespace Cirrus.Circuit.World
                     }
                     else _portals.Add(
                         portal.Connection,
-                        new Tuple<Portal, Portal>(portal, portal));                    
+                        new Tuple<Portal, Portal>(portal, portal));
                 }
 
                 res._levelSession = this;
@@ -230,7 +230,7 @@ namespace Cirrus.Circuit.World
                     obj._session = session;
                     session._object = obj;
 
-                    obj.TrySetState(BaseObject.State.Disabled);
+                    obj.Disable();
                 }
             }
         }
@@ -247,7 +247,7 @@ namespace Cirrus.Circuit.World
             _randomDropRainTimer.OnTimeLimitHandler -= Cmd_OnRainTimeout;
 
             foreach (var obj in _objects) if (obj != null) Destroy(obj.gameObject);
-            
+
             if (CustomNetworkManager.IsServer)
             {
                 foreach (var sess in ObjectSessions)
@@ -266,7 +266,7 @@ namespace Cirrus.Circuit.World
 
                     NetworkServer.Destroy(gameObject);
                     Destroy(gameObject);
-                }                
+                }
             }
 
             _instance = null;
@@ -275,13 +275,13 @@ namespace Cirrus.Circuit.World
         public static LevelSession Create()
         {
             int i = 0;
-            LevelSession levelSession = NetworkingLibrary.Instance.LevelSession.Create();           
+            LevelSession levelSession = NetworkingLibrary.Instance.LevelSession.Create();
             List<PlaceholderInfo> placeholders = new List<PlaceholderInfo>();
 
             var objs = GameSession.Instance.SelectedLevel.Objects.Where(x => x != null).FirstOrDefault();
 
             foreach (
-                var obj in 
+                var obj in
                 GameSession.Instance.SelectedLevel.Objects)
             {
                 if (obj != null)
@@ -289,9 +289,9 @@ namespace Cirrus.Circuit.World
                     var objectSession = NetworkingLibrary.Instance.ObjectSession.Create();
                     objectSession.Index = i;
                     levelSession._objectSessions.Add(objectSession.gameObject);
-                    
+
                     NetworkServer.Spawn(
-                        objectSession.gameObject, 
+                        objectSession.gameObject,
                         NetworkServer.localConnection);
 
                     if (obj is Gem)
@@ -327,7 +327,7 @@ namespace Cirrus.Circuit.World
                     info._characterId = player.CharacterId;
 
                     //if (
-                    //    CustomNetworkManager.Instance.ServerHandler.TryGetConnection(
+                    //    CustomNetworkManager.Instance.ServerHandler.GetConnection(
                     //        player._connectionId,
                     //        out ClientPlayer client))
                     //{
@@ -344,27 +344,27 @@ namespace Cirrus.Circuit.World
                 (Gem gem, int player, float value) =>
                 {
                     GameSession.Instance.GetPlayer(player).Score += value;
-                };            
+                };
 
             NetworkServer.Spawn(levelSession.gameObject, NetworkServer.localConnection);
             return levelSession;
         }
 
-        private bool DoIsMoveAllowed(
+        private bool IsMoveAllowed(
             BaseObject source,
             Vector3Int position,
             Vector3Int direction)
         {
-            if (TryGet(
+            if (Get(
                     position,
-                    out BaseObject pushed))
+                    out BaseObject moved))
             {
-                if (pushed.IsMoveAllowed(
+                if (moved.IsMoveAllowed(
                     direction,
                     source))
                     return true;
 
-                else if (pushed.IsEnterAllowed(
+                else if (moved.IsEnterAllowed(
                     direction,
                     source))
                     return true;
@@ -380,13 +380,13 @@ namespace Cirrus.Circuit.World
         {
             Vector3Int position = source._gridPosition + direction;
 
-            if (Level.IsWithinBounds(position)) return DoIsMoveAllowed(source, position, direction);
+            if (Level.IsWithinBounds(position)) return IsMoveAllowed(source, position, direction);
 
             return false;
         }
 
-        public void SetObject(
-            Vector3Int pos, 
+        public void Set(
+            Vector3Int pos,
             BaseObject obj)
         {
             int i = VectorUtils.ToIndex(pos, Level.Dimension.x, Level.Dimension.y);
@@ -400,8 +400,8 @@ namespace Cirrus.Circuit.World
             Vector3Int pos = Level.WorldToGrid(obj.Transform.position);
 
             int i = VectorUtils.ToIndex(
-                pos, 
-                Level.Dimension.x, 
+                pos,
+                Level.Dimension.x,
                 Level.Dimension.y);
 
             //Debug.Log("Registered: " + obj);
@@ -413,12 +413,12 @@ namespace Cirrus.Circuit.World
 
         public void UnregisterObject(BaseObject obj)
         {
-            SetObject(obj._gridPosition, null);
+            Set(obj._gridPosition, null);
         }
 
 
-        public bool TryGet(
-            Vector3Int pos, 
+        public bool Get(
+            Vector3Int pos,
             out BaseObject obj)
         {
             obj = null;
@@ -433,75 +433,104 @@ namespace Cirrus.Circuit.World
             return obj != null;
         }
 
-        public bool DoTryMove(
-            BaseObject source, 
-            Vector3Int position, 
-            Vector3Int direction, 
-            ref Vector3 offset, 
-            out BaseObject pushed, 
-            out BaseObject destination)
+        public bool MoveToPosition(
+            BaseObject source,
+            Vector3Int gridTarget,
+            Vector3Int step,
+            out Vector3 offset,
+            out Vector3Int gridDest,
+            out BaseObject moved,
+            out BaseObject dest)
         {
-            pushed = null;
-            destination = null;
+            dest = null;
+            gridDest = gridTarget;
+            offset = Vector3.zero;
 
-            if (TryGet(position, out pushed))
+            if (Get(
+                gridTarget,
+                out moved))
             {
-                if (pushed.TryMove(direction, source))
+                if (moved.Move(
+                    step,
+                    source))
                 {
-                    // Only set occupying tile if not visiting
-                    // Only set occupying tile if not visiting
-                    if (source._destination == null) SetObject(source._gridPosition, null);
+                    // Only set/free occupying tile if not visiting
+                    if (source._destination == null) Set(source._gridPosition, null);
                     else source._destination._visitor = null;
 
-                    SetObject(position, source);
+                    Set(gridTarget, source);
                     return true;
 
                 }
-                else if (pushed.TryEnter(direction, ref offset, source))
+                else if (moved.Enter(
+                    step,
+                    source,
+                    out offset,
+                    out gridDest,
+                    out Vector3Int stepDest,
+                    out dest))
                 {
-                    destination = pushed;
+                    // If moving out of entered object
+                    if (dest != moved)
+                    {
+                        if (
+                            dest == null || 
+                            dest.Move(stepDest, source))
+                        {
+                            // Only set/free occupying tile if not visiting
+                            if (source._destination == null) Set(source._gridPosition, null);
+                            else source._destination._visitor = null;
 
-                    // Only set occupying tile if not visiting
-                    if (source._destination == null) SetObject(source._gridPosition, null);
-                    else source._destination._visitor = null;
-
-                    return true;
+                            Set(gridDest, source);
+                            return true;
+                        }
+                    }
+                    // If moving in entered object
+                    else
+                    {
+                        // Only set/free occupying tile if not visiting
+                        if (source._destination == null) Set(source._gridPosition, null);
+                        else source._destination._visitor = null;
+                        return true;
+                    }                    
                 }
             }
             else
             {
                 // Only set occupying tile if not visiting
-                if (source._destination == null) SetObject(source._gridPosition, null);
+                if (source._destination == null) Set(source._gridPosition, null);
                 else source._destination._visitor = null;
 
-                SetObject(position, source);
+                Set(gridTarget, source);
                 return true;
             }
 
             return false;
         }
 
-        public bool TryMove(
+        public bool Move(
             BaseObject source,
             Vector3Int step,
-            ref Vector3 offset,
-            out Vector3Int position,
-            out BaseObject pushed,
+            out Vector3 offset,
+            out Vector3Int destinationPosition,
+            out BaseObject moved,
             out BaseObject destination)
         {
             destination = null;
-            pushed = null;
+            moved = null;
             Vector3Int direction = step;
-            position = source._gridPosition + step;
+            destinationPosition = source._gridPosition + step;
+            offset = Vector3.zero;
 
-            if (Level.IsWithinBounds(position))
+            if (Level.IsWithinBounds(destinationPosition))
             {
-                return DoTryMove(
+                return MoveToPosition(
                     source,
-                    position,
+                    destinationPosition,
                     direction,
-                    ref offset,
-                    out pushed,
+                    out offset,
+                    out destinationPosition,
+                    out moved,
                     out destination);
             }
 
@@ -517,18 +546,18 @@ namespace Cirrus.Circuit.World
             return !Level.IsWithinBoundsY(position.y);
         }
 
-        public Vector3Int GetFallThroughPosition(bool isLandingGuaranteed=true)
+        public Vector3Int GetFallThroughPosition(bool isLandingGuaranteed = true)
         {
             for (int k = 0; k < FallTrials; k++)
             {
                 Vector3Int position = new Vector3Int(
-                    
+
                     UnityEngine.Random.Range(
                         0,
                         Level.Dimension.x),
-                    
+
                     Level.Dimension.y - 1,
-                    
+
                     UnityEngine.Random.Range(
                         0,
                         Level.Dimension.z));
@@ -538,13 +567,14 @@ namespace Cirrus.Circuit.World
                 // Check for valid surface to fall on
                 for (int i = 0; i < Level.Dimension.y; i++)
                 {
-                    if (TryGet(
-                        position.Copy().SetY(position.y - i), 
+                    if (Get(
+                        position.Copy().SetY(position.y - i),
                         out BaseObject target))
                     {
                         if (target is Gem) continue;
                         if (target is Character) continue;
-                        if (target is Door) continue;                       
+                        if (target is Door) continue;
+                        if (target is Portal) continue;
 
                         return position;
                     }
@@ -555,41 +585,42 @@ namespace Cirrus.Circuit.World
             return Vector3Int.zero;
         }
 
-        public bool TryFallThrough(
+        public bool FallThrough(
             BaseObject source,
-            Vector3Int step, 
+            Vector3Int step,
             ref Vector3 offset,
-            out Vector3Int position,
+            out Vector3Int destinationPosition,
             out BaseObject destination)
         {
             destination = null;
             Vector3Int direction = step;//.SetXYZ(step.x, 0, step.z);
-            position = source._gridPosition + step;
+            destinationPosition = source._gridPosition + step;
 
             //bool once = false;
 
-            if (!Level.IsWithinBoundsY(position.y))
-            {      
-                position = GetFallThroughPosition();
+            if (!Level.IsWithinBoundsY(destinationPosition.y))
+            {
+                destinationPosition = GetFallThroughPosition();
 
                 for (int i = 0; i < Level.Dimension.y; i++)
                 {
-                    if (TryGet(position.Copy().SetY(position.y - i), out BaseObject target))
+                    if (Get(destinationPosition.Copy().SetY(destinationPosition.y - i), out BaseObject target))
                     {
                         if (target is Gem) continue;
                         if (target is Character) continue;
                         if (target is Door) continue;
 
-                        return DoTryMove(
-                            source, 
-                            position, 
-                            direction, 
-                            ref offset, 
-                            out BaseObject pushed, 
+                        return MoveToPosition(
+                            source,
+                            destinationPosition,
+                            direction,
+                            out offset,
+                            out destinationPosition,
+                            out BaseObject moved,
                             out destination);
                     }
                 }
-                
+
             }
 
             return false;
@@ -599,35 +630,35 @@ namespace Cirrus.Circuit.World
 
         public void Cmd_Spawn(Spawnable spawnable, Vector3Int pos)
         {
-            Cmd_Spawn(spawnable.Id, pos);  
+            Cmd_Spawn(spawnable.Id, pos);
         }
 
         public void Cmd_Spawn(int spawnId, Vector3Int pos)
         {
             CommandClient.Instance.Cmd_LevelSession_Spawn(
                 gameObject,
-                spawnId, 
+                spawnId,
                 pos);
         }
 
         [ClientRpc]
         public void Rpc_Spawn(
-            GameObject sessionObj, 
-            int spawnId, 
+            GameObject sessionObj,
+            int spawnId,
             Vector3Int pos)
         {
             if (sessionObj.TryGetComponent(out ObjectSession session))
             {
-                Local_Spawn(
+                Spawn(
                     session,
                     ObjectLibrary.Instance.Get(spawnId),
                     pos);
             }
         }
 
-        public void Local_Spawn(
-            ObjectSession session, 
-            Spawnable template, 
+        public void Spawn(
+            ObjectSession session,
+            Spawnable template,
             Vector3Int pos)
         {
             GameObject gobj = template.gameObject.Create(
@@ -641,7 +672,7 @@ namespace Cirrus.Circuit.World
                 obj._session = session;
                 obj._levelSession = this;
                 (obj.Transform.position, obj._gridPosition) = RegisterObject(obj);
-                obj.TrySetState(BaseObject.State.Idle);
+                obj.Idle();
             }
         }
 
@@ -657,7 +688,7 @@ namespace Cirrus.Circuit.World
 
             Gem gem = ObjectLibrary.Instance.Gems[
                 UnityEngine.Random.Range(
-                    0, 
+                    0,
                     ObjectLibrary.Instance.Gems.Length)];
 
             if (gem.TryGetComponent(out Spawnable spawn))
@@ -669,10 +700,10 @@ namespace Cirrus.Circuit.World
         [ClientRpc]
         public void Rpc_OnRainTimeout(Vector3Int pos, int objectId)
         {
-            Local_OnRainTimeout(pos, objectId);
+            OnRainTimeout(pos, objectId);
         }
 
-        public void Local_OnRainTimeout(Vector3Int pos, int objectId)
+        public void OnRainTimeout(Vector3Int pos, int objectId)
         {
             Cmd_Spawn(objectId, pos);
         }
@@ -692,7 +723,7 @@ namespace Cirrus.Circuit.World
             {
                 if (obj == null) continue;
 
-                obj.TrySetState(BaseObject.State.Idle);
+                obj.Idle();
             }
 
             if (CustomNetworkManager.IsServer)
@@ -710,7 +741,7 @@ namespace Cirrus.Circuit.World
 
             //    obj.OnRoundEnd();
 
-            //    obj.TrySetState(BaseObject.State.Disabled);
+            //    obj.SetState(BaseObject.State.Disabled);
             //}
 
             //foreach (GameObject obj in _objects)
@@ -720,7 +751,7 @@ namespace Cirrus.Circuit.World
 
             //    //obj.OnRoundEnd();
 
-            //    //obj.TrySetState(BaseObject.State.Disabled);
+            //    //obj.SetState(BaseObject.State.Disabled);
             //}
 
             _randomDropRainTimer.Stop();
@@ -746,7 +777,7 @@ namespace Cirrus.Circuit.World
             //{
             //    if (obj == null) continue;
 
-            //    obj.TrySetState(BaseObject.State.LevelSelect);
+            //    obj.SetState(BaseObject.State.LevelSelect);
             //}
         }
     }

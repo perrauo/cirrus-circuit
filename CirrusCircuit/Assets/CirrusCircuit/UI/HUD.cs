@@ -33,9 +33,9 @@ namespace Cirrus.Circuit.UI
         {
             if (_availablePlayerDisplays.Count != 0)
             {
-                //_availablePlayerDisplays[0].TrySetState(Player.State.Ready, player.ServerId);
+                //_availablePlayerDisplays[0].SetState(Player.State.Ready, player.ServerId);
                 _availablePlayerDisplays.RemoveAt(0);
-                //_playerDisplays[index]?.TrySetState(state);
+                //_playerDisplays[index]?.SetState(state);
             }            
         }
    

@@ -146,7 +146,7 @@ namespace Cirrus.Circuit.Networking
             _handler.Stop();
         }
 
-        public bool TryStartHost(string port)
+        public bool StartHost(string port)
         {            
             _handler = null;
             _handler = new ServerHandler(this);
@@ -163,10 +163,10 @@ namespace Cirrus.Circuit.Networking
 
         // 25.1.149.130:4040
 
-        public bool TryStartClient(string hostAddress)
+        public bool StartClient(string hostAddress)
         {
             _handler = null;
-            if (NetworkUtils.TryParseAddress(hostAddress, out IPAddress adrs, out ushort port))
+            if (NetworkUtils.ParseAddress(hostAddress, out IPAddress adrs, out ushort port))
             {
                 _handler = new ClientHandler(this);
                 Transport.port = port;

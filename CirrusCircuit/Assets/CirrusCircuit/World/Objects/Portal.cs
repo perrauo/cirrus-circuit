@@ -1,7 +1,5 @@
 ﻿using Cirrus.Utils;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -12,7 +10,7 @@ namespace Cirrus.Circuit.World.Objects
 
     public class Portal : BaseObject
     {
-        public override ObjectId Id => ObjectId.Portal;
+        public override ObjectType Type => ObjectType.Portal;
 
         [SerializeField]
         private Number _connection;
@@ -50,34 +48,52 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
-        public override bool TryMove(Vector3Int step, BaseObject incoming = null)
+        public override bool Move(Vector3Int step, BaseObject source = null)
         {
             return false;
         }
 
 
-        public override bool TryEnter(Vector3Int step, ref Vector3 offset, BaseObject incoming = null)
+        public override bool Enter(
+            Vector3Int step,
+            BaseObject source,
+            out Vector3 offset,
+            out Vector3Int gridDest,
+            out Vector3Int stepDest,
+            out BaseObject dest)
         {
-            if (base.TryEnter(step, ref offset, incoming))
+            if (base.Enter(
+                step, 
+                source, 
+                out offset, 
+                out gridDest,
+                out stepDest,
+                out dest))
             {
-                //_user = incoming;
-
-                switch (incoming.Id)
+                switch (source.Type)
                 {
-                    case ObjectId.Gem:
+                    case ObjectType.Gem:
                         StartCoroutine(PunchScaleCoroutine());
 
-                        if(LevelSession.Instance.TryGetOtherPortal(this, out Portal other))
+                        if(LevelSession
+                            .Instance
+                            .GetOtherPortal(
+                            this, 
+                            out Portal other))
                         {
-                            //other.TryExitFrom(incoming);
+                            other.Exit(
+                                source, 
+                                out gridDest,
+                                out stepDest,
+                                out dest);
+
+                            offset += Vector3.up * Level.CellSize / 2;
+                            return true;
                         }
 
-                        incoming._targetScale = 0;
-                        offset += Vector3.up * Level.CellSize / 2;
+                        return false;
 
-                        return true;
-
-                    case ObjectId.Character:
+                    case ObjectType.Character:
                         return false;
                     default:
                         return false;
@@ -87,43 +103,59 @@ namespace Cirrus.Circuit.World.Objects
             return false;
         }
 
-        public void TryExitFrom(BaseObject incoming)
+        public virtual void Exit(
+            BaseObject source, 
+            out Vector3Int gridDest,
+            out Vector3Int stepDest,
+            out BaseObject dest)
         {
-            if (incoming == null) return;
-
             StartCoroutine(PunchScaleCoroutine());
 
-            Vector3Int step = Transform.forward.ToVector3Int();
-            incoming.TryExit(this, _gridPosition, step);
+            stepDest = Transform.forward.ToVector3Int();
+
+            gridDest = _gridPosition + stepDest;
+
+            LevelSession.Instance.Get(gridDest, out dest);
+
+            source.OnExited();
         }
 
 
-        public override void Cmd_TryFall()
+        public override void Cmd_Fall()
         {
 
         }
 
-        public override void Cmd_TryFallThrough(Vector3Int step)
+        public void OnDrawGizmos()
+        {
+            
+            GraphicsUtils.DrawLine(
+                Transform.position, 
+                Transform.position + Transform.forward,
+                2f);
+        }
+
+        public override void Cmd_FallThrough(Vector3Int step)
         {
 
         }
 
-        public override void Local_TryFall()
+        public override void Fall()
         {
 
         }
 
-        public override void Accept(BaseObject incoming)
+        public override void Accept(BaseObject source)
         {
-            switch (incoming.Id)
+            switch (source.Type)
             {
-                case ObjectId.Gem:
+                case ObjectType.Gem:
                     iTween.Init(Transform.gameObject);
                     iTween.Stop(Transform.gameObject);
 
                     //_visual.Parent.transform.localScale = new Vector3(1, 1, 1);
                     //StartCoroutine(PunchScale());
-                    //incoming._targetScale = 0;
+                    //source._targetScale = 0;
 
                     return;
                 default:

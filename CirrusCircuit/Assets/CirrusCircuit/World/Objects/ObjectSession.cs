@@ -61,7 +61,7 @@ namespace Cirrus.Circuit.World.Objects
         }
 
         [ClientRpc]
-        public void Rpc_TryInteract(GameObject sourceGameObject)
+        public void Rpc_Interact(GameObject sourceGameObject)
         {
             if (sourceGameObject
                     .TryGetComponent(
@@ -70,7 +70,7 @@ namespace Cirrus.Circuit.World.Objects
                 _mutex.WaitOne();
 
                 _object
-                    .Local_TryInteract(
+                    .Interact(
                         sourceSession
                         ._object);
 
@@ -79,51 +79,46 @@ namespace Cirrus.Circuit.World.Objects
         }
 
         [ClientRpc]
-        public void Rpc_TryFall()
+        public void Rpc_Fall()
         {
             _mutex.WaitOne();
 
-            _object.Local_TryFall();
+            _object.Fall();
 
             _mutex.ReleaseMutex();
         }
 
         [ClientRpc]
-        public void Rpc_TryMove(Vector3Int step)
+        public void Rpc_Move(Vector3Int step)
         {
-            _mutex
-                .WaitOne();
+            _mutex.WaitOne();
 
-            _object
-                .Local_TryMove(
-                    step, 
-                    null);
+            _object.Move(step, null);
 
-            _mutex
-                .ReleaseMutex();
+            _mutex.ReleaseMutex();
         }
 
-        public void Cmd_TryMove(Vector3Int step)
+        public void Cmd_Move(Vector3Int step)
         {
             CommandClient
                 .Instance
-                .Cmd_ObjectSession_TryMove(
+                .Cmd_ObjectSession_Move(
                     gameObject,
                     step);
         }
 
-        public void Cmd_TryFall()
+        public void Cmd_Fall()
         {
             CommandClient
                 .Instance
-                .Cmd_ObjectSession_TryFall(gameObject);
+                .Cmd_ObjectSession_Fall(gameObject);
         }
 
-        public void Cmd_TryInteract(BaseObject source)
+        public void Cmd_Interact(BaseObject source)
         {
             CommandClient
                 .Instance
-                .Cmd_ObjectSession_TryInteract(
+                .Cmd_ObjectSession_Interact(
                     gameObject,
                     source
                     ._session
@@ -141,22 +136,22 @@ namespace Cirrus.Circuit.World.Objects
                 .IsFallAllowed();
         }
 
-        public void Cmd_TryFallThrough(Vector3Int step)
+        public void Cmd_FallThrough(Vector3Int step)
         {
             CommandClient
                 .Instance
-                .Cmd_ObjectSession_TryFallThrough(
+                .Cmd_ObjectSession_FallThrough(
                     gameObject,
                     step);
         }
 
         [ClientRpc]
-        public void Rpc_TryFallThrough(
+        public void Rpc_FallThrough(
             Vector3Int step,
             Vector3Int position)
         {
             _object
-                .Local_TryFallThrough(
+                .FallThrough(
                     step,
                     position);
         }
@@ -177,7 +172,7 @@ namespace Cirrus.Circuit.World.Objects
         public void Target_Response(CommandResponse res)
         {
             _object
-                .Local_Response(res);
+                .Respond(res);
         }
     }
 }

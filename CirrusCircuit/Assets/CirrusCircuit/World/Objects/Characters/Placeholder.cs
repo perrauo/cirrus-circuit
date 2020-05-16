@@ -6,7 +6,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
 {
     public class Placeholder : BaseObject
     {
-        public override ObjectId Id => ObjectId.CharacterPlaceholder;
+        public override ObjectType Type => ObjectType.CharacterPlaceholder;
 
         [SerializeField]
         private CameraManager _camera;
@@ -20,7 +20,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
         private float height = 0.5f;
 
         [SerializeField]
-        private float _offset = 0.5f;
+        private float _heightOffset = 0.5f;
 
         public override void OnValidate()
         {
@@ -44,7 +44,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
             //calculate what the new Y position will be
             float newY = Mathf.Sin(Time.time * speed)*height;
             //set the object's Y to the new calculated Y
-            _visual.Parent.transform.position = new Vector3(pos.x, pos.y+ _offset + newY, pos.z);
+            _visual.Parent.transform.position = new Vector3(pos.x, pos.y+ _heightOffset + newY, pos.z);
         }
 
         //Orient the camera after all movement is completed this frame to avoid jittering

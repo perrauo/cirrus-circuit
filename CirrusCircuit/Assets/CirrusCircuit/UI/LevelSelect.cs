@@ -110,7 +110,7 @@ namespace Cirrus.Circuit.UI
             // TODO upd num of players ??
             //foreach (var display in _playerDisplays)
             //{
-            //    display.TrySetState(Player.State.Disabled);
+            //    display.SetState(Player.State.Disabled);
             //}
         }
 
