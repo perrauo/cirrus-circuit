@@ -5,7 +5,7 @@
 * Push the wrong color and lose points.
 
 # Unity version
-2019.2.2
+2019.3.0f6
 
 ![alt text](https://github.com/OliPerraul/gem-jam/blob/master/Capture7.PNG)
 ![alt text](https://github.com/OliPerraul/gem-jam/blob/master/Capture8.PNG)
