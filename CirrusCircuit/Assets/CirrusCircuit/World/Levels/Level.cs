@@ -10,6 +10,7 @@ using System.Threading;
 using Cirrus.Utils;
 using Cirrus.Circuit.Networking;
 using UnityEditor;
+using UnityEngine.Serialization;
 
 namespace Cirrus.Circuit.World
 {
@@ -31,10 +32,11 @@ namespace Cirrus.Circuit.World
         public Vector3Int Offset => _offset;
 
         [SerializeField]
-        private Vector3Int _dimension = new Vector3Int(20, 20, 20);
+        [FormerlySerializedAs("_dimension")]
+        public Vector3Int _dimensions = new Vector3Int(20, 20, 20);
 
-        public Vector3Int Dimension => _dimension;    
-        public int Size => Dimension.x * Dimension.y * Dimension.z;
+        public Vector3Int Dimensions => _dimensions;    
+        public int Size => Dimensions.x * Dimensions.y * Dimensions.z;
 
         public const int MaxX = 25;
         public const int MaxY = 25;
@@ -110,34 +112,34 @@ namespace Cirrus.Circuit.World
         public bool IsWithinBounds(Vector3Int pos)
         {
             return
-                (pos.x >= 0 && pos.x < _dimension.x &&
-                pos.y >= 0 && pos.y < _dimension.y &&
-                pos.z >= 0 && pos.z < _dimension.z);
+                (pos.x >= 0 && pos.x < _dimensions.x &&
+                pos.y >= 0 && pos.y < _dimensions.y &&
+                pos.z >= 0 && pos.z < _dimensions.z);
         }
 
         public bool IsWithinBoundsX(int pos)
         {
-            return pos >= 0 && pos < _dimension.x;
+            return pos >= 0 && pos < _dimensions.x;
         }
 
         public bool IsWithinBoundsY(int pos)
         {
-            return pos >= 0 && pos < _dimension.y;
+            return pos >= 0 && pos < _dimensions.y;
         }
 
         public bool IsWithinBoundsZ(int pos)
         {
-            return pos >= 0 && pos < _dimension.z;
+            return pos >= 0 && pos < _dimensions.z;
         }    
 
         public Vector3Int GetOverflow(Vector3Int pos)
         {
-            return _dimension - pos;
+            return _dimensions - pos;
         }
 
         public void Set(Vector3Int pos, BaseObject obj)
         {            
-            int i = VectorUtils.ToIndex(pos, Dimension.x, Dimension.y);
+            int i = VectorUtils.ToIndex(pos, Dimensions.x, Dimensions.y);
 
             _objects[i] = obj;            
         }    
@@ -146,7 +148,7 @@ namespace Cirrus.Circuit.World
         {
             Vector3Int pos = WorldToGrid(obj.Transform.position);
 
-            int i = VectorUtils.ToIndex(pos, Dimension.x, Dimension.y);
+            int i = VectorUtils.ToIndex(pos, Dimensions.x, Dimensions.y);
 
             _objects[i] = obj;
 
@@ -155,7 +157,7 @@ namespace Cirrus.Circuit.World
 
         public void UpdateObjectReference()
         {
-            _objects = new BaseObject[Dimension.x * Dimension.y * Dimension.z];
+            _objects = new BaseObject[Dimensions.x * Dimensions.y * Dimensions.z];
             foreach (var obj in gameObject.GetComponentsInChildren<BaseObject>(true))
             {
                 if (obj == null) continue;
@@ -177,17 +179,13 @@ namespace Cirrus.Circuit.World
 
                 obj.InitState(BaseObject.State.LevelSelect, null);
             }
-        }
-
-        [HideInInspector]
-        [SerializeField]
-        public bool _levelDimensionsVisible = false;
+        } 
     }
 
     #region Editor
 #if UNITY_EDITOR
     [UnityEditor.CustomEditor(typeof(Level))]
-    public class LevelEditor : UnityEditor.Editor
+    public class LevelCustomInspector : UnityEditor.Editor
     {
         private Level _level;
 
@@ -200,43 +198,6 @@ namespace Cirrus.Circuit.World
             if(prop != null) prop.isExpanded = false;
         }
 
-        public void OnSceneGUI()
-        {
-
-            if (!_level._levelDimensionsVisible) return;
-
-            int cellSize = Level.CellSize;
-
-
-            var mesh = GraphicsUtils.CreateCube(
-                _level.Dimension.x * cellSize,
-                _level.Dimension.y * cellSize,
-                _level.Dimension.z * cellSize);
-
-            Graphics.DrawMesh(
-                mesh,
-                _level.transform.position +
-
-                new Vector3(1, 0, 0) * (_level.Dimension.x * cellSize) / 2 -
-                new Vector3(1, 0, 0) * cellSize / 2 +
-
-                new Vector3(0, 1, 0) * (_level.Dimension.y * cellSize) / 2 -
-                new Vector3(0, 1, 0) * cellSize / 2 +
-
-                new Vector3(0, 0, 1) * (_level.Dimension.z * cellSize) / 2 -
-                new Vector3(0, 0, 1) * cellSize / 2 +
-                
-                _level.Offset * cellSize,                                
-
-                Quaternion.identity,
-                LevelLibrary.Instance.EditorMaterial,
-                0
-                );
-
-            //delete meshes of previous frame and draw new meshes
-            EditorUtility.SetDirty(target);
-        }
-
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
@@ -247,12 +208,6 @@ namespace Cirrus.Circuit.World
             if (GUILayout.Button("Update object references"))
             {
                 _level.UpdateObjectReference();
-            }
-
-            if (GUILayout.Button("Show/Hide Level Dimensions"))
-            {
-                _level._levelDimensionsVisible = !_level._levelDimensionsVisible;
-                EditorUtility.SetDirty(target);
             }
         }
     }

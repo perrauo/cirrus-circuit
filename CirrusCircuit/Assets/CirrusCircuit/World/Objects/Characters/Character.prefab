@@ -61,8 +61,8 @@ MonoBehaviour:
   _gridPosition: {x: 0, y: 0, z: 0}
   _targetScale: 1
   _colorId: 0
-  _color: {r: 1, g: 0, b: 0, a: 1}
-  _nextColor: {r: 1, g: 0, b: 0, a: 1}
+  _color: {r: 0, g: 0, b: 0, a: 0}
+  _nextColor: {r: 0, g: 0, b: 0, a: 0}
   _nextColorTime: 2
   _nextColorIndex: 0
   _nextColorSpeed: 0.05
@@ -398,7 +398,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 299b4a6010c580248835775ba08c419e, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 0.2}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.2}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

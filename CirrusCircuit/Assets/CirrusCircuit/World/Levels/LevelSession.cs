@@ -389,7 +389,7 @@ namespace Cirrus.Circuit.World
             Vector3Int pos,
             BaseObject obj)
         {
-            int i = VectorUtils.ToIndex(pos, Level.Dimension.x, Level.Dimension.y);
+            int i = VectorUtils.ToIndex(pos, Level.Dimensions.x, Level.Dimensions.y);
 
             _objects[i] = obj;
 
@@ -401,8 +401,8 @@ namespace Cirrus.Circuit.World
 
             int i = VectorUtils.ToIndex(
                 pos,
-                Level.Dimension.x,
-                Level.Dimension.y);
+                Level.Dimensions.x,
+                Level.Dimensions.y);
 
             //Debug.Log("Registered: " + obj);
             _objects[i] = obj;
@@ -426,7 +426,7 @@ namespace Cirrus.Circuit.World
 
             _mutex.WaitOne();
 
-            int i = VectorUtils.ToIndex(pos, Level.Dimension.x, Level.Dimension.y);
+            int i = VectorUtils.ToIndex(pos, Level.Dimensions.x, Level.Dimensions.y);
             obj = _objects[i];
 
             _mutex.ReleaseMutex();
@@ -554,18 +554,18 @@ namespace Cirrus.Circuit.World
 
                     UnityEngine.Random.Range(
                         0,
-                        Level.Dimension.x),
+                        Level.Dimensions.x),
 
-                    Level.Dimension.y - 1,
+                    Level.Dimensions.y - 1,
 
                     UnityEngine.Random.Range(
                         0,
-                        Level.Dimension.z));
+                        Level.Dimensions.z));
 
                 if (!isLandingGuaranteed) return position;
 
                 // Check for valid surface to fall on
-                for (int i = 0; i < Level.Dimension.y; i++)
+                for (int i = 0; i < Level.Dimensions.y; i++)
                 {
                     if (Get(
                         position.Copy().SetY(position.y - i),
@@ -602,7 +602,7 @@ namespace Cirrus.Circuit.World
             {
                 destinationPosition = GetFallThroughPosition();
 
-                for (int i = 0; i < Level.Dimension.y; i++)
+                for (int i = 0; i < Level.Dimensions.y; i++)
                 {
                     if (Get(destinationPosition.Copy().SetY(destinationPosition.y - i), out BaseObject target))
                     {
