@@ -67,14 +67,8 @@ namespace Cirrus.Circuit.World.Editor
         public Level Level {
             get {
 
-                if (_level == null || _level.gameObject == null)
-                {
-                    _level = FindObjectOfType<Level>();
-                }
-
-                if (_level.gameObject == null) _level = null;
- 
-
+                if (_level == null || _level.gameObject == null) _level = FindObjectOfType<Level>();
+                if (_level.gameObject == null) _level = null; 
                 return _level;
             }
         
