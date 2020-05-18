@@ -32,20 +32,17 @@ namespace Cirrus.Circuit.World.Objects.Characters
         [SerializeField]
         private Guide _guide;
 
-        [SerializeField]
-        public float _moveDelay = 0.6f;
+        public const float MoveDelay = 0.1f;
+        
+        public const float RotationSpeed = 0.6f;
 
-        [SerializeField]
-        public float _rotationSpeed = 0.6f;
+        private const float MoveIdleTransitionTime = 0.6f;
 
         [SerializeField]
         public Axes Axes;
 
         [SerializeField]
         public Animator Animator;
-
-        [SerializeField]
-        private float _moveIdleTransitionTime = 0.6f;
 
         private Timer _moveIdleTransitionTimer;
 
@@ -71,7 +68,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
         {
             base.Awake();
 
-            _moveIdleTransitionTimer = new Timer(_moveIdleTransitionTime, start: false, repeat: false);
+            _moveIdleTransitionTimer = new Timer(MoveIdleTransitionTime, start: false, repeat: false);
             _moveIdleTransitionTimer.OnTimeLimitHandler += OnMoveIdleTransitionTimeout;
             _animatorWrapper = new CharacterAnimatorWrapper(Animator);
         }
@@ -148,8 +145,8 @@ namespace Cirrus.Circuit.World.Objects.Characters
             bool isMovingHorizontal = Mathf.Abs(axis.x) > 0.5f;
             bool isMovingVertical = Mathf.Abs(axis.y) > 0.5f;
 
-            Vector3Int stepHorizontal = new Vector3Int(_stepSize * Math.Sign(axis.x), 0, 0);
-            Vector3Int stepVertical = new Vector3Int(0, 0, _stepSize * Math.Sign(axis.y));
+            Vector3Int stepHorizontal = new Vector3Int(StepSize * Math.Sign(axis.x), 0, 0);
+            Vector3Int stepVertical = new Vector3Int(0, 0, StepSize * Math.Sign(axis.y));
 
             if (isMovingVertical && isMovingHorizontal)
             {                
@@ -180,7 +177,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 _wasMovingVertical = true;                
             }
 
-            yield return new WaitForSeconds(_moveDelay);
+            yield return new WaitForSeconds(MoveDelay);
             _moveCoroutine = null;
             yield return null;
         }
@@ -194,7 +191,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 case State.Falling:
                 case State.Entering:
                 case State.Idle:
-                case State.RampIdle:
+                case State.SlopeIdle:
                     
                     if (_moveCoroutine == null) _moveCoroutine = StartCoroutine(MoveCoroutine(axis));
 
@@ -221,7 +218,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 case State.Falling:
                 case State.Entering:
                 case State.Idle:
-                case State.RampIdle:
+                case State.SlopeIdle:
                     
                     if (_direction != Vector3.zero)
                         Transform.rotation = Quaternion.LookRotation(_direction, Transform.up);

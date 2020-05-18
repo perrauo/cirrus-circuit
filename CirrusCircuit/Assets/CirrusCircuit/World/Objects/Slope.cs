@@ -6,9 +6,18 @@ using UnityEngine;
 
 namespace Cirrus.Circuit.World.Objects
 {
-    public class Ramp : BaseObject
+    public enum SlopeType
     {
-        public override ObjectType Type => ObjectType.Ramp;
+        Staircase,
+        Ramp,
+    }
+
+
+    public class Slope : BaseObject
+    {
+        public override ObjectType Type => ObjectType.Slope;
+        public bool _isStaircase = false;
+        public bool IsStaircase => _isStaircase;
 
         public override bool Move(Vector3Int step, BaseObject source = null)
         {
@@ -32,11 +41,32 @@ namespace Cirrus.Circuit.World.Objects
             gridDest = source._gridPosition;
             dest = this;
 
-            if (step == _direction)
+            // Moving up
+            if (step.y >= 0)
+            {
+                if (step.Copy().SetY(0) == _direction)
+                {
+                    if (base.Enter(
+                        step,
+                        source,
+                        out offset,
+                        out gridDest,
+                        out stepDest,
+                        out dest))
+                    {
+                        _visitor = source;
+                        offset += Vector3.up * Level.CellSize / 2;
+                        return true;
+                    }
+                }
+            }
+            // Moving down
+            // Mus be going in opposite direction
+            else if (step.Copy().SetY(0) == -_direction)
             {
                 if (base.Enter(
-                    step, 
-                    source, 
+                    step,
+                    source,
                     out offset,
                     out gridDest,
                     out stepDest,
@@ -47,6 +77,7 @@ namespace Cirrus.Circuit.World.Objects
                     return true;
                 }
             }
+            
 
             return false;
         }

@@ -11,16 +11,13 @@ namespace Cirrus.Circuit.World.Objects.Characters
         [SerializeField]
         private CameraManager _camera;
 
-        //adjust this to change speed
-        [SerializeField]
-        private float speed = 5f;
-
-        [SerializeField]
+        //adjust this to change speed        
+        private const float Speed = 5f;
+        
         //adjust this to change how high it goes
-        private float height = 0.5f;
+        private const float Height = 0.5f;
 
-        [SerializeField]
-        private float _heightOffset = 0.5f;
+        private const float HeightOffset = 0.5f;
 
         public override void OnValidate()
         {
@@ -42,9 +39,9 @@ namespace Cirrus.Circuit.World.Objects.Characters
             //get the objects current position and put it in a variable so we can access it later with less code
             Vector3 pos = transform.position;
             //calculate what the new Y position will be
-            float newY = Mathf.Sin(Time.time * speed)*height;
+            float newY = Mathf.Sin(Time.time * Speed)*Height;
             //set the object's Y to the new calculated Y
-            _visual.Parent.transform.position = new Vector3(pos.x, pos.y+ _heightOffset + newY, pos.z);
+            _visual.Parent.transform.position = new Vector3(pos.x, pos.y+ HeightOffset + newY, pos.z);
         }
 
         //Orient the camera after all movement is completed this frame to avoid jittering

@@ -24,9 +24,9 @@ namespace Cirrus.Circuit.World.Objects
             Falling,
             FallingThrough,
             Idle,
-            RampIdle,
+            SlopeIdle,
             Moving,
-            RampMoving
+            SlopeMoving
         }
 
         public enum ObjectType
@@ -39,7 +39,7 @@ namespace Cirrus.Circuit.World.Objects
             Door,
             Portal,
             Solid,
-            Ramp,
+            Slope,
             Breakable
         }
 
@@ -58,20 +58,15 @@ namespace Cirrus.Circuit.World.Objects
         public Transform _transform;
         public Transform Transform => _transform;
 
-        [SerializeField]
-        public int _stepSize = 1;
+        public const int StepSize = 1;
 
-        [SerializeField]
-        public float _stepSpeed = 0.2f;
+        public const float StepSpeed = 0.4f;
 
-        [SerializeField]
-        public float _fallSpeed = 0.6f;
+        public const float FallSpeed = 0.8f;
 
-        [SerializeField]
-        public float _fallDistance = 100f;
+        public const float FallDistance = 100f;
 
-        [SerializeField]
-        public float _scaleSpeed = 0.6f;
+        public const float ScaleSpeed = 0.6f;
 
         public BaseObject _destination = null;
 
@@ -118,14 +113,12 @@ namespace Cirrus.Circuit.World.Objects
 
         private Timer _nextColorTimer;
 
-        [SerializeField]
-        private float _nextColorTime = 2;
+        private const float NextColorTime = 2;
+
+        protected const float NextColorSpeed = 0.05f;
 
         [SerializeField]
         protected int _nextColorIndex = 0;
-
-        [SerializeField]
-        protected float _nextColorSpeed = 0.05f;
 
         public string Name => transform.name;
 
@@ -137,7 +130,7 @@ namespace Cirrus.Circuit.World.Objects
         private bool _hasArrived = false;
 
         [SerializeField]
-        private float _exitScaleTime = 0.4f;
+        private const float ExitScaleTime = 0.01f;
 
         private Timer _exitScaleTimer;
 
@@ -145,7 +138,7 @@ namespace Cirrus.Circuit.World.Objects
         protected State _state = State.Disabled;
 
 
-        #region Unity
+        #region Unity Engine
 
         public virtual void OnValidate()
         {
@@ -165,7 +158,7 @@ namespace Cirrus.Circuit.World.Objects
             if (PlayerManager.IsValidPlayerId(ColorId))
             {
                 _nextColorIndex = ColorId;
-                _nextColorTimer = new Timer(_nextColorTime, start: false, repeat: true);
+                _nextColorTimer = new Timer(NextColorTime, start: false, repeat: true);
                 _nextColorTimer.OnTimeLimitHandler += OnNextColorTimeOut;
             }
             else
@@ -177,7 +170,7 @@ namespace Cirrus.Circuit.World.Objects
                     .GetColor(ColorId);
             }
 
-            _exitScaleTimer = new Timer(_exitScaleTime, start: false, repeat: false);
+            _exitScaleTimer = new Timer(ExitScaleTime, start: false, repeat: false);
             _exitScaleTimer.OnTimeLimitHandler += OnExitScaleTimeout;
 
             _direction = Transform.forward.ToVector3Int();
@@ -219,7 +212,6 @@ namespace Cirrus.Circuit.World.Objects
             (transform.position, _gridPosition) = _level.RegisterObject(this);
             Transform.position = transform.position;
         }
-
 
         public virtual void OnRoundEnd()
         {
@@ -329,12 +321,12 @@ namespace Cirrus.Circuit.World.Objects
                 this,
                 step,
                 out Vector3 offset,
-                out Vector3Int destinationPosition,
-                out BaseObject destination,
+                out Vector3Int gridDest,
+                out BaseObject dest,
                 out BaseObject moved))
             {
-                _destination = destination;
-                _gridPosition = destinationPosition;
+                _destination = dest;
+                _gridPosition = gridDest;
                 //Debug.Log(Name + " " + _gridPosition);
                 _targetPosition = _level.GridToWorld(_gridPosition);
 
@@ -355,7 +347,6 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
-
         public virtual void Cmd_FallThrough(Vector3Int step)
         {
             _session.Cmd_FallThrough(step);
@@ -370,12 +361,12 @@ namespace Cirrus.Circuit.World.Objects
                 fallThroughPosition,
                 step,
                 out Vector3 offset,
-                out Vector3Int destinationPosition,
+                out Vector3Int gridDest,
                 out BaseObject moved,
                 out BaseObject destination))
             {
                 _destination = destination;
-                _gridPosition = destinationPosition;
+                _gridPosition = gridDest;
                 _targetPosition = _level.GridToWorld(_gridPosition);
                 Transform.position = _targetPosition;
 
@@ -394,8 +385,8 @@ namespace Cirrus.Circuit.World.Objects
         {
             switch (_state)
             {
-                case State.RampIdle:
-                    MoveFromRamp(step, source);
+                case State.SlopeIdle:
+                    MoveFromSlope(step, source);
                     break;
 
                 default:
@@ -427,7 +418,7 @@ namespace Cirrus.Circuit.World.Objects
 
         }
 
-        public virtual void MoveFromRamp(
+        public virtual void MoveFromSlope(
             Vector3Int step,
             BaseObject source)
         {
@@ -436,36 +427,33 @@ namespace Cirrus.Circuit.World.Objects
             // Determine which direction to cast the ray
 
             // Same direction (Look up)
-            if (step == _destination._direction)
+            if (step.Copy().SetY(0) == _destination._direction)
             {
-                gridOffset += Vector3Int.up;
-                //offset += Vector3.up * (Level.GridSize / 2);
+                gridOffset = Vector3Int.up;
             }
             // Opposing direction (look down)
-            else if (step == _destination._direction * -1)
+            else if (step.Copy().SetY(0) == -_destination._direction)
             {
-                gridOffset += Vector3Int.up;
-                //offset -= Vector3.up * (Level.GridSize / 2);
+                gridOffset = -Vector3Int.up;
             }
 
             if (_levelSession.Move(
                 this,
                 step + gridOffset,
                 out Vector3 offset,
-                out Vector3Int destinationPosition,
+                out Vector3Int gridDest,
                 out BaseObject moved,
                 out BaseObject destination))
             {
                 if (moved) moved.Cmd_Interact(this);
                 _destination = destination;
-                _gridPosition = destinationPosition;
+                _gridPosition = gridDest;
                 _targetPosition = _level.GridToWorld(_gridPosition);
                 _targetPosition += offset;
                 _direction = step;
 
-                InitState(State.RampMoving, source);
+                InitState(State.SlopeMoving, source);
             }
-
         }
 
 
@@ -498,7 +486,7 @@ namespace Cirrus.Circuit.World.Objects
         public virtual bool Enter(
             Vector3Int step,
             BaseObject source,
-            out Vector3 offset,            
+            out Vector3 offset,
             out Vector3Int gridDest,
             out Vector3Int stepDest,
             out BaseObject dest)
@@ -524,14 +512,19 @@ namespace Cirrus.Circuit.World.Objects
                 _gridPosition + Vector3Int.down,
                 out BaseObject other))
             {
-                InitState(State.Idle, null);
+                State state =
+                    _destination != null && _destination.Type == ObjectType.Slope ?
+                    State.SlopeIdle :
+                    State.Idle;
+
+                InitState(state, null);
             }
             else Cmd_Fall();
         }
 
         public virtual void RampIdle()
         {
-            InitState(State.RampIdle, null);
+            InitState(State.SlopeIdle, null);
         }
 
 
@@ -567,7 +560,7 @@ namespace Cirrus.Circuit.World.Objects
             {
                 case State.Falling:
                 case State.FallingThrough:
-                case State.RampMoving:
+                case State.SlopeMoving:
                 case State.Moving:
                 case State.Entering:
                     _hasArrived = false;
@@ -585,7 +578,7 @@ namespace Cirrus.Circuit.World.Objects
                 switch (target)
                 {
                     case State.Moving:
-                    case State.RampMoving:
+                    case State.SlopeMoving:
                     case State.Falling:
 
                         if (_levelSession.Get(_previousGridPosition + Vector3Int.up, out above))
@@ -614,7 +607,7 @@ namespace Cirrus.Circuit.World.Objects
 
                     if (ColorId < PlayerManager.PlayerMax)
                     {
-                        Color = Color.Lerp(_color, _nextColor, _nextColorSpeed);
+                        Color = Color.Lerp(_color, _nextColor, NextColorSpeed);
                     }
 
                     break;
@@ -622,21 +615,21 @@ namespace Cirrus.Circuit.World.Objects
                 case State.Entering:
                 case State.Falling:
                 case State.Idle:
-                case State.RampIdle:
+                case State.SlopeIdle:
                 case State.Moving:
                 case State.FallingThrough:
-                case State.RampMoving:
+                case State.SlopeMoving:
 
                     Transform.position = Vector3.Lerp(
                         Transform.position,
                         _targetPosition,
-                        _stepSpeed);
+                        StepSpeed);
 
                     float scale =
                         Mathf.Lerp(
                             Transform.localScale.x,
                             _targetScale,
-                            _scaleSpeed);
+                            ScaleSpeed);
 
                     Transform.localScale =
                         new Vector3(
@@ -658,13 +651,13 @@ namespace Cirrus.Circuit.World.Objects
                     return;
 
                 case State.Idle:
-                case State.RampIdle:
+                case State.SlopeIdle:
                     return;
 
                 case State.Entering:
                 case State.Falling:
                 case State.Moving:
-                case State.RampMoving:
+                case State.SlopeMoving:
                 case State.FallingThrough:
 
                     if (_hasArrived) break;

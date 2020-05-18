@@ -22,10 +22,10 @@ namespace Cirrus.Circuit.World.Objects
         public GemType GemType;
 
         [SerializeField]
-        public float Value = 1f;
+        public float _value = 1f;
 
         [SerializeField]
-        private float _rotateSpeed = 0.6f;
+        private const float RotateSpeed = 0.6f;
 
         public bool IsRequired = false;
 
@@ -45,7 +45,7 @@ namespace Cirrus.Circuit.World.Objects
         {
             base.FixedUpdate();
 
-            _visual.Parent.transform.Rotate(Vector3.right * Time.deltaTime * _rotateSpeed);
+            _visual.Parent.transform.Rotate(Vector3.right * Time.deltaTime * RotateSpeed);
         }
 
         public override bool Enter(

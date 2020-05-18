@@ -21,8 +21,7 @@ namespace Cirrus.Circuit
         [SerializeField]
         private Platform _platformTemplate;
 
-        [SerializeField]
-        private float _platformOffset = 2f;
+        private const float PlatformOffset = 2f;
 
         [SerializeField]
         private GameObject _platformsParent;
@@ -37,20 +36,16 @@ namespace Cirrus.Circuit
         private List<Character> _characters;
 
         private Timer _timer;
-
-        [SerializeField]
-        private float _timeTransition = 2f;
+        
+        private const float TimeTransition = 2f;
 
         private Timer _finalTimer;
+        
+        private const float TimeFinal = 3f;
+        
+        private const float TimeTransitionFrom = 2f;
 
-        [SerializeField]
-        private float _timeFinal = 3f;
-
-        [SerializeField]
-        private float _timeTransitionFrom = 2f;
-
-        [SerializeField]
-        public float _positionSpeed = 0.4f;
+        public const float PositionSpeed = 0.4f;
 
         public bool IsEmpty => _platforms.Count == 0;
 
@@ -69,8 +64,8 @@ namespace Cirrus.Circuit
         {
             base.Awake();
 
-            _timer = new Timer(_timeTransition, start: false, repeat: false);
-            _finalTimer = new Timer(_timeFinal, start: false, repeat: false);
+            _timer = new Timer(TimeTransition, start: false, repeat: false);
+            _finalTimer = new Timer(TimeFinal, start: false, repeat: false);
 
             _finalTimer.OnTimeLimitHandler += () => OnPodiumFinishedHandler?.Invoke();
 
@@ -90,19 +85,19 @@ namespace Cirrus.Circuit
             transform.position = Vector3.Lerp(
                 transform.position, 
                 TargetPosition, 
-                _positionSpeed);
+                PositionSpeed);
 
             for(int i = 0; i < _characters.Count; i++) {
                 _characters[i].Transform.position =
                 Vector3.Lerp(
                     _characters[i].Transform.position,
                     _platforms[i]._characterAnchor.transform.position,
-                    _timer.Time/_timeTransitionFrom);
+                    _timer.Time/TimeTransitionFrom);
 
                 _characters[i].Transform.rotation = Quaternion.Lerp(
                     _characters[i].Transform.rotation, 
                     _platforms[i]._visual.Parent.transform.rotation,
-                    _timer.Time / _timeTransitionFrom);
+                    _timer.Time / TimeTransitionFrom);
             }
         }
 
@@ -139,7 +134,7 @@ namespace Cirrus.Circuit
             CharacterAsset characterResource)
         {
             Platform platform = _platformTemplate.Create(
-                _platformsParent.transform.position + Vector3.right * _platforms.Count * _platformOffset,
+                _platformsParent.transform.position + Vector3.right * _platforms.Count * PlatformOffset,
                 _platformsParent.transform,
                 player);
             platform.OnPlatformFinishedHandler += OnPlatformFinished;

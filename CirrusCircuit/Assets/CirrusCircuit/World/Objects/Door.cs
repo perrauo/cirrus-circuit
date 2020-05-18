@@ -20,9 +20,8 @@ namespace Cirrus.Circuit.World.Objects
 
         [SerializeField]
         private Cirrus.UI.ProgressBars.ProgressBar _progressBar;
-
-        [SerializeField]
-        private int _comboRequired = 2;
+      
+        private const int ComboRequired = 2;
 
         [SerializeField]
         private int _comboAmount = 0;
@@ -30,25 +29,20 @@ namespace Cirrus.Circuit.World.Objects
         private Gem _previousGem;
 
         private float _multiplier = 1;
-
-        [SerializeField]
-        private float _multiplierIncrement = 0.5f;
+        
+        private const float MultiplierIncrement = 0.5f;
 
         private Timer _multiplierTimer;
-
-        [SerializeField]
-        private float _multiplierTime = 2f;
+        
+        private const float MultiplierTime = 2f;
 
         private Timer _valueTimer;
 
-        [SerializeField]
-        private float _valueTime = 1.5f;
+        private const float ValueTime = 1.5f;
 
-        [SerializeField]
-        private float _scorePunchScaleAmount = 0.5f;
+        private const float ScorePunchScaleAmount = 0.5f;
 
-        [SerializeField]
-        private float _scorePunchScaleTime = 1f;
+        private const float ScorePunchScaleTime = 1f;
 
         [SerializeField]
         private UnityEngine.UI.Text _textMultiplier;
@@ -56,11 +50,9 @@ namespace Cirrus.Circuit.World.Objects
         [SerializeField]
         private UnityEngine.UI.Text _textValue;
 
-        [SerializeField]
-        private float _punchScaleAmount = 1f;
+        private const float PunchScaleAmount = 1f;
 
-        [SerializeField]
-        private float _punchScaleTime = 1f;
+        private const float PunchScaleTime = 1f;
   
         IEnumerator PunchScaleCoroutine()
         {
@@ -70,8 +62,8 @@ namespace Cirrus.Circuit.World.Objects
             yield return new WaitForSeconds(0.01f);
 
             iTween.PunchScale(_visual.Parent.gameObject,
-                new Vector3(_punchScaleAmount, _punchScaleAmount, _punchScaleAmount),
-                _punchScaleTime);
+                new Vector3(PunchScaleAmount, PunchScaleAmount, PunchScaleAmount),
+                PunchScaleTime);
 
             yield return null;
         }
@@ -80,11 +72,11 @@ namespace Cirrus.Circuit.World.Objects
         {
             base.Awake();
 
-            _multiplierTimer = new Timer(_multiplierTime, start: false, repeat: false);
+            _multiplierTimer = new Timer(MultiplierTime, start: false, repeat: false);
             _multiplierTimer.OnTimeLimitHandler += OnMultiplierTimeOut;
 
 
-            _valueTimer = new Timer(_valueTime, start: false, repeat: false);
+            _valueTimer = new Timer(ValueTime, start: false, repeat: false);
             _valueTimer.OnTimeLimitHandler += OnValueTimeOut;
 
             Multiplier = 1;
@@ -98,7 +90,7 @@ namespace Cirrus.Circuit.World.Objects
         {
             base.Update();
 
-            _progressBar.SetValue(1 - (_multiplierTimer.Time / _multiplierTime));
+            _progressBar.SetValue(1 - (_multiplierTimer.Time / MultiplierTime));
         }
 
 
@@ -195,8 +187,8 @@ namespace Cirrus.Circuit.World.Objects
             yield return new WaitForSeconds(0.01f);
 
             iTween.PunchScale(_textValue.gameObject,
-                new Vector3(_scorePunchScaleAmount, _scorePunchScaleAmount, _scorePunchScaleAmount),
-                _scorePunchScaleTime);
+                new Vector3(ScorePunchScaleAmount, ScorePunchScaleAmount, ScorePunchScaleAmount),
+                ScorePunchScaleTime);
 
 
             yield return null;
@@ -210,8 +202,8 @@ namespace Cirrus.Circuit.World.Objects
             yield return new WaitForSeconds(0.01f);
 
             iTween.PunchScale(_textMultiplier.gameObject,
-                new Vector3(_scorePunchScaleAmount, _scorePunchScaleAmount, _scorePunchScaleAmount),
-                _scorePunchScaleTime);
+                new Vector3(ScorePunchScaleAmount, ScorePunchScaleAmount, ScorePunchScaleAmount),
+                ScorePunchScaleTime);
 
 
             yield return null;
@@ -237,7 +229,7 @@ namespace Cirrus.Circuit.World.Objects
             iTween.Stop(_textValue.gameObject);
             _textValue.gameObject.transform.localScale = new Vector3(1, 1, 1);
 
-            Value = gem.ColorId == ColorId ? gem.Value * _multiplier : -gem.Value;
+            Value = gem.ColorId == ColorId ? gem._value * _multiplier : -gem._value;
 
             _valueTimer.Start();
 
@@ -247,9 +239,9 @@ namespace Cirrus.Circuit.World.Objects
 
             _previousGem = gem;
 
-            if (_comboAmount % _comboRequired == _comboRequired -1)
+            if (_comboAmount % ComboRequired == ComboRequired -1)
             {
-                Multiplier += _multiplierIncrement;
+                Multiplier += MultiplierIncrement;
 
                 iTween.Init(_textMultiplier.gameObject); //TODO move elsewhere
                 iTween.Stop(_textMultiplier.gameObject);

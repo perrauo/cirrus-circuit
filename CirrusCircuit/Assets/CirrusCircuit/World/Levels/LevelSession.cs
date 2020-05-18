@@ -439,7 +439,7 @@ namespace Cirrus.Circuit.World
             Vector3Int step,
             out Vector3 offset,
             out Vector3Int gridDest,
-            out BaseObject moved,
+            out BaseObject other,
             out BaseObject dest)
         {
             dest = null;
@@ -448,9 +448,9 @@ namespace Cirrus.Circuit.World
 
             if (Get(
                 gridTarget,
-                out moved))
+                out other))
             {
-                if (moved.Move(
+                if (other.Move(
                     step,
                     source))
                 {
@@ -462,7 +462,7 @@ namespace Cirrus.Circuit.World
                     return true;
 
                 }
-                else if (moved.Enter(
+                else if (other.Enter(
                     step,
                     source,
                     out offset,
@@ -471,7 +471,7 @@ namespace Cirrus.Circuit.World
                     out dest))
                 {
                     // If moving out of entered object
-                    if (dest != moved)
+                    if (dest != other)
                     {
                         if (
                             dest == null || 
@@ -497,39 +497,94 @@ namespace Cirrus.Circuit.World
             }
             else
             {
-                // Only set occupying tile if not visiting
-                if (source._destination == null) Set(source._gridPosition, null);
-                else source._destination._visitor = null;
+                bool downSlope = false;
 
-                Set(gridTarget, source);
-                return true;
+                if (Level.IsWithinBoundsY(gridTarget.y - 1))
+                {
+                    if (Get(
+                      gridTarget.Copy().SetY(gridTarget.y - 1),
+                      out other))
+                    {
+                        if (other is Slope)
+                        {
+                            step = step - Vector3Int.up;
+
+                            if (other.Enter(
+                                step,
+                                source,
+                                out offset,
+                                out gridDest,
+                                out Vector3Int stepDest,
+                                out dest))
+                            {
+                                downSlope = true;
+
+                                // If moving out of entered object
+                                if (dest != other)
+                                {
+                                    if (
+                                        dest == null ||
+                                        dest.Move(stepDest, source))
+                                    {
+                                        // Only set/free occupying tile if not visiting
+                                        if (source._destination == null) Set(source._gridPosition, null);
+                                        else source._destination._visitor = null;
+
+                                        Set(gridDest, source);
+                                        return true;
+                                    }
+                                }
+                                // If moving in entered object
+                                else
+                                {
+                                    // Only set/free occupying tile if not visiting
+                                    if (source._destination == null) Set(source._gridPosition, null);
+                                    else source._destination._visitor = null;
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (!downSlope)
+                {
+                    // Only set occupying tile if not visiting
+                    if (source._destination == null) Set(source._gridPosition, null);
+                    else source._destination._visitor = null;
+
+                    Set(gridTarget, source);
+                    return true;
+                }
+
             }
 
             return false;
         }
-
+        // TODO Remove
         public bool Move(
             BaseObject source,
             Vector3Int step,
             out Vector3 offset,
-            out Vector3Int destinationPosition,
+            out Vector3Int gridDest,
             out BaseObject moved,
             out BaseObject destination)
         {
             destination = null;
-            moved = null;
-            Vector3Int direction = step;
-            destinationPosition = source._gridPosition + step;
+            moved = null;            
+            gridDest = source._gridPosition + step;
             offset = Vector3.zero;
 
-            if (Level.IsWithinBounds(destinationPosition))
+            if (Level
+                .IsWithinBounds(
+                gridDest))
             {
                 return MoveToPosition(
                     source,
-                    destinationPosition,
-                    direction,
+                    gridDest,
+                    step,
                     out offset,
-                    out destinationPosition,
+                    out gridDest,
                     out moved,
                     out destination);
             }

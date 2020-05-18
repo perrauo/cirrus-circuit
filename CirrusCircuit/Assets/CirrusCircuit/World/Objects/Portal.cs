@@ -16,11 +16,9 @@ namespace Cirrus.Circuit.World.Objects
         private Number _connection;
         public int Connection => (int) _connection;        
 
-        [SerializeField]
-        private float _punchScaleAmount = 1f;
+        private const float PunchScaleAmount = 1f;
 
-        [SerializeField]
-        private float _punchScaleTime = 1f;
+        private const float PunchScaleTime = 1f;
 
         IEnumerator PunchScaleCoroutine()
         {
@@ -31,8 +29,8 @@ namespace Cirrus.Circuit.World.Objects
             yield return new WaitForSeconds(0.01f);
 
             iTween.PunchScale(_visual.Parent.gameObject,
-                new Vector3(_punchScaleAmount, _punchScaleAmount, _punchScaleAmount),
-                _punchScaleTime);
+                new Vector3(PunchScaleAmount, PunchScaleAmount, PunchScaleAmount),
+                PunchScaleTime);
 
             yield return null;
         }
@@ -81,6 +79,10 @@ namespace Cirrus.Circuit.World.Objects
                             this, 
                             out Portal other))
                         {
+                            source.Transform.position =
+                                LevelSession.Instance.Level.GridToWorld(
+                                    other._gridPosition);
+
                             other.Exit(
                                 source, 
                                 out gridDest,

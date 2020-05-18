@@ -19,20 +19,17 @@ namespace Cirrus.Circuit.World.Objects
         
         private Collections.GameObjectPool _pool;
 
-        [SerializeField]
-        private int _poolSize = 10;
+        private const int PoolSize = 10;
+        
+        private const float Alpha = 0.6f;
 
-
-        [SerializeField]
-        private float _alpha = 0.6f;
-
-        private float _raycastDistance = 100f;
+        private const float RaycastDistance = 100f;
 
 
         public void Awake()
         {
             _squares = new List<GameObject>();
-            _pool = new Collections.GameObjectPool(_squareTemplate, _poolSize);
+            _pool = new Collections.GameObjectPool(_squareTemplate, PoolSize);
         }
 
         private Color _color;
@@ -47,7 +44,7 @@ namespace Cirrus.Circuit.World.Objects
             set
             {
                 _color = value;
-                _color.a = _alpha;
+                _color.a = Alpha;
                 _templateSpriteRenderer.color = _color;
             }
         }
@@ -63,7 +60,7 @@ namespace Cirrus.Circuit.World.Objects
                 transform.position + Vector3.up,
                 step,
                 out RaycastHit hit,
-                _raycastDistance,
+                RaycastDistance,
                 // Collide everything except layer 8
                 ~Layers.MoveableFlags
                 ))
