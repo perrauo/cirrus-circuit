@@ -66,8 +66,15 @@ namespace Cirrus.Circuit.World.Editor
         [SerializeField]
         public Level Level {
             get {
-                if (_level == null) return null;
-                if (_level.gameObject == null) return null;
+
+                if (_level == null || _level.gameObject == null)
+                {
+                    _level = FindObjectOfType<Level>();
+                }
+
+                if (_level.gameObject == null) _level = null;
+ 
+
                 return _level;
             }
         

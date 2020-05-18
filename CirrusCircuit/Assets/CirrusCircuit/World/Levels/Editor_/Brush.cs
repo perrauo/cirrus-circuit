@@ -149,6 +149,7 @@ namespace Cirrus.Circuit.World.Editor
         public BaseObject SelectedTile => _selectedTileObject == null ?
             null :
                 _selectedTileObject is GameObject ?
+          
                     (_selectedTileObject as GameObject).GetComponent<BaseObject>() :
                     (BaseObject)_selectedTileObject;
 
