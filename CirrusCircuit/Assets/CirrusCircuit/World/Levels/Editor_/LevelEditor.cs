@@ -46,16 +46,31 @@ namespace Cirrus.Circuit.World.Editor
         public static readonly KeyCode[] RotateTile = new KeyCode[] { KeyCode.F3 };
         public static readonly KeyCode[] ScrollLayer = new KeyCode[] { KeyCode.F4 };
 
+        public static readonly KeyCode FreeCamMacOS = KeyCode.Alpha1;
+        public static readonly KeyCode TileSelectMacOS = KeyCode.Alpha2;
+        public static readonly KeyCode RotateTileMacOS = KeyCode.Alpha3;
+        public static readonly KeyCode ScrollLayerMacOS = KeyCode.Alpha4;
+
         //public static readonly KeyCode[] ScrollLayer = new KeyCode[] { KeyCode.Keypad0 };
     }
 
     public class LevelEditor : BaseSingleton<LevelEditor>
     {
+
+#if UNITY_EDITOR_OSX
+
+        [Header("Shift+1 - Free Cam mode", order = -100)]
+        [Header("Shift+2 - Tile/Palette select", order = -100)]
+        [Header("Shift+3 - Rotate Tile", order = -100)]
+        [Header("Shift+4 - Scroll drawing layer", order = -100)]
+
+#elif UNITY_EDITOR_WIN
         [Header("F1 - Free Cam mode", order = -100)]
         [Header("F2 - Tile/Palette select", order = -100)]
         [Header("F3 - Rotate Tile", order = -100)]
         [Header("F4 - Scroll drawing layer", order = -100)]
 
+#endif
 
 
         [Space(height: 32, order = -99)]
@@ -389,10 +404,30 @@ namespace Cirrus.Circuit.World.Editor
                         ScrollLayer(_editor.LayerMode, false);
                         InitPlane(_editor.LayerMode);
                     }
-                    else if (LevelEditorKeys.FreeCam.Contains(Event.current.keyCode)) _editor._mode = EditorMode.FreeCam;
-                    else if (LevelEditorKeys.TileSelect.Contains(Event.current.keyCode)) _editor._mode = EditorMode.SelectTile;
-                    else if (LevelEditorKeys.RotateTile.Contains(Event.current.keyCode)) _editor._mode = EditorMode.RotateTile;
-                    else if (LevelEditorKeys.ScrollLayer.Contains(Event.current.keyCode)) _editor._mode = EditorMode.ScrollLayer;
+#if UNITY_EDITOR_WIN
+                    else if (LevelEditorKeys.FreeCam.Contains(Event.current.keyCode))
+#elif UNITY_EDITOR_OSX
+                    else if (e.control && e.keyCode == KeyCode.Alpha1)
+#endif
+                        _editor._mode = EditorMode.FreeCam;
+#if UNITY_EDITOR_WIN
+                    else if (LevelEditorKeys.TileSelect.Contains(Event.current.keyCode))
+#elif UNITY_EDITOR_OSX
+                    else if (e.control && e.keyCode == KeyCode.Alpha2)
+#endif
+                        _editor._mode = EditorMode.SelectTile;
+#if UNITY_EDITOR_WIN
+                    else if (LevelEditorKeys.RotateTile.Contains(Event.current.keyCode))
+#elif UNITY_EDITOR_OSX
+                    else if (e.control && e.keyCode == KeyCode.Alpha3)
+#endif
+                        _editor._mode = EditorMode.RotateTile;
+#if UNITY_EDITOR_WIN
+                    else if (LevelEditorKeys.ScrollLayer.Contains(Event.current.keyCode))
+#elif UNITY_EDITOR_OSX
+                    else if (e.control && e.keyCode == KeyCode.Alpha3)
+#endif
+                        _editor._mode = EditorMode.ScrollLayer;
 
                     break;
 
@@ -413,7 +448,7 @@ namespace Cirrus.Circuit.World.Editor
 
             Mesh mesh;
 
-            #region Dimensions
+#region Dimensions
 
             if (_editor.AreDimensionsVisible)
             {
@@ -443,9 +478,9 @@ namespace Cirrus.Circuit.World.Editor
                     );
             }
 
-            #endregion
+#endregion
 
-            #region Layer
+#region Layer
 
             switch (_editor.LayerMode)
             {
@@ -528,9 +563,9 @@ namespace Cirrus.Circuit.World.Editor
                     break;
             }
 
-            #endregion
+#endregion
 
-            #region GUI
+#region GUI
 
             Rect screenRect =
                 SceneView.currentDrawingSceneView.position;
@@ -585,7 +620,7 @@ namespace Cirrus.Circuit.World.Editor
 
             GUILayout.EndArea();
 
-            #endregion
+#endregion
 
             //delete meshes of previous frame and draw new meshes
             EditorUtility.SetDirty(target);

@@ -35,10 +35,6 @@ namespace Cirrus.Circuit.World.Editor
         public List<Palette> _palettes;
 
         [SerializeField]
-        public BrushMode _brushMode;
-        public BrushMode BrushMode => _brushMode;
-
-        [SerializeField]
         public Vector3Int _potition = Vector3Int.zero;
 
         [SerializeField]
