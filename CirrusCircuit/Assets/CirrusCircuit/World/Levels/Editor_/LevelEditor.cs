@@ -59,10 +59,10 @@ namespace Cirrus.Circuit.World.Editor
 
 #if UNITY_EDITOR_OSX
 
-        [Header("Shift+1 - Free Cam mode", order = -100)]
-        [Header("Shift+2 - Tile/Palette select", order = -100)]
-        [Header("Shift+3 - Rotate Tile", order = -100)]
-        [Header("Shift+4 - Scroll drawing layer", order = -100)]
+        [Header("Control+1 - Free Cam mode", order = -100)]
+        [Header("Control+2 - Tile/Palette select", order = -100)]
+        [Header("Control+3 - Rotate Tile", order = -100)]
+        [Header("Control+4 - Scroll drawing layer", order = -100)]
 
 #elif UNITY_EDITOR_WIN
         [Header("F1 - Free Cam mode", order = -100)]
