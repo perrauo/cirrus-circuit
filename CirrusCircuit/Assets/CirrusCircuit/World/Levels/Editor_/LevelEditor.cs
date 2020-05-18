@@ -436,7 +436,7 @@ namespace Cirrus.Circuit.World.Editor
 #if UNITY_EDITOR_WIN
                     else if (LevelEditorKeys.ScrollLayer.Contains(Event.current.keyCode))
 #elif UNITY_EDITOR_OSX
-                    else if (e.control && e.keyCode == KeyCode.Alpha3)
+                    else if (e.control && e.keyCode == KeyCode.Alpha4)
 #endif
                     {
                         _editor._mode = EditorMode.ScrollLayer;
