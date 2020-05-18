@@ -1,28 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &3324398872031673421
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6830423953863144236}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c207cb311c8305440a7b4d8450d9c1d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Parent: {fileID: 3050880680413162458}
-  _meshRenderers:
-  - {fileID: 3201051557078444536}
-  _spriteRenderers: []
-  _images: []
-  _texts:
-  - {fileID: 0}
-  - {fileID: 0}
-  _outlines: []
-  _barcolors:
-  - {fileID: 0}
 --- !u!114 &212900811259092984
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -48,6 +25,7 @@ MonoBehaviour:
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
   _targetPosition: {x: 0, y: 0, z: 0}
+  _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 0, y: 0, z: 0}
   _targetScale: 1
   _colorId: 0
@@ -58,10 +36,34 @@ MonoBehaviour:
   _nextColorSpeed: 0.05
   _level: {fileID: 0}
   _levelSession: {fileID: 0}
+  _exitScaleTime: 0.1
   _state: 0
   _connection: 0
   _punchScaleAmount: 1
   _punchScaleTime: 1
+--- !u!114 &3324398872031673421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6830423953863144236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c207cb311c8305440a7b4d8450d9c1d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Parent: {fileID: 3050880680413162458}
+  _meshRenderers:
+  - {fileID: 3201051557078444536}
+  _spriteRenderers: []
+  _images: []
+  _texts:
+  - {fileID: 0}
+  - {fileID: 0}
+  _outlines: []
+  _barcolors:
+  - {fileID: 0}
 --- !u!1 &3050880680413162458
 GameObject:
   m_ObjectHideFlags: 0

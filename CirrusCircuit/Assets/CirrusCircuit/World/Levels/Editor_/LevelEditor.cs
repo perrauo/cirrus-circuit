@@ -64,8 +64,14 @@ namespace Cirrus.Circuit.World.Editor
         private Level _level;
 
         [SerializeField]
-        public Level Level => _level;
-
+        public Level Level {
+            get {
+                if (_level == null) return null;
+                if (_level.gameObject == null) return null;
+                return _level;
+            }
+        
+        }
         public Vector3Int _dimensions;
 
         [Header("Modes")]
@@ -395,6 +401,8 @@ namespace Cirrus.Circuit.World.Editor
 
         public void OnSceneGUI()
         {
+            if (_editor.Level == null) return; 
+
             HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
 
             HandleInputs();
