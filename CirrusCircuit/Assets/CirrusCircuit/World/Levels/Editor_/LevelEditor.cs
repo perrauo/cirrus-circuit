@@ -316,7 +316,8 @@ namespace Cirrus.Circuit.World.Editor
                     if (Event.current.type == EventType.KeyDown)
                     {
                         if (Event.current.keyCode > KeyCode.Alpha0 &&
-                            Event.current.keyCode <= KeyCode.Alpha9)
+                            Event.current.keyCode <= KeyCode.Alpha9 &&
+                            !Event.current.control)
                         {
                             int paletteIndex = Event.current.keyCode - KeyCode.Alpha0;
                             paletteIndex = IntegerUtils.Mod(paletteIndex - 1, 10);
@@ -355,7 +356,8 @@ namespace Cirrus.Circuit.World.Editor
                     if (Event.current.type == EventType.KeyDown)
                     {
                         if (Event.current.keyCode > KeyCode.Alpha0 &&
-                            Event.current.keyCode <= KeyCode.Alpha9)
+                            Event.current.keyCode <= KeyCode.Alpha9 && 
+                            !Event.current.control)
                         {
                             int keyIndex = Event.current.keyCode - KeyCode.Alpha0;
                             _editor._layerMode = (LayerMode)IntegerUtils.Mod(keyIndex - 1, 3);
@@ -409,25 +411,37 @@ namespace Cirrus.Circuit.World.Editor
 #elif UNITY_EDITOR_OSX
                     else if (e.control && e.keyCode == KeyCode.Alpha1)
 #endif
+                    {
                         _editor._mode = EditorMode.FreeCam;
+                        Event.current.Use();
+                    }
 #if UNITY_EDITOR_WIN
                     else if (LevelEditorKeys.TileSelect.Contains(Event.current.keyCode))
 #elif UNITY_EDITOR_OSX
-                    else if (e.control && e.keyCode == KeyCode.Alpha2)
+                    else if (e.control && e.keyCode == KeyCode.Alpha2)                       
 #endif
+                    {
                         _editor._mode = EditorMode.SelectTile;
+                        Event.current.Use();
+                    }
 #if UNITY_EDITOR_WIN
                     else if (LevelEditorKeys.RotateTile.Contains(Event.current.keyCode))
 #elif UNITY_EDITOR_OSX
                     else if (e.control && e.keyCode == KeyCode.Alpha3)
 #endif
+                    {
                         _editor._mode = EditorMode.RotateTile;
+                        Event.current.Use();
+                    }
 #if UNITY_EDITOR_WIN
                     else if (LevelEditorKeys.ScrollLayer.Contains(Event.current.keyCode))
 #elif UNITY_EDITOR_OSX
                     else if (e.control && e.keyCode == KeyCode.Alpha3)
 #endif
+                    {
                         _editor._mode = EditorMode.ScrollLayer;
+                        Event.current.Use();
+                    }
 
                     break;
 
