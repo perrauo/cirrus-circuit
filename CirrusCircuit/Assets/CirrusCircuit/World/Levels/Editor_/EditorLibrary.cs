@@ -8,9 +8,6 @@ namespace Cirrus.Circuit.World.Editor
     public class EditorLibrary : Resources.BaseAssetLibrary<EditorLibrary>
     {
         [SerializeField]
-        public Level[] Levels;
-
-        [SerializeField]
         public Material DimensionsMaterial;
 
         [SerializeField]

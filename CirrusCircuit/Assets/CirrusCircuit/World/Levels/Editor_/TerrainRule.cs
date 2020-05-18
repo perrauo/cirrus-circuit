@@ -1,40 +1,51 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Cirrus.Circuit.World.Objects;
+using System;
 
 namespace Cirrus.Circuit.World.Editor
 {
-    public class TerrainRule : BaseAsset
+    public enum TerrainDrawMode
     {
-        ///
+        Normal,
+        Checkered,
+        Dithered,
+        Noise,
+    }
+
+    [CreateAssetMenu(menuName = "Cirrus Circuit/Editor.TerrainRule")]
+    public class TerrainRule : BaseAsset, IEditorTile
+    {
+        public bool IsAvailableInEditor => true;
+
+        public const int MaxGroups = 10;
+        
         [SerializeField]
-        public BaseObject _topLeft;
+        private TerrainDrawMode _terrainDrawMode;
+        public TerrainDrawMode TerrainDrawMode => _terrainDrawMode;
 
         [SerializeField]
-        public BaseObject _topCenter;
-
+        public int _primaryGroupIndex = 0;
         [SerializeField]
-        public BaseObject _topRight;
+        public int _secondaryGroupIndex = 1;
 
         //
         [SerializeField]
-        public BaseObject _midLeft;
+        public TerrainGroup[] _groups;
 
-        [SerializeField]
-        public BaseObject _midCenter;
+        public GameObject GetPreview(
+            Level level, 
+            Vector3Int position)
+        {
+            Debug.Log("Autotile terrain rules are not finished, and does not work.");
+            return null;
+        }
 
-        [SerializeField]
-        public BaseObject _midRight;
+        public void Draw(
+            Level level, 
+            Vector3Int position)
+        {
 
-        // 
-        [SerializeField]
-        public BaseObject _bottomLeft;
-
-        [SerializeField]
-        public BaseObject _bottomCenter;
-
-        [SerializeField]
-        public BaseObject _bottomRight;
-
+        }
     }
 }

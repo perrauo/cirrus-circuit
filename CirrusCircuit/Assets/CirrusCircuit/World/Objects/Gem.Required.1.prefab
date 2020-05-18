@@ -47,6 +47,11 @@ PrefabInstance:
       propertyPath: _nextColor.b
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 589164697707602030, guid: f21a58351e578c94aa1a2d52cd62707e,
+        type: 3}
+      propertyPath: _isAvailableInEditor
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 661945422966739770, guid: f21a58351e578c94aa1a2d52cd62707e,
         type: 3}
       propertyPath: m_LocalPosition.x
