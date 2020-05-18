@@ -155,6 +155,32 @@ namespace Cirrus.Circuit.World
             return (GridToWorld(pos), pos);
         }
 
+
+        public bool Get(
+            Vector3Int pos,
+            out BaseObject obj)
+        {
+            obj = null;
+            if (!IsWithinBounds(pos)) return false;
+            
+
+            int i = VectorUtils.ToIndex(pos, Dimensions.x, Dimensions.y);
+            obj = _objects[i];
+
+            return obj != null;
+        }
+
+
+        //public void Set(
+        //    Vector3Int pos,
+        //    BaseObject obj)
+        //{
+        //    int i = VectorUtils.ToIndex(pos, Dimensions.x, Dimensions.y);
+
+        //    _objects[i] = obj;
+
+        //}
+
         public void UpdateObjectReference()
         {
             _objects = new BaseObject[Dimensions.x * Dimensions.y * Dimensions.z];

@@ -14,7 +14,7 @@ namespace Cirrus.Circuit.World.Editor
     }
 
     [CreateAssetMenu(menuName = "Cirrus Circuit/Editor.TerrainRule")]
-    public class TerrainRule : BaseAsset, IEditorTile
+    public class TerrainRule : BaseAsset//, IEditorTile
     {
         public bool IsAvailableInEditor => true;
 

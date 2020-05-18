@@ -18,6 +18,7 @@ namespace Cirrus.Circuit.World.Editor
     {
         FreeCam,
         SelectTile,
+        RotateTile,
         ScrollLayer
     }
 
@@ -42,7 +43,8 @@ namespace Cirrus.Circuit.World.Editor
     {
         public static readonly KeyCode[] FreeCam = new KeyCode[] { KeyCode.F1 };
         public static readonly KeyCode[] TileSelect = new KeyCode[] { KeyCode.F2 };
-        public static readonly KeyCode[] ScrollLayer = new KeyCode[] { KeyCode.F3 };
+        public static readonly KeyCode[] RotateTile = new KeyCode[] { KeyCode.F3 };
+        public static readonly KeyCode[] ScrollLayer = new KeyCode[] { KeyCode.F4 };
 
         //public static readonly KeyCode[] ScrollLayer = new KeyCode[] { KeyCode.Keypad0 };
     }
@@ -51,10 +53,12 @@ namespace Cirrus.Circuit.World.Editor
     {
         [Header("F1 - Free Cam mode", order = -100)]
         [Header("F2 - Tile/Palette select", order = -100)]
-        [Header("F3 - Scroll drawing layer", order = -100)]
-        [Header("F4 - Rotate Tile", order = -100)]
+        [Header("F3 - Rotate Tile", order = -100)]
+        [Header("F4 - Scroll drawing layer", order = -100)]
 
-        [Space(height:32, order=-99)]
+
+
+        [Space(height: 32, order = -99)]
         [Header("Level")]
         [SerializeField]
         private Level _level;
@@ -120,7 +124,7 @@ namespace Cirrus.Circuit.World.Editor
         {
             base.OnValidate();
 
-            if (_level == null) _level = FindObjectOfType<Level>();
+            if (_level == null || _level.gameObject == null) _level = FindObjectOfType<Level>();
 
             EditorLibrary.Instance.DimensionsMaterial.color = _dimensionsColor;
             EditorLibrary.Instance.LayerMaterial.color = _layerColor;
@@ -197,7 +201,7 @@ namespace Cirrus.Circuit.World.Editor
             _editor = serializedObject.targetObject as LevelEditor;
 
             Selection.selectionChanged += OnSelectionChange;
-            
+
             ScrollLayer(_editor.LayerMode, true);
             InitPlane(_editor.LayerMode);
 
@@ -213,7 +217,7 @@ namespace Cirrus.Circuit.World.Editor
         {
             Object selected = Selection.objects.FirstOrDefault();
             if (selected == null) return;
-            if (!(selected is IEditorTile)) return;
+            if (!(selected is BaseObject)) return;
             _editor._brush._selectedTileObject = selected;
 
         }
@@ -297,9 +301,9 @@ namespace Cirrus.Circuit.World.Editor
                             _editor._brush.SelectedPaletteIndex = paletteIndex;
 
                             Event.current.Use();
-                        }                        
+                        }
                     }
-                    
+
                     // Change Tile
                     if (Event.current.type == EventType.ScrollWheel)
                     {
@@ -308,7 +312,19 @@ namespace Cirrus.Circuit.World.Editor
 
                         Event.current.Use();
                     }
-        
+
+                    break;
+
+                case EditorMode.RotateTile:
+
+                    if (Event.current.type == EventType.ScrollWheel)
+                    {
+                        if (EventUtils.MouseWheelUp()) _editor._brush.RotationIndex++;
+                        else if (EventUtils.MouseWheelDown()) _editor._brush.RotationIndex--;
+
+                        Event.current.Use();
+                    }
+
                     break;
 
                 case EditorMode.ScrollLayer:
@@ -320,7 +336,7 @@ namespace Cirrus.Circuit.World.Editor
                             Event.current.keyCode <= KeyCode.Alpha9)
                         {
                             int keyIndex = Event.current.keyCode - KeyCode.Alpha0;
-                            _editor._layerMode = (LayerMode) IntegerUtils.Mod(keyIndex - 1, 3);
+                            _editor._layerMode = (LayerMode)IntegerUtils.Mod(keyIndex - 1, 3);
 
                             Event.current.Use();
                         }
@@ -366,17 +382,13 @@ namespace Cirrus.Circuit.World.Editor
                         ScrollLayer(_editor.LayerMode, false);
                         InitPlane(_editor.LayerMode);
                     }
-                    else if (LevelEditorKeys.FreeCam.Contains(Event.current.keyCode)) _editor._mode = EditorMode.FreeCam;    
+                    else if (LevelEditorKeys.FreeCam.Contains(Event.current.keyCode)) _editor._mode = EditorMode.FreeCam;
                     else if (LevelEditorKeys.TileSelect.Contains(Event.current.keyCode)) _editor._mode = EditorMode.SelectTile;
+                    else if (LevelEditorKeys.RotateTile.Contains(Event.current.keyCode)) _editor._mode = EditorMode.RotateTile;
                     else if (LevelEditorKeys.ScrollLayer.Contains(Event.current.keyCode)) _editor._mode = EditorMode.ScrollLayer;
 
                     break;
 
-                case EventType.MouseDown:
-                    _editor._brush.Use(_editor.Level);
-
-                    break;
-                    
             }
 
         }
@@ -509,38 +521,6 @@ namespace Cirrus.Circuit.World.Editor
 
             #endregion
 
-            #region Cursor            
-
-            var cam = SceneView.currentDrawingSceneView.camera;
-
-            var ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
-
-            if (_editor.SelectedLayer.Plane.Raycast(
-                ray,
-                out float enter))
-            {
-                //Get the point that is clicked
-                Vector3 hitPoint = ray.GetPoint(enter);
-
-                //Move your cube GameObject to the point where you clicked
-                _editor._brush._potition = _editor.Level.WorldToGrid(hitPoint);
-                _editor._brush._potition.Clamp(
-                    Vector3Int.zero,
-                    _editor.Level.Dimensions - new Vector3Int(1, 1, 1));
-
-                Graphics.DrawMesh(
-                    _cursorMesh,
-                    //_editor.Level.transform.position +
-                    _editor.Level.GridToWorld(_editor._brush._potition),
-                    Quaternion.identity,
-                    EditorLibrary.Instance.CursorMaterial,
-                    0
-                    );
-            }
-
-
-            #endregion
-
             #region GUI
 
             Rect screenRect =
@@ -598,23 +578,31 @@ namespace Cirrus.Circuit.World.Editor
 
             #endregion
 
-            _editor._brush.Update();
-
             //delete meshes of previous frame and draw new meshes
-            EditorUtility.SetDirty(target);            
+            EditorUtility.SetDirty(target);
         }
 
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
 
-            //Called whenever the inspector is drawn for this object.
-            //DrawDefaultInspector();
-     
-
-            if (GUILayout.Button("Save"))
+            if (GUILayout.Button("Save level as prefab"))
             {
                 _editor.Save();
+                var path = EditorUtility.SaveFilePanel(
+                    "Save Level as Prefab",
+                    "",
+                    _editor.Level.name + ".prefab",
+                    "prefab");
+
+                if (path.Length != 0)
+                {
+                    PrefabUtility.SaveAsPrefabAssetAndConnect(
+                        _editor.Level.gameObject, 
+                        path, 
+                        InteractionMode.AutomatedAction);
+                }
+
             }
         }
     }

@@ -12,7 +12,7 @@ using Cirrus.Circuit.Networking;
 
 namespace Cirrus.Circuit.World.Objects
 {
-    public abstract partial class BaseObject : MonoBehaviour, Editor.IEditorTile
+    public abstract partial class BaseObject : MonoBehaviour
     {
 
         [Serializable]
@@ -700,26 +700,7 @@ namespace Cirrus.Circuit.World.Objects
 
         #endregion
 
-        #endregion
-
-        #region Editor
-
-        public bool _isAvailableInEditor = false;
-        public bool IsAvailableInEditor => _isAvailableInEditor;
-
-        public GameObject GetPreview(
-            Level level,
-            Vector3Int position)
-        {
-            return gameObject;
-        }
-
-        public void Draw(Level level, Vector3Int position)
-        {
-            //throw new NotImplementedException();
-        }
-
-        #endregion
-
+        #endregion        
     }
 }
+
