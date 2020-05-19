@@ -61,7 +61,7 @@ namespace Cirrus.Circuit.World.Editor
             get => _rotationIndex;
             set
             {
-                _rotationIndex = IntegerUtils.Wrap(value, 0, 3);
+                _rotationIndex = IntegerUtils.Wrap(value, 0, 4);
                 UpdatePreview();
             }
         }
