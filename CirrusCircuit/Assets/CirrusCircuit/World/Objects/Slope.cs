@@ -19,7 +19,9 @@ namespace Cirrus.Circuit.World.Objects
         public bool _isStaircase = false;
         public bool IsStaircase => _isStaircase;
 
-        public override bool Move(Vector3Int step, BaseObject source = null)
+        public override bool Move(
+            BaseObject source, 
+            Vector3Int step)
         {
             switch (source.Type)
             {
@@ -29,8 +31,8 @@ namespace Cirrus.Circuit.World.Objects
         }
 
         public override bool Enter(
-            Vector3Int step,
             BaseObject source,
+            Vector3Int step,
             out Vector3 offset,
             out Vector3Int gridDest,
             out Vector3Int stepDest,
@@ -47,8 +49,8 @@ namespace Cirrus.Circuit.World.Objects
                 if (step.Copy().SetY(0) == _direction)
                 {
                     if (base.Enter(
-                        step,
                         source,
+                        step,
                         out offset,
                         out gridDest,
                         out stepDest,
@@ -65,8 +67,8 @@ namespace Cirrus.Circuit.World.Objects
             else if (step.Copy().SetY(0) == -_direction)
             {
                 if (base.Enter(
-                    step,
                     source,
+                    step,
                     out offset,
                     out gridDest,
                     out stepDest,
@@ -100,7 +102,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public override void Accept(BaseObject source)
         {
-            source.RampIdle();
+            //source.RampIdle();
         }
     }
 }

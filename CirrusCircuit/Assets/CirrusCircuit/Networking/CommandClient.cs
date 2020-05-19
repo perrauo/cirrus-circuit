@@ -423,7 +423,7 @@ namespace Cirrus.Circuit.Networking
                     case ObjectSession.CommandId.LevelSession_IsMoveAllowed:
                         res.Success = session
                             ._object
-                            ._levelSession
+                            .LevelSession
                             .IsMoveAllowed(
                                 session._object,
                                 req.step);
@@ -432,7 +432,7 @@ namespace Cirrus.Circuit.Networking
                     case ObjectSession.CommandId.LevelSession_IsFallThroughAllowed:
                         res.Success = session
                             ._object
-                            ._levelSession
+                            .LevelSession
                             .IsFallThroughAllowed(
                                 session._object,
                                 req.step);

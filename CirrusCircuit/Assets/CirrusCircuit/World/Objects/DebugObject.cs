@@ -7,7 +7,9 @@ namespace Cirrus.Circuit.World.Objects
 {
     public class DebugObject : BaseObject
     {
-        public override bool Move(Vector3Int step, BaseObject source = null)
+        public override bool Move(
+            BaseObject source, 
+            Vector3Int step)
         {
             return false;
         }

@@ -189,35 +189,31 @@ namespace Cirrus.Circuit.World
                         new Tuple<Portal, Portal>(portal, portal));
                 }
 
-                res._levelSession = this;
-                res._level = Level;
                 res.Color = PlayerManager.Instance.GetColor(res.ColorId);
 
                 res.gameObject.SetActive(true);
                 (res.Transform.position, res._gridPosition) = RegisterObject(res);
             }
 
-            foreach (var info in PlaceholderInfos)
+            foreach (var plceholderInfo in PlaceholderInfos)
             {
-                PlayerSession player = GameSession.Instance.GetPlayer(info.PlayerId);
+                PlayerSession player = GameSession.Instance.GetPlayer(plceholderInfo.PlayerId);
                 Player localPlayer = PlayerManager.Instance.GetPlayer(player.LocalId);
                 player.Score = 0;
 
-                info.Session._object =
-                    info.Character.Create(
-                        Level.GridToWorld(info.Position),
+                plceholderInfo.Session._object =
+                    plceholderInfo.Character.Create(
+                        Level.GridToWorld(plceholderInfo.Position),
                         transform,
-                        info.Rotation);
-                info.Session._object._session = info.Session;
-                info.Session._object._levelSession = this;
-                info.Session._object._level = Level;
-                info.Session._object.ColorId = info.PlayerId;
-                info.Session._object.Color = player.Color;
-                info.Session._object._gridPosition = info.Position;
-                (info.Session._object.Transform.position, info.Session._object._gridPosition) = RegisterObject(info.Session._object);
+                        plceholderInfo.Rotation);
+                plceholderInfo.Session._object._session = plceholderInfo.Session;
+                plceholderInfo.Session._object.ColorId = plceholderInfo.PlayerId;
+                plceholderInfo.Session._object.Color = player.Color;
+                plceholderInfo.Session._object._gridPosition = plceholderInfo.Position;
+                (plceholderInfo.Session._object.Transform.position, plceholderInfo.Session._object._gridPosition) = RegisterObject(plceholderInfo.Session._object);
 
                 if (player.ServerId == localPlayer.ServerId)
-                    localPlayer._character = (Character)info.Session._object;
+                    localPlayer._character = (Character)plceholderInfo.Session._object;
             }
 
             foreach (var session in ObjectSessions)
@@ -350,37 +346,24 @@ namespace Cirrus.Circuit.World
             return levelSession;
         }
 
-        private bool IsMoveAllowed(
-            BaseObject source,
-            Vector3Int position,
-            Vector3Int direction)
-        {
-            if (Get(
-                    position,
-                    out BaseObject moved))
-            {
-                if (moved.IsMoveAllowed(
-                    direction,
-                    source))
-                    return true;
-
-                else if (moved.IsEnterAllowed(
-                    direction,
-                    source))
-                    return true;
-            }
-            else return true;
-
-            return false;
-        }
-
         public bool IsMoveAllowed(
             BaseObject source,
-            Vector3Int direction)
+            Vector3Int step)
         {
-            Vector3Int position = source._gridPosition + direction;
+            Vector3Int gridDest = source._gridPosition + step;
 
-            if (Level.IsWithinBounds(position)) return IsMoveAllowed(source, position, direction);
+            if (Level.IsWithinBounds(gridDest))
+            {
+                if (Get(
+                    gridDest,
+                    out BaseObject moved))
+                {
+                    if (moved.IsMoveAllowed(step, source)) return true;
+
+                    else if (moved.IsEnterAllowed(step, source)) return true;
+                }
+                else return true;
+            }
 
             return false;
         }
@@ -389,7 +372,10 @@ namespace Cirrus.Circuit.World
             Vector3Int pos,
             BaseObject obj)
         {
-            int i = VectorUtils.ToIndex(pos, Level.Dimensions.x, Level.Dimensions.y);
+            int i = VectorUtils.ToIndex(
+                pos, 
+                Level.Dimensions.x, 
+                Level.Dimensions.y);
 
             _objects[i] = obj;
 
@@ -433,41 +419,139 @@ namespace Cirrus.Circuit.World
             return obj != null;
         }
 
-        public bool MoveToPosition(
+        #region Exit
+
+        public bool GetExitValues(
             BaseObject source,
-            Vector3Int gridTarget,
             Vector3Int step,
+            Vector3Int gridTarget,
             out Vector3 offset,
             out Vector3Int gridDest,
             out BaseObject other,
             out BaseObject dest)
         {
+            other = null;
             dest = null;
             gridDest = gridTarget;
             offset = Vector3.zero;
 
+            if (Level.IsWithinBoundsY(gridTarget.y + 1))
+            {
+                if (Get(
+                  gridTarget.Copy().SetY(gridTarget.y + 1),
+                  out other))
+                {
+                    // Handle stepping on a slope
+                    if (other is Slope)
+                    {
+                        step = step - Vector3Int.up;
+                    }
+                }
+            }
+
+
+            return true;
+        }
+
+        public void Exit(
+            BaseObject source)
+        {
+            // Only set/free occupying tile if not visiting
+            if (source._destination == null) Set(source._gridPosition, null);
+            else source._destination._visitor = null;
+        }
+
+        #endregion
+
+
+        #region Enter
+
+        public bool GetEnterValues(
+            BaseObject source,
+            Vector3Int step,
+            Vector3Int gridTarget,
+            out Vector3 offset,
+            out Vector3Int gridDest,
+            out Vector3Int stepDest,
+            out BaseObject dest)
+        {
+            dest = null;
+            gridDest = gridTarget;
+            stepDest = step;
+            offset = Vector3.zero;
+
+            return true;
+        }
+
+        public void Enter(
+            BaseObject source,
+            Vector3Int gridDest)
+        {
+            Set(gridDest, source);
+        }
+
+        #endregion
+
+
+
+        public bool Move(
+            BaseObject source,
+            Vector3Int step,
+            Vector3Int gridTarget,
+            out Vector3 offset,
+            out Vector3Int gridDest,
+            out BaseObject other,
+            out BaseObject dest)
+        {
+            Vector3Int stepDest = step;
+            other = null;
+            dest = null;
+            gridDest = gridTarget;
+            offset = Vector3.zero;
+
+            if (!Level
+                .IsWithinBounds(
+                gridDest))
+            {                
+                return false;
+            }
+
+            if (!GetExitValues(
+                source,
+                step,
+                gridTarget,
+                out offset,
+                out gridDest,
+                out other,
+                out dest
+                ))
+            {
+                return false;
+            }
+
             if (Get(
+                // Object moved into
                 gridTarget,
                 out other))
             {
+                // Object moved into is movable
                 if (other.Move(
-                    step,
-                    source))
+                    source,
+                    step))
                 {
-                    // Only set/free occupying tile if not visiting
-                    if (source._destination == null) Set(source._gridPosition, null);
-                    else source._destination._visitor = null;
-
-                    Set(gridTarget, source);
+                    Exit(source);
+                    Enter(source, gridTarget);
                     return true;
 
                 }
-                else if (other.Enter(
-                    step,
+                // Object moved into is enterable
+                else if (GetEnterValues(
                     source,
+                    step,
+                    gridTarget,
                     out offset,
                     out gridDest,
-                    out Vector3Int stepDest,
+                    out stepDest,
                     out dest))
                 {
                     // If moving out of entered object
@@ -475,26 +559,23 @@ namespace Cirrus.Circuit.World
                     {
                         if (
                             dest == null || 
-                            dest.Move(stepDest, source))
+                            dest.Move(source, stepDest))
                         {
-                            // Only set/free occupying tile if not visiting
-                            if (source._destination == null) Set(source._gridPosition, null);
-                            else source._destination._visitor = null;
-
-                            Set(gridDest, source);
+                            Exit(source);
+                            Enter(source, gridTarget);
                             return true;
                         }
                     }
                     // If moving in entered object
                     else
                     {
-                        // Only set/free occupying tile if not visiting
-                        if (source._destination == null) Set(source._gridPosition, null);
-                        else source._destination._visitor = null;
+                        Exit(source);
+                        Enter(source, gridTarget);
                         return true;
-                    }                    
+                    }                                
                 }
             }
+            // No object moved into
             else
             {
                 bool downSlope = false;
@@ -505,16 +586,18 @@ namespace Cirrus.Circuit.World
                       gridTarget.Copy().SetY(gridTarget.y - 1),
                       out other))
                     {
+                        // Handle stepping on a slope
                         if (other is Slope)
                         {
                             step = step - Vector3Int.up;
 
-                            if (other.Enter(
-                                step,
+                            if (GetEnterValues(
                                 source,
+                                step,
+                                gridTarget,
                                 out offset,
                                 out gridDest,
-                                out Vector3Int stepDest,
+                                out stepDest,
                                 out dest))
                             {
                                 downSlope = true;
@@ -524,22 +607,19 @@ namespace Cirrus.Circuit.World
                                 {
                                     if (
                                         dest == null ||
-                                        dest.Move(stepDest, source))
+                                        dest.Move(source, stepDest))
                                     {
-                                        // Only set/free occupying tile if not visiting
-                                        if (source._destination == null) Set(source._gridPosition, null);
-                                        else source._destination._visitor = null;
-
+                                        Exit(source);
+                                        Enter(source, gridTarget);
                                         Set(gridDest, source);
-                                        return true;
+                                        return true;                                        
                                     }
                                 }
                                 // If moving in entered object
                                 else
                                 {
-                                    // Only set/free occupying tile if not visiting
-                                    if (source._destination == null) Set(source._gridPosition, null);
-                                    else source._destination._visitor = null;
+                                    Exit(source);
+                                    Enter(source, gridTarget);
                                     return true;
                                 }
                             }
@@ -549,11 +629,8 @@ namespace Cirrus.Circuit.World
 
                 if (!downSlope)
                 {
-                    // Only set occupying tile if not visiting
-                    if (source._destination == null) Set(source._gridPosition, null);
-                    else source._destination._visitor = null;
-
-                    Set(gridTarget, source);
+                    Exit(source);
+                    Enter(source, gridTarget);
                     return true;
                 }
 
@@ -562,35 +639,35 @@ namespace Cirrus.Circuit.World
             return false;
         }
         // TODO Remove
-        public bool Move(
-            BaseObject source,
-            Vector3Int step,
-            out Vector3 offset,
-            out Vector3Int gridDest,
-            out BaseObject moved,
-            out BaseObject destination)
-        {
-            destination = null;
-            moved = null;            
-            gridDest = source._gridPosition + step;
-            offset = Vector3.zero;
+        //public bool Move(
+        //    BaseObject source,
+        //    Vector3Int step,
+        //    out Vector3 offset,
+        //    out Vector3Int gridDest,
+        //    out BaseObject moved,
+        //    out BaseObject destination)
+        //{
+        //    destination = null;
+        //    moved = null;            
+        //    gridDest = source._gridPosition + step;
+        //    offset = Vector3.zero;
 
-            if (Level
-                .IsWithinBounds(
-                gridDest))
-            {
-                return MoveToPosition(
-                    source,
-                    gridDest,
-                    step,
-                    out offset,
-                    out gridDest,
-                    out moved,
-                    out destination);
-            }
+        //    if (Level
+        //        .IsWithinBounds(
+        //        gridDest))
+        //    {
+        //        return MoveToPosition(
+        //            source,
+        //            gridDest,
+        //            step,
+        //            out offset,
+        //            out gridDest,
+        //            out moved,
+        //            out destination);
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
         public bool IsFallThroughAllowed(
             BaseObject source,
@@ -665,10 +742,10 @@ namespace Cirrus.Circuit.World
                         if (target is Character) continue;
                         if (target is Door) continue;
 
-                        return MoveToPosition(
+                        return Move(
                             source,
-                            destinationPosition,
                             direction,
+                            destinationPosition,
                             out offset,
                             out destinationPosition,
                             out BaseObject moved,
@@ -722,10 +799,8 @@ namespace Cirrus.Circuit.World
 
             if (gobj.TryGetComponent(out BaseObject obj))
             {
-                session._object = obj;
-                obj._level = Level;
-                obj._session = session;
-                obj._levelSession = this;
+                session._object = obj;                
+                obj._session = session;                
                 (obj.Transform.position, obj._gridPosition) = RegisterObject(obj);
                 obj.Idle();
             }

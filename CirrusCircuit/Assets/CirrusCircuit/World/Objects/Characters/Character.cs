@@ -191,7 +191,6 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 case State.Falling:
                 case State.Entering:
                 case State.Idle:
-                case State.SlopeIdle:
                     
                     if (_moveCoroutine == null) _moveCoroutine = StartCoroutine(MoveCoroutine(axis));
 
@@ -218,7 +217,6 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 case State.Falling:
                 case State.Entering:
                 case State.Idle:
-                case State.SlopeIdle:
                     
                     if (_direction != Vector3.zero)
                         Transform.rotation = Quaternion.LookRotation(_direction, Transform.up);

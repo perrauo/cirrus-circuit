@@ -93,7 +93,7 @@ namespace Cirrus.Circuit.World.Objects
         {
             _mutex.WaitOne();
 
-            _object.Move(step, null);
+            _object.Move(null, step);
 
             _mutex.ReleaseMutex();
         }

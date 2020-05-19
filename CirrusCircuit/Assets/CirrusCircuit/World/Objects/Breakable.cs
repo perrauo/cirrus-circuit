@@ -9,7 +9,9 @@ namespace Cirrus.Circuit.World.Objects
     {
         public override ObjectType Type => ObjectType.Breakable;
 
-        public override bool Move(Vector3Int step, BaseObject source = null)
+        public override bool Move(
+            BaseObject source, 
+            Vector3Int step)
         {
             return false;
         }

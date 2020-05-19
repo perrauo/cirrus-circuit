@@ -24,9 +24,9 @@ namespace Cirrus.Circuit.World.Objects
             Falling,
             FallingThrough,
             Idle,
-            SlopeIdle,
+            //SlopeIdle,
             Moving,
-            SlopeMoving
+            //SlopeMoving
         }
 
         public enum ObjectType
@@ -123,9 +123,9 @@ namespace Cirrus.Circuit.World.Objects
         public string Name => transform.name;
 
         [SerializeField]
-        public Level _level = null;
+        public Level Level => LevelSession.Instance.Level;
 
-        public LevelSession _levelSession = null;
+        public LevelSession LevelSession => LevelSession.Instance;
 
         private bool _hasArrived = false;
 
@@ -206,10 +206,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public void Register(Level level)
         {
-            _level = level;
-            if (_level == null) return;
-
-            (transform.position, _gridPosition) = _level.RegisterObject(this);
+            (transform.position, _gridPosition) = level.RegisterObject(this);
             Transform.position = transform.position;
         }
 
@@ -304,7 +301,7 @@ namespace Cirrus.Circuit.World.Objects
             BaseObject source = null)
         {
 
-            return _levelSession.IsMoveAllowed(this, Vector3Int.down);
+            return LevelSession.IsMoveAllowed(this, Vector3Int.down);
         }
 
 
@@ -317,9 +314,10 @@ namespace Cirrus.Circuit.World.Objects
         {
             Vector3Int step = Vector3Int.down;
 
-            if (_levelSession.Move(
+            if (LevelSession.Move(
                 this,
                 step,
+                _gridPosition + step,
                 out Vector3 offset,
                 out Vector3Int gridDest,
                 out BaseObject dest,
@@ -327,13 +325,12 @@ namespace Cirrus.Circuit.World.Objects
             {
                 _destination = dest;
                 _gridPosition = gridDest;
-                //Debug.Log(Name + " " + _gridPosition);
-                _targetPosition = _level.GridToWorld(_gridPosition);
+                _targetPosition = Level.GridToWorld(_gridPosition);
 
                 InitState(State.Falling, null);
 
             }
-            else if (_levelSession.IsFallThroughAllowed(
+            else if (LevelSession.IsFallThroughAllowed(
                 this,
                 step))
             {
@@ -356,10 +353,10 @@ namespace Cirrus.Circuit.World.Objects
             Vector3Int step,
             Vector3Int fallThroughPosition)
         {
-            if (LevelSession.Instance.MoveToPosition(
+            if (LevelSession.Instance.Move(
                 this,
-                fallThroughPosition,
                 step,
+                fallThroughPosition,
                 out Vector3 offset,
                 out Vector3Int gridDest,
                 out BaseObject moved,
@@ -367,7 +364,7 @@ namespace Cirrus.Circuit.World.Objects
             {
                 _destination = destination;
                 _gridPosition = gridDest;
-                _targetPosition = _level.GridToWorld(_gridPosition);
+                _targetPosition = Level.GridToWorld(_gridPosition);
                 Transform.position = _targetPosition;
 
                 InitState(State.FallingThrough, null);
@@ -380,81 +377,75 @@ namespace Cirrus.Circuit.World.Objects
         #region Move
 
         public virtual bool Move(
-            Vector3Int step,
-            BaseObject source)
+            BaseObject source,
+            Vector3Int step)
         {
-            switch (_state)
+            if (LevelSession.Move(
+                this,
+                step,
+                _gridPosition + step,
+                out _offset,
+                out Vector3Int gridDest,
+                out BaseObject other,
+                out BaseObject destination))
             {
-                case State.SlopeIdle:
-                    MoveFromSlope(step, source);
-                    break;
+                //destination.
+                if (other) other.Cmd_Interact(this);
 
-                default:
-                    if (_levelSession.Move(
-                        this,
-                        step,
-                        out _offset,
-                        out Vector3Int gridDest,
-                        out BaseObject moved,
-                        out BaseObject destination))
-                    {
-                        //destination.
-                        if (moved) moved.Cmd_Interact(this);
+                _destination = destination;
+                _gridPosition = gridDest;
+                _targetPosition = Level.GridToWorld(_gridPosition);
+                _targetPosition += _offset;
+                _direction = step;
 
-                        _destination = destination;
-                        _gridPosition = gridDest;
-                        _targetPosition = _level.GridToWorld(_gridPosition);
-                        _targetPosition += _offset;
-                        _direction = step;
-
-                        InitState(State.Moving, source);
-                        return true;
-                    }
-                    break;
-
+                InitState(State.Moving, source);
+                return true;
             }
 
             return false;
 
         }
 
-        public virtual void MoveFromSlope(
-            Vector3Int step,
-            BaseObject source)
-        {
-            Vector3Int gridOffset = Vector3Int.zero;
+        //public virtual void MoveFromSlope(
+        //    Vector3Int step,
+        //    BaseObject source)
+        //{
+        //    Vector3Int gridOffset = Vector3Int.zero;
 
-            // Determine which direction to cast the ray
+        //    // Determine which direction to cast the ray
 
-            // Same direction (Look up)
-            if (step.Copy().SetY(0) == _destination._direction)
-            {
-                gridOffset = Vector3Int.up;
-            }
-            // Opposing direction (look down)
-            else if (step.Copy().SetY(0) == -_destination._direction)
-            {
-                gridOffset = -Vector3Int.up;
-            }
+        //    // Same direction (Look up)
+        //    if (step.Copy().SetY(0) == _destination._direction)
+        //    {
+        //        gridOffset = Vector3Int.up;
+        //    }
+        //    // Opposing direction (look down)
+        //    else if (step.Copy().SetY(0) == -_destination._direction)
+        //    {
+        //        gridOffset = -Vector3Int.up;
+        //    }
 
-            if (_levelSession.Move(
-                this,
-                step + gridOffset,
-                out Vector3 offset,
-                out Vector3Int gridDest,
-                out BaseObject moved,
-                out BaseObject destination))
-            {
-                if (moved) moved.Cmd_Interact(this);
-                _destination = destination;
-                _gridPosition = gridDest;
-                _targetPosition = _level.GridToWorld(_gridPosition);
-                _targetPosition += offset;
-                _direction = step;
+        //    step += gridOffset;
 
-                InitState(State.SlopeMoving, source);
-            }
-        }
+        //    if (_levelSession.Move(
+        //        this,
+        //        step,
+        //        source._gridPosition + step,
+        //        out Vector3 offset,
+        //        out Vector3Int gridDest,
+        //        out BaseObject moved,
+        //        out BaseObject destination))
+        //    {
+        //        if (moved) moved.Cmd_Interact(this);
+        //        _destination = destination;
+        //        _gridPosition = gridDest;
+        //        _targetPosition = _level.GridToWorld(_gridPosition);
+        //        _targetPosition += offset;
+        //        _direction = step;
+
+        //        InitState(State.SlopeMoving, source);
+        //    }
+        //}
 
 
         public virtual void Cmd_Move(Vector3Int step)
@@ -467,13 +458,14 @@ namespace Cirrus.Circuit.World.Objects
             Vector3Int step,
             BaseObject source = null)
         {
-            return _levelSession.IsMoveAllowed(this, step);
+            return LevelSession.IsMoveAllowed(this, step);
         }
 
         #endregion
 
         #region Enter
 
+        // TODO remplace with GetEnterValues
         public virtual bool IsEnterAllowed(
             Vector3Int step,
             BaseObject source = null)
@@ -484,8 +476,18 @@ namespace Cirrus.Circuit.World.Objects
         }
 
         public virtual bool Enter(
-            Vector3Int step,
             BaseObject source,
+            Vector3Int step)
+        {
+            if (_visitor != null) _visitor.Move(source, step);
+
+            return true;
+        }
+
+
+        public virtual bool GetEnterValues(
+            BaseObject source,
+            Vector3Int step,
             out Vector3 offset,
             out Vector3Int gridDest,
             out Vector3Int stepDest,
@@ -496,39 +498,15 @@ namespace Cirrus.Circuit.World.Objects
             gridDest = source._gridPosition + step;
             dest = this;
 
-            if (_visitor != null) _visitor.Move(step, source);
+            if (_visitor != null) return _visitor.IsMoveAllowed(step, source);
 
             return true;
         }
 
-        #endregion
-
-        #region Idle
-
-        public virtual void Idle()
-        {
-            // TODO: Redundant
-            if (_levelSession.Get(
-                _gridPosition + Vector3Int.down,
-                out BaseObject other))
-            {
-                State state =
-                    _destination != null && _destination.Type == ObjectType.Slope ?
-                    State.SlopeIdle :
-                    State.Idle;
-
-                InitState(state, null);
-            }
-            else Cmd_Fall();
-        }
-
-        public virtual void RampIdle()
-        {
-            InitState(State.SlopeIdle, null);
-        }
 
 
         #endregion
+
 
         #region Exit
 
@@ -536,6 +514,42 @@ namespace Cirrus.Circuit.World.Objects
         {
             _exitScaleTimer.Start();
             _targetScale = 0;
+        }
+
+        // Ramp exit with offset
+        public virtual bool GetExitValue(
+            BaseObject source,
+            out Vector3Int gridDest,
+            out Vector3Int stepDest,
+            out BaseObject dest)
+        {
+            gridDest = Vector3Int.zero;
+            stepDest = Vector3Int.zero;
+            dest = null;
+            return true;
+        }
+
+        public virtual void Exit(BaseObject source)
+        {
+
+        }
+
+
+        #endregion
+
+
+        #region Idle
+
+        public virtual void Idle()
+        {
+            // TODO: Redundant
+            if (LevelSession.Get(
+                _gridPosition + Vector3Int.down,
+                out BaseObject other))
+            {     
+                InitState(State.Idle, null);
+            }
+            else Cmd_Fall();
         }
 
         #endregion
@@ -560,7 +574,6 @@ namespace Cirrus.Circuit.World.Objects
             {
                 case State.Falling:
                 case State.FallingThrough:
-                case State.SlopeMoving:
                 case State.Moving:
                 case State.Entering:
                     _hasArrived = false;
@@ -578,10 +591,11 @@ namespace Cirrus.Circuit.World.Objects
                 switch (target)
                 {
                     case State.Moving:
-                    case State.SlopeMoving:
                     case State.Falling:
 
-                        if (_levelSession.Get(_previousGridPosition + Vector3Int.up, out above))
+                        if (LevelSession.Get(
+                            _previousGridPosition + Vector3Int.up, 
+                            out above))
                         {
                             above.Cmd_Fall();
                         }
@@ -615,10 +629,8 @@ namespace Cirrus.Circuit.World.Objects
                 case State.Entering:
                 case State.Falling:
                 case State.Idle:
-                case State.SlopeIdle:
                 case State.Moving:
                 case State.FallingThrough:
-                case State.SlopeMoving:
 
                     Transform.position = Vector3.Lerp(
                         Transform.position,
@@ -650,14 +662,12 @@ namespace Cirrus.Circuit.World.Objects
                 case State.LevelSelect:
                     return;
 
-                case State.Idle:
-                case State.SlopeIdle:
+                case State.Idle:                
                     return;
 
                 case State.Entering:
                 case State.Falling:
                 case State.Moving:
-                case State.SlopeMoving:
                 case State.FallingThrough:
 
                     if (_hasArrived) break;
@@ -670,11 +680,11 @@ namespace Cirrus.Circuit.World.Objects
 
                         if (_destination == null)
                         {
-                            if (!_level.IsWithinBoundsY(_gridPosition.y - 1))
+                            if (!Level.IsWithinBoundsY(_gridPosition.y - 1))
                             {
                                 Cmd_FallThrough(_gridPosition + Vector3Int.down);
                             }
-                            else if (_levelSession.Get(
+                            else if (LevelSession.Get(
                                 _gridPosition + Vector3Int.down,
                                 out BaseObject obj))
                             {

@@ -146,16 +146,18 @@ namespace Cirrus.Circuit.World.Editor
         {
             base.OnValidate();
 
-            if (_level == null || _level.gameObject == null) _level = FindObjectOfType<Level>();
+            if (Level == null || Level.gameObject == null) _level = FindObjectOfType<Level>();            
 
             EditorLibrary.Instance.DimensionsMaterial.color = _dimensionsColor;
             EditorLibrary.Instance.LayerMaterial.color = _layerColor;
             EditorLibrary.Instance.CursorMaterial.color = _cursorColor;
 
-            if (_level.Dimensions != _dimensions)
+            if (Level == null) return;
+
+            if (Level.Dimensions != _dimensions)
             {
-                _level._dimensions = _dimensions;
-                EditorUtility.SetDirty(_level);
+                Level._dimensions = _dimensions;
+                EditorUtility.SetDirty(Level);
             }
         }
 

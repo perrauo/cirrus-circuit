@@ -9,7 +9,9 @@ namespace Cirrus.Circuit.World.Objects
     {
         public override ObjectType Type => ObjectType.Solid;
 
-        public override bool Move(Vector3Int step, BaseObject source = null)
+        public override bool Move(
+            BaseObject source, 
+            Vector3Int step)
         {
             switch (source.Type)
             {
@@ -19,8 +21,8 @@ namespace Cirrus.Circuit.World.Objects
         }
 
         public override bool Enter(
-            Vector3Int step,
             BaseObject source,
+            Vector3Int step,
             out Vector3 offset,
             out Vector3Int gridDest,
             out Vector3Int stepDest,
