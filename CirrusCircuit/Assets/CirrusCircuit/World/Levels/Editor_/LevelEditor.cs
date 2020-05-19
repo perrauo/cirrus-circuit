@@ -613,7 +613,7 @@ namespace Cirrus.Circuit.World.Editor
 
             rect.height = screenRect.height / 8;
             rect.width = screenRect.width / 8;
-            rect.position = new Vector2(screenRect.width / 2, screenRect.height - 96);
+            rect.position = new Vector2(screenRect.width /2, screenRect.height - 96);
 
             GUILayout.BeginArea(rect);
 
