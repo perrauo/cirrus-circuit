@@ -56,53 +56,50 @@ namespace Cirrus.Circuit.World.Objects
 
         public override bool Enter(
             BaseObject source,
-            Vector3Int step,
-            out Vector3 offset,
-            out Vector3Int gridDest,
-            out Vector3Int stepDest,
-            out BaseObject dest)
-        {
-            if (base.Enter(
-                source,
-                step,
-                out offset,
-                out gridDest,
-                out stepDest,
-                out dest))
-            {
-                switch (source.Type)
-                {
-                    case ObjectType.Gem:
-                        StartCoroutine(PunchScaleCoroutine());
+            Vector3Int gridDest)
+        { 
+        //{
+        //    if (base.GetEnterValues(
+        //        source,
+        //        step,
+        //        out Vector3 offset,
+        //        out gridDest,
+        //        out stepDest,
+        //        out dest))
+        //    {
+        //        switch (source.Type)
+        //        {
+        //            case ObjectType.Gem:
+        //                StartCoroutine(PunchScaleCoroutine());
 
-                        if(LevelSession
-                            .Instance
-                            .GetOtherPortal(
-                            this, 
-                            out Portal other))
-                        {
-                            source.Transform.position =
-                                LevelSession.Instance.Level.GridToWorld(
-                                    other._gridPosition);
+        //                if(LevelSession
+        //                    .Instance
+        //                    .GetOtherPortal(
+        //                    this, 
+        //                    out Portal other))
+        //                {
+        //                    source.Transform.position =
+        //                        LevelSession.Instance.Level.GridToWorld(
+        //                            other._gridPosition);
 
-                            other.Exit(
-                                source, 
-                                out gridDest,
-                                out stepDest,
-                                out dest);
+        //                    other.Exit(
+        //                        source, 
+        //                        out gridDest,
+        //                        out stepDest,
+        //                        out dest);
 
-                            offset += Vector3.up * Level.CellSize / 2;
-                            return true;
-                        }
+        //                    offset += Vector3.up * Level.CellSize / 2;
+        //                    return true;
+        //                }
 
-                        return false;
+        //                return false;
 
-                    case ObjectType.Character:
-                        return false;
-                    default:
-                        return false;
-                }
-            }
+        //            case ObjectType.Character:
+        //                return false;
+        //            default:
+        //                return false;
+        //        }
+        //    }
 
             return false;
         }

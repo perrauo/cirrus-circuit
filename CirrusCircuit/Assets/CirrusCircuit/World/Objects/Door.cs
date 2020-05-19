@@ -102,45 +102,45 @@ namespace Cirrus.Circuit.World.Objects
 
         public override bool Enter(
             BaseObject source,
-            Vector3Int step,
-            out Vector3 offset,
-            out Vector3Int gridDest,
-            out Vector3Int stepDest,
-            out BaseObject dest)
+            Vector3Int step)
+            //out Vector3 offset,
+            //out Vector3Int gridDest,
+            //out Vector3Int stepDest,
+            //out BaseObject dest)
         {
-            if (base.Enter(
-                source,
-                step,
-                out offset,
-                out gridDest,
-                out stepDest,
-                out dest))
-            {
-                //_user = source;
+            //if (base.Enter(
+            //    source,
+            //    step,
+            //    out offset,
+            //    out gridDest,
+            //    out stepDest,
+            //    out dest))
+            //{
+            //    //_user = source;
 
-                switch (source.Type)
-                {
-                    case ObjectType.Gem:
+            //    switch (source.Type)
+            //    {
+            //        case ObjectType.Gem:
 
-                        iTween.Init(_visual.Parent.gameObject);
-                        iTween.Stop(_visual.Parent.gameObject);
+            //            iTween.Init(_visual.Parent.gameObject);
+            //            iTween.Stop(_visual.Parent.gameObject);
 
-                        _visual.Parent.gameObject.transform.localScale = new Vector3(1, 1, 1);
-                        StartCoroutine(PunchScaleCoroutine());
+            //            _visual.Parent.gameObject.transform.localScale = new Vector3(1, 1, 1);
+            //            StartCoroutine(PunchScaleCoroutine());
 
-                        OnGemEntered(source as Gem);
+            //            OnGemEntered(source as Gem);
 
-                        source._targetScale = 0;
-                        offset += Vector3.up * Level.CellSize / 2;
+            //            source._targetScale = 0;
+            //            offset += Vector3.up * Level.CellSize / 2;
 
-                        return true;
+            //            return true;
 
-                    case ObjectType.Character:
-                        return false;
-                    default:
-                        return false;
-                }
-            }
+            //        case ObjectType.Character:
+            //            return false;
+            //        default:
+            //            return false;
+            //    }
+            //}
 
             return false;
         }

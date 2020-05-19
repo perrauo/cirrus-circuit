@@ -32,53 +32,53 @@ namespace Cirrus.Circuit.World.Objects
 
         public override bool Enter(
             BaseObject source,
-            Vector3Int step,
-            out Vector3 offset,
-            out Vector3Int gridDest,
-            out Vector3Int stepDest,
-            out BaseObject dest)
+            Vector3Int step)
+            //out Vector3 offset,
+            //out Vector3Int gridDest,
+            //out Vector3Int stepDest,
+            //out BaseObject dest)
         {
-            offset = Vector3.zero;
-            stepDest = step;
-            gridDest = source._gridPosition;
-            dest = this;
+            //offset = Vector3.zero;
+            //stepDest = step;
+            //gridDest = source._gridPosition;
+            //dest = this;
 
-            // Moving up
-            if (step.y >= 0)
-            {
-                if (step.Copy().SetY(0) == _direction)
-                {
-                    if (base.Enter(
-                        source,
-                        step,
-                        out offset,
-                        out gridDest,
-                        out stepDest,
-                        out dest))
-                    {
-                        _visitor = source;
-                        offset += Vector3.up * Level.CellSize / 2;
-                        return true;
-                    }
-                }
-            }
-            // Moving down
-            // Mus be going in opposite direction
-            else if (step.Copy().SetY(0) == -_direction)
-            {
-                if (base.Enter(
-                    source,
-                    step,
-                    out offset,
-                    out gridDest,
-                    out stepDest,
-                    out dest))
-                {
-                    _visitor = source;
-                    offset += Vector3.up * Level.CellSize / 2;
-                    return true;
-                }
-            }
+            //// Moving up
+            //if (step.y >= 0)
+            //{
+            //    if (step.Copy().SetY(0) == _direction)
+            //    {
+            //        if (base.Enter(
+            //            source,
+            //            step,
+            //            out offset,
+            //            out gridDest,
+            //            out stepDest,
+            //            out dest))
+            //        {
+            //            _visitor = source;
+            //            offset += Vector3.up * Level.CellSize / 2;
+            //            return true;
+            //        }
+            //    }
+            //}
+            //// Moving down
+            //// Mus be going in opposite direction
+            //else if (step.Copy().SetY(0) == -_direction)
+            //{
+            //    if (base.Enter(
+            //        source,
+            //        step,
+            //        out offset,
+            //        out gridDest,
+            //        out stepDest,
+            //        out dest))
+            //    {
+            //        _visitor = source;
+            //        offset += Vector3.up * Level.CellSize / 2;
+            //        return true;
+            //    }
+            //}
             
 
             return false;
