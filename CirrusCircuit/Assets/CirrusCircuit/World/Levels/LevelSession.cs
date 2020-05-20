@@ -463,7 +463,6 @@ namespace Cirrus.Circuit.World
 
         #endregion
 
-
         #region Enter
 
         public bool GetEnterValues(
@@ -485,14 +484,18 @@ namespace Cirrus.Circuit.World
 
         public void Enter(
             BaseObject source,
-            Vector3Int gridDest)
+            Vector3Int gridDest,
+            Vector3Int step)
         {
-            Set(gridDest, source);
+            if (Get(gridDest, out BaseObject other)) other.Enter(
+                source, 
+                gridDest, 
+                step);
+
+            else Set(gridDest, source);
         }
 
         #endregion
-
-
 
         public bool Move(
             BaseObject source,
@@ -540,9 +543,8 @@ namespace Cirrus.Circuit.World
                     step))
                 {
                     Exit(source);
-                    Enter(source, gridTarget);
+                    Enter(source, gridTarget, step);
                     return true;
-
                 }
                 // Object moved into is enterable
                 else if (GetEnterValues(
@@ -562,7 +564,7 @@ namespace Cirrus.Circuit.World
                             dest.Move(source, stepDest))
                         {
                             Exit(source);
-                            Enter(source, gridTarget);
+                            Enter(source, gridTarget, step);
                             return true;
                         }
                     }
@@ -570,7 +572,7 @@ namespace Cirrus.Circuit.World
                     else
                     {
                         Exit(source);
-                        Enter(source, gridTarget);
+                        Enter(source, gridTarget, step);
                         return true;
                     }                                
                 }
@@ -610,8 +612,7 @@ namespace Cirrus.Circuit.World
                                         dest.Move(source, stepDest))
                                     {
                                         Exit(source);
-                                        Enter(source, gridTarget);
-                                        Set(gridDest, source);
+                                        Enter(source, gridTarget, step);            
                                         return true;                                        
                                     }
                                 }
@@ -619,7 +620,7 @@ namespace Cirrus.Circuit.World
                                 else
                                 {
                                     Exit(source);
-                                    Enter(source, gridTarget);
+                                    Enter(source, gridTarget, step);
                                     return true;
                                 }
                             }
@@ -630,7 +631,7 @@ namespace Cirrus.Circuit.World
                 if (!downSlope)
                 {
                     Exit(source);
-                    Enter(source, gridTarget);
+                    Enter(source, gridTarget, step);
                     return true;
                 }
 

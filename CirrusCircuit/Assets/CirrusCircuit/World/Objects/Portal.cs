@@ -54,72 +54,108 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
-        public override bool Enter(
+        #region Exit
+
+        public override bool GetExitValue(
             BaseObject source,
-            Vector3Int gridDest)
-        { 
-        //{
-        //    if (base.GetEnterValues(
-        //        source,
-        //        step,
-        //        out Vector3 offset,
-        //        out gridDest,
-        //        out stepDest,
-        //        out dest))
-        //    {
-        //        switch (source.Type)
-        //        {
-        //            case ObjectType.Gem:
-        //                StartCoroutine(PunchScaleCoroutine());
-
-        //                if(LevelSession
-        //                    .Instance
-        //                    .GetOtherPortal(
-        //                    this, 
-        //                    out Portal other))
-        //                {
-        //                    source.Transform.position =
-        //                        LevelSession.Instance.Level.GridToWorld(
-        //                            other._gridPosition);
-
-        //                    other.Exit(
-        //                        source, 
-        //                        out gridDest,
-        //                        out stepDest,
-        //                        out dest);
-
-        //                    offset += Vector3.up * Level.CellSize / 2;
-        //                    return true;
-        //                }
-
-        //                return false;
-
-        //            case ObjectType.Character:
-        //                return false;
-        //            default:
-        //                return false;
-        //        }
-        //    }
-
-            return false;
-        }
-
-        public virtual void Exit(
-            BaseObject source, 
+            Vector3Int step,
+            out Vector3 offset,
             out Vector3Int gridDest,
             out Vector3Int stepDest,
             out BaseObject dest)
         {
-            StartCoroutine(PunchScaleCoroutine());
-
+            offset = Vector3.zero;
             stepDest = Transform.forward.ToVector3Int();
-
             gridDest = _gridPosition + stepDest;
-
             LevelSession.Instance.Get(gridDest, out dest);
 
+            return true;
+        }
+
+
+        public override void Exit(BaseObject source)
+        {
+            StartCoroutine(PunchScaleCoroutine());
             source.OnExited();
         }
+
+        #endregion
+
+        #region Enter
+
+        public override bool GetEnterValues(
+            BaseObject source, 
+            Vector3Int step, 
+            out Vector3 offset, 
+            out Vector3Int gridDest, 
+            out Vector3Int stepDest, 
+            out BaseObject dest)
+        {
+            if (base.GetEnterValues(
+                source,
+                step,                
+                out offset,
+                out gridDest,
+                out stepDest,
+                out dest))
+            {
+                switch (source.Type)
+                {
+                    case ObjectType.Gem:
+
+                        if (LevelSession
+                            .Instance
+                            .GetOtherPortal(
+                            this,
+                            out Portal other))
+                        {
+                            source.Transform.position =
+                                LevelSession.Instance.Level.GridToWorld(
+                                    other._gridPosition);
+
+                            other.GetExitValue(
+                                source,
+                                step,
+                                out offset,
+                                out gridDest,
+                                out stepDest,
+                                out dest);
+
+                            offset += Vector3.up * Level.CellSize / 2;
+                            return true;
+                        }
+
+                        return false;
+
+                    case ObjectType.Character:
+                        return false;
+                    default:
+                        return false;
+                }
+            }
+
+            return false;
+        }
+
+        public override void Enter(
+            BaseObject source,
+            Vector3Int gridDest,
+            Vector3Int step)            
+        {
+            StartCoroutine(PunchScaleCoroutine());
+
+            if (LevelSession
+                .Instance
+                .GetOtherPortal(
+                    this,
+                    out Portal other))
+            {
+                other.Exit(source);
+            }
+        }
+
+
+        #endregion
 
 
         public override void Cmd_Fall()

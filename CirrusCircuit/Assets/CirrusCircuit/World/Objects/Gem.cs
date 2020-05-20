@@ -48,22 +48,11 @@ namespace Cirrus.Circuit.World.Objects
             _visual.Parent.transform.Rotate(Vector3.right * Time.deltaTime * RotateSpeed);
         }
 
-        public override bool Enter(
+        public override void Enter(
             BaseObject source,
+            Vector3Int gridDest,
             Vector3Int step)
-        {
-            //out Vector3 offset,
-            //out Vector3Int gridDest,
-            //out Vector3Int stepDest,
-            //out BaseObject dest)
-            {
-                //offset = Vector3.zero;
-                //gridDest = Vector3Int.zero;
-                //stepDest = step;
-                //dest = this;
-
-                return false;
-            }
+        {           
 
         }
     }

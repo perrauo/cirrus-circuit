@@ -30,13 +30,55 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
-        public override bool Enter(
+        public override bool GetExitValue(
             BaseObject source,
-            Vector3Int step)
-            //out Vector3 offset,
-            //out Vector3Int gridDest,
-            //out Vector3Int stepDest,
-            //out BaseObject dest)
+            Vector3Int step,
+            out Vector3 offset,
+            out Vector3Int gridDest, 
+            out Vector3Int stepDest, 
+            out BaseObject dest)
+        {
+            offset = Vector3.zero;
+            gridDest = Vector3Int.zero;
+            stepDest = Vector3Int.zero;
+            dest = null;
+
+            // Same direction (Look up)
+            //if (step.Copy().SetY(0) == _destination._direction)
+            //{
+            //    gridOffset = Vector3Int.up;
+            //}
+            //// Opposing direction (look down)
+            //else if (step.Copy().SetY(0) == -_destination._direction)
+            //{
+            //    gridOffset = -Vector3Int.up;
+            //}
+
+            //if (_levelSession.Move(
+            //    this,
+            //    step + gridOffset,
+            //    out Vector3 offset,
+            //    out Vector3Int gridDest,
+            //    out BaseObject moved,
+            //    out BaseObject destination))
+            //{
+            //    if (moved) moved.Cmd_Interact(this);
+            //    _destination = destination;
+            //    _gridPosition = gridDest;
+            //    _targetPosition = _level.GridToWorld(_gridPosition);
+            //    _targetPosition += offset;
+            //    _direction = step;
+
+            //    InitState(State.SlopeMoving, source);
+            //}
+            return true;
+        }
+
+
+        public override void Enter(
+            BaseObject source,
+            Vector3Int step,
+            Vector3Int gridDest)
         {
             //offset = Vector3.zero;
             //stepDest = step;
@@ -79,10 +121,13 @@ namespace Cirrus.Circuit.World.Objects
             //        return true;
             //    }
             //}
-            
-
-            return false;
         }
+
+
+
+
+
+
 
         // Start is called before the first frame update
         public override void Start()

@@ -20,20 +20,21 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
-        public override bool Enter(
+        public override void Enter(
             BaseObject source,
+            Vector3Int gridDest,
             Vector3Int step)
-            //out Vector3 offset,
-            //out Vector3Int gridDest,
-            //out Vector3Int stepDest,
-            //out BaseObject dest)
+        //out Vector3 offset,
+        //out Vector3Int gridDest,
+        //out Vector3Int stepDest,
+        //out BaseObject dest)
         {
             //gridDest = source._gridPosition;
             //stepDest = step;
             //offset = Vector3.zero;
             //dest = this;
 
-            return false;
+            return;
         }
 
         // Start is called before the first frame update

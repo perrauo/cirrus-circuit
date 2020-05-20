@@ -475,13 +475,12 @@ namespace Cirrus.Circuit.World.Objects
             else return true;
         }
 
-        public virtual bool Enter(
+        public virtual void Enter(
             BaseObject source,
+            Vector3Int gridDest,
             Vector3Int step)
-        {
+        {          
             if (_visitor != null) _visitor.Move(source, step);
-
-            return true;
         }
 
 
@@ -503,10 +502,7 @@ namespace Cirrus.Circuit.World.Objects
             return true;
         }
 
-
-
         #endregion
-
 
         #region Exit
 
@@ -519,10 +515,13 @@ namespace Cirrus.Circuit.World.Objects
         // Ramp exit with offset
         public virtual bool GetExitValue(
             BaseObject source,
+            Vector3Int step,
+            out Vector3 offset,
             out Vector3Int gridDest,
             out Vector3Int stepDest,
             out BaseObject dest)
         {
+            offset = Vector3.zero;
             gridDest = Vector3Int.zero;
             stepDest = Vector3Int.zero;
             dest = null;
@@ -536,7 +535,6 @@ namespace Cirrus.Circuit.World.Objects
 
 
         #endregion
-
 
         #region Idle
 
