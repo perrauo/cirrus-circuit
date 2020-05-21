@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f2339dbe7ff754789a0ba81feed53d6a
+guid: 451e8435e91e941f8ba1f39e8e8f13f0
 ModelImporter:
   serializedVersion: 19300
   internalIDToNameTable: []
@@ -7,23 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: V1.tree01.leaves
-    second: {fileID: 2100000, guid: 951950c9c18f147e3a4fc3cebdb6dea3, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: V1.tree01.leaves.dark
-    second: {fileID: 2100000, guid: 852b56d058b3041c88c0a79d75c3835d, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: V1.tree01.leaves.light
-    second: {fileID: 2100000, guid: 1911af32d86ca4f2bbc2ee714ad6a278, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: V1.tree01.trunk
-    second: {fileID: 2100000, guid: afef38cd1e1354dc1a0a7e1b43cf298f, type: 2}
+      name: V1.RockDecor.Base
+    second: {fileID: 2100000, guid: b7b32184b0e4542cb9ba5ad05008c12e, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
