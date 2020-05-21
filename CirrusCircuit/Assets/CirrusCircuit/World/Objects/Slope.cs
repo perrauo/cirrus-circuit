@@ -19,11 +19,9 @@ namespace Cirrus.Circuit.World.Objects
         public bool _isStaircase = false;
         public bool IsStaircase => _isStaircase;
 
-        public override bool Move(
-            BaseObject source, 
-            Vector3Int step)
+        public override bool Move(Move move)
         {
-            switch (source.Type)
+            switch (move.User.Type)
             {
                 default:
                     return false;
@@ -31,17 +29,15 @@ namespace Cirrus.Circuit.World.Objects
         }
 
         public override bool GetExitValue(
-            BaseObject source,
-            Vector3Int step,
-            out Vector3 offset,
-            out Vector3Int gridDest, 
-            out Vector3Int stepDest, 
-            out BaseObject dest)
+            Move move,
+            out MoveResult result)
         {
-            offset = Vector3.zero;
-            gridDest = Vector3Int.zero;
-            stepDest = Vector3Int.zero;
-            dest = null;
+            result = new MoveResult();
+
+            //offset = Vector3.zero;
+            //gridDest = Vector3Int.zero;
+            //stepDest = Vector3Int.zero;
+            //dest = null;
 
             // Same direction (Look up)
             //if (step.Copy().SetY(0) == _destination._direction)
@@ -76,9 +72,8 @@ namespace Cirrus.Circuit.World.Objects
 
 
         public override void Enter(
-            BaseObject source,
-            Vector3Int step,
-            Vector3Int gridDest)
+            Move move,
+            MoveResult result)
         {
             //offset = Vector3.zero;
             //stepDest = step;

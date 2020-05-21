@@ -48,7 +48,7 @@ MonoBehaviour:
   _visual: {fileID: 4590825821992199521}
   _fallbackColors: []
   _transform: {fileID: 2260829504269684254}
-  _destination: {fileID: 0}
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
   _targetPosition: {x: 0, y: 0, z: 0}

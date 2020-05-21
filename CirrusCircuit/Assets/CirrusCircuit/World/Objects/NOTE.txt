@@ -1,0 +1,5 @@
+﻿
+
+
+- BLOCK THAT SLOW YOU DOWN
+    - GetExitValues() false

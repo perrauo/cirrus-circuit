@@ -374,7 +374,7 @@ namespace Cirrus.Circuit.Networking
         private Mutex Cmd_ObjectSession_Move_mutex = new Mutex();
 
         [Command]
-        public void Cmd_ObjectSession_Move(GameObject obj, Vector3Int step)
+        public void Cmd_ObjectSession_Move(GameObject obj, NetworkMove move)
         {
             //AssertGameObjectNull(obj);
             if (obj == null) return;
@@ -385,9 +385,9 @@ namespace Cirrus.Circuit.Networking
                 Cmd_ObjectSession_Move_mutex.WaitOne();
 
                 // Server holds the truth
-                if (session.IsMoveAllowed(step))
+                if (session.IsMoveAllowed(move.ToMove()))
                 {
-                    session.Rpc_Move(step);
+                    session.Rpc_Move(move);
                 }
 
                 Cmd_ObjectSession_Move_mutex.ReleaseMutex();
@@ -425,8 +425,10 @@ namespace Cirrus.Circuit.Networking
                             ._object
                             .LevelSession
                             .IsMoveAllowed(
-                                session._object,
-                                req.step);
+                                new Move {
+                                    Source = session._object,
+                                    Step = req.step
+                                });
                         break;
 
                     case ObjectSession.CommandId.LevelSession_IsFallThroughAllowed:

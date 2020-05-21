@@ -15,7 +15,6 @@ namespace Cirrus.Circuit.World.Objects
 {
     public class ObjectSession : NetworkBehaviour
     {
-
         public enum CommandId
         {
             LevelSession_IsMoveAllowed,
@@ -89,22 +88,22 @@ namespace Cirrus.Circuit.World.Objects
         }
 
         [ClientRpc]
-        public void Rpc_Move(Vector3Int step)
+        public void Rpc_Move(NetworkMove move)
         {
             _mutex.WaitOne();
 
-            _object.Move(null, step);
+            _object.Move(move.ToMove());
 
             _mutex.ReleaseMutex();
         }
 
-        public void Cmd_Move(Vector3Int step)
+        public void Cmd_Move(Move move)
         {
             CommandClient
                 .Instance
                 .Cmd_ObjectSession_Move(
                     gameObject,
-                    step);
+                    move.ToNetworkMove());
         }
 
         public void Cmd_Fall()
@@ -125,9 +124,9 @@ namespace Cirrus.Circuit.World.Objects
                     .gameObject);
         }
 
-        public bool IsMoveAllowed(Vector3Int step)
+        public bool IsMoveAllowed(Move move)
         {
-            return _object.IsMoveAllowed(step);
+            return _object.IsMoveAllowed(move);
         }
 
         public bool IsFallAllowed()

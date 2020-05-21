@@ -153,26 +153,26 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 //moving in both directions, prioritize later
                 if (_wasMovingVertical)
                 {
-                    base.Cmd_Move(stepHorizontal);
+                    base.Cmd_Move(new Move { Step = stepHorizontal, User = this });
                     _guide.Show(stepHorizontal);
                 }
                 else
                 {
-                    base.Cmd_Move(stepVertical);
+                    base.Cmd_Move(new Move { Step = stepVertical, User = this });
                     _guide.Show(stepVertical);
                 }
             }
             else if (isMovingHorizontal)
             {
                 Play(CharacterAnimation.Character_Walking, false);
-                Cmd_Move(stepHorizontal);                
+                Cmd_Move(new Move { Step = stepHorizontal, User = this });                
                 _guide.Show(stepHorizontal);
                 _wasMovingVertical = false;                
             }
             else if (isMovingVertical)
             {
                 Play(CharacterAnimation.Character_Walking, false);
-                Cmd_Move(stepVertical);                
+                Cmd_Move(new Move { Step = stepVertical, User = this });                
                 _guide.Show(stepVertical);
                 _wasMovingVertical = true;                
             }

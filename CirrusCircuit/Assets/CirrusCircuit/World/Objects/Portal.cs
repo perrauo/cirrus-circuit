@@ -46,9 +46,7 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
-        public override bool Move(
-            BaseObject source, 
-            Vector3Int step)
+        public override bool Move(Move move)
         {
             return false;
         }
@@ -57,17 +55,11 @@ namespace Cirrus.Circuit.World.Objects
         #region Exit
 
         public override bool GetExitValue(
-            BaseObject source,
-            Vector3Int step,
-            out Vector3 offset,
-            out Vector3Int gridDest,
-            out Vector3Int stepDest,
-            out BaseObject dest)
+            Move move,
+            out MoveResult result)
         {
-            offset = Vector3.zero;
-            stepDest = Transform.forward.ToVector3Int();
-            gridDest = _gridPosition + stepDest;
-            LevelSession.Instance.Get(gridDest, out dest);
+            result = new MoveResult();
+            LevelSession.Instance.Get(move.Position, out result.Moved);
 
             return true;
         }
@@ -83,23 +75,15 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Enter
 
-        public override bool GetEnterValues(
-            BaseObject source, 
-            Vector3Int step, 
-            out Vector3 offset, 
-            out Vector3Int gridDest, 
-            out Vector3Int stepDest, 
-            out BaseObject dest)
+        public override bool GetEnterResult(
+            Move move,
+            out MoveResult result)                                    
         {
-            if (base.GetEnterValues(
-                source,
-                step,                
-                out offset,
-                out gridDest,
-                out stepDest,
-                out dest))
+            if (base.GetEnterResult(
+                move,
+                out result))
             {
-                switch (source.Type)
+                switch (move.User.Type)
                 {
                     case ObjectType.Gem:
 
@@ -109,19 +93,14 @@ namespace Cirrus.Circuit.World.Objects
                             this,
                             out Portal other))
                         {
-                            source.Transform.position =
+                            move.User.Transform.position =
                                 LevelSession.Instance.Level.GridToWorld(
                                     other._gridPosition);
 
-                            other.GetExitValue(
-                                source,
-                                step,
-                                out offset,
-                                out gridDest,
-                                out stepDest,
-                                out dest);
+                            other.GetExitValue(move, out MoveResult exitResult);
 
-                            offset += Vector3.up * Level.CellSize / 2;
+                            // TODO remove out offset instead
+                            exitResult.Offset += Vector3.up * Level.CellSize / 2;
                             return true;
                         }
 
@@ -138,9 +117,8 @@ namespace Cirrus.Circuit.World.Objects
         }
 
         public override void Enter(
-            BaseObject source,
-            Vector3Int gridDest,
-            Vector3Int step)            
+            Move move, 
+            MoveResult result)
         {
             StartCoroutine(PunchScaleCoroutine());
 
@@ -150,7 +128,10 @@ namespace Cirrus.Circuit.World.Objects
                     this,
                     out Portal other))
             {
-                other.Exit(source);
+                other.GetExitValue(
+                    move,
+                    out result
+                    );
             }
         }
 

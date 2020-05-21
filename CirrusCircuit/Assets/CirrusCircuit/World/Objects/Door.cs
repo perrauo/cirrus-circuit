@@ -94,7 +94,7 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
-        public override bool Move(BaseObject source, Vector3Int step)
+        public override bool Move(Move move)
         {
             return false;
         }
@@ -107,38 +107,29 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Enter
 
-        public override bool GetEnterValues(
-            BaseObject source, 
-            Vector3Int step, 
-            out Vector3 offset, 
-            out Vector3Int gridDest, 
-            out Vector3Int stepDest, 
-            out BaseObject dest)
+        public override bool GetEnterResult(
+            Move move,
+            out MoveResult result)
         {
-            return base.GetEnterValues(
-                source, 
-                step, 
-                out offset, 
-                out gridDest, 
-                out stepDest, 
-                out dest);
+            return base.GetEnterResult(
+                move,
+                out result);
         }
 
 
         public override void Enter(
-            BaseObject source,
-            Vector3Int gridDest,
-            Vector3Int step)            
+            Move move, 
+            MoveResult result)            
         {
-            switch (source.Type)
+            switch (move.User.Type)
             {
                 case ObjectType.Gem:
                     iTween.Init(_visual.Parent.gameObject);
                     iTween.Stop(_visual.Parent.gameObject);
                     _visual.Parent.gameObject.transform.localScale = new Vector3(1, 1, 1);
                     StartCoroutine(PunchScaleCoroutine());
-                    OnGemEntered(source as Gem);
-                    source._targetScale = 0;
+                    OnGemEntered(move.User as Gem);
+                    move.User._targetScale = 0;
                     break;
 
                 case ObjectType.Character:

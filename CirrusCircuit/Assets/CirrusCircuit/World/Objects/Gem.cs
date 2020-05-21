@@ -49,9 +49,8 @@ namespace Cirrus.Circuit.World.Objects
         }
 
         public override void Enter(
-            BaseObject source,
-            Vector3Int gridDest,
-            Vector3Int step)
+            Move move,
+            MoveResult result)
         {           
 
         }

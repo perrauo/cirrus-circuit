@@ -9,25 +9,26 @@ namespace Cirrus.Circuit.World.Objects
     {
         public override ObjectType Type => ObjectType.Solid;
 
-        public override bool Move(
-            BaseObject source, 
-            Vector3Int step)
+        public override bool Move(Move move)
         {
-            switch (source.Type)
+            switch (move.User.Type)
             {
                 default:
                     return false;
             }
         }
 
+        public override bool GetEnterResult(
+            Move move,
+            out MoveResult result)
+        {
+            result = new MoveResult();
+            return false;
+        }
+
         public override void Enter(
-            BaseObject source,
-            Vector3Int gridDest,
-            Vector3Int step)
-        //out Vector3 offset,
-        //out Vector3Int gridDest,
-        //out Vector3Int stepDest,
-        //out BaseObject dest)
+            Move move,
+            MoveResult result)        
         {
             //gridDest = source._gridPosition;
             //stepDest = step;
@@ -58,7 +59,7 @@ namespace Cirrus.Circuit.World.Objects
             
         }
 
-        public override void Cmd_Move(Vector3Int step)
+        public override void Cmd_Move(Move move)
         {
             
         }
