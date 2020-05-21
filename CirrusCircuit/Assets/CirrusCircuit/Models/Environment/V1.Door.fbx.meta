@@ -1,9 +1,19 @@
 fileFormatVersion: 2
-guid: 2866a8399071e49e29a883523f068b4e
+guid: c0aa8073901994d098a6cc33ce88ca0e
 ModelImporter:
   serializedVersion: 19300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: V1.Door.Player.Color
+    second: {fileID: 2100000, guid: 062afd95abf8846b1aad07ed13fa63ed, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: V1.Door.Wood
+    second: {fileID: 2100000, guid: 062afd95abf8846b1aad07ed13fa63ed, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
