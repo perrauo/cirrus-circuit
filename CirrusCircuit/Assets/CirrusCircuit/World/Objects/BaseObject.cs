@@ -444,12 +444,6 @@ namespace Cirrus.Circuit.World.Objects
             _session.Cmd_Fall();
         }
 
-        // TODO play some anim
-        public virtual void Fall()
-        {
-            InitState(State.Falling, null);
-        }
-
         #endregion
 
 
@@ -462,7 +456,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void FSM_Start()
         {
-            //SetState(State.Disabled);
+            InitState(State.Disabled, null);
         }
 
 
@@ -585,7 +579,7 @@ namespace Cirrus.Circuit.World.Objects
                                 _gridPosition + Vector3Int.down,
                                 out BaseObject obj))
                             {
-                                if (_state == State.Falling || _state == State.FallingThrough) Land();
+                                if (_state == State.Falling || _state == State.FallingThrough) Cmd_Land();
 
                                 Cmd_Idle();
                             }

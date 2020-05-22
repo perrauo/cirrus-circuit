@@ -4,11 +4,6 @@ using System.Collections.Generic;
 
 using Cirrus.Circuit.World.Objects;
 using Cirrus.Utils;
-using System;
-
-using System.Threading;
-using Cirrus.Utils;
-using Cirrus.Circuit.Networking;
 using UnityEditor;
 using UnityEngine.Serialization;
 

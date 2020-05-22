@@ -348,14 +348,17 @@ namespace Cirrus.Circuit.Networking
                 Cmd_ObjectSession_Move_mutex.WaitOne();
 
                 // Server holds the truth
-                if (session._object.GetMoveResults(new Move { 
-                    User = session._object,
-                    Position = session._object._gridPosition,
-                    Step = Vector3Int.down                
-                },
-                out IEnumerable<MoveResult> result))
+                if (session._object.GetMoveResults(
+                    new Move
+                    {
+                        User = session._object,
+                        Position = session._object._gridPosition,
+                        Step = Vector3Int.down
+                    },
+                    out IEnumerable<MoveResult> result))
                 {
-                    session.Rpc_Fall();
+                    session.Rpc_Move(
+                        result.Select(x => x.ToNetworkMoveResult()).ToArray());
                 }
 
                 Cmd_ObjectSession_Move_mutex.ReleaseMutex();

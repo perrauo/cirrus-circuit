@@ -79,7 +79,6 @@ namespace Cirrus.Circuit.World
 
         private Timer _randomDropRainTimer;
 
-
         public Level Level => GameSession.Instance.SelectedLevel;
 
         [SyncVar]
@@ -433,7 +432,14 @@ namespace Cirrus.Circuit.World
 
         public void ApplyResult(MoveResult result)
         {
-            if(result.Move.Entered == null) Set(result.Move.Position, null);
+            if (
+                result.Move.Entered == null &&
+                Get(result.Move.Position, out BaseObject previous) &&
+                previous == result.Move.User)
+            { 
+                Set(result.Move.Position, null);
+            }
+
             if(result.Entered == null) Set(result.Destination, result.Move.User);
         }
 
@@ -463,8 +469,6 @@ namespace Cirrus.Circuit.World
         }
 
         #endregion
-
-
 
         public bool GetMoveResults(
             Move move, 

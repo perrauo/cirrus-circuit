@@ -153,16 +153,6 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
-        [ClientRpc]
-        public void Rpc_Fall()
-        {
-            _mutex.WaitOne();
-
-            _object.Fall();
-
-            _mutex.ReleaseMutex();
-        }
-
         #endregion
 
         #region Land

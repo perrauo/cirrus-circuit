@@ -146,7 +146,6 @@ namespace Cirrus.Circuit.World.Objects.Characters
             if (move != null)
             {
                 Cmd_Move(move);
-
                 Play(CharacterAnimation.Character_Walking, false);
                 _guide.Show(move.Step);
             }
