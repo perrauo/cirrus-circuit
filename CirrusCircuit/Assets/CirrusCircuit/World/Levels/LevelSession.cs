@@ -15,112 +15,7 @@ using Cirrus.Circuit.Networking;
 using UnityEditor.Experimental.GraphView;
 
 namespace Cirrus.Circuit.World
-{
-    public static class MoveUtils
-    {
-        #region Network Move Conversion
-
-        public static MoveResult ToMoveResult(this NetworkMoveResult netMoveResult)
-        {
-            ObjectSession sess;
-            return new MoveResult
-            {
-                Destination = netMoveResult.Destination,
-
-                Entered = netMoveResult.Entered == null ?
-                    null :
-                    netMoveResult.Entered.TryGetComponent(out sess) ? 
-                        sess._object : 
-                        null,
-                
-                Moved = netMoveResult.Moved == null ? 
-                    null : 
-                    netMoveResult.Moved.TryGetComponent(out sess) ? 
-                        sess._object : 
-                        null,
-
-                Offset = netMoveResult.Offset,
-                Step = netMoveResult.Step
-            };
-        }
-
-        public static NetworkMoveResult ToNetworkMoveResult(this MoveResult moveResult)
-        { 
-            return new NetworkMoveResult
-            {
-                Destination = moveResult.Destination,
-                Entered = moveResult.Entered == null ? null : moveResult.Entered._session.gameObject,
-                Moved = moveResult.Moved == null ? null : moveResult.Moved._session.gameObject,
-                Offset = moveResult.Offset,
-                Step = moveResult.Step
-            };
-        }
-
-
-        public static Move ToMove(this NetworkMove netMove)
-        {
-            BaseObject obj;
-            return new Move
-            {
-                Position = netMove.Position,
-                Step = netMove.Step,
-                Source = netMove.Source.TryGetComponent(out obj) ? obj._session._object : null,
-                User = netMove.User.TryGetComponent(out obj) ? obj._session._object : null,
-            };
-        }
-
-        public static NetworkMove ToNetworkMove(this Move move)
-        {
-            return new NetworkMove
-            {
-                Position = move.Position,
-                Step = move.Step,
-                Source = move.Source == null ? null : move.Source._session.gameObject,
-                User = move.User == null ? null : move.User._session.gameObject
-        };
-        }
-
-        #endregion
-
-
-    }
-
-    public struct Move
-    {
-        public BaseObject Source;
-        public BaseObject User;
-        public Vector3Int Step;
-        public Vector3Int Position;
-    }
-
-    public struct MoveResult
-    {
-        public Vector3 Offset;
-        public Vector3Int Destination;
-        public Vector3Int Step;
-        public BaseObject Moved;
-        public BaseObject Entered;
-    }
-
-    public struct NetworkMove
-    {
-        public GameObject Source;
-        public GameObject User;
-        public Vector3Int Step;
-        public Vector3Int Position;
-    }
-
-    public struct NetworkMoveResult
-    {
-        public Vector3 Offset;
-        public Vector3Int Destination;
-        public Vector3Int Step;
-        public GameObject Moved;
-        public GameObject Entered;
-    }
-
-
-
+{    
     public class LevelSession : CustomNetworkBehaviour
     {
         public class MoveInfo
@@ -451,36 +346,6 @@ namespace Cirrus.Circuit.World
             return levelSession;
         }
 
-        public bool IsMoveAllowed(Move move)
-        {
-            Vector3Int destination = move.Position + move.Step;
-
-            if (Level.IsWithinBounds(destination))
-            {
-                if (Get(
-                    destination,
-                    out BaseObject moved))
-                {
-                    Move otherMove = new Move();
-                    otherMove = new Move
-                    {
-                        Position = destination,
-                        Source = move.User,
-                        Step = move.Step,
-                        User = moved
-                    };
-
-
-                    if (moved.IsMoveAllowed(move)) return true;
-
-                    else if (moved.IsEnterAllowed(move)) return true;
-                }
-                else return true;
-            }
-
-            return false;
-        }
-
         public void Set(
             Vector3Int pos,
             BaseObject obj)
@@ -566,6 +431,13 @@ namespace Cirrus.Circuit.World
             else move.Source._entered._visitor = null;
         }
 
+        public void ApplyResult(MoveResult result)
+        {
+            if(result.Move.Entered == null) Set(result.Move.Position, null);
+            if(result.Entered == null) Set(result.Destination, result.Move.User);
+        }
+
+
         #endregion
 
         #region Enter
@@ -590,24 +462,24 @@ namespace Cirrus.Circuit.World
             return true;
         }
 
-        public void Enter(
-            Move move,
-            MoveResult result)
-        {
-            if (Get(result.Destination, out BaseObject other))
-            {
-                other.Enter(move, result);
-            }
-            else Set(result.Destination, move.User);
-        }
-
         #endregion
 
-        public bool Move(
+
+
+        public bool GetMoveResults(
             Move move, 
-            out MoveResult result)
+            out IEnumerable<MoveResult> results)
         {
-            result = new MoveResult();
+            results = new List<MoveResult>();
+            
+            var result = new MoveResult { 
+                Move = move,
+                Step = move.Step,
+                Destination = move.Position + move.Step,
+                State = BaseObject.State.Moving
+            };
+
+            ((List<MoveResult>)results).Add(result);
 
             if (!Level.IsWithinBounds(move.Position + move.Step))
             {                
@@ -616,7 +488,7 @@ namespace Cirrus.Circuit.World
 
             if (!GetExitResult(
                 move,
-                out result))                          
+                out MoveResult exitResult))                          
             {
                 return false;
             }
@@ -627,10 +499,11 @@ namespace Cirrus.Circuit.World
                 out result.Moved))
             {
                 // Object moved into is movable
-                if (result.Moved.Move(move))                    
+                if (result.Moved.GetMoveResults(
+                    move, 
+                    out IEnumerable<MoveResult> movedResults))                    
                 {
-                    Exit(move, result);
-                    Enter(move, result);
+                    ((List<MoveResult>)results).AddRange(movedResults);
                     return true;
                 }
                 // Object moved into is enterable
@@ -641,26 +514,29 @@ namespace Cirrus.Circuit.World
                     // If moving out of entered object
                     if (enterResult.Entered != result.Moved)
                     {
+                        IEnumerable<MoveResult> enteredMovedResults = null;
+
                         if (
                             enterResult.Moved == null ||
-                            enterResult.Moved.Move(new Move
+                            enterResult.Moved.GetMoveResults(
+                                new Move
                             {
                                 Position = enterResult.Destination,
                                 Step = enterResult.Step,
                                 User = move.User,
                                 Source = move.Source
-                            }))
+                            },
+                            out enteredMovedResults))
                         {
-                            Exit(move, enterResult);
-                            Enter(move, enterResult);
+                            if(enterResult.Move != null) ((List<MoveResult>)results).AddRange(enteredMovedResults);
                             return true;
                         }
                     }
                     // If moving in entered object
                     else
                     {
-                        Exit(move, result);
-                        Enter(move, result);
+                        result.Moved = null;
+                        result.Entered = result.Moved;
                         return true;
                     }                                
                 }
@@ -668,104 +544,34 @@ namespace Cirrus.Circuit.World
             // No object moved into
             else
             {
-                bool downSlope = false;
-
-                if (Level.IsWithinBounds(
-                    move.Position + move.Step + Vector3Int.down))
+                if (Level.IsWithinBounds(move.Position + move.Step + Vector3Int.down))
                 {
+
                     if (Get(
                       move.Position + move.Step + Vector3Int.down,
-                      out result.Entered))
+                      out BaseObject slope))
                     {
                         // Handle stepping on a slope
-                        if (result.Moved is Slope)
+                        if (slope is Slope)
                         {
-                            result.Step = move.Step + Vector3Int.up;
-
-                            if (GetEnterResult(move, out MoveResult enterResult))
+                            var slopeMove = move.Copy();
+                            slopeMove.Step = move.Step + Vector3Int.down;
+                            if (GetMoveResults(
+                                slopeMove,
+                                out IEnumerable<MoveResult> downhillResults))
                             {
-                                downSlope = true;
-
-                                // If moving out from other than entered object
-                                if (enterResult.Entered != result.Entered)
-                                {
-                                    if (
-                                        enterResult.Entered == null ||
-                                        enterResult.Entered.Move(
-                                            new Move
-                                            {
-                                                Step = enterResult.Step,
-                                                Position = enterResult.Destination,
-                                                Source = move.User,
-                                                User = enterResult.Entered
-                                            }))
-                                    {
-                                        Exit(move, enterResult);
-                                        Enter(move, enterResult);
-                                        return true;                                        
-                                    }
-                                }
-                                // If moving in entered object
-                                else
-                                {
-                                    Exit(move, enterResult);
-                                    Enter(move, enterResult);
-                                    return true;
-                                }
+                                ((List<MoveResult>)results).AddRange(downhillResults);
+                                return true;
                             }
+                            else return false;// cant move object in the slope, cant move myself
                         }
                     }
                 }
 
-                if (!downSlope)
-                {
-                    Exit(move, result);
-                    Enter(move, result);
-                    return true;
-                }
-
+                return true;
             }
 
             return false;
-        }
-        // TODO Remove
-        //public bool Move(
-        //    BaseObject source,
-        //    Vector3Int step,
-        //    out Vector3 offset,
-        //    out Vector3Int gridDest,
-        //    out BaseObject moved,
-        //    out BaseObject destination)
-        //{
-        //    destination = null;
-        //    moved = null;            
-        //    gridDest = source._gridPosition + step;
-        //    offset = Vector3.zero;
-
-        //    if (Level
-        //        .IsWithinBounds(
-        //        gridDest))
-        //    {
-        //        return MoveToPosition(
-        //            source,
-        //            gridDest,
-        //            step,
-        //            out offset,
-        //            out gridDest,
-        //            out moved,
-        //            out destination);
-        //    }
-
-        //    return false;
-        //}
-
-        public bool IsFallThroughAllowed(
-            BaseObject source,
-            Vector3Int step)
-        {
-            var position = source._gridPosition + step;
-
-            return !Level.IsWithinBoundsY(position.y);
         }
 
         public Vector3Int GetFallThroughPosition(bool isLandingGuaranteed = true)
@@ -832,14 +638,14 @@ namespace Cirrus.Circuit.World
                         if (target is Character) continue;
                         if (target is Door) continue;
 
-                        return Move(
+                        return GetMoveResults(
                             new Move { 
                                 User = source,
                                 Step = step,
                                 Position = source._gridPosition,
                                 Source = null
                             },
-                            out MoveResult result);
+                            out IEnumerable<MoveResult> result);
                     }
                 }
 
@@ -892,7 +698,7 @@ namespace Cirrus.Circuit.World
                 session._object = obj;                
                 obj._session = session;                
                 (obj.Transform.position, obj._gridPosition) = RegisterObject(obj);
-                obj.Idle();
+                obj.Cmd_Idle();
             }
         }
 
@@ -943,7 +749,7 @@ namespace Cirrus.Circuit.World
             {
                 if (obj == null) continue;
 
-                obj.Idle();
+                obj.Cmd_Idle();
             }
 
             if (CustomNetworkManager.IsServer)

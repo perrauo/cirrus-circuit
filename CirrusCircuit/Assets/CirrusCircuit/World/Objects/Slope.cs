@@ -19,13 +19,10 @@ namespace Cirrus.Circuit.World.Objects
         public bool _isStaircase = false;
         public bool IsStaircase => _isStaircase;
 
-        public override bool Move(Move move)
+        public override bool GetMoveResults(Move move, out IEnumerable<MoveResult> result)
         {
-            switch (move.User.Type)
-            {
-                default:
-                    return false;
-            }
+            result = null;
+            return false;
         }
 
         public override bool GetExitValue(
@@ -71,8 +68,7 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
-        public override void Enter(
-            Move move,
+        public override void Enter(            
             MoveResult result)
         {
             //offset = Vector3.zero;

@@ -9,13 +9,10 @@ namespace Cirrus.Circuit.World.Objects
     {
         public override ObjectType Type => ObjectType.Solid;
 
-        public override bool Move(Move move)
+        public override bool GetMoveResults(Move move, out IEnumerable<MoveResult> res)
         {
-            switch (move.User.Type)
-            {
-                default:
-                    return false;
-            }
+            res = null;
+            return false;
         }
 
         public override bool GetEnterResult(
@@ -27,13 +24,8 @@ namespace Cirrus.Circuit.World.Objects
         }
 
         public override void Enter(
-            Move move,
             MoveResult result)        
         {
-            //gridDest = source._gridPosition;
-            //stepDest = step;
-            //offset = Vector3.zero;
-            //dest = this;
 
             return;
         }
@@ -44,22 +36,9 @@ namespace Cirrus.Circuit.World.Objects
             base.Start();
         }
 
-        public override void Cmd_Fall()
-        {
-        
-        }
-
-        public override void Cmd_FallThrough(Vector3Int step)
-        {
-            
-        }
-
+        // TODO remove
+        // Replaced by OnMoved
         public override void Cmd_Interact(BaseObject source)
-        {
-            
-        }
-
-        public override void Cmd_Move(Move move)
         {
             
         }

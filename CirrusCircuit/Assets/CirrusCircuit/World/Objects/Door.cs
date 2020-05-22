@@ -94,8 +94,9 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
-        public override bool Move(Move move)
+        public override bool GetMoveResults(Move move, out IEnumerable<MoveResult> res)
         {
+            res = null;
             return false;
         }
 
@@ -117,19 +118,17 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
-        public override void Enter(
-            Move move, 
-            MoveResult result)            
+        public override void Enter(MoveResult result)            
         {
-            switch (move.User.Type)
+            switch (result.Move.User.Type)
             {
                 case ObjectType.Gem:
                     iTween.Init(_visual.Parent.gameObject);
                     iTween.Stop(_visual.Parent.gameObject);
                     _visual.Parent.gameObject.transform.localScale = new Vector3(1, 1, 1);
                     StartCoroutine(PunchScaleCoroutine());
-                    OnGemEntered(move.User as Gem);
-                    move.User._targetScale = 0;
+                    OnGemEntered(result.Move.User as Gem);
+                    result.Move.User._targetScale = 0;
                     break;
 
                 case ObjectType.Character:
@@ -140,21 +139,6 @@ namespace Cirrus.Circuit.World.Objects
         }
 
         #endregion
-
-        public override void Cmd_Fall()
-        {
-            
-        }
-
-        public override void Cmd_FallThrough(Vector3Int step)
-        {
-            
-        }
-
-        public override void Fall()
-        {
-
-        }
 
         public override void Accept(BaseObject source)
         {            

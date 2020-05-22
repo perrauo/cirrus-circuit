@@ -10,6 +10,8 @@ using Cirrus.Circuit.Networking;
 using Cirrus.Circuit.World;
 using System;
 using Cirrus.Circuit.World.Objects;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Cirrus.Circuit.World.Objects
 {
@@ -77,22 +79,15 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
+        #region Move
+
+
         [ClientRpc]
-        public void Rpc_Fall()
+        public void Rpc_Move(NetworkMoveResult[] results)
         {
             _mutex.WaitOne();
 
-            _object.Fall();
-
-            _mutex.ReleaseMutex();
-        }
-
-        [ClientRpc]
-        public void Rpc_Move(NetworkMove move)
-        {
-            _mutex.WaitOne();
-
-            _object.Move(move.ToMove());
+            _object.Move(results.Select(x =>x.ToMoveResult()));
 
             _mutex.ReleaseMutex();
         }
@@ -106,12 +101,9 @@ namespace Cirrus.Circuit.World.Objects
                     move.ToNetworkMove());
         }
 
-        public void Cmd_Fall()
-        {
-            CommandClient
-                .Instance
-                .Cmd_ObjectSession_Fall(gameObject);
-        }
+        #endregion
+
+        #region Interact
 
         public void Cmd_Interact(BaseObject source)
         {
@@ -124,54 +116,69 @@ namespace Cirrus.Circuit.World.Objects
                     .gameObject);
         }
 
-        public bool IsMoveAllowed(Move move)
-        {
-            return _object.IsMoveAllowed(move);
-        }
+        #endregion
 
-        public bool IsFallAllowed()
-        {
-            return _object
-                .IsFallAllowed();
-        }
 
-        public void Cmd_FallThrough(Vector3Int step)
+
+        #region Idle
+
+        public void Cmd_Idle()
         {
             CommandClient
                 .Instance
-                .Cmd_ObjectSession_FallThrough(
-                    gameObject,
-                    step);
+                .Cmd_ObjectSession_Idle(gameObject);
         }
+
 
         [ClientRpc]
-        public void Rpc_FallThrough(
-            Vector3Int step,
-            Vector3Int position)
+        public void Rpc_Idle()
         {
-            _object
-                .FallThrough(
-                    step,
-                    position);
+            _mutex.WaitOne();
+
+            _object.Idle();
+
+            _mutex.ReleaseMutex();
         }
 
+        #endregion
 
-        // TODO
-        ///////
-        ///
-        public void Cmd_Request(CommandRequest req)
+
+        #region Fall
+
+        public void Cmd_Fall()
         {
             CommandClient
                 .Instance
-                .Cmd_ObjectSession_Request(
-                    gameObject,
-                    req);
+                .Cmd_ObjectSession_Fall(gameObject);
         }
 
-        public void Target_Response(CommandResponse res)
+
+        [ClientRpc]
+        public void Rpc_Fall()
         {
-            _object
-                .Respond(res);
+            _mutex.WaitOne();
+
+            _object.Fall();
+
+            _mutex.ReleaseMutex();
         }
+
+        #endregion
+
+        #region Land
+
+        public void Cmd_Land()
+        {
+            CommandClient
+                .Instance
+                .Cmd_ObjectSession_Land(gameObject);
+        }
+
+        internal void Rpc_Land()
+        {
+            _object.Land();
+        }
+
+        #endregion
     }
 }

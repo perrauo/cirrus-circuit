@@ -85,34 +85,6 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
         private bool _wasMovingVertical = false;
 
-        public override void Idle()
-        {
-            base.Idle();
-
-            _moveIdleTransitionTimer.Start();
-        }
-
-        public override void Fall()
-        {
-            base.Fall();
-
-            Play(CharacterAnimation.Character_Falling);
-        }
-
-        public override void FallThrough(Vector3Int step, Vector3Int position)
-        {
-            base.FallThrough(step, position);
-
-            Play(CharacterAnimation.Character_Falling);
-        }
-
-        public override void Land()
-        {
-            base.Land();
-
-            Play(CharacterAnimation.Character_Landing);
-        }
-
 
         public void OnMoveIdleTransitionTimeout()
         {
@@ -148,33 +120,35 @@ namespace Cirrus.Circuit.World.Objects.Characters
             Vector3Int stepHorizontal = new Vector3Int(StepSize * Math.Sign(axis.x), 0, 0);
             Vector3Int stepVertical = new Vector3Int(0, 0, StepSize * Math.Sign(axis.y));
 
+            Move move = null;
+
             if (isMovingVertical && isMovingHorizontal)
-            {                
-                //moving in both directions, prioritize later
-                if (_wasMovingVertical)
+            {
+                //moving in both directions, prioritize latest
+                move = new Move
                 {
-                    base.Cmd_Move(new Move { Step = stepHorizontal, User = this });
-                    _guide.Show(stepHorizontal);
-                }
-                else
-                {
-                    base.Cmd_Move(new Move { Step = stepVertical, User = this });
-                    _guide.Show(stepVertical);
-                }
+                    Step = _wasMovingVertical ? stepHorizontal : stepVertical,
+                    User = this,
+                    Position = _gridPosition
+                };
             }
             else if (isMovingHorizontal)
             {
-                Play(CharacterAnimation.Character_Walking, false);
-                Cmd_Move(new Move { Step = stepHorizontal, User = this });                
-                _guide.Show(stepHorizontal);
+                move = new Move { Step = stepHorizontal, Position = _gridPosition, User = this };
                 _wasMovingVertical = false;                
             }
             else if (isMovingVertical)
             {
-                Play(CharacterAnimation.Character_Walking, false);
-                Cmd_Move(new Move { Step = stepVertical, User = this });                
-                _guide.Show(stepVertical);
+                move = new Move { Step = stepVertical, Position = _gridPosition, User = this };
                 _wasMovingVertical = true;                
+            }            
+
+            if (move != null)
+            {
+                Cmd_Move(move);
+
+                Play(CharacterAnimation.Character_Walking, false);
+                _guide.Show(move.Step);
             }
 
             yield return new WaitForSeconds(MoveDelay);

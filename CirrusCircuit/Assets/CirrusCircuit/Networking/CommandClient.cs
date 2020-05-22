@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using Cirrus.Utils;
 using Cirrus.Circuit.World;
+using System.Collections.Generic;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -333,23 +334,8 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-        private Mutex Cmd_ObjectSession_Fall_mutex = new Mutex();
-
-        [Command]
-        public void Cmd_ObjectSession_FallThrough(
-            GameObject gobj,
-            Vector3Int step)            
-        {
-            if (gobj.TryGetComponent(out ObjectSession obj))
-            {
-                obj.Rpc_FallThrough(
-                    step,
-                    LevelSession.Instance.GetFallThroughPosition()
-                    );
-            }
-
-        }
-
+        private Mutex Cmd_ObjectSession_Move_mutex = new Mutex();
+        
 
         [Command]
         public void Cmd_ObjectSession_Fall(GameObject obj)
@@ -359,22 +345,56 @@ namespace Cirrus.Circuit.Networking
 
             if (obj.TryGetComponent(out ObjectSession session))
             {
-                Cmd_ObjectSession_Fall_mutex.WaitOne();
+                Cmd_ObjectSession_Move_mutex.WaitOne();
 
                 // Server holds the truth
-                if (session.IsFallAllowed())
+                if (session._object.GetMoveResults(new Move { 
+                    User = session._object,
+                    Position = session._object._gridPosition,
+                    Step = Vector3Int.down                
+                },
+                out IEnumerable<MoveResult> result))
                 {
                     session.Rpc_Fall();
                 }
 
-                Cmd_ObjectSession_Fall_mutex.ReleaseMutex();
+                Cmd_ObjectSession_Move_mutex.ReleaseMutex();
             }
         }
 
-        private Mutex Cmd_ObjectSession_Move_mutex = new Mutex();
+        [Command]
+        public void Cmd_ObjectSession_Idle(GameObject obj)
+        {
+            //AssertGameObjectNull(obj);
+            if (obj == null) return;
+
+            if (obj.TryGetComponent(out ObjectSession session))
+            {
+                Cmd_ObjectSession_Move_mutex.WaitOne();
+                session.Rpc_Idle();
+                Cmd_ObjectSession_Move_mutex.ReleaseMutex();
+            }
+        }
+
 
         [Command]
-        public void Cmd_ObjectSession_Move(GameObject obj, NetworkMove move)
+        public void Cmd_ObjectSession_Land(GameObject obj)
+        {
+            //AssertGameObjectNull(obj);
+            if (obj == null) return;
+
+            if (obj.TryGetComponent(out ObjectSession session))
+            {
+                Cmd_ObjectSession_Move_mutex.WaitOne();
+                session.Rpc_Land();
+                Cmd_ObjectSession_Move_mutex.ReleaseMutex();
+            }
+        }
+
+
+        // TODO validate the move
+        [Command]
+        public void Cmd_ObjectSession_Move(GameObject obj, NetworkMove netMove)
         {
             //AssertGameObjectNull(obj);
             if (obj == null) return;
@@ -385,14 +405,18 @@ namespace Cirrus.Circuit.Networking
                 Cmd_ObjectSession_Move_mutex.WaitOne();
 
                 // Server holds the truth
-                if (session.IsMoveAllowed(move.ToMove()))
+                if (session._object.GetMoveResults(
+                    netMove.ToMove(), 
+                    out IEnumerable<MoveResult> res))
                 {
-                    session.Rpc_Move(move);
+                    session.Rpc_Move(res.Select(x => x == null ? null : x.ToNetworkMoveResult()).ToArray());
                 }
 
                 Cmd_ObjectSession_Move_mutex.ReleaseMutex();
             }
         }
+
+
 
         [Command]
         public void Cmd_ObjectSession_SetIndex(GameObject obj, int idx)
@@ -405,54 +429,6 @@ namespace Cirrus.Circuit.Networking
             {
                 session._index = idx;
             }
-        }
-
-
-
-        // TODO remove
-        /////////////////////////
-        
-        [Command]
-        public void Cmd_ObjectSession_Request(GameObject obj, ObjectSession.CommandRequest req)
-        {
-            if (obj.TryGetComponent(out ObjectSession session))
-            {
-                var res = new ObjectSession.CommandResponse { Id = req.Id };
-                switch (res.Id)
-                {
-                    case ObjectSession.CommandId.LevelSession_IsMoveAllowed:
-                        res.Success = session
-                            ._object
-                            .LevelSession
-                            .IsMoveAllowed(
-                                new Move {
-                                    Source = session._object,
-                                    Step = req.step
-                                });
-                        break;
-
-                    case ObjectSession.CommandId.LevelSession_IsFallThroughAllowed:
-                        res.Success = session
-                            ._object
-                            .LevelSession
-                            .IsFallThroughAllowed(
-                                session._object,
-                                req.step);
-                        break;
-
-                }
-
-                Target_ObjectSession_Response(obj, res);
-            }
-        }
-
-
-        [TargetRpc]
-        public void Target_ObjectSession_Response(
-            GameObject obj,
-            ObjectSession.CommandResponse res)
-        {
-            if (obj.TryGetComponent(out ObjectSession session)) session.Target_Response(res);
         }
 
 

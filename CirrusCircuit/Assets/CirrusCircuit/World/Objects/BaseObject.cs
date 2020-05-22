@@ -18,6 +18,7 @@ namespace Cirrus.Circuit.World.Objects
         [Serializable]
         public enum State
         {
+            Unknown,
             Disabled,
             LevelSelect,
             Entering,
@@ -242,11 +243,6 @@ namespace Cirrus.Circuit.World.Objects
             InitState(State.Disabled, null);
         }
 
-        public virtual void Land()
-        {
-
-        }
-
         public virtual void WaitLevelSelect()
         {
             if (PlayerManager.IsValidPlayerId(ColorId))
@@ -294,189 +290,80 @@ namespace Cirrus.Circuit.World.Objects
 
         #endregion
 
-        #region Fall
-
-        // TODO State move argument
-        public virtual bool IsFallAllowed(
-            BaseObject source = null)
-        {
-
-            return LevelSession.IsMoveAllowed(new Move
-            {
-                User = this,
-                Position = _gridPosition,
-                Step = Vector3Int.down
-            });
-        }
-
-
-        public virtual void Cmd_Fall()
-        {
-            _session.Cmd_Fall();
-        }
-
-        public virtual void Fall()
-        {
-            Vector3Int step = Vector3Int.down;
-
-            if (LevelSession.Move(new Move
-                {
-                    User = this,
-                    Step = Vector3Int.down,
-                    Position = _gridPosition
-                },
-                out MoveResult result
-                ))
-            {
-                _entered = result.Entered;
-                _gridPosition = result.Destination;
-                _targetPosition = Level.GridToWorld(_gridPosition);
-
-                InitState(State.Falling, null);
-
-            }
-            else if (LevelSession.IsFallThroughAllowed(
-                this,
-                step))
-            {
-                Cmd_FallThrough(step);
-
-                InitState(State.Falling, null);
-            }
-            else
-            {
-                InitState(State.Idle, null);
-            }
-        }
-
-        public virtual void Cmd_FallThrough(Vector3Int step)
-        {
-            _session.Cmd_FallThrough(step);
-        }
-
-        public virtual void FallThrough(
-            Vector3Int step,
-            Vector3Int fallThroughPosition)
-        {
-            if (LevelSession.Instance.Move(
-                new Move
-                {
-                    Position = fallThroughPosition,
-                    Step = step,
-                    User = this
-                },
-                out MoveResult result))
-            {
-                _entered = result.Entered;
-                _gridPosition = result.Destination;
-                _targetPosition = Level.GridToWorld(_gridPosition);
-                Transform.position = _targetPosition;
-
-                InitState(State.FallingThrough, null);
-            }
-        }
-
-
-        #endregion
-
         #region Move
-
-        public virtual bool Move(Move move)
-        {
-            if (LevelSession.Move(move, out MoveResult result))
-            {
-                //destination.
-                if (result.Moved != null) result.Moved.Cmd_Interact(this);
-
-                _entered = result.Entered;
-                _gridPosition = result.Destination;
-                _targetPosition = Level.GridToWorld(result.Destination);
-                _targetPosition += result.Offset;
-                _direction = result.Step;
-
-                InitState(
-                    State.Moving,
-                    this);
-
-                return true;
-            }
-
-            return false;
-
-        }
-
-        //public virtual void MoveFromSlope(
-        //    Vector3Int step,
-        //    BaseObject source)
-        //{
-        //    Vector3Int gridOffset = Vector3Int.zero;
-
-        //    // Determine which direction to cast the ray
-
-        //    // Same direction (Look up)
-        //    if (step.Copy().SetY(0) == _destination._direction)
-        //    {
-        //        gridOffset = Vector3Int.up;
-        //    }
-        //    // Opposing direction (look down)
-        //    else if (step.Copy().SetY(0) == -_destination._direction)
-        //    {
-        //        gridOffset = -Vector3Int.up;
-        //    }
-
-        //    step += gridOffset;
-
-        //    if (_levelSession.Move(
-        //        this,
-        //        step,
-        //        source._gridPosition + step,
-        //        out Vector3 offset,
-        //        out Vector3Int gridDest,
-        //        out BaseObject moved,
-        //        out BaseObject destination))
-        //    {
-        //        if (moved) moved.Cmd_Interact(this);
-        //        _destination = destination;
-        //        _gridPosition = gridDest;
-        //        _targetPosition = _level.GridToWorld(_gridPosition);
-        //        _targetPosition += offset;
-        //        _direction = step;
-
-        //        InitState(State.SlopeMoving, source);
-        //    }
-        //}
-
 
         public virtual void Cmd_Move(Move move)
         {
             _session.Cmd_Move(move);
         }
 
-        // TODO State move argument
-        public virtual bool IsMoveAllowed(Move move)
+        public virtual void Move(MoveResult result)
         {
-            return LevelSession.IsMoveAllowed(move);
+            _entered = result.Entered;
+            _gridPosition = result.Destination;
+            _targetPosition = Level.GridToWorld(result.Destination);
+            _targetPosition += result.Offset;
+            _direction = result.Step;
+
+
+            //destination.
+            if (result.Moved != null)
+            {
+                result.Moved.Interact(this);
+            }
+
+            if (_entered != null)
+            {
+                _entered.Exit(this);
+                _entered = null;
+            }
+
+            if (result.Entered != null) result.Entered.Enter(result);
+
+            LevelSession.Instance.ApplyResult(result);
+            InitState(
+                result.State,
+                this);
         }
+
+
+        public virtual void Move(IEnumerable<MoveResult> results)
+        {
+            foreach (var result in results)
+            {
+                if (result == null) continue;
+                result.Move.User.Move(result);
+            }
+        }
+
+
+        public virtual bool GetMoveResults(
+            Move move, 
+            out IEnumerable<MoveResult> results)
+        {
+            return LevelSession.GetMoveResults(
+               move,
+               out results);
+        }
+
 
         #endregion
 
         #region Enter
 
-        // TODO remplace with GetEnterResult
-        public virtual bool IsEnterAllowed(Move move)
+
+        public virtual void Enter(MoveResult result)
         {
-            if (_visitor != null) return _visitor.IsMoveAllowed(move);
+            if (_visitor != null)
+            {
+                _visitor.GetMoveResults(new Move
+                {
 
-            else return true;
+                },
+                out IEnumerable<MoveResult> enterResult);
+            }
+            //else e            
         }
-
-        public virtual void Enter(
-            Move move,
-            MoveResult result)
-        {          
-            if (_visitor != null) _visitor.Move(move);
-        }
-
 
         public virtual bool GetEnterResult(
             Move move,            
@@ -484,7 +371,7 @@ namespace Cirrus.Circuit.World.Objects
         {
             result = new MoveResult();
 
-            if (_visitor != null) return _visitor.IsMoveAllowed(move);
+            //if (_visitor != null) return _visitor.IsMoveAllowed(move);
 
             return true;
         }
@@ -518,19 +405,53 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Idle
 
+        public virtual void Cmd_Idle()
+        { 
+        
+            _session.Cmd_Idle();
+        }
+
+
+        // TODO play some anim
         public virtual void Idle()
         {
-            // TODO: Redundant
-            if (LevelSession.Get(
-                _gridPosition + Vector3Int.down,
-                out BaseObject other))
-            {     
-                InitState(State.Idle, null);
-            }
-            else Cmd_Fall();
+            InitState(State.Idle, null);
+        }
+
+
+        #endregion
+
+
+        #region Land
+
+        public virtual void Land()
+        { 
+        
+        }
+        public virtual void Cmd_Land()
+        {
+            _session.Cmd_Land();
+        }
+
+
+        #endregion
+
+
+        #region Fall
+
+        public virtual void Cmd_Fall()
+        {
+            _session.Cmd_Fall();
+        }
+
+        // TODO play some anim
+        public virtual void Fall()
+        {
+            InitState(State.Falling, null);
         }
 
         #endregion
+
 
         #region FSM
 
@@ -544,6 +465,8 @@ namespace Cirrus.Circuit.World.Objects
             //SetState(State.Disabled);
         }
 
+
+        // Common to all state or subset of states
         public void InitState(State target, BaseObject source = null)
         {
             _state = target;
@@ -575,7 +498,7 @@ namespace Cirrus.Circuit.World.Objects
                             _previousGridPosition + Vector3Int.up, 
                             out above))
                         {
-                            above.Cmd_Fall();
+                            //above.Cmd_Fall();
                         }
 
                         _state = target;
@@ -657,22 +580,17 @@ namespace Cirrus.Circuit.World.Objects
                         _hasArrived = true;
 
                         if (_entered == null)
-                        {
-                            if (!Level.IsWithinBoundsY(_gridPosition.y - 1))
-                            {
-                                Cmd_FallThrough(_gridPosition + Vector3Int.down);
-                            }
-                            else if (LevelSession.Get(
+                        {                            
+                            if (LevelSession.Get(
                                 _gridPosition + Vector3Int.down,
                                 out BaseObject obj))
                             {
                                 if (_state == State.Falling || _state == State.FallingThrough) Land();
 
-                                Idle();
+                                Cmd_Idle();
                             }
                             else Cmd_Fall();
                         }
-                        else _entered.Accept(this);
                     }
 
                     break;

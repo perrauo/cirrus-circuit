@@ -48,9 +48,7 @@ namespace Cirrus.Circuit.World.Objects
             _visual.Parent.transform.Rotate(Vector3.right * Time.deltaTime * RotateSpeed);
         }
 
-        public override void Enter(
-            Move move,
-            MoveResult result)
+        public override void Enter(     MoveResult result)
         {           
 
         }

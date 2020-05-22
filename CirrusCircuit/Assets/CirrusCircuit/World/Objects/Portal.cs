@@ -1,5 +1,6 @@
 ﻿using Cirrus.Utils;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -46,11 +47,15 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
-        public override bool Move(Move move)
+        #region Enter
+
+        public override bool GetMoveResults(Move move, out IEnumerable<MoveResult> result)
         {
+            result = null;
             return false;
         }
 
+        #endregion
 
         #region Exit
 
@@ -116,33 +121,15 @@ namespace Cirrus.Circuit.World.Objects
             return false;
         }
 
-        public override void Enter(
-            Move move, 
+        public override void Enter(            
             MoveResult result)
         {
             StartCoroutine(PunchScaleCoroutine());
-
-            if (LevelSession
-                .Instance
-                .GetOtherPortal(
-                    this,
-                    out Portal other))
-            {
-                other.GetExitValue(
-                    move,
-                    out result
-                    );
-            }
+            return;
         }
 
 
         #endregion
-
-
-        public override void Cmd_Fall()
-        {
-
-        }
 
         public void OnDrawGizmos()
         {
@@ -151,16 +138,6 @@ namespace Cirrus.Circuit.World.Objects
                 Transform.position, 
                 Transform.position + Transform.forward,
                 2f);
-        }
-
-        public override void Cmd_FallThrough(Vector3Int step)
-        {
-
-        }
-
-        public override void Fall()
-        {
-
         }
 
         public override void Accept(BaseObject source)
