@@ -51,6 +51,7 @@ MonoBehaviour:
   _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 0, y: 0, z: 0}

@@ -38,6 +38,8 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
         private const float MoveIdleTransitionTime = 0.6f;
 
+        public override bool IsSlidable => false;
+
         [SerializeField]
         public Axes Axes;
 
@@ -112,7 +114,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
         private Coroutine _moveCoroutine = null;
 
-        public IEnumerator MoveCoroutine(Vector2 axis)
+        public IEnumerator Coroutine_Cmd_Move(Vector2 axis)
         {            
             bool isMovingHorizontal = Mathf.Abs(axis.x) > 0.5f;
             bool isMovingVertical = Mathf.Abs(axis.y) > 0.5f;
@@ -120,34 +122,44 @@ namespace Cirrus.Circuit.World.Objects.Characters
             Vector3Int stepHorizontal = new Vector3Int(StepSize * Math.Sign(axis.x), 0, 0);
             Vector3Int stepVertical = new Vector3Int(0, 0, StepSize * Math.Sign(axis.y));
 
-            Move move = null;
+            Move move = new Move
+            {
+                User = this,
+                Position = _gridPosition,                
+            };
+
+            switch (_state)
+            {
+                case ObjectState.Disabled:
+                case ObjectState.Falling:                    
+                    move.Type = MoveType.Direction;                    
+                    break;
+
+                default:
+                    move.Type = MoveType.Moving;
+                    break;
+            }
+
 
             if (isMovingVertical && isMovingHorizontal)
             {
-                //moving in both directions, prioritize latest
-                move = new Move
-                {
-                    Step = _wasMovingVertical ? stepHorizontal : stepVertical,
-                    User = this,
-                    Position = _gridPosition
-                };
+                move.Step = _wasMovingVertical ? stepHorizontal : stepVertical;
             }
             else if (isMovingHorizontal)
             {
-                move = new Move { Step = stepHorizontal, Position = _gridPosition, User = this };
-                _wasMovingVertical = false;                
+                move.Step = stepHorizontal;
+                _wasMovingVertical = false;
             }
             else if (isMovingVertical)
             {
-                move = new Move { Step = stepVertical, Position = _gridPosition, User = this };
-                _wasMovingVertical = true;                
-            }            
+                move.Step = stepVertical;
+                _wasMovingVertical = true;
+            }
+            else move = null;
 
             if (move != null)
             {
                 Cmd_Move(move);
-                Play(CharacterAnimation.Character_Walking, false);
-                _guide.Show(move.Step);
             }
 
             yield return new WaitForSeconds(MoveDelay);
@@ -156,16 +168,16 @@ namespace Cirrus.Circuit.World.Objects.Characters
         }
 
         // Use the same raycast to show guide
-        public void Move(Vector2 axis)
+        public void Cmd_Move(Vector2 axis)
         {
             switch (_state)
             {               
-                case State.Moving:
-                case State.Falling:
-                case State.Entering:
-                case State.Idle:
+                case ObjectState.Moving:
+                case ObjectState.Falling:
+                case ObjectState.Idle:
+                case ObjectState.Disabled:                
                     
-                    if (_moveCoroutine == null) _moveCoroutine = StartCoroutine(MoveCoroutine(axis));
+                    if (_moveCoroutine == null) _moveCoroutine = StartCoroutine(Coroutine_Cmd_Move(axis));
 
                     break;
 
@@ -175,29 +187,29 @@ namespace Cirrus.Circuit.World.Objects.Characters
             }
         }
 
+        public override void Move(MoveResult result)
+        {
+            base.Move(result);
+
+            switch (result.MoveType)
+            {
+                case MoveType.Moving:
+                    Play(CharacterAnimation.Character_Walking, false);
+                    //_guide.Show(move.Step);
+                break;
+            }
+        }
+
+        public override void Land()
+        {
+            base.Land();
+            Play(CharacterAnimation.Character_Landing);
+        }
+
 
         public override void FSM_Update()
         {
-            base.FSM_Update();
-
-
-            switch (_state)
-            {
-                case State.LevelSelect:
-                    break;
-
-                case State.Moving:
-                case State.Falling:
-                case State.Entering:
-                case State.Idle:
-                    
-                    if (_direction != Vector3.zero)
-                        Transform.rotation = Quaternion.LookRotation(_direction, Transform.up);
-                    break;
-
-            }
-
-
+           base.FSM_Update();
         }
 
         public void DoAction0()

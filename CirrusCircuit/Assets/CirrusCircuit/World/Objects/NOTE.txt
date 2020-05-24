@@ -3,3 +3,16 @@
 
 - BLOCK THAT SLOW YOU DOWN
     - GetExitValues() false
+
+- Angle object on slope
+
+- Ladder Block
+    - Dont press anything makes you fall down
+    - Press down makes your drop the ladder
+
+- Lock out player until they press their first move
+    - Red cross on the direction
+    - One time warning when falling from the edge
+   
+- Character Turns in place (Character Spins in place)
+    - Character spin and arrow appears

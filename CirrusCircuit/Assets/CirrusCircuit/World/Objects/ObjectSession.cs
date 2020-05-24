@@ -79,7 +79,7 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
-        #region Move
+        #region Action
 
 
         [ClientRpc]
@@ -87,7 +87,7 @@ namespace Cirrus.Circuit.World.Objects
         {
             _mutex.WaitOne();
 
-            _object.Move(results.Select(x =>x.ToMoveResult()));
+            _object.Move(results.Select(x =>x.ToActionResult()));
 
             _mutex.ReleaseMutex();
         }
@@ -164,11 +164,19 @@ namespace Cirrus.Circuit.World.Objects
                 .Cmd_ObjectSession_Land(gameObject);
         }
 
-        internal void Rpc_Land()
+        [ClientRpc]
+        public void Rpc_Land()
         {
             _object.Land();
         }
 
         #endregion
+
+        public void Cmd_Slide()
+        {
+            CommandClient
+                .Instance
+                .Cmd_ObjectSession_Slide(gameObject);
+        }
     }
 }

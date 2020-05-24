@@ -56,7 +56,7 @@ namespace Cirrus.Circuit
         }
 
         [SerializeField]
-        public Visual _visual;
+        public ColorController _visual;
 
         private float _growth;
 

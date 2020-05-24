@@ -157,7 +157,7 @@ namespace Cirrus.Circuit
         {
             base.Awake();
 
-            if (IsSeedRandomized) Random.InitState(Environment.TickCount);          
+            if (IsSeedRandomized) Random.InitState(Environment.TickCount);
         }
 
         public override void Start()
@@ -321,7 +321,7 @@ namespace Cirrus.Circuit
 
                         if (player._character == null) continue;
 
-                        if (player.IsAxesLeft) player._character.Move(player.AxisLeft);
+                        if (player.IsAxesLeft) player._character.Cmd_Move(player.AxisLeft);
                         
                         
                     }
@@ -793,7 +793,7 @@ namespace Cirrus.Circuit
                     break;
 
                 case State.Round:
-                    if (player._character != null) player._character?.Move(axis);
+                    if (player._character != null) player._character?.Cmd_Move(axis);
 
                     break;
 

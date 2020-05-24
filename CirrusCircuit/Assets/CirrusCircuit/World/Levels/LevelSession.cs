@@ -64,6 +64,8 @@ namespace Cirrus.Circuit.World
 
         private static LevelSession _instance;
 
+        public Event<MoveResult> OnMoveHandler;
+
         public static LevelSession Instance
         {
             get
@@ -138,7 +140,9 @@ namespace Cirrus.Circuit.World
             }
         }
 
-        public bool GetOtherPortal(Portal portal, out Portal other)
+        public bool GetOtherPortal(
+            Portal portal, 
+            out Portal other)
         {
             other = null;
 
@@ -172,11 +176,13 @@ namespace Cirrus.Circuit.World
                     );
 
                 if (res is Door) ((Door)res).OnScoreValueAddedHandler += OnGemEntered;
-
-                if (res is Portal)
+                else if (res is Gem) OnMoveHandler += ((Gem)res).OnLevelMove;
+                else if (res is Portal)
                 {
                     var portal = (Portal)res;
-                    if (_portals.TryGetValue(portal.Connection, out Tuple<Portal, Portal> tuple))
+                    if (_portals.TryGetValue(
+                        portal.Connection, 
+                        out Tuple<Portal, Portal> tuple))
                     {
                         _portals[portal.Connection] =
                             new Tuple<Portal, Portal>(
@@ -194,25 +200,25 @@ namespace Cirrus.Circuit.World
                 (res.Transform.position, res._gridPosition) = RegisterObject(res);
             }
 
-            foreach (var plceholderInfo in PlaceholderInfos)
+            foreach (var info in PlaceholderInfos)
             {
-                PlayerSession player = GameSession.Instance.GetPlayer(plceholderInfo.PlayerId);
+                PlayerSession player = GameSession.Instance.GetPlayer(info.PlayerId);
                 Player localPlayer = PlayerManager.Instance.GetPlayer(player.LocalId);
                 player.Score = 0;
 
-                plceholderInfo.Session._object =
-                    plceholderInfo.Character.Create(
-                        Level.GridToWorld(plceholderInfo.Position),
+                info.Session._object =
+                    info.Character.Create(
+                        Level.GridToWorld(info.Position),
                         transform,
-                        plceholderInfo.Rotation);
-                plceholderInfo.Session._object._session = plceholderInfo.Session;
-                plceholderInfo.Session._object.ColorId = plceholderInfo.PlayerId;
-                plceholderInfo.Session._object.Color = player.Color;
-                plceholderInfo.Session._object._gridPosition = plceholderInfo.Position;
-                (plceholderInfo.Session._object.Transform.position, plceholderInfo.Session._object._gridPosition) = RegisterObject(plceholderInfo.Session._object);
+                        info.Rotation);
+                info.Session._object._session = info.Session;
+                info.Session._object.ColorId = info.PlayerId;
+                info.Session._object.Color = player.Color;
+                info.Session._object._gridPosition = info.Position;
+                (info.Session._object.Transform.position, info.Session._object._gridPosition) = RegisterObject(info.Session._object);
 
                 if (player.ServerId == localPlayer.ServerId)
-                    localPlayer._character = (Character)plceholderInfo.Session._object;
+                    localPlayer._character = (Character)info.Session._object;
             }
 
             foreach (var session in ObjectSessions)
@@ -385,7 +391,7 @@ namespace Cirrus.Circuit.World
             out BaseObject obj)
         {
             obj = null;
-            if (!Level.IsWithinBounds(pos)) return false;
+            if (!Level.IsInsideBounds(pos)) return false;
 
             _mutex.WaitOne();
 
@@ -396,76 +402,55 @@ namespace Cirrus.Circuit.World
             return obj != null;
         }
 
-        #region Exit
 
-        public bool GetExitResult(
-            Move move,
-            out MoveResult result)
-        {
-            result = new MoveResult();
-
-            if (Level.IsWithinBounds(move.Position + move.Step + Vector3Int.up))
-            {
-                if (Get(
-                  move.Position + move.Step + Vector3Int.up,
-                  out result.Entered))
-                {
-                    // Handle stepping on a slope
-                    if (result.Entered is Slope)
-                    {
-                        result.Step = move.Step - Vector3Int.up;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        public void Exit(
-            Move move,
-            MoveResult result)
-        {
-            // Only set/free occupying tile if not visiting
-            if (move.Source._entered == null) Set(move.Source._gridPosition, null);
-            else move.Source._entered._visitor = null;
-        }
-
-        public void ApplyResult(MoveResult result)
+        public void Move(MoveResult result)
         {
             if (
                 result.Move.Entered == null &&
                 Get(result.Move.Position, out BaseObject previous) &&
                 previous == result.Move.User)
-            { 
+            {
                 Set(result.Move.Position, null);
             }
 
-            if(result.Entered == null) Set(result.Destination, result.Move.User);
+            if (result.Entered == null) Set(result.Destination, result.Move.User);
+
+            OnMoveHandler?.Invoke(result);
         }
 
+        #region Exit
+
+        public bool GetExitResult(
+            Move move,
+            out ExitResult result)
+        {
+            result = new ExitResult { Step = move.Step };
+            if (move.User._entered != null)
+            {
+                return move.User._entered.GetExitResult(
+                    move,
+                    out result
+                    );                                                                    
+            }          
+
+            return true;
+        }
 
         #endregion
 
         #region Enter
 
-        public bool GetEnterResult(
+        public bool GetEnterResults(
+            BaseObject entered,
             Move move,
-            out MoveResult result)            
+            out EnterResult enterResult,
+            out IEnumerable<MoveResult> moveResults)            
         {
-            result = new MoveResult();
-
-            if (Get(
-                move.Position + move.Step, 
-                out result.Entered))
-            {
-                return
-                    result.Entered.GetEnterResult(
-                        move,
-                        out result
-                        );
-            }
-
-            return true;
+            return entered.GetEnterResults(
+                move,
+                out enterResult,
+                out moveResults
+                );
         }
 
         #endregion
@@ -477,108 +462,113 @@ namespace Cirrus.Circuit.World
             results = new List<MoveResult>();
             
             var result = new MoveResult { 
-                Move = move,
-                Step = move.Step,
-                Destination = move.Position + move.Step,
-                State = BaseObject.State.Moving
+                MoveType = move.Type,
+                Move = move,                                
             };
-
-            ((List<MoveResult>)results).Add(result);
-
-            if (!Level.IsWithinBounds(move.Position + move.Step))
-            {                
-                return false;
-            }
 
             if (!GetExitResult(
                 move,
-                out MoveResult exitResult))                          
+                out ExitResult exitResult))                          
             {
                 return false;
             }
 
+            result.Direction = move.Type == MoveType.Falling ? 
+                move.User._direction : 
+                exitResult.Step.SetY(0);
+
+            result.Destination = move.Position + exitResult.Step;
+            result.Offset = exitResult.Offset;
+            if (!Level.IsInsideBounds(result.Destination)) return false;
+
             if (Get(
                 // Object pushed into
-                move.Position + move.Step,
+                move.Position + exitResult.Step,
                 out result.Moved))
             {
                 // Object moved into is movable
                 if (result.Moved.GetMoveResults(
-                    move, 
-                    out IEnumerable<MoveResult> movedResults))                    
+                    new Move
+                    {
+                        Position = result.Moved._gridPosition,
+                        Entered = result.Moved._entered,
+                        Source = move.User,
+                        User = result.Moved,
+                        Type = move.Type,
+                        Step = exitResult.Step.SetY(0)
+                    },
+                    out IEnumerable<MoveResult> movedResults))
                 {
                     ((List<MoveResult>)results).AddRange(movedResults);
-                    return true;
                 }
-                // Object moved into is enterable
-                else if (GetEnterResult(
-                    move, 
-                    out MoveResult enterResult))
+                // Object moved into is enterable (or no object)
+                else if (GetEnterResults(
+                    result.Moved,
+                    new Move {
+                        Step = exitResult.Step,
+                        Position = move.Position,
+                        Entered = move.Entered,
+                        Source = move.Source,
+                        Type = move.Type,
+                        User = move.User                
+                    },
+                    out EnterResult enterResult,
+                    out IEnumerable<MoveResult> moveResults))
                 {
-                    // If moving out of entered object
-                    if (enterResult.Entered != result.Moved)
-                    {
-                        IEnumerable<MoveResult> enteredMovedResults = null;
+                    result.Moved = enterResult.Moved;
+                    result.Entered = enterResult.Entered;
+                    result.Direction = enterResult.Step.SetY(0);
+                    result.Destination = enterResult.Destination;
+                    result.Offset = enterResult.Offset;
+                    result.PitchAngle = enterResult.PitchAngle;
+                    //result.MoveType = enterResult.MoveType;
 
-                        if (
-                            enterResult.Moved == null ||
-                            enterResult.Moved.GetMoveResults(
-                                new Move
-                            {
-                                Position = enterResult.Destination,
-                                Step = enterResult.Step,
-                                User = move.User,
-                                Source = move.Source
-                            },
-                            out enteredMovedResults))
-                        {
-                            if(enterResult.Move != null) ((List<MoveResult>)results).AddRange(enteredMovedResults);
-                            return true;
-                        }
-                    }
-                    // If moving in entered object
-                    else
-                    {
-                        result.Moved = null;
-                        result.Entered = result.Moved;
-                        return true;
-                    }                                
+                    ((List<MoveResult>)results).AddRange(moveResults);
                 }
+                else result = null;
             }
             // No object moved into
             else
             {
-                if (Level.IsWithinBounds(move.Position + move.Step + Vector3Int.down))
+                if (Level.IsInsideBounds(move.Position + move.Step + Vector3Int.down))
                 {
-
                     if (Get(
                       move.Position + move.Step + Vector3Int.down,
                       out BaseObject slope))
-                    {
+                    {                        
                         // Handle stepping on a slope
                         if (slope is Slope)
                         {
                             var slopeMove = move.Copy();
                             slopeMove.Step = move.Step + Vector3Int.down;
-                            if (GetMoveResults(
+                            if (GetEnterResults(
+                                slope,
                                 slopeMove,
-                                out IEnumerable<MoveResult> downhillResults))
+                                out EnterResult enterResult,
+                                out IEnumerable<MoveResult> downhillMoveResults))
                             {
-                                ((List<MoveResult>)results).AddRange(downhillResults);
-                                return true;
+                                result.Moved = enterResult.Moved;
+                                result.Entered = enterResult.Entered;
+                                result.Direction = enterResult.Step.SetY(0);
+                                result.Destination = enterResult.Destination;
+                                result.Offset = enterResult.Offset;
+                                result.PitchAngle = enterResult.PitchAngle;                                
+
+                                ((List<MoveResult>)results).AddRange(downhillMoveResults);
                             }
-                            else return false;// cant move object in the slope, cant move myself
+                            else result = null;// cant move object in the slope, cant move myself
                         }
                     }
                 }
-
-                return true;
             }
 
-            return false;
+            // Add action result
+            if(result != null) ((List<MoveResult>)results).Add(result);
+            return result != null;
         }
 
-        public Vector3Int GetFallThroughPosition(bool isLandingGuaranteed = true)
+        public Vector3Int GetFallThroughPosition(
+            bool isLandingGuaranteed = true)
         {
             for (int k = 0; k < FallTrials; k++)
             {
@@ -600,7 +590,7 @@ namespace Cirrus.Circuit.World
                 for (int i = 0; i < Level.Dimensions.y; i++)
                 {
                     if (Get(
-                        position.Copy().SetY(position.y - i),
+                        position.SetY(position.y - i),
                         out BaseObject target))
                     {
                         if (target is Gem) continue;
@@ -617,46 +607,6 @@ namespace Cirrus.Circuit.World
             return Vector3Int.zero;
         }
 
-        public bool FallThrough(
-            BaseObject source,
-            Vector3Int step,
-            ref Vector3 offset,
-            out Vector3Int destinationPosition,
-            out BaseObject destination)
-        {
-            destination = null;
-            Vector3Int direction = step;//.SetXYZ(step.x, 0, step.z);
-            destinationPosition = source._gridPosition + step;
-
-            //bool once = false;
-
-            if (!Level.IsWithinBoundsY(destinationPosition.y))
-            {
-                destinationPosition = GetFallThroughPosition();
-
-                for (int i = 0; i < Level.Dimensions.y; i++)
-                {
-                    if (Get(destinationPosition.Copy().SetY(destinationPosition.y - i), out BaseObject target))
-                    {
-                        if (target is Gem) continue;
-                        if (target is Character) continue;
-                        if (target is Door) continue;
-
-                        return GetMoveResults(
-                            new Move { 
-                                User = source,
-                                Step = step,
-                                Position = source._gridPosition,
-                                Source = null
-                            },
-                            out IEnumerable<MoveResult> result);
-                    }
-                }
-
-            }
-
-            return false;
-        }
 
         #region Spawn
 

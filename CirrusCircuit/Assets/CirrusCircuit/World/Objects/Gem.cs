@@ -17,6 +17,8 @@ namespace Cirrus.Circuit.World.Objects
     {
         public override ObjectType Type => ObjectType.Gem;
 
+        public override bool IsSlidable => true;
+
         [SerializeField]
         [FormerlySerializedAs("Type")]
         public GemType GemType;
@@ -29,16 +31,30 @@ namespace Cirrus.Circuit.World.Objects
 
         public bool IsRequired = false;
 
-        //public Gem Create(Transform parent, Vector3 position)
-        //{
-        //    return Instantiate(gameObject, position, Quaternion.identity, parent).GetComponent<Gem>();
-        //}
-
 
         protected override void Awake()
         {
             base.Awake();
         }
+
+
+        public virtual void OnLevelMove(MoveResult result)
+        {
+            if (result.Move.User == this) return;
+            if (!_hasArrived) return;
+
+
+            if (
+            IsSlidable &&
+            _entered != null &&
+            _entered is Slope &&
+            !((Slope)_entered).IsStaircase)
+            {
+                Cmd_Slide();
+            }
+
+        }
+
 
         // Update is called once per frame
         public override void FixedUpdate()
@@ -46,11 +62,6 @@ namespace Cirrus.Circuit.World.Objects
             base.FixedUpdate();
 
             _visual.Parent.transform.Rotate(Vector3.right * Time.deltaTime * RotateSpeed);
-        }
-
-        public override void Enter(     MoveResult result)
-        {           
-
         }
     }
 }

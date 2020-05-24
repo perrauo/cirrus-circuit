@@ -108,27 +108,30 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Enter
 
-        public override bool GetEnterResult(
-            Move move,
-            out MoveResult result)
+        public override bool GetEnterResults(
+            Move move, 
+            out EnterResult enterResult, 
+            out IEnumerable<MoveResult> results)
         {
-            return base.GetEnterResult(
-                move,
-                out result);
+            return base.GetEnterResults(
+                move, 
+                out enterResult, 
+                out results);
         }
 
-
-        public override void Enter(MoveResult result)            
+        public override void Enter(BaseObject visitor)            
         {
-            switch (result.Move.User.Type)
+            base.Enter(visitor);
+
+            switch (visitor.Type)
             {
                 case ObjectType.Gem:
                     iTween.Init(_visual.Parent.gameObject);
                     iTween.Stop(_visual.Parent.gameObject);
                     _visual.Parent.gameObject.transform.localScale = new Vector3(1, 1, 1);
                     StartCoroutine(PunchScaleCoroutine());
-                    OnGemEntered(result.Move.User as Gem);
-                    result.Move.User._targetScale = 0;
+                    OnGemEntered(visitor as Gem);
+                    visitor._targetScale = 0;
                     break;
 
                 case ObjectType.Character:

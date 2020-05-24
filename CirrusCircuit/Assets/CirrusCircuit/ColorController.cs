@@ -5,7 +5,7 @@ using System;
 
 namespace Cirrus.Circuit
 {
-    public class Visual : MonoBehaviour
+    public class ColorController : MonoBehaviour
     {
         //[SerializeField]
         //private World.Resources _resources;
@@ -43,11 +43,7 @@ namespace Cirrus.Circuit
 
         public bool Enabled
         {
-            get
-            {
-                return _enabled;
-            }
-
+            get => _enabled;       
             set
             {
                 _enabled = value;

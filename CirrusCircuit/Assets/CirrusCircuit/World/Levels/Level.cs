@@ -41,6 +41,8 @@ namespace Cirrus.Circuit.World
         [SerializeField]
         private BaseObject[] _objects;
 
+        public static Level Instance => LevelSession.Instance.Level;
+
         public IEnumerable<BaseObject> Objects => _objects;
 
         [SerializeField]
@@ -104,7 +106,9 @@ namespace Cirrus.Circuit.World
                 (pos.z + _offset.z) * CellSize);
         }
 
-        public bool IsWithinBounds(Vector3Int pos)
+        #region Bounds
+
+        public bool IsInsideBounds(Vector3Int pos)
         {
             return
                 (pos.x >= 0 && pos.x < _dimensions.x &&
@@ -112,25 +116,44 @@ namespace Cirrus.Circuit.World
                 pos.z >= 0 && pos.z < _dimensions.z);
         }
 
-        public bool IsWithinBoundsX(int pos)
+        public bool IsInsideBoundsX(int pos)
         {
             return pos >= 0 && pos < _dimensions.x;
         }
 
-        public bool IsWithinBoundsY(int pos)
+        public bool IsInsideBoundsY(int pos)
         {
             return pos >= 0 && pos < _dimensions.y;
         }
 
-        public bool IsWithinBoundsZ(int pos)
+        public bool IsInsideBoundsZ(int pos)
         {
             return pos >= 0 && pos < _dimensions.z;
-        }    
+        }
+
+
+        public bool IsInsideBoundsX(Vector3Int pos)
+        {
+            return pos.x >= 0 && pos.x < _dimensions.x;
+        }
+
+        public bool IsInsideBoundsY(Vector3Int pos)
+        {
+            return pos.y >= 0 && pos.y < _dimensions.y;
+        }
+
+        public bool IsInsideBoundsZ(Vector3Int pos)
+        {
+            return pos.z >= 0 && pos.z < _dimensions.z;
+        }
 
         public Vector3Int GetOverflow(Vector3Int pos)
         {
             return _dimensions - pos;
         }
+
+        #endregion
+
 
         public void Set(Vector3Int pos, BaseObject obj)
         {            
@@ -156,7 +179,7 @@ namespace Cirrus.Circuit.World
             out BaseObject obj)
         {
             obj = null;
-            if (!IsWithinBounds(pos)) return false;
+            if (!IsInsideBounds(pos)) return false;
             
 
             int i = VectorUtils.ToIndex(pos, Dimensions.x, Dimensions.y);
@@ -198,7 +221,7 @@ namespace Cirrus.Circuit.World
                 if (obj == null)
                     continue;
 
-                obj.InitState(BaseObject.State.LevelSelect, null);
+                obj.InitState(ObjectState.LevelSelect, null);
             }
         } 
     }

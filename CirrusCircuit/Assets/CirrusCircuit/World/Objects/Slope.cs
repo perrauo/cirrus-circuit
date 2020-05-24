@@ -15,6 +15,8 @@ namespace Cirrus.Circuit.World.Objects
 
     public class Slope : BaseObject
     {
+        public const float VisitorAngle = 20;
+
         public override ObjectType Type => ObjectType.Slope;
         public bool _isStaircase = false;
         public bool IsStaircase => _isStaircase;
@@ -25,100 +27,58 @@ namespace Cirrus.Circuit.World.Objects
             return false;
         }
 
-        public override bool GetExitValue(
+        public override bool GetExitResult(
             Move move,
-            out MoveResult result)
+            out ExitResult exitResult)
         {
-            result = new MoveResult();
+            if (base.GetExitResult(
+                move,
+                out exitResult
+                ))
+            {                
+                
 
-            //offset = Vector3.zero;
-            //gridDest = Vector3Int.zero;
-            //stepDest = Vector3Int.zero;
-            //dest = null;
+                ////Same direction(Look up)
+                if (exitResult.Step.SetY(0) == _direction)
+                {
+                    exitResult.Step = move.Step + Vector3Int.up;                 
+                }
+                
+                return true;
+            }
 
-            // Same direction (Look up)
-            //if (step.Copy().SetY(0) == _destination._direction)
-            //{
-            //    gridOffset = Vector3Int.up;
-            //}
-            //// Opposing direction (look down)
-            //else if (step.Copy().SetY(0) == -_destination._direction)
-            //{
-            //    gridOffset = -Vector3Int.up;
-            //}
-
-            //if (_levelSession.Move(
-            //    this,
-            //    step + gridOffset,
-            //    out Vector3 offset,
-            //    out Vector3Int gridDest,
-            //    out BaseObject moved,
-            //    out BaseObject destination))
-            //{
-            //    if (moved) moved.Cmd_Interact(this);
-            //    _destination = destination;
-            //    _gridPosition = gridDest;
-            //    _targetPosition = _level.GridToWorld(_gridPosition);
-            //    _targetPosition += offset;
-            //    _direction = step;
-
-            //    InitState(State.SlopeMoving, source);
-            //}
-            return true;
+            return false;
         }
 
 
-        public override void Enter(            
-            MoveResult result)
+        public override bool GetEnterResults(
+            Move move, 
+            out EnterResult enterResult,
+            out IEnumerable<MoveResult> moveResults
+            )
         {
-            //offset = Vector3.zero;
-            //stepDest = step;
-            //gridDest = source._gridPosition;
-            //dest = this;
+            if (base.GetEnterResults(
+                move,
+                out enterResult,
+                out moveResults
+                ))
+            {
+                var dir = move.Step.SetY(0);
 
-            //// Moving up
-            //if (step.y >= 0)
-            //{
-            //    if (step.Copy().SetY(0) == _direction)
-            //    {
-            //        if (base.Enter(
-            //            source,
-            //            step,
-            //            out offset,
-            //            out gridDest,
-            //            out stepDest,
-            //            out dest))
-            //        {
-            //            _visitor = source;
-            //            offset += Vector3.up * Level.CellSize / 2;
-            //            return true;
-            //        }
-            //    }
-            //}
-            //// Moving down
-            //// Mus be going in opposite direction
-            //else if (step.Copy().SetY(0) == -_direction)
-            //{
-            //    if (base.Enter(
-            //        source,
-            //        step,
-            //        out offset,
-            //        out gridDest,
-            //        out stepDest,
-            //        out dest))
-            //    {
-            //        _visitor = source;
-            //        offset += Vector3.up * Level.CellSize / 2;
-            //        return true;
-            //    }
-            //}
+                // Moving up or moving down
+                if ((move.Step.y >= 0 &&
+                    dir == _direction) ||
+                    (move.Step.y != 0 &&
+                    dir == -_direction))                    
+                {
+                    enterResult.PitchAngle = dir == _direction ? VisitorAngle : -VisitorAngle;
+                    enterResult.Offset = Vector3.up * Level.CellSize / 2;
+                    return true;
+                }
+            }
+
+            return false;
         }
-
-
-
-
-
-
 
         // Start is called before the first frame update
         public override void Start()

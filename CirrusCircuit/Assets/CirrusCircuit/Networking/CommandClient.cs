@@ -187,7 +187,7 @@ namespace Cirrus.Circuit.Networking
 
 
         [Command]
-        public void Cmd_LevelSession_SetObjectId(GameObject obj, int idx, BaseObject.ObjectType id)
+        public void Cmd_LevelSession_SetObjectId(GameObject obj, int idx, ObjectType id)
         {
             //LevelSession session;
             //if ((session = obj.GetComponent<LevelSession>()) != null)
@@ -337,6 +337,7 @@ namespace Cirrus.Circuit.Networking
         private Mutex Cmd_ObjectSession_Move_mutex = new Mutex();
         
 
+        // Handle fall through here
         [Command]
         public void Cmd_ObjectSession_Fall(GameObject obj)
         {
@@ -347,18 +348,33 @@ namespace Cirrus.Circuit.Networking
             {
                 Cmd_ObjectSession_Move_mutex.WaitOne();
 
-                // Server holds the truth
-                if (session._object.GetMoveResults(
+                Move move = 
+                    Level.Instance.IsInsideBoundsY(
+                        session._object._gridPosition + Vector3Int.down) ?                    
                     new Move
                     {
+                        Type = MoveType.Falling,
                         User = session._object,
                         Position = session._object._gridPosition,
                         Step = Vector3Int.down
-                    },
-                    out IEnumerable<MoveResult> result))
+                    } :
+                    // Probably move this inside get move results
+                    new Move
+                    {
+                        Type = MoveType.Teleport,
+                        User = session._object,
+                        Position = LevelSession.Instance.GetFallThroughPosition(true),
+                        Step = Vector3Int.down
+                    };
+
+                // Server holds the truth
+                if (session._object.GetMoveResults(
+                    move,
+                    out IEnumerable<MoveResult> results))
                 {
                     session.Rpc_Move(
-                        result.Select(x => x.ToNetworkMoveResult()).ToArray());
+                        results.Select(
+                            x => x.ToNetworkActionResult()).ToArray());
                 }
 
                 Cmd_ObjectSession_Move_mutex.ReleaseMutex();
@@ -379,6 +395,41 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
+        [Command]
+        public void Cmd_ObjectSession_Slide(GameObject obj)
+        {
+            //AssertGameObjectNull(obj);
+            if (obj == null) return;
+
+            if (obj.TryGetComponent(out ObjectSession session))
+            {
+                Cmd_ObjectSession_Move_mutex.WaitOne();
+
+                Move move =
+                    new Move
+                    {
+                        Type = MoveType.Sliding,
+                        User = session._object,
+                        Position = session._object._gridPosition,
+                        Step = -session._object._entered._direction + Vector3Int.down,
+                        Entered = session._object._entered,
+                    };
+
+                // Server holds the truth
+                if (session._object.GetMoveResults(
+                    move,
+                    out IEnumerable<MoveResult> results))
+                {
+                    session.Rpc_Move(
+                        results.Select(
+                            x => x.ToNetworkActionResult()).ToArray());
+                }
+
+                Cmd_ObjectSession_Move_mutex.ReleaseMutex();
+            }
+        }
+
+
 
         [Command]
         public void Cmd_ObjectSession_Land(GameObject obj)
@@ -397,7 +448,7 @@ namespace Cirrus.Circuit.Networking
 
         // TODO validate the move
         [Command]
-        public void Cmd_ObjectSession_Move(GameObject obj, NetworkMove netMove)
+        public void Cmd_ObjectSession_Move(GameObject obj, NetworkMove netAction)
         {
             //AssertGameObjectNull(obj);
             if (obj == null) return;
@@ -409,10 +460,10 @@ namespace Cirrus.Circuit.Networking
 
                 // Server holds the truth
                 if (session._object.GetMoveResults(
-                    netMove.ToMove(), 
+                    netAction.ToMove(), 
                     out IEnumerable<MoveResult> res))
                 {
-                    session.Rpc_Move(res.Select(x => x == null ? null : x.ToNetworkMoveResult()).ToArray());
+                    session.Rpc_Move(res.Select(x => x == null ? null : x.ToNetworkActionResult()).ToArray());
                 }
 
                 Cmd_ObjectSession_Move_mutex.ReleaseMutex();

@@ -15,19 +15,14 @@ namespace Cirrus.Circuit.World.Objects
             return false;
         }
 
-        public override bool GetEnterResult(
+        public override bool GetEnterResults(
             Move move,
-            out MoveResult result)
+            out EnterResult result,
+            out IEnumerable<MoveResult> results)
         {
-            result = new MoveResult();
+            result = new EnterResult();
+            results = new MoveResult[0];
             return false;
-        }
-
-        public override void Enter(
-            MoveResult result)        
-        {
-
-            return;
         }
 
         // Start is called before the first frame update

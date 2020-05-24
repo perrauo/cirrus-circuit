@@ -1,86 +1,76 @@
 ﻿
-using UnityEngine;
-using System.Collections;
-
-using Cirrus.Circuit.Controls;
-using Cirrus.Circuit.World;
 using Cirrus.Circuit.World.Objects;
-using Cirrus.Circuit.World.Objects.Characters;
-using Cirrus.Events;
-using Cirrus.MirrorExt;
-using Cirrus.Utils;
-using Mirror;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using UnityEngine;
-using Cirrus.Circuit.Networking;
-using UnityEditor.Experimental.GraphView;
 
 namespace Cirrus.Circuit.World
 {
     public static class MoveUtils
     {
-        public static MoveResult ToMoveResult(this NetworkMoveResult netMoveResult)
+        public static MoveResult ToActionResult(this NetworkMoveResult net)
         {
             ObjectSession sess;
             return new MoveResult
             {
-                Move = netMoveResult.Move.ToMove(),
+                Move = net.Move.ToMove(),
 
-                Destination = netMoveResult.Destination,
+                Destination = net.Destination,
 
-                Entered = netMoveResult.Entered == null ?
+                Entered = net.Entered == null ?
                     null :
-                    netMoveResult.Entered.TryGetComponent(out sess) ?
+                    net.Entered.TryGetComponent(out sess) ?
                         sess._object :
                         null,
 
-                Moved = netMoveResult.Moved == null ?
+                Moved = net.Moved == null ?
                     null :
-                    netMoveResult.Moved.TryGetComponent(out sess) ?
+                    net.Moved.TryGetComponent(out sess) ?
                         sess._object :
                         null,
 
-                Offset = netMoveResult.Offset,
-                Step = netMoveResult.Step,
+                Offset = net.Offset,
+                PitchAngle = net.Angle,
+                Direction = net.Direction,
 
-                State = netMoveResult.State
+                //State = net.State,
+                MoveType =  net.MoveType,                
+                
             };
         }
 
-        public static NetworkMoveResult ToNetworkMoveResult(this MoveResult moveResult)
+        public static NetworkMoveResult ToNetworkActionResult(this MoveResult result)
         {
             return new NetworkMoveResult
             {
-                Move = moveResult.Move == null ? null : moveResult.Move.ToNetworkMove(),
-                Destination = moveResult.Destination,
-                Entered = moveResult.Entered == null ? null : moveResult.Entered._session.gameObject,
-                Moved = moveResult.Moved == null ? null : moveResult.Moved._session.gameObject,
-                State = moveResult.State,
+                Move = result.Move == null ? null : result.Move.ToNetworkMove(),
+                Destination = result.Destination,
+                Entered = result.Entered == null ? null : result.Entered._session.gameObject,
+                Moved = result.Moved == null ? null : result.Moved._session.gameObject,
+                //State = result.State,
                 
                 //MovedResult =
                 //    (moveResult != null && moveResult.MovedResult != null) ?
                 //    moveResult.MovedResult.ToNetworkMoveResult() : null,
 
-                Offset = moveResult.Offset,
-                Step = moveResult.Step
+                Offset = result.Offset,
+                Angle = result.PitchAngle,
+                Direction = result.Direction,
+                MoveType =  result.MoveType,                
             };
         }
 
 
-        public static Move ToMove(this NetworkMove netMove)
+        public static Move ToMove(this NetworkMove net)
         {
             ObjectSession sess;
             return new Move
             {
-                Position = netMove.Position,
-                Step = netMove.Step,
-                Source = netMove.Source == null ? null : netMove.Source.TryGetComponent(out sess) ? sess._object : null,
-                User = netMove.User == null ? null : netMove.User.TryGetComponent(out sess) ? sess._object : null,
-                Entered = netMove.Entered == null ? null : netMove.Entered.TryGetComponent(out sess) ? sess._object : null,
-                State = netMove.State
+                Position = net.Position,
+                Step = net.Step,
+                Source = net.Source == null ? null : net.Source.TryGetComponent(out sess) ? sess._object : null,
+                User = net.User == null ? null : net.User.TryGetComponent(out sess) ? sess._object : null,
+                Entered = net.Entered == null ? null : net.Entered.TryGetComponent(out sess) ? sess._object : null,
+                Type = net.Type,              
             };
         }
 
@@ -93,8 +83,7 @@ namespace Cirrus.Circuit.World
                 Source = move.Source == null ? null : move.Source._session.gameObject,
                 User = move.User == null ? null : move.User._session.gameObject,
                 Entered = move.Entered == null ? null : move.Entered._session.gameObject,
-                State = move.State
-
+                Type = move.Type,                                              
             };
         }
 
@@ -108,8 +97,9 @@ namespace Cirrus.Circuit.World
                 Entered = result.Entered,
                 Moved = result.Moved,
                 Offset = result.Offset,
-                State = result.State,
-                Step = result.Step
+                PitchAngle = result.PitchAngle,
+                Direction = result.Direction,
+                MoveType = result.MoveType
             };
         }
 
@@ -121,10 +111,20 @@ namespace Cirrus.Circuit.World
                 Step = move.Step,
                 Position = move.Position,
                 Source = move.Source,
-                State = move.State,
+                Type = move.Type,                
                 User = move.User
             };
         }
+    }
+
+    public enum MoveType
+    { 
+        Unknown,
+        Sliding,
+        Teleport,
+        Falling,
+        Moving,
+        Direction
     }
 
     public class Move
@@ -132,10 +132,42 @@ namespace Cirrus.Circuit.World
         public BaseObject Source;
         public BaseObject Entered; // Entered object from which we start
         public BaseObject User;
-        public Vector3Int Step;
+        public Vector3Int Step;        
         public Vector3Int Position;
-        public BaseObject.State State;
+        public MoveType Type;
     }
+
+    public class ExitResult
+    {
+        public Vector3 Offset;
+        public Vector3Int Step;        
+    }
+
+    public class EnterResult
+    {
+        public BaseObject Entered;
+        public BaseObject Moved;
+        public Vector3 Offset;
+        public float PitchAngle = 0;
+        public Vector3Int Step;
+        public Vector3Int Destination;
+        //public MoveType MoveType;
+    }
+
+    public class MoveResult
+    {        
+        public Move Move;
+        public Vector3 Offset;
+        public float PitchAngle = 0;
+        public Vector3Int Destination;
+        public Vector3Int Direction;
+        public MoveType MoveType;
+        public BaseObject Moved;
+        public BaseObject Entered;
+    }
+
+
+    #region Network
 
     [Serializable]
     public class NetworkMove
@@ -143,32 +175,24 @@ namespace Cirrus.Circuit.World
         public GameObject Source;
         public GameObject Entered; // Entered object from which we start
         public GameObject User;
+        public MoveType Type;
         public Vector3Int Step;
         public Vector3Int Position;
-        public BaseObject.State State;
-    }
-
-    public class MoveResult
-    {
-        public Move Move;
-        public Vector3 Offset;
-        public Vector3Int Destination;
-        public Vector3Int Step;
-        public BaseObject.State State;
-        public BaseObject Moved;
-        public BaseObject Entered;
     }
 
     [Serializable]
     public class NetworkMoveResult
     {
         public NetworkMove Move;
+        public MoveType MoveType;
         public Vector3 Offset;
+        public float Angle = 0;
         public Vector3Int Destination;
-        public Vector3Int Step;
-        public BaseObject.State State;
+        public Vector3Int Direction;        
         public GameObject Moved;
         public GameObject Entered;
     }
+
+    #endregion
 
 }

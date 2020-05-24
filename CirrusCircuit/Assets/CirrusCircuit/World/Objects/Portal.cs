@@ -59,12 +59,12 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Exit
 
-        public override bool GetExitValue(
+        public override bool GetExitResult(
             Move move,
-            out MoveResult result)
+            out ExitResult result)
         {
-            result = new MoveResult();
-            LevelSession.Instance.Get(move.Position, out result.Moved);
+            result = new ExitResult();
+            //LevelSession.Instance.Get(move.Position, out result.Moved);
 
             return true;
         }
@@ -80,13 +80,15 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Enter
 
-        public override bool GetEnterResult(
+        public override bool GetEnterResults(
             Move move,
-            out MoveResult result)                                    
+            out EnterResult enterResult,
+            out IEnumerable<MoveResult> results)                                    
         {
-            if (base.GetEnterResult(
+            if (base.GetEnterResults(
                 move,
-                out result))
+                out enterResult,
+                out results))
             {
                 switch (move.User.Type)
                 {
@@ -102,7 +104,7 @@ namespace Cirrus.Circuit.World.Objects
                                 LevelSession.Instance.Level.GridToWorld(
                                     other._gridPosition);
 
-                            other.GetExitValue(move, out MoveResult exitResult);
+                            other.GetExitResult(move, out ExitResult exitResult);
 
                             // TODO remove out offset instead
                             exitResult.Offset += Vector3.up * Level.CellSize / 2;
@@ -121,8 +123,7 @@ namespace Cirrus.Circuit.World.Objects
             return false;
         }
 
-        public override void Enter(            
-            MoveResult result)
+        public override void Enter(BaseObject visitor)
         {
             StartCoroutine(PunchScaleCoroutine());
             return;
@@ -131,14 +132,7 @@ namespace Cirrus.Circuit.World.Objects
 
         #endregion
 
-        public void OnDrawGizmos()
-        {
-            
-            GraphicsUtils.DrawLine(
-                Transform.position, 
-                Transform.position + Transform.forward,
-                2f);
-        }
+
 
         public override void Accept(BaseObject source)
         {
