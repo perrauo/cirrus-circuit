@@ -61,7 +61,7 @@ namespace Cirrus.Circuit.World.Editor
             get => _rotationIndex;
             set
             {
-                _rotationIndex = IntegerUtils.Wrap(value, 0, 3);
+                _rotationIndex = IntegerUtils.Wrap(value, 0, 4);
                 UpdatePreview();
             }
         }
@@ -227,6 +227,8 @@ namespace Cirrus.Circuit.World.Editor
 
         public void Draw()
         {
+            _tileOverwriteHeld = true;
+
             // TODO if draw
             if (SelectedTile == null) return;
 
@@ -355,7 +357,7 @@ namespace Cirrus.Circuit.World.Editor
             {
                 case EventType.KeyDown:
 
-                    if (e.keyCode == KeyCode.LeftControl || e.keyCode == KeyCode.RightControl)
+                    if (e.keyCode == KeyCode.LeftShift || e.keyCode == KeyCode.RightShift)
                     {
                         _brush._tileOverwriteHeld = true;
                         e.Use();
@@ -365,7 +367,7 @@ namespace Cirrus.Circuit.World.Editor
 
                 case EventType.KeyUp:
        
-                    if (e.keyCode == KeyCode.LeftControl || e.keyCode == KeyCode.RightControl)
+                    if (e.keyCode == KeyCode.LeftShift || e.keyCode == KeyCode.RightShift)
                     {
                         _brush._tileOverwriteHeld = false;
                         e.Use();
