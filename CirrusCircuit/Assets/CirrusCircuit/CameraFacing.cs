@@ -37,8 +37,8 @@ namespace Cirrus.Circuit
         void LateUpdate()
         {
             // rotates the object relative to the camera
-            Vector3 targetPos = transform.position + CameraManager.Instance.Camera.transform.rotation * (reverseFace ? Vector3.forward : Vector3.back);
-            Vector3 targetOrientation = CameraManager.Instance.Camera.transform.rotation * GetAxis(axis);
+            Vector3 targetPos = transform.position + CameraController.Instance.Camera.transform.rotation * (reverseFace ? Vector3.forward : Vector3.back);
+            Vector3 targetOrientation = CameraController.Instance.Camera.transform.rotation * GetAxis(axis);
             transform.LookAt(targetPos, targetOrientation);
         }
     }

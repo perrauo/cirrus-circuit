@@ -2,11 +2,13 @@
 //using Cirrus.Circuit.World.Objects.Attributes;
 using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.World.Objects.Characters.Controls;
+using Cirrus.Utils;
 //using Cirrus.Circuit.UI.HUD;
 //using Cirrus.Circuit.World.Objects.Characters.Strategies;
 using KinematicCharacterController;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 //using Cirrus.Circuit.Actions;
 //using Cirrus.Circuit.Conditions;
@@ -37,8 +39,9 @@ namespace Cirrus.Circuit.World.Objects.Characters
         public const float RotationSpeed = 0.6f;
 
         private const float MoveIdleTransitionTime = 0.6f;
-
         public override bool IsSlidable => false;
+
+        public Vector3Int _inputDirection;
 
         [SerializeField]
         public Axes Axes;
@@ -66,13 +69,15 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
         public float BaseLayerLayerWeight { set => throw new NotImplementedException(); }
 
-        protected override void Awake()
+        public override void Awake()
         {
             base.Awake();
 
             _moveIdleTransitionTimer = new Timer(MoveIdleTransitionTime, start: false, repeat: false);
             _moveIdleTransitionTimer.OnTimeLimitHandler += OnMoveIdleTransitionTimeout;
             _animatorWrapper = new CharacterAnimatorWrapper(Animator);
+
+            _inputDirection = Transform.forward.ToVector3Int();
         }
 
         public override void Start()
@@ -86,7 +91,6 @@ namespace Cirrus.Circuit.World.Objects.Characters
         }
 
         private bool _wasMovingVertical = false;
-
 
         public void OnMoveIdleTransitionTimeout()
         {
@@ -122,6 +126,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
             Vector3Int stepHorizontal = new Vector3Int(StepSize * Math.Sign(axis.x), 0, 0);
             Vector3Int stepVertical = new Vector3Int(0, 0, StepSize * Math.Sign(axis.y));
 
+
             Move move = new Move
             {
                 User = this,
@@ -140,25 +145,34 @@ namespace Cirrus.Circuit.World.Objects.Characters
                     break;
             }
 
-
             if (isMovingVertical && isMovingHorizontal)
-            {
-                move.Step = _wasMovingVertical ? stepHorizontal : stepVertical;
+            {                
+                move.Step = _wasMovingVertical ? stepHorizontal : stepVertical;                
             }
             else if (isMovingHorizontal)
-            {
+            {                
                 move.Step = stepHorizontal;
                 _wasMovingVertical = false;
             }
             else if (isMovingVertical)
-            {
+            {                
                 move.Step = stepVertical;
                 _wasMovingVertical = true;
             }
             else move = null;
-
+          
             if (move != null)
             {
+                if (_preserveInputDirection && _inputDirection == move.Step)
+                {
+                    move.Step = _direction;
+                }
+                else
+                {
+                    _inputDirection = move.Step;
+                    _preserveInputDirection = false;
+                }
+
                 Cmd_Move(move);
             }
 
@@ -175,7 +189,8 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 case ObjectState.Moving:
                 case ObjectState.Falling:
                 case ObjectState.Idle:
-                case ObjectState.Disabled:                
+                case ObjectState.Disabled:
+                case ObjectState.Climbing:
                     
                     if (_moveCoroutine == null) _moveCoroutine = StartCoroutine(Coroutine_Cmd_Move(axis));
 
@@ -198,6 +213,16 @@ namespace Cirrus.Circuit.World.Objects.Characters
                     //_guide.Show(move.Step);
                 break;
             }
+        }
+
+        public override bool GetEnterResults(
+            Move move, 
+            out EnterResult result, 
+            out IEnumerable<MoveResult> moveResults)
+        {
+            result = null;
+            moveResults = null;
+            return false;
         }
 
         public override void Land()

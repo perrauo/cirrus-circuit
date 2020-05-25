@@ -11,15 +11,22 @@ namespace Cirrus.Circuit.World.Objects
 
     public class Portal : BaseObject
     {
+        // TODO
+        // When coming out of the portal make it so that successive keypress in same direction
+        // moves the character forward even if not the same direction
+
+
         public override ObjectType Type => ObjectType.Portal;
 
         [SerializeField]
-        private Number _connection;
-        public int Connection => (int) _connection;        
+        private Number _link;
+        public int Link => (int)_link;
 
         private const float PunchScaleAmount = 1f;
 
         private const float PunchScaleTime = 1f;
+
+        public const float EnterScale = 0.5f;
 
         IEnumerator PunchScaleCoroutine()
         {
@@ -36,7 +43,7 @@ namespace Cirrus.Circuit.World.Objects
             yield return null;
         }
 
-        protected override void Awake()
+        public override void Awake()
         {
             base.Awake();
         }
@@ -59,21 +66,52 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Exit
 
-        public override bool GetExitResult(
-            Move move,
-            out ExitResult result)
-        {
-            result = new ExitResult();
-            //LevelSession.Instance.Get(move.Position, out result.Moved);
 
-            return true;
-        }
+        // TODO Entered, Moved
+        //public override bool GetExitResult(
+        //    Move move,
+        //    out ExitResult result,
+        //    out IEnumerable<MoveResult> moveResults)
+        //{
+        //    //moveResults = new MoveResult[0];
+        //    //result = new ExitResult
+        //    //{
+        //    //    Step = Transform.forward.ToVector3Int(),
+        //    //    Position = _gridPosition,
+        //    //};
+
+        //    //result.Destination = _gridPosition + result.Step;
+        //    //moveResults = new MoveResult[0];
+
+        //    //if (LevelSession.Instance.Get(
+        //    //    move.Position,
+        //    //    out result.Moved))
+        //    //{
+        //    //    if (result.Moved.GetEnterResults(
+        //    //        new Move
+        //    //        {
+        //    //            Type = MoveType.Moving,
+        //    //            Entered = null, 
+        //    //            Position = move.Position,
+        //    //        },
+        //    //        out EnterResult enterResult,
+        //    //        out moveResults))
+        //    //    { 
+
+
+        //    //    }
+        //    //}
+
+        //    //return true;
+        //}
 
 
         public override void Exit(BaseObject source)
         {
+            base.Exit(source);
+
             StartCoroutine(PunchScaleCoroutine());
-            source.OnExited();
+            //source.OnExited();
         }
 
         #endregion
@@ -83,40 +121,69 @@ namespace Cirrus.Circuit.World.Objects
         public override bool GetEnterResults(
             Move move,
             out EnterResult enterResult,
-            out IEnumerable<MoveResult> results)                                    
+            out IEnumerable<MoveResult> moveResults)
         {
             if (base.GetEnterResults(
                 move,
                 out enterResult,
-                out results))
+                out moveResults))
             {
-                switch (move.User.Type)
+                enterResult.Entered = null;
+                moveResults = new MoveResult[0];
+
+                if (LevelSession
+                         .Instance
+                         .GetOtherPortal(
+                         this,
+                         out Portal otherPortal))
                 {
-                    case ObjectType.Gem:
+                    enterResult.Step = otherPortal.Transform.forward.ToVector3Int();
+                    enterResult.MoveType = MoveType.UsingPortal;
+                    enterResult.Position = otherPortal._gridPosition;
+                    enterResult.Destination = enterResult.Position + enterResult.Step;
+                    enterResult.Offset = Vector3.up * Level.CellSize / 2;
+                    enterResult.Scale = EnterScale;
 
-                        if (LevelSession
-                            .Instance
-                            .GetOtherPortal(
-                            this,
-                            out Portal other))
+                    if (LevelSession.Instance.Get(
+                        enterResult.Destination,
+                        out enterResult.Moved))
+                    {
+                        if (enterResult.Moved.GetMoveResults(
+                          new Move
+                          {
+                              Type = MoveType.Moving,
+                              Entered = null,
+                              Position = enterResult.Destination,
+                              Step = enterResult.Step,
+                              User = enterResult.Moved                              
+                          },
+                          out moveResults))
                         {
-                            move.User.Transform.position =
-                                LevelSession.Instance.Level.GridToWorld(
-                                    other._gridPosition);
-
-                            other.GetExitResult(move, out ExitResult exitResult);
-
-                            // TODO remove out offset instead
-                            exitResult.Offset += Vector3.up * Level.CellSize / 2;
                             return true;
                         }
-
-                        return false;
-
-                    case ObjectType.Character:
-                        return false;
-                    default:
-                        return false;
+                        else if (enterResult.Moved.GetEnterResults(
+                           new Move
+                           {
+                               Type = MoveType.Moving,
+                               Entered = null,
+                               Position = enterResult.Position,
+                               Step = enterResult.Step,
+                               User = move.User,
+                               Source = move.Source
+                               
+                           },
+                          out EnterResult nextEnterResult,
+                          out moveResults))
+                        {
+                            enterResult.Position = nextEnterResult.Position;
+                            enterResult.Step = nextEnterResult.Step;
+                            enterResult.Destination = nextEnterResult.Position + nextEnterResult.Step;
+                            enterResult.Entered = nextEnterResult.Entered;
+                            enterResult.Moved = nextEnterResult.Moved;
+                            return true;
+                        }
+                    }
+                    else return true;
                 }
             }
 

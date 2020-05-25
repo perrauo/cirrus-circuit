@@ -26,6 +26,7 @@ namespace Cirrus.Circuit.World.Objects
         Idle,
         Moving,
         Sliding,
+        Climbing
     }
 
     public enum ObjectType
@@ -39,7 +40,7 @@ namespace Cirrus.Circuit.World.Objects
         Portal,
         Solid,
         Slope,
-        Breakable
+        Ladder
     }
 
     public abstract partial class BaseObject : MonoBehaviour
@@ -51,9 +52,6 @@ namespace Cirrus.Circuit.World.Objects
 
         [SerializeField]
         protected ColorController _visual;
-
-        [SerializeField]
-        private Color[] _fallbackColors;
 
         [SerializeField]
         public Transform _transform;
@@ -69,6 +67,10 @@ namespace Cirrus.Circuit.World.Objects
 
         public const float ScaleSpeed = 0.6f;
 
+        public const float ClimbFallTime = 0.5f;
+
+        public Timer _climbFallTimer;
+
         public BaseObject _entered = null;
 
         public BaseObject _visitor = null;
@@ -80,6 +82,8 @@ namespace Cirrus.Circuit.World.Objects
         public Vector3 _targetPosition;
 
         public Vector3 _offset;
+
+        public virtual bool IsNetworked => true;
 
         public virtual bool IsSlidable => false;
 
@@ -137,10 +141,12 @@ namespace Cirrus.Circuit.World.Objects
         [SerializeField]
         private const float ExitScaleTime = 0.01f;
 
-        private Timer _exitScaleTimer;
+        private Timer _exitPortalTimer;
 
         [SerializeField]
         protected ObjectState _state = ObjectState.Disabled;
+
+        protected bool _preserveInputDirection = false;
 
 
         #region Unity Engine
@@ -158,7 +164,7 @@ namespace Cirrus.Circuit.World.Objects
         }
 
         // TODO: will not be called on disabled level
-        protected virtual void Awake()
+        public virtual void Awake()
         {
             if (PlayerManager.IsValidPlayerId(ColorId))
             {
@@ -175,8 +181,11 @@ namespace Cirrus.Circuit.World.Objects
                     .GetColor(ColorId);
             }
 
-            _exitScaleTimer = new Timer(ExitScaleTime, start: false, repeat: false);
-            _exitScaleTimer.OnTimeLimitHandler += OnExitScaleTimeout;
+            _exitPortalTimer = new Timer(ExitScaleTime, start: false, repeat: false);
+            _exitPortalTimer.OnTimeLimitHandler += OnExitScaleTimeout;
+
+            _climbFallTimer = new Timer(ClimbFallTime, start: false, repeat: false);
+            _climbFallTimer.OnTimeLimitHandler += OnClimbFallTimeout;
 
             _direction = Transform.forward.ToVector3Int();
             _targetPosition = Transform.position;
@@ -331,15 +340,6 @@ namespace Cirrus.Circuit.World.Objects
                     _direction = result.Direction;                    
                     return;
 
-                case MoveType.Teleport:
-                    _gridPosition = result.Destination;                    
-                    _targetPosition = Level.GridToWorld(result.Destination);
-                    _targetPosition += result.Offset;
-                    Transform.position = _targetPosition;
-                    _direction = result.Direction;
-                    _pitchAngle = result.PitchAngle;
-                    break;
-
                 case MoveType.Moving:
 
                     _gridPosition = result.Destination;
@@ -350,6 +350,43 @@ namespace Cirrus.Circuit.World.Objects
                     state = ObjectState.Moving;
 
 
+                    break;
+
+                case MoveType.Climbing:
+
+                    _gridPosition = result.Destination;
+                    _targetPosition = Level.GridToWorld(result.Destination);                    
+                    _targetPosition += result.Offset;
+                    _direction = result.Direction;
+                    _pitchAngle = result.PitchAngle;
+                    state = ObjectState.Climbing;
+
+
+                    break;
+
+                case MoveType.Teleport:
+                    _gridPosition = result.Destination;                    
+                    _targetPosition = Level.GridToWorld(result.Destination);
+                    _targetPosition += result.Offset;
+                    Transform.position = _targetPosition;
+                    _direction = result.Direction;
+                    _pitchAngle = result.PitchAngle;
+                    break;
+
+                case MoveType.UsingPortal:
+                    // TODO preserve input direction timer
+                    // TODO Timer restarted inside Cmd move
+                    _preserveInputDirection = true;                    
+                    _gridPosition = result.Destination;
+                    _targetPosition = Level.GridToWorld(result.Destination);
+                    _offset = result.Offset;
+                    _targetPosition += _offset;
+                    _targetScale = result.Scale;
+                    Transform.position = Level.GridToWorld(result.Position);
+                    _direction = result.Direction;
+                    _pitchAngle = result.PitchAngle;                    
+                    _exitPortalTimer.Start();
+                    state = ObjectState.Moving;
                     break;
 
                 case MoveType.Falling:
@@ -420,8 +457,7 @@ namespace Cirrus.Circuit.World.Objects
             results = null;
 
             if (move.Source != null &&
-                move.Type == MoveType.Sliding &&
-                !IsSlidable)
+                move.Type == MoveType.Sliding)
             {
                 return false;
             }
@@ -474,7 +510,9 @@ namespace Cirrus.Circuit.World.Objects
                 Entered = this,
                 Offset = Vector3.zero,
                 Destination = move.Position + move.Step,
-                //MoveType = move.Type                
+                MoveType = move.Type,
+                Position = move.Position,
+                Scale = 1
             };
             
             moveResults = new MoveResult[0];
@@ -503,17 +541,19 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Exit
 
-        public virtual void OnExited()
-        {
-            _exitScaleTimer.Start();
-            _targetScale = 0;
-        }
+        //public virtual void OnExited()
+        //{
+        //    _exitScaleTimer.Start();
+        //    _targetScale = 0;
+        //}
 
         // Ramp exit with offset
         public virtual bool GetExitResult(
             Move move,
-            out ExitResult result)
+            out ExitResult result,
+            out IEnumerable<MoveResult> moveResults)
         {
+            moveResults = new MoveResult[0];
             result = new ExitResult
             {
                 Step = move.Step,
@@ -602,7 +642,9 @@ namespace Cirrus.Circuit.World.Objects
 
 
         // Common to all state or subset of states
-        public void InitState(ObjectState target, BaseObject source = null)
+        public void InitState(
+            ObjectState target, 
+            BaseObject source = null)
         {
             _state = target;
 
@@ -620,6 +662,7 @@ namespace Cirrus.Circuit.World.Objects
 
             BaseObject above;
 
+            // TODO previous grid pos may not be upd ?
             if (source == null)
             {
                 // Determine if object above to make it fall
@@ -633,7 +676,7 @@ namespace Cirrus.Circuit.World.Objects
                             _previousGridPosition + Vector3Int.up, 
                             out above))
                         {
-                            //above.Cmd_Fall();
+                            above.Cmd_Fall();
                         }
 
                         _state = target;
@@ -648,6 +691,31 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void FSM_FixedUpdate()
         {
+            switch (_state)
+            {
+                case ObjectState.LevelSelect:
+                    break;
+
+                case ObjectState.Moving:
+                case ObjectState.Falling:
+                case ObjectState.Idle:
+                case ObjectState.Disabled:
+                case ObjectState.Sliding:
+                case ObjectState.Climbing:
+
+                    if (_direction != Vector3Int.zero)
+                    {
+                        Transform.rotation = Quaternion.LookRotation(
+                            Quaternion.AngleAxis(
+                                _pitchAngle,
+                                Vector3.Cross(_direction, Vector3.up).normalized) * _direction,
+                            Vector3.up);
+                    }
+                    break;
+
+            }
+
+
             switch (_state)
             {
                 case ObjectState.Disabled:
@@ -666,6 +734,7 @@ namespace Cirrus.Circuit.World.Objects
                 case ObjectState.Idle:
                 case ObjectState.Moving:
                 case ObjectState.Sliding:
+                case ObjectState.Climbing:                    
 
                     Transform.position = Vector3.Lerp(
                         Transform.position,
@@ -688,31 +757,39 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
+        public virtual void OnClimbFallTimeout()
+        {
+            if (_entered == null)
+            {
+                if (LevelSession.Get(
+                    _gridPosition + Vector3Int.down,
+                    out BaseObject obj))
+                {
+                    if (_state == ObjectState.Falling) Cmd_Land();
+                    else Cmd_Idle();
+                }
+                else Cmd_Fall();
+            }
+            // If arrived on a slope
+            else if (
+                IsSlidable &&
+                _entered != null &&
+                _entered is Slope &&
+                !((Slope)_entered).IsStaircase)
+            {
+                Cmd_Slide();
+            }
+            else if (LevelSession.Get(
+                _gridPosition + Vector3Int.down,
+                out BaseObject _))
+            {
+                if (_state == ObjectState.Falling) Cmd_Land();
+                else Cmd_Idle();
+            }
+        }
+
         public virtual void FSM_Update()
         {
-            switch (_state)
-            {
-                case ObjectState.LevelSelect:
-                    break;
-
-                case ObjectState.Moving:
-                case ObjectState.Falling:
-                case ObjectState.Idle:
-                case ObjectState.Disabled:
-                case ObjectState.Sliding:
-
-                    if (_direction != Vector3Int.zero)
-                    {
-                        Transform.rotation = Quaternion.LookRotation(
-                            Quaternion.AngleAxis(
-                                _pitchAngle,
-                                Vector3.Cross(_direction, Vector3.up).normalized) * _direction,
-                            Vector3.up);
-                    }
-                    break;
-
-            }
-
             switch (_state)
             {
                 case ObjectState.Disabled:
@@ -723,9 +800,24 @@ namespace Cirrus.Circuit.World.Objects
                 case ObjectState.Idle:                
                     return;
 
+                case ObjectState.Climbing:
+
+                    if (_hasArrived) break;
+
+                    if (VectorUtils.IsCloseEnough(
+                        Transform.position,
+                        _targetPosition))
+                    {
+                        _hasArrived = true;
+                        _climbFallTimer.Start();
+                    }
+
+                        break;
+
                 case ObjectState.Sliding:
                 case ObjectState.Falling:
                 case ObjectState.Moving:
+                //case ObjectState.Climbing:
 
                     if (_hasArrived) break;
 

@@ -46,8 +46,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 4590825821992199521}
-  _fallbackColors: []
   _transform: {fileID: 2260829504269684254}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
   _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
@@ -67,6 +71,7 @@ MonoBehaviour:
     _characterSlot: {fileID: 0}
     _localId: 0
   _guide: {fileID: 7203719092928459714}
+  _inputDirection: {x: 0, y: 0, z: 0}
   Axes:
     Left: {x: 0, y: 0}
     Right: {x: 0, y: 0}

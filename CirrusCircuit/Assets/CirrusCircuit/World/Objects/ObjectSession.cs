@@ -87,7 +87,7 @@ namespace Cirrus.Circuit.World.Objects
         {
             _mutex.WaitOne();
 
-            _object.Move(results.Select(x =>x.ToActionResult()));
+            _object.Move(results.Select(x =>x.ToMoveResult()));
 
             _mutex.ReleaseMutex();
         }

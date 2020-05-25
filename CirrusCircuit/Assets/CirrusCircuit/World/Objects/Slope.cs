@@ -15,6 +15,9 @@ namespace Cirrus.Circuit.World.Objects
 
     public class Slope : BaseObject
     {
+        // TODO
+        //public override bool IsNetworked => false;
+
         public const float VisitorAngle = 20;
 
         public override ObjectType Type => ObjectType.Slope;
@@ -29,11 +32,14 @@ namespace Cirrus.Circuit.World.Objects
 
         public override bool GetExitResult(
             Move move,
-            out ExitResult exitResult)
+            out ExitResult exitResult,
+            out IEnumerable<MoveResult> moveResults)
         {
+            moveResults = new MoveResult[0];
             if (base.GetExitResult(
                 move,
-                out exitResult
+                out exitResult,
+                out moveResults
                 ))
             {                
                 

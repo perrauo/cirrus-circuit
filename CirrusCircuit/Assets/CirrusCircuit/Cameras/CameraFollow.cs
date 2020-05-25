@@ -17,7 +17,7 @@ namespace Cirrus.Circuit.Cameras
     {
         private State _state;
 
-        public CameraManager Camera;
+        public CameraController Camera;
 
         //public BaseObject _target;            // The position that that camera will be following.
 

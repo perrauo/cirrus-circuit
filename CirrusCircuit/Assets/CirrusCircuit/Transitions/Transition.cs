@@ -91,6 +91,7 @@ namespace Cirrus.Circuit.Transitions
         public override void Start()
         {
             base.Start();
+            OnTransitionTimeoutHandler += Game.Instance.OnTransitionTimeOut;
             //StartCoroutine(DoStart());
         }
 
@@ -141,10 +142,7 @@ namespace Cirrus.Circuit.Transitions
         }
 
         public void Perform()
-        {
-            //Debug.Log("Perform transition");
-            OnTransitionTimeoutHandler += Game.Instance.OnTransitionTimeOut;
-
+        {            
             _transitionTimer.Start(_transitionTime);
             StartCoroutine(DoTransition());
         }

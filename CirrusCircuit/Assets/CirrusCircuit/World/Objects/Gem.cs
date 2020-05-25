@@ -32,29 +32,37 @@ namespace Cirrus.Circuit.World.Objects
         public bool IsRequired = false;
 
 
-        protected override void Awake()
+        public override void Awake()
         {
             base.Awake();
         }
 
 
-        public virtual void OnLevelMove(MoveResult result)
+        public virtual void OnMoved(MoveResult result)
         {
             if (result.Move.User == this) return;
             if (!_hasArrived) return;
 
-
             if (
-            IsSlidable &&
-            _entered != null &&
-            _entered is Slope &&
-            !((Slope)_entered).IsStaircase)
+                IsSlidable &&
+                _entered != null &&
+                _entered is Slope &&
+                !((Slope)_entered).IsStaircase)
             {
                 Cmd_Slide();
             }
-
         }
 
+
+        public override bool GetEnterResults(
+            Move move, 
+            out EnterResult result, 
+            out IEnumerable<MoveResult> moveResults)
+        {
+            result = null;
+            moveResults = null;
+            return false;
+        }
 
         // Update is called once per frame
         public override void FixedUpdate()

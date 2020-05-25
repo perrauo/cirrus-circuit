@@ -105,11 +105,11 @@ namespace Cirrus.Circuit.UI
         private State _state = State.Closed;
 
         [SerializeField]
-        private CameraManager _camera;
+        private CameraController _camera;
 
         private void OnValidate()
         {
-            if (_camera == null) _camera = FindObjectOfType<CameraManager>();
+            if (_camera == null) _camera = FindObjectOfType<CameraController>();
             if (_rect == null) _rect = _selection.GetComponent<RectTransform>();
 
         }
@@ -222,7 +222,7 @@ namespace Cirrus.Circuit.UI
                     if (_state != State.Ready) GameSession.Instance.CharacterSelectReadyCount++;
 
                     Vector3 position =
-                    CameraManager.Instance.Camera.ScreenToWorldPoint(
+                    CameraController.Instance.Camera.ScreenToWorldPoint(
                         _characterSpotlightAnchor.position);
 
                     // TODO maybe select locked character??

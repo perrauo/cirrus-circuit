@@ -19,7 +19,7 @@ namespace Cirrus.Circuit.Networking
 
         public Events.Event OnFixedUpdateHandler;
 
-        public static void AssertGameObjectNull(GameObject gameObject) => Utils.DebugUtils.Assert(gameObject != null, "Cmd GameObject is null. Was the object spawn?");
+        public static void AssertGameObjectNull(GameObject gameObject) => DebugUtils.Assert(gameObject != null, "Cmd GameObject is null. Was the object spawn?");
 
         public static CommandClient _instance;
 
@@ -374,7 +374,7 @@ namespace Cirrus.Circuit.Networking
                 {
                     session.Rpc_Move(
                         results.Select(
-                            x => x.ToNetworkActionResult()).ToArray());
+                            x => x.ToNetworkMoveResult()).ToArray());
                 }
 
                 Cmd_ObjectSession_Move_mutex.ReleaseMutex();
@@ -411,7 +411,7 @@ namespace Cirrus.Circuit.Networking
                         Type = MoveType.Sliding,
                         User = session._object,
                         Position = session._object._gridPosition,
-                        Step = -session._object._entered._direction + Vector3Int.down,
+                        Step = -session._object._entered._direction,
                         Entered = session._object._entered,
                     };
 
@@ -422,7 +422,7 @@ namespace Cirrus.Circuit.Networking
                 {
                     session.Rpc_Move(
                         results.Select(
-                            x => x.ToNetworkActionResult()).ToArray());
+                            x => x.ToNetworkMoveResult()).ToArray());
                 }
 
                 Cmd_ObjectSession_Move_mutex.ReleaseMutex();
@@ -463,7 +463,7 @@ namespace Cirrus.Circuit.Networking
                     netAction.ToMove(), 
                     out IEnumerable<MoveResult> res))
                 {
-                    session.Rpc_Move(res.Select(x => x == null ? null : x.ToNetworkActionResult()).ToArray());
+                    session.Rpc_Move(res.Select(x => x == null ? null : x.ToNetworkMoveResult()).ToArray());
                 }
 
                 Cmd_ObjectSession_Move_mutex.ReleaseMutex();

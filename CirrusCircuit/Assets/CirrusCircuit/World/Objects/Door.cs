@@ -68,7 +68,7 @@ namespace Cirrus.Circuit.World.Objects
             yield return null;
         }
 
-        protected override void Awake()
+        public override void Awake()
         {
             base.Awake();
 

@@ -39,6 +39,10 @@ namespace Cirrus.Circuit.World
 
         private Dictionary<int, Tuple<Portal, Portal>> _portals = new Dictionary<int, Tuple<Portal, Portal>>();
 
+        private List<Character> _characters = new List<Character>();
+        public IEnumerable<Character> Characters => _characters;
+
+
         [Serializable]
         public class PlaceholderInfoSyncList : SyncList<PlaceholderInfo> { }
 
@@ -64,7 +68,7 @@ namespace Cirrus.Circuit.World
 
         private static LevelSession _instance;
 
-        public Event<MoveResult> OnMoveHandler;
+        public Event<MoveResult> OnMovedHandler;
 
         public static LevelSession Instance
         {
@@ -123,8 +127,7 @@ namespace Cirrus.Circuit.World
         {
             _mutex = new Mutex(false);
 
-            Game.Instance.OnRoundInitHandler += OnRoundInit;
-            Game.Instance.OnRoundHandler += OnRound;
+            Game.Instance.OnRoundInitHandler += OnRoundInit;            
 
             if (CustomNetworkManager.IsServer)
             {
@@ -147,7 +150,7 @@ namespace Cirrus.Circuit.World
             other = null;
 
             if (_portals.TryGetValue(
-                portal.Connection,
+                portal.Link,
                 out Tuple<Portal, Portal> tuple))
             {
                 other = portal == tuple.Item1 ? tuple.Item2 : tuple.Item1;
@@ -157,8 +160,10 @@ namespace Cirrus.Circuit.World
             return false;
         }
 
-        public void OnRound()
+        public void OnRoundInit()
         {
+            RoundSession.Instance.OnRoundStartHandler += OnRoundStarted;
+
             _objects = new BaseObject[Level.Size];
 
             List<Placeholder> placeholders = new List<Placeholder>();
@@ -176,23 +181,24 @@ namespace Cirrus.Circuit.World
                     );
 
                 if (res is Door) ((Door)res).OnScoreValueAddedHandler += OnGemEntered;
-                else if (res is Gem) OnMoveHandler += ((Gem)res).OnLevelMove;
+                else if (res is Gem) OnMovedHandler += ((Gem)res).OnMoved;
+                //else if (res is Character) _characters.Add(res as Character);
                 else if (res is Portal)
                 {
                     var portal = (Portal)res;
                     if (_portals.TryGetValue(
-                        portal.Connection, 
+                        portal.Link,
                         out Tuple<Portal, Portal> tuple))
                     {
-                        _portals[portal.Connection] =
+                        _portals[portal.Link] =
                             new Tuple<Portal, Portal>(
                                 tuple.Item1,
                                 portal);
                     }
                     else _portals.Add(
-                        portal.Connection,
+                        portal.Link,
                         new Tuple<Portal, Portal>(portal, portal));
-                }
+                }                
 
                 res.Color = PlayerManager.Instance.GetColor(res.ColorId);
 
@@ -211,6 +217,7 @@ namespace Cirrus.Circuit.World
                         Level.GridToWorld(info.Position),
                         transform,
                         info.Rotation);
+                _characters.Add((Character)info.Session._object);
                 info.Session._object._session = info.Session;
                 info.Session._object.ColorId = info.PlayerId;
                 info.Session._object.Color = player.Color;
@@ -246,28 +253,28 @@ namespace Cirrus.Circuit.World
         public override void Destroy()
         {
             _randomDropRainTimer.OnTimeLimitHandler -= Cmd_OnRainTimeout;
+            Game.Instance.OnRoundInitHandler -= OnRoundInit;
 
-            foreach (var obj in _objects) if (obj != null) Destroy(obj.gameObject);
+            foreach (var obj in _objects)
+            {
+                if (obj == null) continue;
+                if (obj.gameObject == null) continue;
+                Destroy(obj.gameObject);
+            }
 
             if (CustomNetworkManager.IsServer)
             {
                 foreach (var sess in ObjectSessions)
                 {
-                    if (sess != null)
-                    {
-                        NetworkServer.Destroy(sess.gameObject);
-                        Destroy(sess.gameObject);
-                    }
+                    if (sess == null) continue;
+                    if (sess.gameObject == null) continue;
+
+                    NetworkServer.Destroy(sess.gameObject);
+                    Destroy(sess.gameObject);                    
                 }
 
-                if (gameObject != null)
-                {
-                    Game.Instance.OnRoundInitHandler -= OnRoundInit;
-                    Game.Instance.OnRoundHandler -= OnRound;
-
-                    NetworkServer.Destroy(gameObject);
-                    Destroy(gameObject);
-                }
+                NetworkServer.Destroy(gameObject);
+                Destroy(gameObject);
             }
 
             _instance = null;
@@ -279,13 +286,12 @@ namespace Cirrus.Circuit.World
             LevelSession levelSession = NetworkingLibrary.Instance.LevelSession.Create();
             List<PlaceholderInfo> placeholders = new List<PlaceholderInfo>();
 
-            var objs = GameSession.Instance.SelectedLevel.Objects.Where(x => x != null).FirstOrDefault();
-
             foreach (
                 var obj in
                 GameSession.Instance.SelectedLevel.Objects)
-            {
-                if (obj != null)
+            {               
+                if (obj != null && 
+                    obj.IsNetworked)
                 {
                     var objectSession = NetworkingLibrary.Instance.ObjectSession.Create();
                     objectSession.Index = i;
@@ -415,21 +421,25 @@ namespace Cirrus.Circuit.World
 
             if (result.Entered == null) Set(result.Destination, result.Move.User);
 
-            OnMoveHandler?.Invoke(result);
+            OnMovedHandler?.Invoke(result);
         }
 
         #region Exit
 
         public bool GetExitResult(
             Move move,
-            out ExitResult result)
+            out ExitResult result,
+            out IEnumerable<MoveResult> moveResults)
         {
+            moveResults = new MoveResult[0];
+            
             result = new ExitResult { Step = move.Step };
             if (move.User._entered != null)
             {
                 return move.User._entered.GetExitResult(
                     move,
-                    out result
+                    out result,
+                    out moveResults
                     );                                                                    
             }          
 
@@ -463,12 +473,14 @@ namespace Cirrus.Circuit.World
             
             var result = new MoveResult { 
                 MoveType = move.Type,
+                Position = move.Position,
                 Move = move,                                
             };
 
             if (!GetExitResult(
                 move,
-                out ExitResult exitResult))                          
+                out ExitResult exitResult,
+                out IEnumerable<MoveResult> exitMoveResults))                          
             {
                 return false;
             }
@@ -478,7 +490,9 @@ namespace Cirrus.Circuit.World
                 exitResult.Step.SetY(0);
 
             result.Destination = move.Position + exitResult.Step;
+            result.Position = exitResult.Position;
             result.Offset = exitResult.Offset;
+
             if (!Level.IsInsideBounds(result.Destination)) return false;
 
             if (Get(
@@ -510,17 +524,23 @@ namespace Cirrus.Circuit.World
                         Entered = move.Entered,
                         Source = move.Source,
                         Type = move.Type,
-                        User = move.User                
+                        User = move.User                      
                     },
                     out EnterResult enterResult,
                     out IEnumerable<MoveResult> moveResults))
                 {
                     result.Moved = enterResult.Moved;
                     result.Entered = enterResult.Entered;
-                    result.Direction = enterResult.Step.SetY(0);
+                    result.Position = enterResult.Position;
+                    result.Scale = enterResult.Scale;
+                    result.Direction = 
+                        enterResult.MoveType == MoveType.Climbing ?
+                            result.Direction : 
+                            enterResult.Step.SetY(0);                    
                     result.Destination = enterResult.Destination;
                     result.Offset = enterResult.Offset;
                     result.PitchAngle = enterResult.PitchAngle;
+                    result.MoveType = enterResult.MoveType;
                     //result.MoveType = enterResult.MoveType;
 
                     ((List<MoveResult>)results).AddRange(moveResults);
@@ -528,38 +548,43 @@ namespace Cirrus.Circuit.World
                 else result = null;
             }
             // No object moved into
-            else
+            else if (Level.IsInsideBounds(
+                move.Position + 
+                move.Step + 
+                Vector3Int.down))
             {
-                if (Level.IsInsideBounds(move.Position + move.Step + Vector3Int.down))
-                {
-                    if (Get(
-                      move.Position + move.Step + Vector3Int.down,
-                      out BaseObject slope))
-                    {                        
-                        // Handle stepping on a slope
-                        if (slope is Slope)
+                if (Get(
+                    move.Position + 
+                    move.Step + 
+                    Vector3Int.down,
+                    out BaseObject slope))
+                {                        
+                    // Handle stepping on a slope
+                    if (slope is Slope)
+                    {
+                        var slopeMove = move.Copy();
+                        slopeMove.Step = move.Step + Vector3Int.down;
+                        if (GetEnterResults(
+                            slope,
+                            slopeMove,
+                            out EnterResult enterResult,
+                            out IEnumerable<MoveResult> downhillMoveResults))
                         {
-                            var slopeMove = move.Copy();
-                            slopeMove.Step = move.Step + Vector3Int.down;
-                            if (GetEnterResults(
-                                slope,
-                                slopeMove,
-                                out EnterResult enterResult,
-                                out IEnumerable<MoveResult> downhillMoveResults))
-                            {
-                                result.Moved = enterResult.Moved;
-                                result.Entered = enterResult.Entered;
-                                result.Direction = enterResult.Step.SetY(0);
-                                result.Destination = enterResult.Destination;
-                                result.Offset = enterResult.Offset;
-                                result.PitchAngle = enterResult.PitchAngle;                                
+                            result.Moved = enterResult.Moved;
+                            result.Entered = enterResult.Entered;
+                            result.Direction = enterResult.Step.SetY(0);
+                            result.Destination = enterResult.Destination;
+                            result.Offset = enterResult.Offset;
+                            result.PitchAngle = enterResult.PitchAngle;
+                            result.MoveType = enterResult.MoveType;
+                            result.Position = enterResult.Position;
+                            result.Scale = enterResult.Scale;
 
-                                ((List<MoveResult>)results).AddRange(downhillMoveResults);
-                            }
-                            else result = null;// cant move object in the slope, cant move myself
+                            ((List<MoveResult>)results).AddRange(downhillMoveResults);
                         }
+                        else result = null;// cant move object in the slope, cant move myself
                     }
-                }
+                }                
             }
 
             // Add action result
@@ -691,11 +716,6 @@ namespace Cirrus.Circuit.World
 
         #endregion
 
-
-        public void OnRoundInit()
-        {
-            RoundSession.Instance.OnRoundStartHandler += OnRoundStarted;
-        }
 
         public void OnRoundStarted(int i)
         {

@@ -9,7 +9,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
         public override ObjectType Type => ObjectType.CharacterPlaceholder;
 
         [SerializeField]
-        private CameraManager _camera;
+        private CameraController _camera;
 
         //adjust this to change speed        
         private const float Speed = 5f;
@@ -24,7 +24,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
             base.OnValidate();
 
             if (_camera == null)
-                _camera = FindObjectOfType<CameraManager>();
+                _camera = FindObjectOfType<CameraController>();
         }
 
         public override void Start()

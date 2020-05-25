@@ -7,6 +7,9 @@ namespace Cirrus.Circuit.World.Objects
 {
     public class Solid : BaseObject
     {
+        // TODO
+        //public override bool IsNetworked => false;
+
         public override ObjectType Type => ObjectType.Solid;
 
         public override bool GetMoveResults(Move move, out IEnumerable<MoveResult> res)

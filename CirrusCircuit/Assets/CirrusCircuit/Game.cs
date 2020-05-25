@@ -164,8 +164,8 @@ namespace Cirrus.Circuit
         {
             base.Start();
 
-            _initialVectorBottomLeft = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
-            _initialVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30)); // I used 30 as my camera z is -30
+            _initialVectorBottomLeft = CameraController.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
+            _initialVectorTopRight = CameraController.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30)); // I used 30 as my camera z is -30
 
             Screen.fullScreen = IsFullScreen; 
 
@@ -177,8 +177,8 @@ namespace Cirrus.Circuit
 
         public void Update()
         {
-            _updatedVectorBottomLeft = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
-            _updatedVectorTopRight = CameraManager.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30));
+            _updatedVectorBottomLeft = CameraController.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
+            _updatedVectorTopRight = CameraController.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30));
 
             if (
                 _initialVectorBottomLeft != _updatedVectorBottomLeft || 
@@ -293,11 +293,11 @@ namespace Cirrus.Circuit
                 case State.Score:
                 case State.Podium:
                 case State.FinalPodium:
-                    CameraManager
+                    CameraController
                         .Instance
                         .Camera.orthographicSize =
                             Mathf.Lerp(
-                                CameraManager
+                                CameraController
                                     .Instance
                                     .Camera
                                     .orthographicSize,
