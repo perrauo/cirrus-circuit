@@ -15,7 +15,8 @@ namespace Cirrus.Circuit.Editor
         Fill
     }
 
-    public class EditorObjectInfo
+    [System.Serializable]
+    public class EditorObjectDescription
     {
         public Vector3Int Position;
         public BaseObject Template;
@@ -28,9 +29,9 @@ namespace Cirrus.Circuit.Editor
         [SerializeField]
         public Vector3Int Position;
         [SerializeField]
-        public List<Tuple<Vector3Int, BaseObject>> Erased = new List<Tuple<Vector3Int, BaseObject>>();
+        public List<EditorObjectDescription> Erased = new List<EditorObjectDescription>();
         [SerializeField]
-        public List<Tuple<Vector3Int, BaseObject>> Added = new List<Tuple<Vector3Int, BaseObject>>();
+        public List<EditorObjectDescription> Added = new List<EditorObjectDescription>();
         [SerializeField]
         public BaseObject SelectedTile;
         [SerializeField]

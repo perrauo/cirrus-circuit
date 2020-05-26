@@ -91,6 +91,14 @@ namespace Cirrus.Circuit.World.Objects
 
         public Vector3Int _gridPosition;
 
+        public Vector3Int Forward => Transform.forward.normalized.ToVector3Int();
+
+        public int RotationIndex {
+            set {
+                Transform.rotation = Quaternion.AngleAxis(value.IndexToAngle(), Vector3.up);
+            }
+        }
+
         public float _targetScale = 1;
 
         public int ColorId
@@ -879,7 +887,7 @@ namespace Cirrus.Circuit.World.Objects
 
 #if UNITY_EDITOR
 
-        public BaseObject SelectedEditorObject = null;
+        public BaseObject SelectedTemplate = null;
 
 #endif
     }

@@ -190,14 +190,10 @@ namespace Cirrus.Circuit.World
                         portal.Link,
                         out Tuple<Portal, Portal> tuple))
                     {
-                        _portals[portal.Link] =
-                            new Tuple<Portal, Portal>(
-                                tuple.Item1,
-                                portal);
+                        _portals[portal.Link] = Utils.MakePair(tuple.Item1, portal);
                     }
-                    else _portals.Add(
-                        portal.Link,
-                        new Tuple<Portal, Portal>(portal, portal));
+                    else _portals.Add(portal.Link, Utils.MakePair(portal, portal));
+                        
                 }                
 
                 res.Color = PlayerManager.Instance.GetColor(res.ColorId);

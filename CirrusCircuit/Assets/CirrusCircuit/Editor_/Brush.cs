@@ -64,19 +64,11 @@ namespace Cirrus.Circuit.Editor
             }
         }
 
-        public float Rotation
+        public float RotationAngle
         {
             get
             {
-                switch (RotationIndex)
-                {
-                    case 0: return 0;
-                    case 1: return 90;
-                    case 2: return 180;
-                    case 3: return 270;
-                    default: return 0;
-                }
-            
+                return _rotationIndex.IndexToAngle();            
             }
         }
 
@@ -200,7 +192,11 @@ namespace Cirrus.Circuit.Editor
             if (template == null) return;
 
             _preview = template.Create(transform);
-            _preview.transform.Rotate(Vector3.up, Rotation);
+            if (_preview.TryGetComponent(out BaseObject obj))
+            {
+                obj.RotationIndex = RotationIndex;
+            }
+
             _previews.Add(_preview);
         }
 
@@ -240,14 +236,25 @@ namespace Cirrus.Circuit.Editor
                 _position,
                 out BaseObject other))
             {
-                if (other.SelectedEditorObject != null)
+                if (other.SelectedTemplate != null)
                 {
-                    action.Erased.Add(Utils.MakePair(_position, other.SelectedEditorObject));
+                    action.Erased.Add(new EditorObjectDescription
+                    {
+                        Position = _position,
+                        Rotation = RotationIndex,
+                        Template = other.SelectedTemplate
+                    });
+
                     other.gameObject.DestroyImmediate();
                 }
                 else
-                {
-                    action.Erased.Add(Utils.MakePair(_position, other));
+                {                    
+                    action.Erased.Add(new EditorObjectDescription
+                    {
+                        Position = _position,
+                        Rotation = other.Forward.DirectionToIndex(),
+                        Template = other
+                    });
                     other.gameObject.SetActive(false);
                 }
             }
@@ -255,16 +262,21 @@ namespace Cirrus.Circuit.Editor
             var tile = Instantiate(
                 SelectedTile.gameObject, 
                 LevelEditor.Instance.Level.transform);
-
-            tile.transform.Rotate(Vector3.up, Rotation);        
+            
             tile.transform.position = LevelEditor.Instance.Level.GridToWorld(_position);
 
             if (tile.TryGetComponent(out BaseObject obj))
             {
+                obj.RotationIndex = RotationIndex;
                 obj._gridPosition = _position;
-                obj.SelectedEditorObject = SelectedTile;
+                obj.SelectedTemplate = SelectedTile;
                 obj.Register(LevelEditor.Instance.Level);
-                action.Added.Add(Utils.MakePair(_position, SelectedTile));
+                action.Added.Add(new EditorObjectDescription
+                {
+                    Position = _position,
+                    Rotation = RotationIndex,
+                    Template = SelectedTile
+                });
 
                 _lastAction = action;
 
@@ -294,14 +306,24 @@ namespace Cirrus.Circuit.Editor
                 LevelEditor.Instance.Level.Set(_position, null);
                 _lastAction = action;
 
-                if (other.SelectedEditorObject != null)
+                if (other.SelectedTemplate != null)
                 {
-                    action.Erased.Add(Utils.MakePair(_position, other.SelectedEditorObject));
+                    action.Erased.Add(new EditorObjectDescription
+                    {
+                        Position = _position,
+                        Template = other.SelectedTemplate,
+                        Rotation = RotationIndex
+                    });
                     other.gameObject.DestroyImmediate();
                 }
                 else
                 {
-                    action.Erased.Add(Utils.MakePair(_position, other));
+                    action.Erased.Add(new EditorObjectDescription
+                    {
+                        Position = _position,
+                        Template = other,
+                        Rotation = other.Forward.DirectionToIndex()
+                    });
                     other.gameObject.SetActive(false);
                 }
 
@@ -432,25 +454,26 @@ namespace Cirrus.Circuit.Editor
                     foreach (var added in action.Added)
                     {
                         if (added == null) continue;
-                        if (added.Item2 == null) continue;
+                        //if (added.Item2 == null) continue;
 
-                        if (LevelEditor.Instance.Level.Get(added.Item1, out BaseObject obj))
+                        if (LevelEditor.Instance.Level.Get(added.Position, out BaseObject obj))
                         {
                             obj.gameObject.DestroyImmediate();
-                            LevelEditor.Instance.Level.Set(added.Item1, null);
+                            LevelEditor.Instance.Level.Set(added.Position, null);
                         }
                     }
 
                     foreach (var erased in action.Erased)
                     {
                         if (erased == null) continue;
-                        if (erased.Item2 == null) continue;
+                        //if (erased.Item2 == null) continue;
 
-                        var obj = erased.Item2.Create();
+                        var obj = erased.Template.Create(LevelEditor.Instance.Level.transform);
                         obj.gameObject.SetActive(true);
-                        obj.SelectedEditorObject = erased.Item2;
-                        obj.Register(LevelEditor.Instance.Level, erased.Item1);
-                        LevelEditor.Instance.Level.Set(erased.Item1, obj);
+                        obj.SelectedTemplate = erased.Template;
+                        obj.RotationIndex = erased.Rotation;
+                        obj.Register(LevelEditor.Instance.Level, erased.Position);
+                        LevelEditor.Instance.Level.Set(erased.Position, obj);
                     }
 
                     break;
@@ -460,17 +483,18 @@ namespace Cirrus.Circuit.Editor
                     {
                         if (erased == null) continue;
 
-                        if (LevelEditor.Instance.Level.Get(erased.Item1, out BaseObject del))
+                        if (LevelEditor.Instance.Level.Get(erased.Position, out BaseObject del))
                         {
                             del.gameObject.DestroyImmediate();
-                            LevelEditor.Instance.Level.Set(erased.Item1, null);
+                            LevelEditor.Instance.Level.Set(erased.Position, null);
                         }
 
-                        var obj = erased.Item2.Create();
+                        var obj = erased.Template.Create(LevelEditor.Instance.Level.transform);
                         obj.gameObject.SetActive(true);
-                        obj.SelectedEditorObject = erased.Item2;
-                        obj.Register(LevelEditor.Instance.Level, erased.Item1);
-                        LevelEditor.Instance.Level.Set(erased.Item1, obj);
+                        obj.SelectedTemplate = erased.Template;
+                        obj.RotationIndex = erased.Rotation;
+                        obj.Register(LevelEditor.Instance.Level, erased.Position);
+                        LevelEditor.Instance.Level.Set(erased.Position, obj);
                     }
 
                     //foreach (var added in action.Added)
@@ -508,11 +532,11 @@ namespace Cirrus.Circuit.Editor
                     foreach (var erased in action.Erased)
                     {
                         if (erased == null) continue;
-                        if (erased.Item2 == null) continue;
-                        if (LevelEditor.Instance.Level.Get(erased.Item1, out BaseObject del))
+                        if (erased.Template == null) continue;
+                        if (LevelEditor.Instance.Level.Get(erased.Position, out BaseObject del))
                         {
                             del.gameObject.DestroyImmediate();
-                            LevelEditor.Instance.Level.Set(erased.Item1, null);
+                            LevelEditor.Instance.Level.Set(erased.Position, null);
                         }
                     }
 
@@ -520,18 +544,19 @@ namespace Cirrus.Circuit.Editor
                     {
                         if (added == null) continue;
 
-                        if (LevelEditor.Instance.Level.Get(added.Item1, out BaseObject del))
+                        if (LevelEditor.Instance.Level.Get(added.Position, out BaseObject del))
                         {
                             del.gameObject.DestroyImmediate();
-                            LevelEditor.Instance.Level.Set(added.Item1, null);
+                            LevelEditor.Instance.Level.Set(added.Position, null);
                         }
 
-                        var obj = added.Item2.Create();
+                        var obj = added.Template.Create(LevelEditor.Instance.Level.transform);
                         obj.gameObject.SetActive(true);
-                        obj.SelectedEditorObject = added.Item2;
-                        if (obj.Register(LevelEditor.Instance.Level, added.Item1))
+                        obj.SelectedTemplate = added.Template;
+                        obj.RotationIndex = added.Rotation;
+                        if (obj.Register(LevelEditor.Instance.Level, added.Position))
                         {
-                            LevelEditor.Instance.Level.Set(added.Item1, obj);
+                            LevelEditor.Instance.Level.Set(added.Position, obj);
                         }
                     }
 
@@ -542,18 +567,18 @@ namespace Cirrus.Circuit.Editor
                     {                        
                         if (erased == null) continue;
 
-                        if (LevelEditor.Instance.Level.Get(erased.Item1, out BaseObject del))
+                        if (LevelEditor.Instance.Level.Get(erased.Position, out BaseObject del))
                         {
                             del.gameObject.DestroyImmediate();
-                            LevelEditor.Instance.Level.Set(erased.Item1, null);
+                            LevelEditor.Instance.Level.Set(erased.Position, null);
                         }
 
-                        var obj = erased.Item2.Create();
+                        var obj = erased.Template.Create(LevelEditor.Instance.Level.transform);
                         obj.gameObject.SetActive(true);
-                        obj.SelectedEditorObject = erased.Item2;
-                        if (obj.Register(LevelEditor.Instance.Level, erased.Item1))
+                        obj.SelectedTemplate = erased.Template;
+                        if (obj.Register(LevelEditor.Instance.Level, erased.Position))
                         {
-                            LevelEditor.Instance.Level.Set(erased.Item1, obj);
+                            LevelEditor.Instance.Level.Set(erased.Position, obj);
                         }                        
                     }
 
