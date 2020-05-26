@@ -2,8 +2,9 @@
 using System.Collections;
 using Cirrus.Circuit.World.Objects;
 using System;
+using Cirrus.Circuit.World;
 
-namespace Cirrus.Circuit.World.Editor
+namespace Cirrus.Circuit.Editor
 {
     public enum TerrainDrawMode
     {

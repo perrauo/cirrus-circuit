@@ -3,7 +3,7 @@ using System.Collections;
 using Cirrus.Circuit.World.Objects;
 using System;
 
-namespace Cirrus.Circuit.World.Editor
+namespace Cirrus.Circuit.Editor
 {
     public enum TerrainGroupTilingMode
     { 

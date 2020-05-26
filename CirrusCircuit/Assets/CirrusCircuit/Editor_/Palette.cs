@@ -4,7 +4,7 @@ using Cirrus.Circuit.World.Objects;
 using UnityEditor;
 using SubjectNerd.Utilities;
 
-namespace Cirrus.Circuit.World.Editor
+namespace Cirrus.Circuit.Editor
 {
     [CreateAssetMenu(menuName = "Cirrus Circuit/Editor.Palette")]
     public class Palette : BaseAsset

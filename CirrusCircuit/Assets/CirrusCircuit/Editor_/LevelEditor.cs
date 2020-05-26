@@ -5,14 +5,12 @@ using Cirrus.Editor;
 using Cirrus.Utils;
 using Devdog.General.ThirdParty.UniLinq;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using Cirrus.Collections;
 
-namespace Cirrus.Circuit.World.Editor
+namespace Cirrus.Circuit.Editor
 {
     public enum EditorMode
     {
@@ -210,8 +208,10 @@ namespace Cirrus.Circuit.World.Editor
 
     //#if UNITY_EDITOR
     [CustomEditor(typeof(LevelEditor))]
-    public class LevelEditorCustomInspector : UnityEditor.Editor
+    public class LevelEditorCustom : UnityEditor.Editor
     {
+        public static Events.Event OnLevelSavedStaticHandler;
+
         private LevelEditor _editor;
 
         private Mesh _cursorMesh;
@@ -657,10 +657,21 @@ namespace Cirrus.Circuit.World.Editor
 
                 if (path.Length != 0)
                 {
+                    foreach (
+                        BaseObject obj in 
+                        LevelEditor.Instance.Level.GetComponentsInChildren<BaseObject>())
+                    {
+                        if (obj == null) continue;
+                        if (obj.gameObject.activeInHierarchy) continue;                        
+                        obj.gameObject.DestroyImmediate();
+                    }
+
                     PrefabUtility.SaveAsPrefabAssetAndConnect(
                         _editor.Level.gameObject, 
                         path, 
                         InteractionMode.AutomatedAction);
+
+                    OnLevelSavedStaticHandler?.Invoke();
                 }
 
             }

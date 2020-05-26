@@ -2,9 +2,8 @@
 using System.Collections;
 using Cirrus.Circuit.World.Objects;
 
-namespace Cirrus.Circuit.World.Editor
+namespace Cirrus.Circuit.Editor
 {
-
     public class EditorLibrary : Resources.BaseAssetLibrary<EditorLibrary>
     {
         [SerializeField]
