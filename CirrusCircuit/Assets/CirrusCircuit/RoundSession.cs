@@ -5,7 +5,7 @@ using Cirrus.Circuit.UI;
 using Mirror;
 //using UnityEngine;
 using Cirrus.MirrorExt;
-using Cirrus.Utils;
+using Cirrus;
 using Cirrus.Events;
 using System;
 using Cirrus.Circuit.Networking;

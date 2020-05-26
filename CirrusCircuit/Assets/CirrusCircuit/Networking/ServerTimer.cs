@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 using Mirror;
 using Cirrus.Circuit.Networking;
-using Cirrus.Utils;
+using Cirrus;
 
 namespace Cirrus.Circuit.Networking
 {

@@ -2,7 +2,7 @@
 using Cirrus.Circuit.UI;
 using Cirrus.Circuit.World;
 using Cirrus.Circuit.World.Objects;
-using Cirrus.Utils;
+using Cirrus;
 using Mirror;
 using System.Collections.Generic;
 using System.Threading;

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using Cirrus.Circuit.World.Objects;
-using Cirrus.Utils;
+using Cirrus;
 using UnityEditor;
 using UnityEngine.Serialization;
 
@@ -171,6 +171,17 @@ namespace Cirrus.Circuit.World
             _objects[i] = obj;
 
             return (GridToWorld(pos), pos);
+        }
+
+        public bool RegisterObject(BaseObject obj, Vector3Int pos)
+        {
+            if (!IsInsideBounds(pos)) return false;
+
+            int i = VectorUtils.ToIndex(pos, Dimensions.x, Dimensions.y);
+
+            _objects[i] = obj;
+
+            return true;
         }
 
 

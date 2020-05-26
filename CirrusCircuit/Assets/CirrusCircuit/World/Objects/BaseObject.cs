@@ -4,13 +4,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cirrus.Resources;
-using Cirrus.Utils;
+using Cirrus;
 using System;
 using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.Networking;
 using Cirrus.Circuit.Cameras;
 using UnityEditor;
-using MathUtils = Cirrus.Utils.MathUtils;
+using MathUtils = Cirrus.MathUtils;
 //using System.Numerics;
 
 namespace Cirrus.Circuit.World.Objects
@@ -240,6 +240,19 @@ namespace Cirrus.Circuit.World.Objects
         {
             (transform.position, _gridPosition) = level.RegisterObject(this);
             Transform.position = transform.position;
+        }
+
+        public bool Register(Level level, Vector3Int pos)
+        {
+            if (level.RegisterObject(this, pos))
+            {
+                _gridPosition = pos;
+                transform.position = level.GridToWorld(pos);
+                Transform.position = transform.position;
+                return true;
+            }
+
+            return false;
         }
 
         public virtual void OnRoundEnd()
@@ -862,7 +875,13 @@ namespace Cirrus.Circuit.World.Objects
 
         #endregion
 
-        #endregion        
+        #endregion
+
+#if UNITY_EDITOR
+
+        public BaseObject SelectedEditorObject = null;
+
+#endif
     }
 }
 

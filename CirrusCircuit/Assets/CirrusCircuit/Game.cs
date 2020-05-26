@@ -1,7 +1,7 @@
 using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.Networking;
 using Cirrus.Circuit.World.Objects.Characters;
-using Cirrus.Utils;
+using Cirrus;
 using System;
 using System.Collections;
 using System.Collections.Generic;

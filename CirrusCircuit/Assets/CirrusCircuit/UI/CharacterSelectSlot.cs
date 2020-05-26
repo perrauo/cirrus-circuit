@@ -2,7 +2,7 @@
 using System.Collections;
 
 using Cirrus.Circuit.World.Objects.Characters;
-using Cirrus.Utils;
+using Cirrus;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using Mirror;

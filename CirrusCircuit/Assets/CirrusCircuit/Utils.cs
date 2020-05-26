@@ -10,10 +10,4 @@ namespace Cirrus.Circuit
         Up,
         Down
     }
-
-    public static class Utils
-    {
-
-
-    }
 }

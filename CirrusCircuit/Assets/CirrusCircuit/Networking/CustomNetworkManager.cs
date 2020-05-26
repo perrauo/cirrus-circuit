@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Cirrus.Circuit.Controls;
-using Cirrus.Utils;
+using Cirrus;
 using Mirror;
 
 using UnityEngine;

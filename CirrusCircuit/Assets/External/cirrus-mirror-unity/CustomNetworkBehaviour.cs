@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
-using Cirrus.Utils;
+using Cirrus;
 using Mirror;
 using UnityEngine;
 using Object = UnityEngine.Object;

@@ -2,7 +2,7 @@
 using Cirrus.Circuit.World;
 using Cirrus.Circuit.World.Objects;
 using Cirrus.Editor;
-using Cirrus.Utils;
+using Cirrus;
 using Devdog.General.ThirdParty.UniLinq;
 using System;
 using UnityEditor;

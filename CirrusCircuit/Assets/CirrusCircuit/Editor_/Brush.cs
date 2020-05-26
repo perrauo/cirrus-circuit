@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEditor;
-using Cirrus.Utils;
+using Cirrus;
 using System.Linq;
 using Cirrus.Circuit.World.Objects;
 using System.Runtime.InteropServices;
@@ -11,6 +11,8 @@ using Castle.Core.Internal;
 using UnityEngine.InputSystem.LowLevel;
 using Cirrus.Collections;
 using Cirrus.Circuit.World;
+using System;
+using Object = UnityEngine.Object;
 
 namespace Cirrus.Circuit.Editor
 {
@@ -238,20 +240,31 @@ namespace Cirrus.Circuit.Editor
                 _position,
                 out BaseObject other))
             {
-                action.Erased.Add(other);
-                other.gameObject.SetActive(false);
+                if (other.SelectedEditorObject != null)
+                {
+                    action.Erased.Add(Utils.MakePair(_position, other.SelectedEditorObject));
+                    other.gameObject.DestroyImmediate();
+                }
+                else
+                {
+                    action.Erased.Add(Utils.MakePair(_position, other));
+                    other.gameObject.SetActive(false);
+                }
             }
 
-            var tile = Instantiate(SelectedTile.gameObject, LevelEditor.Instance.Level.transform);
-            tile.transform.Rotate(Vector3.up, Rotation);
+            var tile = Instantiate(
+                SelectedTile.gameObject, 
+                LevelEditor.Instance.Level.transform);
 
+            tile.transform.Rotate(Vector3.up, Rotation);        
             tile.transform.position = LevelEditor.Instance.Level.GridToWorld(_position);
 
             if (tile.TryGetComponent(out BaseObject obj))
             {
                 obj._gridPosition = _position;
+                obj.SelectedEditorObject = SelectedTile;
                 obj.Register(LevelEditor.Instance.Level);
-                action.Added.Add(obj);
+                action.Added.Add(Utils.MakePair(_position, SelectedTile));
 
                 _lastAction = action;
 
@@ -277,13 +290,22 @@ namespace Cirrus.Circuit.Editor
             if (_lastAction.Equals(action)) return false;
 
             if (LevelEditor.Instance.Level.Get(_position, out BaseObject other))
-            {                
-                other.gameObject.SetActive(false);
-
+            {             
                 LevelEditor.Instance.Level.Set(_position, null);
-
-                action.Erased.Add(other);
                 _lastAction = action;
+
+                if (other.SelectedEditorObject != null)
+                {
+                    action.Erased.Add(Utils.MakePair(_position, other.SelectedEditorObject));
+                    other.gameObject.DestroyImmediate();
+                }
+                else
+                {
+                    action.Erased.Add(Utils.MakePair(_position, other));
+                    other.gameObject.SetActive(false);
+                }
+
+
 
                 EditorUtility.SetDirty(LevelEditor.Instance.Level);
                 return true;
@@ -397,19 +419,6 @@ namespace Cirrus.Circuit.Editor
 
         public void ClearRedos()
         {
-            foreach (var redo in _redos)
-            {
-                if (redo == null) continue;
-
-                foreach (var added in redo.Added)
-                {
-                    if (added == null) continue;
-                    if (added.gameObject == null) continue;
-
-                    DestroyImmediate(added.gameObject);
-                }
-            }
-
             _redos.Clear();
         }
 
@@ -419,17 +428,29 @@ namespace Cirrus.Circuit.Editor
             switch (action.Type)
             {
                 case ActionType.Draw:
-                    foreach (var erased in action.Erased)
-                    {
-                        if (erased == null) continue;
-                        erased.gameObject.SetActive(true);
-                        LevelEditor.Instance.Level.Set(erased._gridPosition, erased);
-                    }
 
                     foreach (var added in action.Added)
                     {
                         if (added == null) continue;
-                        added.gameObject.SetActive(false);
+                        if (added.Item2 == null) continue;
+
+                        if (LevelEditor.Instance.Level.Get(added.Item1, out BaseObject obj))
+                        {
+                            obj.gameObject.DestroyImmediate();
+                            LevelEditor.Instance.Level.Set(added.Item1, null);
+                        }
+                    }
+
+                    foreach (var erased in action.Erased)
+                    {
+                        if (erased == null) continue;
+                        if (erased.Item2 == null) continue;
+
+                        var obj = erased.Item2.Create();
+                        obj.gameObject.SetActive(true);
+                        obj.SelectedEditorObject = erased.Item2;
+                        obj.Register(LevelEditor.Instance.Level, erased.Item1);
+                        LevelEditor.Instance.Level.Set(erased.Item1, obj);
                     }
 
                     break;
@@ -438,8 +459,18 @@ namespace Cirrus.Circuit.Editor
                     foreach (var erased in action.Erased)
                     {
                         if (erased == null) continue;
-                        erased.gameObject.SetActive(true);
-                        LevelEditor.Instance.Level.Set(erased._gridPosition, erased);
+
+                        if (LevelEditor.Instance.Level.Get(erased.Item1, out BaseObject del))
+                        {
+                            del.gameObject.DestroyImmediate();
+                            LevelEditor.Instance.Level.Set(erased.Item1, null);
+                        }
+
+                        var obj = erased.Item2.Create();
+                        obj.gameObject.SetActive(true);
+                        obj.SelectedEditorObject = erased.Item2;
+                        obj.Register(LevelEditor.Instance.Level, erased.Item1);
+                        LevelEditor.Instance.Level.Set(erased.Item1, obj);
                     }
 
                     //foreach (var added in action.Added)
@@ -473,27 +504,57 @@ namespace Cirrus.Circuit.Editor
             switch (action.Type)
             {
                 case ActionType.Draw:
-                    foreach (var erased in action.Added)
+
+                    foreach (var erased in action.Erased)
                     {
                         if (erased == null) continue;
-                        erased.gameObject.SetActive(true);
-                        LevelEditor.Instance.Level.Set(erased._gridPosition, erased);
+                        if (erased.Item2 == null) continue;
+                        if (LevelEditor.Instance.Level.Get(erased.Item1, out BaseObject del))
+                        {
+                            del.gameObject.DestroyImmediate();
+                            LevelEditor.Instance.Level.Set(erased.Item1, null);
+                        }
                     }
 
-                    foreach (var added in action.Erased)
+                    foreach (var added in action.Added)
                     {
                         if (added == null) continue;
-                        added.gameObject.SetActive(false);
+
+                        if (LevelEditor.Instance.Level.Get(added.Item1, out BaseObject del))
+                        {
+                            del.gameObject.DestroyImmediate();
+                            LevelEditor.Instance.Level.Set(added.Item1, null);
+                        }
+
+                        var obj = added.Item2.Create();
+                        obj.gameObject.SetActive(true);
+                        obj.SelectedEditorObject = added.Item2;
+                        if (obj.Register(LevelEditor.Instance.Level, added.Item1))
+                        {
+                            LevelEditor.Instance.Level.Set(added.Item1, obj);
+                        }
                     }
 
                     break;
 
                 case ActionType.Erase:
                     foreach (var erased in action.Erased)
-                    {
+                    {                        
                         if (erased == null) continue;
-                        erased.gameObject.SetActive(true);
-                        LevelEditor.Instance.Level.Set(erased._gridPosition, null);
+
+                        if (LevelEditor.Instance.Level.Get(erased.Item1, out BaseObject del))
+                        {
+                            del.gameObject.DestroyImmediate();
+                            LevelEditor.Instance.Level.Set(erased.Item1, null);
+                        }
+
+                        var obj = erased.Item2.Create();
+                        obj.gameObject.SetActive(true);
+                        obj.SelectedEditorObject = erased.Item2;
+                        if (obj.Register(LevelEditor.Instance.Level, erased.Item1))
+                        {
+                            LevelEditor.Instance.Level.Set(erased.Item1, obj);
+                        }                        
                     }
 
 

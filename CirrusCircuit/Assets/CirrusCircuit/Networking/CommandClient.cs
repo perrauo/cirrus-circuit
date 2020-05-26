@@ -6,7 +6,7 @@ using UnityEngine;
 using Cirrus.Circuit.World.Objects;
 using System.Linq;
 using System.Threading;
-using Cirrus.Utils;
+using Cirrus;
 using Cirrus.Circuit.World;
 using System.Collections.Generic;
 

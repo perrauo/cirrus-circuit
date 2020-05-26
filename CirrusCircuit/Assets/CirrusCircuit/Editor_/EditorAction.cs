@@ -2,11 +2,12 @@
 using System.Collections;
 using Boo.Lang;
 using Cirrus.Circuit.World.Objects;
+using System;
 
 namespace Cirrus.Circuit.Editor
 {
     public enum ActionType
-    { 
+    {
         Unknown,
         Erase,
         Draw,
@@ -14,15 +15,22 @@ namespace Cirrus.Circuit.Editor
         Fill
     }
 
-    [System.Serializable]
+    public class EditorObjectInfo
+    {
+        public Vector3Int Position;
+        public BaseObject Template;
+        public int Rotation;
+    }
+
+    [Serializable]
     public class EditorAction
     {
         [SerializeField]
         public Vector3Int Position;
         [SerializeField]
-        public List<BaseObject> Erased = new List<BaseObject>();
+        public List<Tuple<Vector3Int, BaseObject>> Erased = new List<Tuple<Vector3Int, BaseObject>>();
         [SerializeField]
-        public List<BaseObject> Added = new List<BaseObject>();
+        public List<Tuple<Vector3Int, BaseObject>> Added = new List<Tuple<Vector3Int, BaseObject>>();
         [SerializeField]
         public BaseObject SelectedTile;
         [SerializeField]

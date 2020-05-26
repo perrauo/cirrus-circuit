@@ -4,7 +4,7 @@ using Cirrus.Circuit.World.Objects;
 using Cirrus.Circuit.World.Objects.Characters;
 using Cirrus.Events;
 using Cirrus.MirrorExt;
-using Cirrus.Utils;
+using Cirrus;
 using Mirror;
 using System;
 using System.Collections.Generic;

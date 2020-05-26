@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cirrus.Utils;
+using Cirrus;
 
 namespace Cirrus.Circuit.UI
 {
