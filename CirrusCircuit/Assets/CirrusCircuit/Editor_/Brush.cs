@@ -42,10 +42,7 @@ namespace Cirrus.Circuit.Editor
         public Vector3Int _position = Vector3Int.zero;
 
         [SerializeField]
-        public EditorAction _lastAction;
-
-        [SerializeField]
-        private List<GameObject> _previews = new List<GameObject>();
+        private List<GameObject> _previews = new List<GameObject>();      
 
         [SerializeField]
         private GameObject _preview = null;
@@ -230,8 +227,6 @@ namespace Cirrus.Circuit.Editor
 
             if (SelectedTile == null) return false;
 
-            if (_lastAction.Equals(action)) return false;
-
             if (LevelEditor.Instance.Level.Get(
                 _position,
                 out BaseObject other))
@@ -278,8 +273,6 @@ namespace Cirrus.Circuit.Editor
                     Template = SelectedTile
                 });
 
-                _lastAction = action;
-
                 EditorUtility.SetDirty(LevelEditor.Instance.Level);
 
                 return true;
@@ -299,12 +292,10 @@ namespace Cirrus.Circuit.Editor
 
             if (SelectedTile == null) return false;
 
-            if (_lastAction.Equals(action)) return false;
 
             if (LevelEditor.Instance.Level.Get(_position, out BaseObject other))
             {             
                 LevelEditor.Instance.Level.Set(_position, null);
-                _lastAction = action;
 
                 if (other.SelectedTemplate != null)
                 {
@@ -366,6 +357,7 @@ namespace Cirrus.Circuit.Editor
 
         public CircularBuffer<EditorAction> _redos = new CircularBuffer<EditorAction>(MaxUndos, true);
 
+        public EditorAction _lastAction;
 
         public int CellSize => Level.CellSize;
 
@@ -385,6 +377,8 @@ namespace Cirrus.Circuit.Editor
                 CellSize,
                 CellSize);           
         }
+
+
 
         public void OnDisable()
         {
@@ -709,6 +703,9 @@ namespace Cirrus.Circuit.Editor
             {
                 if (_brush.Draw(out EditorAction action))
                 {
+                    if (action.Equals(_lastAction)) return;
+
+                    _lastAction = action;
                     _redos.Clear();
                     _undos.Push(action);
                 }
@@ -719,6 +716,9 @@ namespace Cirrus.Circuit.Editor
             {
                 if (_brush.Erase(out EditorAction action))
                 {
+                    if (action.Equals(_lastAction)) return;                                        
+
+                    _lastAction = action;
                     _redos.Clear();
                     _undos.Push(action);
                 }

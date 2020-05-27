@@ -39,6 +39,8 @@ namespace Cirrus.Circuit.Editor
 
         public bool Equals(EditorAction other)
         {
+            if (other == null) return false;
+
             switch (Type)
             {
                 case ActionType.Draw:
