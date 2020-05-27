@@ -9,7 +9,7 @@ using Cirrus.Circuit.Networking;
 using Mirror;
 using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.World.Objects;
-using Cirrus.Events;
+////using Cirrus.Events;
 using Cirrus.Circuit.World.Objects.Characters;
 using Cirrus.MirrorExt;
 
@@ -32,7 +32,7 @@ namespace Cirrus.Circuit
         //[SyncVar()]
         //private State _state;
 
-        public static Event<bool> OnStartClientStaticHandler;
+        public static Delegate<bool> OnStartClientStaticHandler;
 
         protected static GameSession _instance;
 
@@ -119,7 +119,7 @@ namespace Cirrus.Circuit
             return _players[i].GetComponent<PlayerSession>();
         }
 
-        public Event<Gem, int, float> OnScoreValueAddedHandler;
+        public Delegate<Gem, int, float> OnScoreValueAddedHandler;
 
         [SyncVar]
         [SerializeField]        

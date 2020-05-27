@@ -6,7 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cirrus.Events;
+//using Cirrus.Events;
 using Cirrus.Circuit.World;
 using StartMenu = Cirrus.Circuit.UI.StartMenu;
 using System.Threading;
@@ -29,26 +29,26 @@ namespace Cirrus.Circuit
     {
         #region Events
 
-        public Event<bool> OnCharacterSelectHandler;
+        public Delegate<bool> OnCharacterSelectHandler;
 
-        public Event<bool> OnMenuHandler;
+        public Delegate<bool> OnMenuHandler;
 
-        public Event<bool> OnLevelSelectHandler;
+        public Delegate<bool> OnLevelSelectHandler;
 
-        public Event<Level, int> OnLevelSelectedHandler;
+        public Delegate<Level, int> OnLevelSelectedHandler;
 
-        public Event<Level, int> OnLevelScrollHandler;
+        public Delegate<Level, int> OnLevelScrollHandler;
 
-        public Events.Event OnRoundHandler;
+        public Delegate OnRoundHandler;
 
-        public Events.Event OnRoundInitHandler;
+        public Delegate OnRoundInitHandler;
 
 
-        public Events.Event OnScreenResizedHandler;
+        public Delegate OnScreenResizedHandler;
 
-        public Events.Event OnPodiumHandler;
+        public Delegate OnPodiumHandler;
 
-        public Events.Event OnFinalPodiumHandler;
+        public Delegate OnFinalPodiumHandler;
 
         #endregion
 

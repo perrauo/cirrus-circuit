@@ -25,7 +25,7 @@ namespace Cirrus.Circuit.Editor
 
     [Serializable]
     public class EditorAction
-    {
+    {        
         [SerializeField]
         public Vector3Int Position;
         [SerializeField]

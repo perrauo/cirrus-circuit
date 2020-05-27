@@ -7,9 +7,9 @@ namespace Cirrus.Circuit
 {
     public class Clock : BaseSingleton<Clock>
     {
-        public Events.Event OnUpdateHandler;
+        public Delegate OnUpdateHandler;
 
-        public Events.Event OnFixedUpdateHandler;
+        public Delegate OnFixedUpdateHandler;
 
         public void Update()
         {

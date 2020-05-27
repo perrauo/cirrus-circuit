@@ -1,23 +1,25 @@
 ﻿using Castle.Core.Internal;
 using Cirrus.Circuit.World;
 using Cirrus.Circuit.World.Objects;
-using Cirrus.Editor;
+using Cirrus.UnityEditorExt;
 using Cirrus;
-using Devdog.General.ThirdParty.UniLinq;
+//using Devdog.General.ThirdParty.UniLinq;
 using System;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Cirrus.Collections;
+using System.Linq;
 
 namespace Cirrus.Circuit.Editor
 {
     public enum EditorMode
     {
         FreeCam,
-        SelectTile,
+        SetTileTemplate,
         RotateTile,
-        ScrollLayer
+        SelectTile,
+        ScrollLayer,
     }
 
     public enum LayerMode
@@ -40,16 +42,17 @@ namespace Cirrus.Circuit.Editor
     public class LevelEditorKeys
     {
         public static readonly KeyCode[] FreeCam = new KeyCode[] { KeyCode.F1 };
-        public static readonly KeyCode[] TileSelect = new KeyCode[] { KeyCode.F2 };
+        public static readonly KeyCode[] SetTileTemplate = new KeyCode[] { KeyCode.F2 };
         public static readonly KeyCode[] RotateTile = new KeyCode[] { KeyCode.F3 };
-        public static readonly KeyCode[] ScrollLayer = new KeyCode[] { KeyCode.F4 };
+        public static readonly KeyCode[] SelectTile = new KeyCode[] { KeyCode.F4 };
+        public static readonly KeyCode[] ScrollLayer = new KeyCode[] { KeyCode.F5 };
 
-        public static readonly KeyCode FreeCamMacOS = KeyCode.Alpha1;
-        public static readonly KeyCode TileSelectMacOS = KeyCode.Alpha2;
-        public static readonly KeyCode RotateTileMacOS = KeyCode.Alpha3;
-        public static readonly KeyCode ScrollLayerMacOS = KeyCode.Alpha4;
+        public static readonly KeyCode[] FreeCam_MacOS = new KeyCode[] { KeyCode.Alpha1 };
+        public static readonly KeyCode[] SetTileTemplate_MacOS = new KeyCode[] { KeyCode.Alpha2 };
+        public static readonly KeyCode[] RotateTile_MacOS = new KeyCode[] { KeyCode.Alpha3 };
+        public static readonly KeyCode[] SelectTile_MacOS = new KeyCode[] { KeyCode.Alpha4 };
+        public static readonly KeyCode[] ScrollLayer_MacOS = new KeyCode[] { KeyCode.Alpha5 };
 
-        //public static readonly KeyCode[] ScrollLayer = new KeyCode[] { KeyCode.Keypad0 };
     }
 
     public class LevelEditor : BaseSingleton<LevelEditor>
@@ -80,8 +83,11 @@ namespace Cirrus.Circuit.Editor
         public Level Level {
             get {
 
-                if (_level == null || _level.gameObject == null) _level = FindObjectOfType<Level>();
-                if (_level.gameObject == null) _level = null; 
+                if (_level == null ||
+                _level.gameObject == null)
+                {
+                    _level = FindObjectOfType<Level>();
+                }
                 return _level;
             }
         
@@ -95,9 +101,17 @@ namespace Cirrus.Circuit.Editor
 
         [SerializeField]
         public EditorMode _mode = EditorMode.FreeCam;
-        public EditorMode Mode => _mode;
+        public EditorMode Mode
+        {
+            get => _mode;
+            set
+            {
+                _mode = value;
+            }
+        }
 
-        public Tool LastTool = Tool.None;
+        public Tool _lastTool
+            = Tool.None;
 
         [Header("Display")]
         [SerializeField]
@@ -108,9 +122,27 @@ namespace Cirrus.Circuit.Editor
         [SerializeField]
         private Color _cursorColor = ColorUtils.LightBlue;
         [SerializeField]
+        private Color _cursorSelectedColor = ColorUtils.LightGreen;
+        [SerializeField]
         private Color _layerColor = ColorUtils.LightBlue;
 
         [Header("Info")]
+
+        [SerializeField]
+        private Cursor _cursor;
+
+        [SerializeField]
+        public Cursor Cursor {
+            get 
+            {
+                if (_cursor == null)
+                    _cursor = FindObjectOfType<Cursor>();
+
+                return _cursor;
+            }
+        
+        }
+
         [SerializeField]
         public Layer LayerX = new Layer();
 
@@ -120,11 +152,6 @@ namespace Cirrus.Circuit.Editor
         [SerializeField]
         public Layer LayerZ = new Layer();
 
-        [SerializeField]
-        public Vector3 _debugPosition = Vector3.zero;
-
-        [SerializeField]
-        public Brush _brush;
 
         public Layer SelectedLayer
         {
@@ -148,7 +175,8 @@ namespace Cirrus.Circuit.Editor
 
             EditorLibrary.Instance.DimensionsMaterial.color = _dimensionsColor;
             EditorLibrary.Instance.LayerMaterial.color = _layerColor;
-            EditorLibrary.Instance.CursorMaterial.color = _cursorColor;
+            EditorLibrary.Instance.CursorDefaultMaterial.color = _cursorColor;
+            EditorLibrary.Instance.CursorSelectedMaterial.color = _cursorSelectedColor;
 
             if (Level == null) return;
 
@@ -167,7 +195,8 @@ namespace Cirrus.Circuit.Editor
             _dimensions = _level.Dimensions;
             _dimensionsColor = EditorLibrary.Instance.DimensionsMaterial.color;
             _layerColor = EditorLibrary.Instance.LayerMaterial.color;
-            _cursorColor = EditorLibrary.Instance.CursorMaterial.color;
+            _cursorColor = EditorLibrary.Instance.CursorDefaultMaterial.color;
+            _cursorSelectedColor = EditorLibrary.Instance.CursorSelectedMaterial.color;
         }
 
         [ExecuteInEditMode]
@@ -179,7 +208,7 @@ namespace Cirrus.Circuit.Editor
         [ExecuteInEditMode]
         public void Update()
         {
-            //Vector2 mousePos = Event.current.mousePosition;
+            //Vector2 mousePos = UnityEngine.Event.current.mousePosition;
             //mousePos.y = Camera.current.pixelHeight - mousePos.y;
 
             //Vector3 worldPosition = Camera.current.ScreenToWorldPoint(mousePos);
@@ -197,11 +226,6 @@ namespace Cirrus.Circuit.Editor
         [ExecuteInEditMode]
         public void OnDrawGizmos()
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(_debugPosition, 0.1f);
-
-            //Gizmos.DrawLine(_debugRay.origin, _debugRay.origin + _debugRay.direction * 100);
-            //Gizmos.DrawRay(_debugRay.origin, _debugRay.direction * 100);
 
         }
     }
@@ -210,11 +234,9 @@ namespace Cirrus.Circuit.Editor
     [CustomEditor(typeof(LevelEditor))]
     public class LevelEditorCustom : UnityEditor.Editor
     {
-        public static Events.Event OnLevelSavedStaticHandler;
+        public static Delegate OnLevelSavedStaticHandler;
 
         private LevelEditor _editor;
-
-        private Mesh _cursorMesh;
 
         private Plane _plane;
 
@@ -242,7 +264,7 @@ namespace Cirrus.Circuit.Editor
             Object selected = Selection.objects.FirstOrDefault();
             if (selected == null) return;
             if (!(selected is BaseObject)) return;
-            _editor._brush._selectedTileObject = selected;
+            _editor.Cursor._selectedTileTemplate = selected;
 
         }
 
@@ -312,7 +334,7 @@ namespace Cirrus.Circuit.Editor
                 case EditorMode.FreeCam:
                     break;
 
-                case EditorMode.SelectTile:
+                case EditorMode.SetTileTemplate:
 
                     // Change palete
                     if (Event.current.type == EventType.KeyDown)
@@ -323,7 +345,7 @@ namespace Cirrus.Circuit.Editor
                         {
                             int paletteIndex = Event.current.keyCode - KeyCode.Alpha0;
                             paletteIndex = IntegerUtils.Mod(paletteIndex - 1, 10);
-                            _editor._brush.SelectedPaletteIndex = paletteIndex;
+                            _editor.Cursor.SelectedPaletteIndex = paletteIndex;
 
                             Event.current.Use();
                         }
@@ -332,10 +354,17 @@ namespace Cirrus.Circuit.Editor
                     // Change Tile
                     if (Event.current.type == EventType.ScrollWheel)
                     {
-                        if (EventUtils.MouseWheelUp()) _editor._brush.SelectedTileIndex++;
-                        else if (EventUtils.MouseWheelDown()) _editor._brush.SelectedTileIndex--;
-
-                        Event.current.Use();
+                        if (EventUtils.MouseWheelUp())
+                        {
+                            _editor.Cursor.SelectedTileIndex++;
+                            Event.current.Use();
+                        }
+                        else if (EventUtils.MouseWheelDown())
+                        {
+                            _editor.Cursor.SelectedTileIndex--;
+                            Event.current.Use();
+                        }
+                        
                     }
 
                     break;
@@ -344,10 +373,16 @@ namespace Cirrus.Circuit.Editor
 
                     if (Event.current.type == EventType.ScrollWheel)
                     {
-                        if (EventUtils.MouseWheelUp()) _editor._brush.RotationIndex++;
-                        else if (EventUtils.MouseWheelDown()) _editor._brush.RotationIndex--;
-
-                        Event.current.Use();
+                        if (EventUtils.MouseWheelUp())
+                        {
+                            _editor.Cursor.RotationIndex++;
+                            Event.current.Use();
+                        }
+                        else if (EventUtils.MouseWheelDown())
+                        {
+                            _editor.Cursor.RotationIndex--;
+                            Event.current.Use();
+                        }
                     }
 
                     break;
@@ -374,14 +409,15 @@ namespace Cirrus.Circuit.Editor
                         {
                             ScrollLayer(_editor.LayerMode, true);
                             InitPlane(_editor.LayerMode);
+                            Event.current.Use();
                         }
                         else if (EventUtils.MouseWheelDown())
                         {
                             ScrollLayer(_editor.LayerMode, false);
                             InitPlane(_editor.LayerMode);
+                            Event.current.Use();
                         }
 
-                        Event.current.Use();
                     }
                     break;
 
@@ -409,47 +445,63 @@ namespace Cirrus.Circuit.Editor
                         InitPlane(_editor.LayerMode);
                     }
 #if UNITY_EDITOR_WIN
-                    else if (LevelEditorKeys.FreeCam.Contains(Event.current.keyCode))
+                    else if (LevelEditorKeys.FreeCam.Contains(e.keyCode))
 #elif UNITY_EDITOR_OSX
-                    else if (e.control && e.keyCode == KeyCode.Alpha1)
+                   else if (e.control && LevelEditorKeys.FreeCam_MacOS.Contains(e.keyCode))
 #endif
                     {
-                        _editor._mode = EditorMode.FreeCam;
+                        _editor.Mode = EditorMode.FreeCam;
                         Event.current.Use();
                     }
 #if UNITY_EDITOR_WIN
-                    else if (LevelEditorKeys.TileSelect.Contains(Event.current.keyCode))
+                    else if (LevelEditorKeys.SetTileTemplate.Contains(e.keyCode))
 #elif UNITY_EDITOR_OSX
-                    else if (e.control && e.keyCode == KeyCode.Alpha2)                       
+                    else if (e.control && LevelEditorKeys.SetTileTemplate_MacOS.Contains(e.keyCode))                       
 #endif
                     {
-                        _editor._mode = EditorMode.SelectTile;
+                        _editor.Mode = EditorMode.SetTileTemplate;
                         Event.current.Use();
                     }
 #if UNITY_EDITOR_WIN
-                    else if (LevelEditorKeys.RotateTile.Contains(Event.current.keyCode))
+                    else if (LevelEditorKeys.RotateTile.Contains(e.keyCode))
 #elif UNITY_EDITOR_OSX
-                    else if (e.control && e.keyCode == KeyCode.Alpha3)
+                    else if (e.control && LevelEditorKeys.RotateTile_MacOS.Contains(e.keyCode))
 #endif
                     {
-                        _editor._mode = EditorMode.RotateTile;
+                        _editor.Mode = EditorMode.RotateTile;
                         Event.current.Use();
                     }
 #if UNITY_EDITOR_WIN
-                    else if (LevelEditorKeys.ScrollLayer.Contains(Event.current.keyCode))
+                    else if (LevelEditorKeys.ScrollLayer.Contains(e.keyCode))
 #elif UNITY_EDITOR_OSX
-                    else if (e.control && e.keyCode == KeyCode.Alpha4)
+                    else if (e.control && LevelEditorKeys.ScrollLayer_MacOS.Contains(e.keyCode))
 #endif
                     {
-                        _editor._mode = EditorMode.ScrollLayer;
+                        _editor.Mode = EditorMode.ScrollLayer;
+                        Event.current.Use();
+                    }
+#if UNITY_EDITOR_WIN
+                    else if (LevelEditorKeys.SelectTile.Contains(e.keyCode))
+#elif UNITY_EDITOR_OSX
+                    else if (e.control && LevelEditorKeys.SelectTile_MacOS.Contains(e.keyCode))
+#endif
+                    {
+                        _editor.Mode = EditorMode.SelectTile;
                         Event.current.Use();
                     }
 
                     break;
-
             }
 
         }
+
+        //[DrawGizmo(GizmoType.Selected | GizmoType.Active)]
+        //public void OnDrawGizmos()
+        //{ 
+        
+        //}
+
+
 
         public void OnSceneGUI()
         {
@@ -459,7 +511,7 @@ namespace Cirrus.Circuit.Editor
 
             HandleInputs();
 
-            _editor.LastTool = Tools.current;
+            _editor._lastTool = Tools.current;
             Tools.current = Tool.None;
 
             Mesh mesh;
@@ -494,9 +546,9 @@ namespace Cirrus.Circuit.Editor
                     );
             }
 
-#endregion
+            #endregion
 
-#region Layer
+            #region Layer
 
             switch (_editor.LayerMode)
             {
@@ -598,12 +650,12 @@ namespace Cirrus.Circuit.Editor
                 ObjectNames.NicifyVariableName(
                 Enum.GetName(typeof(EditorMode), _editor.Mode))))
             {
-                _editor._mode++;
+                _editor.Mode++;
                 if (
                     (int)_editor._mode >=
                     EnumUtils.Size(typeof(EditorMode)))
                 {
-                    _editor._mode = 0;
+                    _editor.Mode = 0;
                 }
             }
 
@@ -619,18 +671,18 @@ namespace Cirrus.Circuit.Editor
 
             GUILayout.BeginArea(rect);
 
-            if (GUILayout.Button(_editor._brush.SelectedPalette == null
+            if (GUILayout.Button(_editor.Cursor.SelectedPalette == null
                 ? "?" :
-                _editor._brush.SelectedPalette.name))
+                _editor.Cursor.SelectedPalette.name))
             {
-                _editor._brush.SelectedPaletteIndex++;
+                _editor.Cursor.SelectedPaletteIndex++;
             }
 
-            if (GUILayout.Button(_editor._brush.SelectedTile == null
+            if (GUILayout.Button(_editor.Cursor.SelectedTemplate == null
                 ? "?" :
-                _editor._brush.SelectedTile.name))
+                _editor.Cursor.SelectedTemplate.name))
             {
-                _editor._brush.SelectedTileIndex++;
+                _editor.Cursor.SelectedTileIndex++;
             }
 
 
@@ -645,6 +697,16 @@ namespace Cirrus.Circuit.Editor
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
+
+            if (GUILayout.Button("Break prefab"))
+            {
+                //_editor.Level.
+                PrefabUtility.UnpackPrefabInstance(
+                    _editor.Level.gameObject, 
+                    PrefabUnpackMode.Completely, 
+                    InteractionMode.AutomatedAction);
+                
+            }
 
             if (GUILayout.Button("Save level as prefab"))
             {
@@ -673,7 +735,6 @@ namespace Cirrus.Circuit.Editor
 
                     OnLevelSavedStaticHandler?.Invoke();
                 }
-
             }
         }
     }

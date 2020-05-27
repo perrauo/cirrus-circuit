@@ -16,8 +16,8 @@ namespace Cirrus.Circuit.World.Objects.Characters.Controls
 {
     public class AIController : MonoBehaviour
     {
-        [SerializeField]
-        private Agent _agent;
+        //[SerializeField]
+        //private Agent _agent;
 
         [SerializeField]
         private Character _character;

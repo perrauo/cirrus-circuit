@@ -2,7 +2,7 @@
 using Cirrus.Circuit.World;
 using Cirrus.Circuit.World.Objects;
 using Cirrus.Circuit.World.Objects.Characters;
-using Cirrus.Events;
+//using Cirrus.Events;
 using Cirrus.MirrorExt;
 using Cirrus;
 using Mirror;
@@ -62,13 +62,13 @@ namespace Cirrus.Circuit.World
 
         private const int FallTrials = 100;
 
-        public Event<Level.Rule> OnLevelCompletedHandler;
+        public Delegate<Level.Rule> OnLevelCompletedHandler;
 
         public Door.OnScoreValueAdded OnScoreValueAddedHandler;
 
         private static LevelSession _instance;
 
-        public Event<MoveResult> OnMovedHandler;
+        public Delegate<MoveResult> OnMovedHandler;
 
         public static LevelSession Instance
         {

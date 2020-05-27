@@ -28,12 +28,12 @@ namespace Cirrus.Circuit
         public bool IsActive => active;
 
         [NonSerialized]
-        public Events.Event<float> OnTickHandler;
+        public Delegate<float> OnTickHandler;
 
         [NonSerialized]
-        public Events.Event OnTimeLimitHandler;
+        public Delegate OnTimeLimitHandler;
 
-        private Events.Event OnClockUpdateHandler
+        private Delegate OnClockUpdateHandler
         {
             get
             {

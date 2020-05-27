@@ -12,7 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d66c1a65e999824c893e2befa9cad93, type: 3}
   m_Name: EditorLibrary
   m_EditorClassIdentifier: 
-  Levels: []
   DimensionsMaterial: {fileID: 2100000, guid: 203eda0348e36974589719bc5cf6a2b3, type: 2}
   LayerMaterial: {fileID: 2100000, guid: 4fbdc62a1107adf4eb60c51a63e584c3, type: 2}
-  CursorMaterial: {fileID: 2100000, guid: f29412a2904d92a41bfa529dec707646, type: 2}
+  CursorDefaultMaterial: {fileID: 2100000, guid: f29412a2904d92a41bfa529dec707646,
+    type: 2}
+  CursorSelectedMaterial: {fileID: 2100000, guid: 4028942e6dc78ab4d891c5b426afb301,
+    type: 2}
+  Palettes:
+  - {fileID: 11400000, guid: 99ad5dd25edd9ca49aaef3b78afa7503, type: 2}
+  - {fileID: 11400000, guid: b977693f11235e54abf0bbc67716ad45, type: 2}

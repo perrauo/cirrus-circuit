@@ -6,7 +6,7 @@ using Mirror;
 //using UnityEngine;
 using Cirrus.MirrorExt;
 using Cirrus;
-using Cirrus.Events;
+//using Cirrus.Events;
 using System;
 using Cirrus.Circuit.Networking;
 
@@ -14,13 +14,13 @@ namespace Cirrus.Circuit
 {
     public class RoundSession : CustomNetworkBehaviour
     {
-        public Event<int> OnIntermissionHandler;
+        public Delegate<int> OnIntermissionHandler;
 
-        public Event<int> OnCountdownHandler;
+        public Delegate<int> OnCountdownHandler;
 
-        public Event<int> OnRoundStartHandler;
+        public Delegate<int> OnRoundStartHandler;
 
-        public Events.Event OnRoundEndHandler;
+        public Delegate OnRoundEndHandler;
 
         [SyncVar]
         [SerializeField]

@@ -94,6 +94,7 @@ namespace Cirrus.Circuit.World.Objects
         public Vector3Int Forward => Transform.forward.normalized.ToVector3Int();
 
         public int RotationIndex {
+            get => Forward.DirectionToIndex();
             set {
                 Transform.rotation = Quaternion.AngleAxis(value.IndexToAngle(), Vector3.up);
             }
@@ -228,17 +229,17 @@ namespace Cirrus.Circuit.World.Objects
         {
 #if UNITY_EDITOR            
 
-            GraphicsUtils.DrawLine(
-                Transform.position,
-                Transform.position + Transform.forward,
-                2f);
+            //GraphicsUtils.DrawLine(
+            //    Transform.position,
+            //    Transform.position + Transform.forward,
+            //    2f);
 
-            if (this is Characters.Character)
-            {
-                Handles.Label(
-                    Transform.position,
-                    _direction.ToString());
-            }
+            //if (this is Characters.Character)
+            //{
+            //    Handles.Label(
+            //        Transform.position,
+            //        _direction.ToString());
+            //}
 #endif
         }
 

@@ -11,7 +11,7 @@ namespace Cirrus.Circuit.Transitions
 
         private Timer _transitionTimer = null;
 
-        public Events.Event OnTransitionTimeoutHandler { get => _transitionTimer.OnTimeLimitHandler; set => _transitionTimer.OnTimeLimitHandler = value; }
+        public Delegate OnTransitionTimeoutHandler { get => _transitionTimer.OnTimeLimitHandler; set => _transitionTimer.OnTimeLimitHandler = value; }
         
         [SerializeField]
         private UnityEngine.UI.Image _image;

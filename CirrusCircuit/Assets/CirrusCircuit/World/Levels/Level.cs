@@ -6,6 +6,8 @@ using Cirrus.Circuit.World.Objects;
 using Cirrus;
 using UnityEditor;
 using UnityEngine.Serialization;
+//using Devdog.General.ThirdParty.UniLinq;
+using System.Linq;
 
 namespace Cirrus.Circuit.World
 {
@@ -44,6 +46,8 @@ namespace Cirrus.Circuit.World
         public static Level Instance => LevelSession.Instance.Level;
 
         public IEnumerable<BaseObject> Objects => _objects;
+
+        public IEnumerable<BaseObject> NonNullObjects => _objects.Where(x => x != null);
 
         [SerializeField]
         private string _name;

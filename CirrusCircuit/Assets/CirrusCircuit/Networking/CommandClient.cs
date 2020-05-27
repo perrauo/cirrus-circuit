@@ -15,9 +15,9 @@ namespace Cirrus.Circuit.Networking
     // Serves to sync the connection
     public class CommandClient : NetworkBehaviour
     {
-        public Events.Event OnUpdateHandler;
+        public Delegate OnUpdateHandler;
 
-        public Events.Event OnFixedUpdateHandler;
+        public Delegate OnFixedUpdateHandler;
 
         public static void AssertGameObjectNull(GameObject gameObject) => DebugUtils.Assert(gameObject != null, "Cmd GameObject is null. Was the object spawn?");
 

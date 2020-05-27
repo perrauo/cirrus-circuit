@@ -11,14 +11,14 @@ namespace Cirrus.MirrorExt
 {
     public class CustomNetworkBehaviour : NetworkBehaviour
     {
-        public Events.Event OnStopServerHandler;
-        public Events.Event OnStartAuthorityHandler;
+        public Delegate OnStopServerHandler;
+        public Delegate OnStartAuthorityHandler;
 
-        public Events.Event OnStartClientHandler;
-        public Events.Event OnStopClientHandler;
-        public Events.Event OnStopAuthorityHandler;
-        public Events.Event OnStartServerHandler;
-        public Events.Event OnStartLocalPlayerHandler;
+        public Delegate OnStartClientHandler;
+        public Delegate OnStopClientHandler;
+        public Delegate OnStopAuthorityHandler;
+        public Delegate OnStartServerHandler;
+        public Delegate OnStartLocalPlayerHandler;
 
         public bool IsServerOrClient => isServer || isClient;
 

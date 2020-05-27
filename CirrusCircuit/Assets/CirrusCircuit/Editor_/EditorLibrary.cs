@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Cirrus.Circuit.World.Objects;
+using UnityEngine.Serialization;
 
 namespace Cirrus.Circuit.Editor
 {
@@ -13,11 +14,14 @@ namespace Cirrus.Circuit.Editor
         public Material LayerMaterial;
 
         [SerializeField]
-        public Material CursorMaterial;
+        [FormerlySerializedAs("CursorMaterial")]
+        public Material CursorDefaultMaterial;
 
-        //[SerializeField]
-        //private 
+        [SerializeField]
+        public Material CursorSelectedMaterial;
 
+        [SerializeField]
+        public Palette[] Palettes;
 
     }
 }
