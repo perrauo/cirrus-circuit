@@ -40,7 +40,8 @@ namespace Cirrus.Circuit.World.Objects
         Portal,
         Solid,
         Slope,
-        Ladder
+        Ladder,
+        ConveyerBelt
     }
 
     public abstract partial class BaseObject : MonoBehaviour

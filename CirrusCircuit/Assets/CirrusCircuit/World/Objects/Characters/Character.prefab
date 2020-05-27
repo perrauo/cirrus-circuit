@@ -65,7 +65,7 @@ MonoBehaviour:
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
   _state: 0
-  SelectedEditorObject: {fileID: 0}
+  SelectedTemplate: {fileID: 0}
   _controller:
     _session: {fileID: 0}
     _character: {fileID: 0}
@@ -317,7 +317,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d974506047ab8042a7def8ed1523450, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _agent: {fileID: 0}
   _character: {fileID: 0}
 --- !u!1 &8490150904683805297
 GameObject:

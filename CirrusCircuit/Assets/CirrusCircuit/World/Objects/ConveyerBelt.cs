@@ -1,25 +1,21 @@
-﻿using Cirrus;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
-
 
 namespace Cirrus.Circuit.World.Objects
 {
-    public enum SlopeType
+    class ConveyerBelt : BaseObject
     {
-        Staircase,
-        Ramp,
-    }
 
-    public class Slope : BaseObject
-    {
         // TODO
         //public override bool IsNetworked => false;
 
         public const float VisitorAngle = 20;
 
-        public override ObjectType Type => ObjectType.Slope;
+        public override ObjectType Type => ObjectType.ConveyerBelt;
         public bool _isStaircase = false;
         public bool IsStaircase => _isStaircase;
 
@@ -40,15 +36,15 @@ namespace Cirrus.Circuit.World.Objects
                 out exitResult,
                 out moveResults
                 ))
-            {                
-                
+            {
+
 
                 ////Same direction(Look up)
                 if (exitResult.Step.SetY(0) == _direction)
                 {
-                    exitResult.Step = move.Step + Vector3Int.up;                 
+                    exitResult.Step = move.Step + Vector3Int.up;
                 }
-                
+
                 return true;
             }
 
@@ -57,7 +53,7 @@ namespace Cirrus.Circuit.World.Objects
 
 
         public override bool GetEnterResults(
-            Move move, 
+            Move move,
             out EnterResult enterResult,
             out IEnumerable<MoveResult> moveResults
             )
@@ -74,7 +70,7 @@ namespace Cirrus.Circuit.World.Objects
                 if ((move.Step.y >= 0 &&
                     dir == _direction) ||
                     (move.Step.y != 0 &&
-                    dir == -_direction))                    
+                    dir == -_direction))
                 {
                     enterResult.PitchAngle = dir == _direction ? VisitorAngle : -VisitorAngle;
                     enterResult.Offset = Vector3.up * Level.CellSize / 2;
