@@ -782,6 +782,8 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void OnClimbFallTimeout()
         {
+            if (!CustomNetworkManager.IsServer) return;
+
             if (_entered == null)
             {
                 if (LevelSession.Get(
@@ -812,7 +814,7 @@ namespace Cirrus.Circuit.World.Objects
         }
 
         public virtual void FSM_Update()
-        {
+        {            
             switch (_state)
             {
                 case ObjectState.Disabled:
@@ -832,6 +834,9 @@ namespace Cirrus.Circuit.World.Objects
                         _targetPosition))
                     {
                         _hasArrived = true;
+
+                        if (!CustomNetworkManager.IsServer) break;
+
                         _climbFallTimer.Start();
                     }
 
@@ -849,6 +854,8 @@ namespace Cirrus.Circuit.World.Objects
                         _targetPosition))
                     {
                         _hasArrived = true;
+
+                        if (!CustomNetworkManager.IsServer) break;
 
                         if (_entered == null)
                         {
