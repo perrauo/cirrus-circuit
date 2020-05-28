@@ -14,10 +14,10 @@ namespace Cirrus.Circuit.UI
     public class CharacterSelectSlot : NetworkBehaviour
     {
         [SerializeField]        
-        private Image _imageTemplate;
+        private RawImage _imageTemplate;
 
         [SerializeField]
-        private List<Image> _portraits;
+        private List<RawImage> _portraits;
 
         [SerializeField]        
         private RectTransform _rect;
@@ -119,15 +119,30 @@ namespace Cirrus.Circuit.UI
             if (_imageTemplate == null) DebugUtils.Assert(false, "Portrait template is null");
             else _imageTemplate.gameObject.SetActive(true);
 
-            _portraits = new List<Image>();
-            foreach (var res in CharacterLibrary.Instance.Characters)
+            _portraits = new List<RawImage>();
+            foreach (
+                CharacterAsset res 
+                in CharacterLibrary.Instance.Characters)
             {
                 if (res == null) continue;
 
-                var portrait = _imageTemplate.gameObject.Create(_imageTemplate.transform.parent)?.GetComponent<Image>();
+                var portrait = 
+                    _imageTemplate
+                    .Create(_imageTemplate.transform.parent)
+                    ?.GetComponent<RawImage>();
+
                 if (portrait != null)
                 {
-                    portrait.sprite = res.Portrait;
+                    if (
+                        CharacterRosterPreview
+                        .Instance
+                        .TryGetCharacterTexture(
+                            res.Id, 
+                            out RenderTexture tex))
+                    {
+                        portrait.texture = tex;
+                    }
+
                     _portraits.Add(portrait);
                 }
             }
@@ -139,7 +154,6 @@ namespace Cirrus.Circuit.UI
                 _offset = 0;
                 _imageTemplate.gameObject.SetActive(false);
             }
-            //_bound = (_portraitHeight * _images.Count) / 2;
         }
 
         public void OnEnable()
@@ -325,7 +339,7 @@ namespace Cirrus.Circuit.UI
                     break;
 
                 case State.Ready:
-                    CharacterSelect.Instance.SetState(CharacterSelect.State.Select);
+                    CharacterSelectInterface.Instance.SetState(CharacterSelectInterface.State.Select);
                     Cmd_SetState(State.Selecting);
                     break;
 
@@ -347,7 +361,7 @@ namespace Cirrus.Circuit.UI
 
                 case State.Ready:
                     // Try to change the state of the select screen, not the slot
-                    CharacterSelect.Instance.SetState(CharacterSelect.State.Ready);
+                    CharacterSelectInterface.Instance.SetState(CharacterSelectInterface.State.Ready);
                     break;
 
                 case State.Closed:

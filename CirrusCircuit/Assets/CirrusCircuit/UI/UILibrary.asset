@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d45a684a6d37e84f8747850a5437c3b, type: 3}
+  m_Name: UILibrary
+  m_EditorClassIdentifier: 
+  CharacterRenderTextures:
+  - {fileID: 8400000, guid: c1021bace78d2ee4aadbe762c1b4bb9e, type: 2}
+  - {fileID: 8400000, guid: 475ed17037825274088b33f115bd6866, type: 2}
+  - {fileID: 8400000, guid: d32e3a5bcc2a1c543be6b25c509a98fb, type: 2}
+  - {fileID: 8400000, guid: f423754bd5d20534ab09dbf8cbbbcaa2, type: 2}
+  - {fileID: 8400000, guid: aa44c2ef8e784274baaca8ec121d7f6d, type: 2}
+  - {fileID: 8400000, guid: 959b4b542223d70439694f0913283147, type: 2}
+  - {fileID: 8400000, guid: f3ad7c50828e5bb4889b6ef15f8d9cea, type: 2}
+  - {fileID: 8400000, guid: 8496c2a568c59ae419516ce1f31a9572, type: 2}
+  - {fileID: 8400000, guid: 872c50e1fcc38e44eabc27ffa285defa, type: 2}

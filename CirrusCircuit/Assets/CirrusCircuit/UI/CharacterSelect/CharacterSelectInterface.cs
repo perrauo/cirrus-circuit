@@ -7,7 +7,7 @@ namespace Cirrus.Circuit.UI
 {
     public delegate void OnCharacterSelectReady(int numPlayers);
 
-    public class CharacterSelect : BaseSingleton<CharacterSelect>
+    public class CharacterSelectInterface : BaseSingleton<CharacterSelectInterface>
     {        
         public OnCharacterSelectReady OnCharacterSelectReadyHandler;
 

@@ -253,7 +253,8 @@ GameObject:
   - component: {fileID: 1169209694312656345}
   - component: {fileID: 5764225732211087902}
   - component: {fileID: 3100417145589558879}
-  - component: {fileID: 3462516894117315972}
+  - component: {fileID: 7927132579822434436}
+  - component: {fileID: 48141817704237785}
   m_Layer: 5
   m_Name: Portrait
   m_TagString: Untagged
@@ -308,7 +309,7 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &3462516894117315972
+--- !u!114 &7927132579822434436
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -317,7 +318,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3529628480881139846}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -326,16 +327,27 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a5115a63f2b464e488a57fdde7933b05, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_Texture: {fileID: 0}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+--- !u!114 &48141817704237785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3529628480881139846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c4320f16e3803a48a575568bdcbdef5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _image: {fileID: 7927132579822434436}
+  _padding: 0
 --- !u!1 &4629741393548231518
 GameObject:
   m_ObjectHideFlags: 0
@@ -496,7 +508,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  _imageTemplate: {fileID: 3462516894117315972}
+  _imageTemplate: {fileID: 7927132579822434436}
   _portraits: []
   _rect: {fileID: 7237438527225496072}
   _maskRect: {fileID: 2422584818535772990}

@@ -21,7 +21,7 @@ namespace Cirrus.Circuit.World.Objects
         Unknown,
         Disabled,
         LevelSelect,
-        //Entering,
+        CharacterSelect,
         Falling,
         Idle,
         Moving,
@@ -230,10 +230,10 @@ namespace Cirrus.Circuit.World.Objects
         {
 #if UNITY_EDITOR            
 
-            //GraphicsUtils.DrawLine(
-            //    Transform.position,
-            //    Transform.position + Transform.forward,
-            //    2f);
+            GraphicsUtils.DrawLine(
+                Transform.position,
+                Transform.position + Transform.forward,
+                2f);
 
             //if (this is Characters.Character)
             //{
@@ -643,6 +643,39 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Fall
 
+        public virtual void OnClimbFallTimeout()
+        {
+            if (!CustomNetworkManager.IsServer) return;
+
+            if (_entered == null)
+            {
+                if (LevelSession.Get(
+                    _gridPosition + Vector3Int.down,
+                    out BaseObject obj))
+                {
+                    if (_state == ObjectState.Falling) Cmd_Land();
+                    else Cmd_Idle();
+                }
+                else Cmd_Fall();
+            }
+            // If arrived on a slope
+            else if (
+                IsSlidable &&
+                _entered != null &&
+                _entered is Slope &&
+                !((Slope)_entered).IsStaircase)
+            {
+                Cmd_Slide();
+            }
+            else if (LevelSession.Get(
+                _gridPosition + Vector3Int.down,
+                out BaseObject _))
+            {
+                if (_state == ObjectState.Falling) Cmd_Land();
+
+                else Cmd_Idle();
+            }
+        }
         public virtual void Cmd_Fall()
         {
             _session.Cmd_Fall();
@@ -655,12 +688,12 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void FSM_Awake()
         {
-            Disable();
+            //Disable();
         }
 
         public virtual void FSM_Start()
         {
-            InitState(ObjectState.Disabled, null);
+            //InitState(ObjectState.Disabled, null);
         }
 
 
@@ -716,6 +749,7 @@ namespace Cirrus.Circuit.World.Objects
         {
             switch (_state)
             {
+                case ObjectState.CharacterSelect:
                 case ObjectState.LevelSelect:
                     break;
 
@@ -779,46 +813,15 @@ namespace Cirrus.Circuit.World.Objects
                     break;
             }
         }
-
-        public virtual void OnClimbFallTimeout()
-        {
-            if (!CustomNetworkManager.IsServer) return;
-
-            if (_entered == null)
-            {
-                if (LevelSession.Get(
-                    _gridPosition + Vector3Int.down,
-                    out BaseObject obj))
-                {
-                    if (_state == ObjectState.Falling) Cmd_Land();
-                    else Cmd_Idle();
-                }
-                else Cmd_Fall();
-            }
-            // If arrived on a slope
-            else if (
-                IsSlidable &&
-                _entered != null &&
-                _entered is Slope &&
-                !((Slope)_entered).IsStaircase)
-            {
-                Cmd_Slide();
-            }
-            else if (LevelSession.Get(
-                _gridPosition + Vector3Int.down,
-                out BaseObject _))
-            {
-                if (_state == ObjectState.Falling) Cmd_Land();
-
-                else Cmd_Idle();
-            }
-        }
-
         public virtual void FSM_Update()
         {            
             switch (_state)
             {
+
                 case ObjectState.Disabled:
+                    return;
+
+                case ObjectState.CharacterSelect:
                     return;
 
                 case ObjectState.LevelSelect:

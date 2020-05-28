@@ -320,10 +320,15 @@ namespace SubjectNerd.Utilities
 
 		protected virtual void InitInspector()
 		{
-			if (isInitialized && FORCE_INIT == false)
-				return;
+			if (isInitialized && FORCE_INIT == false) return;
 
-			styleEditBox = new GUIStyle(EditorStyles.helpBox) { padding = new RectOffset(5, 5, 5, 5) };
+			try
+			{
+
+				styleEditBox = new GUIStyle(EditorStyles.helpBox) { padding = new RectOffset(5, 5, 5, 5) };
+			}
+			catch { }
+
 			FindTargetProperties();
 			FindContextMenu();
 		}

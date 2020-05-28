@@ -87,7 +87,7 @@ namespace Cirrus.Circuit.Networking
                 session.netIdentity.AssignClientAuthority(conn);       
 
                 GameSession.Instance._players.Add(session.gameObject);
-                CharacterSelect.Instance.AssignAuthority(conn, session._serverId);
+                CharacterSelectInterface.Instance.AssignAuthority(conn, session._serverId);
 
                 return true;                    
             }
