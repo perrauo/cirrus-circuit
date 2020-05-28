@@ -809,6 +809,7 @@ namespace Cirrus.Circuit.World.Objects
                 out BaseObject _))
             {
                 if (_state == ObjectState.Falling) Cmd_Land();
+
                 else Cmd_Idle();
             }
         }
@@ -819,6 +820,7 @@ namespace Cirrus.Circuit.World.Objects
             {
                 case ObjectState.Disabled:
                     return;
+
                 case ObjectState.LevelSelect:
                     return;
 
@@ -840,12 +842,11 @@ namespace Cirrus.Circuit.World.Objects
                         _climbFallTimer.Start();
                     }
 
-                        break;
+                    break;
 
                 case ObjectState.Sliding:
                 case ObjectState.Falling:
                 case ObjectState.Moving:
-                //case ObjectState.Climbing:
 
                     if (_hasArrived) break;
 
