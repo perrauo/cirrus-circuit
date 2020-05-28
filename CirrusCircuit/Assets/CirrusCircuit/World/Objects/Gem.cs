@@ -1,4 +1,5 @@
 ﻿using Cirrus.Circuit.Controls;
+using Cirrus.Circuit.Networking;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -40,8 +41,11 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void OnMoved(MoveResult result)
         {
+            if (!CustomNetworkManager.IsServer) return;
+
             if (result.Move.User == this) return;
-            if (!_hasArrived) return;
+
+            if (!_hasArrived) return;            
 
             if (
                 IsSlidable &&
