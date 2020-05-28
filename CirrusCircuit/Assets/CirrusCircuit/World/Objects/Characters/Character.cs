@@ -85,6 +85,30 @@ namespace Cirrus.Circuit.World.Objects.Characters
             base.Start();
         }
 
+        public override void FSM_SetState(ObjectState state, BaseObject source = null)
+        {
+            base.FSM_SetState(state, source);
+
+            switch (state)
+            {
+                case ObjectState.CharacterSelect:
+                    Play(CharacterAnimation.Character_Idle);
+                    break;
+
+                case ObjectState.Falling:
+                    break;
+
+
+                case ObjectState.Idle:
+                    break;
+
+
+
+                case ObjectState.Moving:
+                    break;
+            }
+        }
+
         public override void FixedUpdate()
         {
             base.FixedUpdate();

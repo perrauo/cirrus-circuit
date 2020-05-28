@@ -3,37 +3,7 @@ guid: 58f2f022659bb4a54935c57a4cf4ee35
 ModelImporter:
   serializedVersion: 19300
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Hair
-    second: {fileID: 2100000, guid: e884f0e46be9c4ed1bb34c45ed054ef5, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Sg.Scarf
-    second: {fileID: 2100000, guid: 33e555be9e7894c039e6c2f055a3078a, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Sg.Shirt
-    second: {fileID: 2100000, guid: c6a9e6421a3d1406686eca726e3c85a1, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Sg.Shoes
-    second: {fileID: 2100000, guid: d3d6f57f33ee44e98b9b25a0f8268e30, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Sg.Skin
-    second: {fileID: 2100000, guid: afd970b7b54c54260a79a1d86a163b2d, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Sg.Skin.001
-    second: {fileID: 2100000, guid: afd970b7b54c54260a79a1d86a163b2d, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 1
     materialName: 0

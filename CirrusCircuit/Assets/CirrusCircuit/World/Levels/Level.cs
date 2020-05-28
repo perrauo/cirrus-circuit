@@ -236,7 +236,7 @@ namespace Cirrus.Circuit.World
                 if (obj == null)
                     continue;
 
-                obj.InitState(ObjectState.LevelSelect, null);
+                obj.FSM_SetState(ObjectState.LevelSelect, null);
             }
         } 
     }

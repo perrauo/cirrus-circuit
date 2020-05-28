@@ -8,4 +8,25 @@ AnimatorOverrideController:
   m_PrefabAsset: {fileID: 0}
   m_Name: Animator.SheepGirl
   m_Controller: {fileID: 9100000, guid: 107cc528a1eb24fcab97ecc7cdba3f4d, type: 2}
-  m_Clips: []
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 60ee8797c98cc0b4e9bb2096233e8d9b, type: 2}
+    m_OverrideClip: {fileID: 4461525060544840217, guid: ac68a688cdcfc4f468600e2b39db0781,
+      type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 912fa029615319046927a647d216a63c, type: 2}
+    m_OverrideClip: {fileID: -9123294880256022256, guid: ac68a688cdcfc4f468600e2b39db0781,
+      type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: dca4ac50056cfdd4bbe28c3d1f80e69c, type: 2}
+    m_OverrideClip: {fileID: 592079809510216186, guid: ac68a688cdcfc4f468600e2b39db0781,
+      type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 3fe20e5138c3d6f48b21f368d176c38f, type: 2}
+    m_OverrideClip: {fileID: -5215997365952155803, guid: ac68a688cdcfc4f468600e2b39db0781,
+      type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 08fc2e6b531f1484a9d350bffa94726f, type: 2}
+    m_OverrideClip: {fileID: -4694795843923662386, guid: ac68a688cdcfc4f468600e2b39db0781,
+      type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: be833ed65b9d6a04689861fcc654fc76, type: 2}
+    m_OverrideClip: {fileID: -6226364757690705096, guid: 3ca8b58a3a609429e8ac7b2a4cf3dd7d,
+      type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 57665e12d6cf52b43bda21c842c56f82, type: 2}
+    m_OverrideClip: {fileID: -5648549216873535388, guid: d17b3dc8b2b454022b702a2ac7128774,
+      type: 3}

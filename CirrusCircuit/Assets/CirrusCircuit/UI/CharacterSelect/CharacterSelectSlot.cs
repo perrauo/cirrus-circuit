@@ -114,7 +114,7 @@ namespace Cirrus.Circuit.UI
 
         }
 
-        public void Awake()
+        public virtual void Start()
         {
             if (_imageTemplate == null) DebugUtils.Assert(false, "Portrait template is null");
             else _imageTemplate.gameObject.SetActive(true);
@@ -160,11 +160,6 @@ namespace Cirrus.Circuit.UI
         {
             _startPosition = Vector3.up * (_portraitHeight/2);
             _targetPosition = _startPosition;
-        }
-
-        public virtual void Start()
-        {
-            
         }
 
         public void FixedUpdate()

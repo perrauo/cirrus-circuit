@@ -39,7 +39,7 @@ namespace Cirrus.Circuit.UI
             preview._character = CharacterLibrary.Instance.Characters[index].Create(
                 preview._anchor, 
                 Quaternion.identity);
-            preview._character.InitState(World.Objects.ObjectState.CharacterSelect);
+            preview._character.FSM_SetState(World.Objects.ObjectState.CharacterSelect);
             preview._character.Transform.rotation =
                 Quaternion.LookRotation(
                     _camera.transform.position - preview._character.Transform.position,

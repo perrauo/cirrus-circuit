@@ -429,8 +429,22 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
+        [Command]
+        public void Cmd_ObjectSession_SetState(GameObject obj, ObjectState state)
+        {
+            //AssertGameObjectNull(obj);
+            if (obj == null) return;
+
+            if (obj.TryGetComponent(out ObjectSession session))
+            {
+                Cmd_ObjectSession_Move_mutex.WaitOne();
+                session.Rpc_SetState(state);
+                Cmd_ObjectSession_Move_mutex.ReleaseMutex();
+            }
+        }
 
 
+        // Replace by set state
         [Command]
         public void Cmd_ObjectSession_Land(GameObject obj)
         {

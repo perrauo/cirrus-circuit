@@ -103,6 +103,21 @@ namespace Cirrus.Circuit.World.Objects
 
         #endregion
 
+        internal void Cmd_FSM_SetState(ObjectState state)
+        {
+            CommandClient
+                .Instance
+                .Cmd_ObjectSession_SetState(gameObject, state);
+        }
+
+        [ClientRpc]
+        public void Rpc_SetState(ObjectState state)
+        {
+            _object.FSM_SetState(state);
+        }
+
+
+
         #region Interact
 
         public void Cmd_Interact(BaseObject source)
@@ -178,5 +193,6 @@ namespace Cirrus.Circuit.World.Objects
                 .Instance
                 .Cmd_ObjectSession_Slide(gameObject);
         }
+
     }
 }

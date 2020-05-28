@@ -230,10 +230,14 @@ namespace Cirrus.Circuit.World.Objects
         {
 #if UNITY_EDITOR            
 
-            GraphicsUtils.DrawLine(
-                Transform.position,
-                Transform.position + Transform.forward,
-                2f);
+            try
+            {
+                GraphicsUtils.DrawLine(
+                    Transform.position,
+                    Transform.position + Transform.forward,
+                    2f);
+            }
+            catch { }
 
             //if (this is Characters.Character)
             //{
@@ -294,7 +298,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void Disable()
         {
-            InitState(ObjectState.Disabled, null);
+            FSM_SetState(ObjectState.Disabled, null);
         }
 
         public virtual void WaitLevelSelect()
@@ -304,7 +308,7 @@ namespace Cirrus.Circuit.World.Objects
                 OnNextColorTimeOut();
                 _nextColorTimer.Start();
 
-                InitState(ObjectState.LevelSelect, null);
+                FSM_SetState(ObjectState.LevelSelect, null);
             }
         }
 
@@ -360,7 +364,7 @@ namespace Cirrus.Circuit.World.Objects
             switch (result.MoveType)
             {
                 case MoveType.Direction:
-                    _direction = result.Direction;                    
+                    _direction = result.Direction;
                     return;
 
                 case MoveType.Moving:
@@ -378,7 +382,7 @@ namespace Cirrus.Circuit.World.Objects
                 case MoveType.Climbing:
 
                     _gridPosition = result.Destination;
-                    _targetPosition = Level.GridToWorld(result.Destination);                    
+                    _targetPosition = Level.GridToWorld(result.Destination);
                     _targetPosition += result.Offset;
                     _direction = result.Direction;
                     _pitchAngle = result.PitchAngle;
@@ -388,7 +392,7 @@ namespace Cirrus.Circuit.World.Objects
                     break;
 
                 case MoveType.Teleport:
-                    _gridPosition = result.Destination;                    
+                    _gridPosition = result.Destination;
                     _targetPosition = Level.GridToWorld(result.Destination);
                     _targetPosition += result.Offset;
                     Transform.position = _targetPosition;
@@ -399,7 +403,7 @@ namespace Cirrus.Circuit.World.Objects
                 case MoveType.UsingPortal:
                     // TODO preserve input direction timer
                     // TODO Timer restarted inside Cmd move
-                    _preserveInputDirection = true;                    
+                    _preserveInputDirection = true;
                     _gridPosition = result.Destination;
                     _targetPosition = Level.GridToWorld(result.Destination);
                     _offset = result.Offset;
@@ -407,7 +411,7 @@ namespace Cirrus.Circuit.World.Objects
                     _targetScale = result.Scale;
                     Transform.position = Level.GridToWorld(result.Position);
                     _direction = result.Direction;
-                    _pitchAngle = result.PitchAngle;                    
+                    _pitchAngle = result.PitchAngle;
                     _exitPortalTimer.Start();
                     state = ObjectState.Moving;
                     break;
@@ -456,7 +460,7 @@ namespace Cirrus.Circuit.World.Objects
                 result.Entered.Enter(this);
             }
 
-            InitState(
+            FSM_SetState(
                 state,
                 this);
             LevelSession.Instance.Move(result);
@@ -474,7 +478,7 @@ namespace Cirrus.Circuit.World.Objects
 
 
         public virtual bool GetMoveResults(
-            Move move, 
+            Move move,
             out IEnumerable<MoveResult> results)
         {
             results = null;
@@ -520,12 +524,12 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void Enter(BaseObject visitor)
         {
-            _visitor = visitor;       
+            _visitor = visitor;
         }
 
         public virtual bool GetEnterResults(
             Move move,
-            out EnterResult result, 
+            out EnterResult result,
             out IEnumerable<MoveResult> moveResults)
         {
             result = new EnterResult {
@@ -537,22 +541,22 @@ namespace Cirrus.Circuit.World.Objects
                 Position = move.Position,
                 Scale = 1
             };
-            
+
             moveResults = new MoveResult[0];
 
             if (_visitor != null)
             {
                 result.Moved = _visitor;
                 return _visitor.GetMoveResults(
-                    new Move 
-                    { 
+                    new Move
+                    {
                         Position = _visitor._gridPosition,
                         Source = move.User,
-                        Type = move.Type, 
+                        Type = move.Type,
                         User = _visitor,
                         Entered = _entered,
                         Step = move.Step.SetY(0)
-                    },                    
+                    },
                     out moveResults
                     );
             }
@@ -597,8 +601,8 @@ namespace Cirrus.Circuit.World.Objects
         #region Idle
 
         public virtual void Cmd_Idle()
-        { 
-        
+        {
+
             _session.Cmd_Idle();
         }
 
@@ -606,7 +610,7 @@ namespace Cirrus.Circuit.World.Objects
         // TODO play some anim
         public virtual void Idle()
         {
-            InitState(ObjectState.Idle, null);
+            FSM_SetState(ObjectState.Idle, null);
         }
 
 
@@ -630,7 +634,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void Land()
         {
-            InitState(ObjectState.Idle, null);
+            FSM_SetState(ObjectState.Idle, null);
         }
         public virtual void Cmd_Land()
         {
@@ -698,7 +702,13 @@ namespace Cirrus.Circuit.World.Objects
 
 
         // Common to all state or subset of states
-        public void InitState(
+
+        public void Cmd_FSM_SetState(ObjectState state)
+        {
+            _session.Cmd_FSM_SetState(state);
+        }
+        
+        public virtual void FSM_SetState(
             ObjectState target, 
             BaseObject source = null)
         {
