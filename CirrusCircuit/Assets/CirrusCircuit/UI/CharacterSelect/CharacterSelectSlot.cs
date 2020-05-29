@@ -95,6 +95,7 @@ namespace Cirrus.Circuit.UI
         [System.Serializable]
         public enum State
         {
+            Unknown,
             Closed,
             Ready,
             Selecting,
@@ -102,10 +103,24 @@ namespace Cirrus.Circuit.UI
 
         [SerializeField]
         [SyncVar]
-        private State _state = State.Closed;
+        private State _state = State.Unknown;
 
         [SerializeField]
         private CameraController _camera;
+
+        [SyncVar]
+        [SerializeField]
+        public int _serverPlayerId = -1;
+        public int ServerPlayerId {
+            get => _serverPlayerId;
+            set {
+
+                _serverPlayerId = value;
+                CommandClient.Instance.Cmd_CharacterSelectSlot_SetPlayerServerId(gameObject, _serverPlayerId);
+            }
+
+        }
+
 
         private void OnValidate()
         {
@@ -120,40 +135,6 @@ namespace Cirrus.Circuit.UI
             else _imageTemplate.gameObject.SetActive(true);
 
             _portraits = new List<RawImage>();
-            foreach (
-                CharacterAsset res 
-                in CharacterLibrary.Instance.Characters)
-            {
-                if (res == null) continue;
-
-                var portrait = 
-                    _imageTemplate
-                    .Create(_imageTemplate.transform.parent)
-                    ?.GetComponent<RawImage>();
-
-                if (portrait != null)
-                {
-                    if (
-                        CharacterRosterPreview
-                        .Instance
-                        .TryGetCharacterTexture(
-                            res.Id, 
-                            out RenderTexture tex))
-                    {
-                        portrait.texture = tex;
-                    }
-
-                    _portraits.Add(portrait);
-                }
-            }
-
-            if (_imageTemplate != null)
-            {
-                _portraitHeight = _portraits[0].GetComponent<LayoutElement>().preferredHeight;
-                _totalHeight = _portraitHeight * _portraits.Count;
-                _offset = 0;
-                _imageTemplate.gameObject.SetActive(false);
-            }
         }
 
         public void OnEnable()
@@ -171,19 +152,18 @@ namespace Cirrus.Circuit.UI
                     .Rotate(Vector3.up * Time.deltaTime * _characterSpotlightRotateSpeed);
         }
 
-        public override void OnStartClient()
-        {
-            base.OnStartLocalPlayer();
-            SetState(_state);
-            Cmd_Scroll(true);
-        }
-       
 
-        public override void OnStartAuthority()
+        #region Authority
+
+        public void SetAuthority(NetworkConnection conn, int serverPlayerId)
         {
-            base.OnStartAuthority();
+            ServerPlayerId = serverPlayerId;
             Cmd_SetState(State.Selecting);
+            Cmd_Scroll(true);
+            netIdentity.AssignClientAuthority(conn);           
         }
+
+        #endregion
 
 
         public void Cmd_SetState(State target)
@@ -191,11 +171,52 @@ namespace Cirrus.Circuit.UI
             CommandClient.Instance.Cmd_CharacterSelectSlot_SetState(gameObject, target);
         }
 
+        public void AddCharacterPortraits()
+        {
+            foreach (
+                CharacterAsset res
+                in CharacterLibrary.Instance.Characters)
+            {
+                if (res == null) continue;
+
+                var portrait =
+                    _imageTemplate
+                    .Create(_imageTemplate.transform.parent)
+                    ?.GetComponent<RawImage>();
+
+                if (portrait != null)
+                {
+                    if (
+                        CharacterRosterPreview
+                        .Instance
+                        .GetCharacterPreview(
+                            ServerPlayerId,
+                            res.Id,
+                            out CharacterPreview preview))
+                    {
+                        portrait.texture = preview.RenderTexture;
+                    }
+
+                    _portraits.Add(portrait);
+                }
+            }
+
+            if (_imageTemplate != null)
+            {
+                _portraitHeight = _portraits[0].GetComponent<LayoutElement>().preferredHeight;
+                _totalHeight = _portraitHeight * _portraits.Count;
+                _offset = 0;
+                _imageTemplate.gameObject.SetActive(false);
+            }
+        }
+
+
         public void SetState(State target)
         {
             switch (target)
-            {
+            {                
                 case State.Closed:
+
                     if (_state != State.Closed)
                         GameSession.Instance.CharacterSelectOpenCount =
                             GameSession.Instance.CharacterSelectOpenCount == 0 ?
@@ -209,14 +230,28 @@ namespace Cirrus.Circuit.UI
                     break;
 
                 case State.Selecting:
+
+                    if (!CharacterRosterPreview
+                        .Instance
+                        .GetCharacterPreview(                            
+                            ServerPlayerId, 0, 
+                            out CharacterPreview _))
+                    {
+                        CharacterRosterPreview
+                            .Instance
+                            .AddPlayerPreviews(ServerPlayerId);
+                        AddCharacterPortraits();
+                    }
+
                     if (_state == State.Closed)
+                    {
                         GameSession.Instance.CharacterSelectOpenCount =
                             GameSession.Instance.CharacterSelectOpenCount >= Controls.PlayerManager.PlayerMax ?
                                 Controls.PlayerManager.PlayerMax :
                                 GameSession.Instance.CharacterSelectOpenCount + 1;
+                    }
 
-                    if (_state == State.Ready)
-                        GameSession.Instance.CharacterSelectReadyCount--;
+                    if (_state == State.Ready) GameSession.Instance.CharacterSelectReadyCount--;
 
                     if (_characterSpotlightAnchor.transform.childCount != 0)
                         Destroy(_characterSpotlightAnchor.GetChild(0).gameObject);

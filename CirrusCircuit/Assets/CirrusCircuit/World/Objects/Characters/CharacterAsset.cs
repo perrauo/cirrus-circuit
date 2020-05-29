@@ -5,10 +5,19 @@ using System;
 namespace Cirrus.Circuit.World.Objects.Characters
 {
 
+
     public class CharacterAsset : ScriptableObject
     {
+        public float Preview_OffsetZ = 2.5f;
+        public float Preview_OffsetY = -0.5f;
+        public float Preview_FOV = 60f;
+        public bool Preview_IsLookAtEnabled = false;
+        public float Preview_PitchAngle = -10f;
+        public float Preview_YawAngle = -10f;
+
         [SerializeField]
-        public Sprite Portrait;
+        private string _name;
+        public string Name => _name;            
 
         [SerializeField]
         [UnityEngine.Serialization.FormerlySerializedAs("CharacterTemplate")]
@@ -30,18 +39,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
         public void OnValidate()
         {
             if (_id < 0) _id = Id;
-        }
-    
-        public string Name
-        {
-            get
-            {
-                string _name = name.Substring(name.IndexOf('.') + 1);
-                _name = _name.Replace('.', ' ');
-                return _name;
-            }
-        }
-
+        }    
 
         public Character Create(Vector3 position, Transform parent)
         {

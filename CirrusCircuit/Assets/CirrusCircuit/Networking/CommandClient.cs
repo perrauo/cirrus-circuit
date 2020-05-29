@@ -82,6 +82,15 @@ namespace Cirrus.Circuit.Networking
         #region Character Select Slot
 
         [Command]
+        public void Cmd_CharacterSelectSlot_SetPlayerServerId(GameObject obj, int id)
+        {
+            if (obj == null) return;
+
+            //Debug.Log("RPC SELECT OUTER CMD");
+            if (obj.TryGetComponent(out CharacterSelectSlot slot)) slot._serverPlayerId = id;
+        }
+
+        [Command]
         public void Cmd_CharacterSelectSlot_SetState(GameObject obj, CharacterSelectSlot.State target)
         {
             if (obj == null) return;

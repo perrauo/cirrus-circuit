@@ -12,6 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f21faec92f36290499d6ccb4e3637b8e, type: 3}
   m_Name: Character.Pig
   m_EditorClassIdentifier: 
-  Portrait: {fileID: 21300000, guid: 648d408302b4c4e82b87543dd63c0a09, type: 3}
-  CharacterTemplate: {fileID: 9174488506507766027, guid: e164541ebc892427dae6eae74f41e5a9,
+  Preview_OffsetZ: 3.4
+  Preview_OffsetY: 1.5
+  Preview_FOV: 60
+  Preview_IsLookAtEnabled: 0
+  Preview_PitchAngle: 8
+  Preview_YawAngle: -180
+  _name: Snack Oil Merchant
+  Character: {fileID: 9174488506507766027, guid: e164541ebc892427dae6eae74f41e5a9,
     type: 3}
+  _id: 5

@@ -12,6 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f21faec92f36290499d6ccb4e3637b8e, type: 3}
   m_Name: Character.SheepGirl
   m_EditorClassIdentifier: 
-  Portrait: {fileID: 21300000, guid: 910dbc32c0b6e4dfeb263d39b89dc023, type: 3}
-  CharacterTemplate: {fileID: 9174488506507766027, guid: efa8dd727bfde458c86e294c28a1a01e,
+  Preview_OffsetZ: 3.4
+  Preview_OffsetY: 1.5
+  Preview_FOV: 60
+  Preview_IsLookAtEnabled: 0
+  Preview_PitchAngle: 8
+  Preview_YawAngle: -180
+  _name: Sheep Girl
+  Character: {fileID: 9174488506507766027, guid: efa8dd727bfde458c86e294c28a1a01e,
     type: 3}
+  _id: 4

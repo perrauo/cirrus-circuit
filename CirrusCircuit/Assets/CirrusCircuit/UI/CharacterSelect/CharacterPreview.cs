@@ -19,33 +19,78 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private Character _character;
 
-        [SerializeField]
-        private RenderTexture _texture;
+        private CharacterAsset _characterAsset;
 
-        public bool Create(
-            Transform transform,
-            int index, 
-            out CharacterPreview preview)
+        private RenderTexture _renderTexture;
+        public RenderTexture RenderTexture => _renderTexture;
+
+
+        public void UpdateCamera()
         {
-            preview = null;
-
-            if (index >= CharacterLibrary.Instance.Characters.Length) return false;
-
-            preview = this.Create(transform);
-            preview.transform.localPosition = Vector3.zero;
-            preview.gameObject.SetActive(true);
-            preview._texture = UILibrary.Instance.CharacterRenderTextures[index];
-            preview._camera.targetTexture = preview._texture;
-            preview._character = CharacterLibrary.Instance.Characters[index].Create(
-                preview._anchor, 
-                Quaternion.identity);
-            preview._character.FSM_SetState(World.Objects.ObjectState.CharacterSelect);
-            preview._character.Transform.rotation =
+            _camera.fieldOfView = _characterAsset.Preview_FOV;
+            _camera.transform.position = transform.position;
+            _camera.transform.position += Vector3.forward * _characterAsset.Preview_OffsetZ;
+            _camera.transform.position += Vector3.up * _characterAsset.Preview_OffsetY;
+            _camera.transform.rotation = _characterAsset.Preview_IsLookAtEnabled ?
                 Quaternion.LookRotation(
-                    _camera.transform.position - preview._character.Transform.position,
+                    _character.Transform.position - _camera.transform.position,
+                    Vector3.up) :
+                Quaternion.Euler(
+                    _characterAsset.Preview_PitchAngle, 
+                    _characterAsset.Preview_YawAngle, 
+                    0);
+
+        }
+
+        public void Init(
+            CharacterAsset asset,
+            RenderTexture renderTexture,
+            float horizontalOffset
+            )            
+        {
+            _characterAsset = asset;
+            _renderTexture = renderTexture;
+            _camera.targetTexture = _renderTexture;
+
+            transform.localPosition = Vector3.right * horizontalOffset;
+
+            _character = asset.Create(
+                transform.position,
+                _anchor,
+                Quaternion.identity);
+            _character.Transform.rotation =
+                Quaternion.LookRotation(
+                    Vector3.forward,
                     Vector3.up);
-            preview._texture = UILibrary.Instance.CharacterRenderTextures[index];            
-            preview.transform.localPosition = Vector3.right * index * DistanceBetween;
+
+                      
+            _character.FSM_SetState(World.Objects.ObjectState.CharacterSelect);
+            UpdateCamera();
+
+        }
+
+
+        public void Update()
+        {
+#if UNITY_EDITOR
+            UpdateCamera();
+#endif
+        }
+
+
+        public CharacterPreview Create(
+            Transform transform,
+            int index)
+        {
+            int characterIndex = index % CharacterLibrary.Instance.Characters.Length;
+
+            CharacterPreview preview = this.Create(transform);
+            preview.gameObject.SetActive(true);            
+            preview.Init(
+                CharacterLibrary.Instance.Characters[characterIndex],
+                UILibrary.Instance.CharacterRenderTextures[index],
+                index * DistanceBetween
+                );
 
             return preview;
         }

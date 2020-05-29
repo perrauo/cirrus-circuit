@@ -2,47 +2,57 @@
 using System.Collections;
 using System.Collections.Generic;
 using Cirrus.Circuit.World.Objects.Characters;
+using System;
+using System.Linq;
 
 namespace Cirrus.Circuit.UI
-{
+{    
+    //using DD = Dictionary<Tuple<int,int>, CharacterPreview>;
     public class CharacterRosterPreview : BaseSingleton<CharacterRosterPreview>
-    {
-        [SerializeField]
-        private List<CharacterPreview> _previews;
+    {        
 
         [SerializeField]
         private CharacterPreview _previewTemplate;
 
-        public Dictionary<int, RenderTexture> _characterTextures = new Dictionary<int, RenderTexture>();
-        public bool TryGetCharacterTexture(int id, out RenderTexture texture)
-        {
-            return _characterTextures
-                .TryGetValue(
-                    id,
-                    out texture);
-        }
+        private Dictionary<Tuple<int, int>, CharacterPreview> _characterPlayerPreviews;
 
-        public override void Awake()
+        public override void Awake() {
+            _characterPlayerPreviews = new Dictionary<Tuple<int, int>, CharacterPreview>();
+        }                
+
+        public bool GetCharacterPreview(
+            int playerId, 
+            int characterId, 
+            out CharacterPreview preview)
         {
-            int index = 0;
+            return
+                _characterPlayerPreviews
+                    .TryGetValue(
+                        Utils.MakePair(playerId, characterId), 
+                        out preview); 
+        }
+        
+
+        public void AddPlayerPreviews(int playerId)
+        {
+            int i = 0;
             foreach (
                 CharacterAsset res
                 in CharacterLibrary.Instance.Characters)
             {
                 if (res == null) continue;
-                if (_previewTemplate.Create(
-                        transform,
-                        index, 
-                        out CharacterPreview preview)) _previews.Add(preview);
 
-                _characterTextures.Add(
-                    CharacterLibrary.Instance.Characters[index].Id,
-                    UILibrary.Instance.CharacterRenderTextures[index]
-                    );
+                CharacterPreview preview = _previewTemplate.Create(
+                    transform,
+                    (playerId * CharacterLibrary.Instance.Characters.Length) + i);
+                
+                _characterPlayerPreviews.Add(
+                    Utils.MakePair(playerId, res.Id),
+                    preview);
 
-                index++;
-            }            
-
+                i++;
+                
+            }
         }
     }
 }

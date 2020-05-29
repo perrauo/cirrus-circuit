@@ -51,8 +51,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
         public float BaseLayerLayerWeight{set { if(_animator != null) _animator.SetLayerWeight(0,value);} }
         public CharacterAnimatorWrapper(Animator animator)
         {
-            if (animator == null) return;
-
+            if(animator==null)return;
             _animator = animator;
             _stateSpeedValues.Add(CharacterAnimation.Character_Idle,2);
             _stateLayerValues.Add(CharacterAnimation.Character_Idle,_animator.GetLayerIndex("Base Layer"));
