@@ -53,12 +53,12 @@ namespace Cirrus.Circuit.Networking
 
         }
 
-        public virtual bool RequestPlayerJoin(int playerId)
+        public virtual bool RequestJoinPlayer(int localPlayerId)           
         {
             return false;
         }
 
-        public virtual bool RequestPlayerLeave(int localId)
+        public virtual bool RequestPlayerLeave(int localPlayerId)
         {
             return false;
         }
@@ -125,19 +125,19 @@ namespace Cirrus.Circuit.Networking
             base.Awake();
         }
 
-        public bool RequestPlayerJoin(int playerId)
+        public bool RequestJoinPlayer(int localPlayerId)
         {
-            return _handler.RequestPlayerJoin(playerId);
+            return _handler.RequestJoinPlayer(localPlayerId);
         }
 
-        public bool RequestPlayerJoin(Controls.Player player)
+        public bool RequestJoinPlayer(Player player)
         {
-            return RequestPlayerJoin(player.LocalId);
+            return RequestJoinPlayer(player.LocalId);
         }
 
-        public bool RequestPlayerLeave(int playerId)
+        public bool RequestPlayerLeave(int serverPlayerId)
         {
-            return false;
+            return _handler.RequestPlayerLeave(serverPlayerId);
         }
 
         public void Stop()

@@ -8,11 +8,27 @@ using UnityEngine.UI;
 using Mirror;
 
 using Cirrus.Circuit.Networking;
+using System;
 
 namespace Cirrus.Circuit.UI
 {
+    [Serializable]
+    public enum CharacterSelectSlotState
+    {
+        Unknown,
+        Closed,
+        Ready,
+        Selecting,
+    }
+
     public class CharacterSelectSlot : NetworkBehaviour
     {
+        [SerializeField]
+        private Color _readyColor = Color.white;
+
+        [SerializeField]
+        private Color _joinColor = Color.black;
+
         [SerializeField]        
         private RawImage _imageTemplate;
 
@@ -83,7 +99,6 @@ namespace Cirrus.Circuit.UI
         [SyncVar]
         private float _characterSpotlightRotateSpeed = 20f;
 
-
         [SerializeField]
         [SyncVar]
         private int _selectedIndex = 0;
@@ -92,18 +107,10 @@ namespace Cirrus.Circuit.UI
         [SyncVar]
         private float _disabledArrowAlpha = 0.35f;
 
-        [System.Serializable]
-        public enum State
-        {
-            Unknown,
-            Closed,
-            Ready,
-            Selecting,
-        }
-
         [SerializeField]
         [SyncVar]
-        private State _state = State.Unknown;
+        private CharacterSelectSlotState _state = CharacterSelectSlotState.Unknown;
+        public CharacterSelectSlotState State => _state;
 
         [SerializeField]
         private CameraController _camera;
@@ -118,23 +125,27 @@ namespace Cirrus.Circuit.UI
                 _serverPlayerId = value;
                 CommandClient.Instance.Cmd_CharacterSelectSlot_SetPlayerServerId(gameObject, _serverPlayerId);
             }
-
         }
 
+        #region Unity Engine
 
         private void OnValidate()
         {
             if (_camera == null) _camera = FindObjectOfType<CameraController>();
-            if (_rect == null) _rect = _selection.GetComponent<RectTransform>();
+            if (_rect == null) _rect = _selection.GetComponent<RectTransform>();            
+        }
 
+        public virtual void Awake()
+        {
+            _serverPlayerId = -1;
         }
 
         public virtual void Start()
-        {
+        {            
             if (_imageTemplate == null) DebugUtils.Assert(false, "Portrait template is null");
             else _imageTemplate.gameObject.SetActive(true);
-
             _portraits = new List<RawImage>();
+
         }
 
         public void OnEnable()
@@ -146,30 +157,36 @@ namespace Cirrus.Circuit.UI
         public void FixedUpdate()
         {
             _rect.localPosition = Vector3.Lerp(_rect.localPosition, _targetPosition, _speed);
-
-            if (_characterSpotlightAnchor.childCount != 0)
-                _characterSpotlightAnchor.GetChild(0)
-                    .Rotate(Vector3.up * Time.deltaTime * _characterSpotlightRotateSpeed);
-        }
-
-
-        #region Authority
-
-        public void SetAuthority(NetworkConnection conn, int serverPlayerId)
-        {
-            ServerPlayerId = serverPlayerId;
-            Cmd_SetState(State.Selecting);
-            Cmd_Scroll(true);
-            netIdentity.AssignClientAuthority(conn);           
         }
 
         #endregion
 
 
-        public void Cmd_SetState(State target)
-        {            
-            CommandClient.Instance.Cmd_CharacterSelectSlot_SetState(gameObject, target);
+        #region Mirror
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+
+            FSM_SetState(CharacterSelectSlotState.Closed);
         }
+
+        public void SetAuthority(NetworkConnection conn, int serverPlayerId)
+        {
+            ServerPlayerId = serverPlayerId;
+            Cmd_SetState(CharacterSelectSlotState.Selecting);
+            netIdentity.AssignClientAuthority(conn);
+        }
+
+        public void RemoveAuthority()
+        {
+            ServerPlayerId = -1;
+            netIdentity.RemoveClientAuthority();
+            Cmd_SetState(CharacterSelectSlotState.Closed);            
+        }
+
+        #endregion
+
 
         public void AddCharacterPortraits()
         {
@@ -210,97 +227,125 @@ namespace Cirrus.Circuit.UI
             }
         }
 
+        #region FSM
 
-        public void SetState(State target)
-        {
+        public void FSM_SetState(CharacterSelectSlotState target)
+        {            
             switch (target)
             {                
-                case State.Closed:
+                case CharacterSelectSlotState.Closed:
 
-                    if (_state != State.Closed)
+                    if (_state == CharacterSelectSlotState.Ready)
+                    {
                         GameSession.Instance.CharacterSelectOpenCount =
                             GameSession.Instance.CharacterSelectOpenCount == 0 ?
                             0 :
                             GameSession.Instance.CharacterSelectOpenCount - 1;
+                    }
 
                     _up.gameObject.SetActive(false);
                     _down.gameObject.SetActive(false);
                     _maskRect.gameObject.SetActive(false);
                     _statusText.text = "Press A to join";
+                    _statusText.color = _joinColor;
                     break;
 
-                case State.Selecting:
-
-                    if (!CharacterRosterPreview
-                        .Instance
-                        .GetCharacterPreview(                            
-                            ServerPlayerId, 0, 
-                            out CharacterPreview _))
+                case CharacterSelectSlotState.Selecting:
                     {
-                        CharacterRosterPreview
+                        if (!CharacterRosterPreview
                             .Instance
-                            .AddPlayerPreviews(ServerPlayerId);
-                        AddCharacterPortraits();
+                            .GetCharacterPreview(
+                                ServerPlayerId, 0,
+                                out CharacterPreview _))
+                        {
+                            CharacterRosterPreview
+                                .Instance
+                                .AddPlayerPreviews(ServerPlayerId);
+                            AddCharacterPortraits();
+                        }
+
+                        if (_state == CharacterSelectSlotState.Closed)
+                        {
+                            Cmd_Scroll(true);
+
+                            GameSession.Instance.CharacterSelectOpenCount =
+                                GameSession.Instance.CharacterSelectOpenCount >= Controls.PlayerManager.PlayerMax ?
+                                    Controls.PlayerManager.PlayerMax :
+                                    GameSession.Instance.CharacterSelectOpenCount + 1;
+                        }
+                        else if (_state == CharacterSelectSlotState.Ready)
+                        {
+                            GameSession.Instance.CharacterSelectReadyCount--;
+                        }
+
+                        if (
+                            CharacterRosterPreview
+                            .Instance
+                            .GetCharacterPreview(
+                                ServerPlayerId,
+                                CharacterLibrary.Instance.Characters[_selectedIndex].Id,
+                                out CharacterPreview preview))
+                        {
+                            preview.Character.Play(
+                                CharacterAnimation.Character_Idle, 
+                                true);
+                        }
+
+                        //if (_characterSpotlightAnchor.transform.childCount != 0)
+                        //    Destroy(_characterSpotlightAnchor.GetChild(0).gameObject);
+
+                        _up.gameObject.SetActive(true);
+                        _down.gameObject.SetActive(true);
+                        _maskRect.gameObject.SetActive(true);
+                        _statusText.text = "";
                     }
-
-                    if (_state == State.Closed)
-                    {
-                        GameSession.Instance.CharacterSelectOpenCount =
-                            GameSession.Instance.CharacterSelectOpenCount >= Controls.PlayerManager.PlayerMax ?
-                                Controls.PlayerManager.PlayerMax :
-                                GameSession.Instance.CharacterSelectOpenCount + 1;
-                    }
-
-                    if (_state == State.Ready) GameSession.Instance.CharacterSelectReadyCount--;
-
-                    //if (_characterSpotlightAnchor.transform.childCount != 0)
-                    //    Destroy(_characterSpotlightAnchor.GetChild(0).gameObject);
-
-                    _up.gameObject.SetActive(true);
-                    _down.gameObject.SetActive(true);
-                    _maskRect.gameObject.SetActive(true);
-                    _statusText.text = "";
                     break;
 
-                case State.Ready:
-                    if (_state != State.Ready) GameSession.Instance.CharacterSelectReadyCount++;
+                case CharacterSelectSlotState.Ready:
+                    
+                    {
+                        if (_state != CharacterSelectSlotState.Ready) GameSession.Instance.CharacterSelectReadyCount++;
 
-                    //CharacterRosterPreview.Instance.GetCharacterPreview(
-
-
-
-                    //Vector3 position =
-                    //CameraController.Instance.Camera.ScreenToWorldPoint(
-                    //    _characterSpotlightAnchor.position);
-
-                    //// TODO maybe select locked character??
-                    //CharacterAsset resource = CharacterLibrary.Instance.Characters[_selectedIndex];
-                    //Character character =
-                    //    resource.Create(
-                    //        _characterSpotlightAnchor,
-                    //        Quaternion.Euler(new Vector3(0, 180, 0)));
-
-                    //character.transform.localScale = new Vector3(
-                    //    _characterSpotlightSize,
-                    //    _characterSpotlightSize,
-                    //    _characterSpotlightSize);
+                        if (CharacterRosterPreview
+                            .Instance
+                            .GetCharacterPreview(
+                                ServerPlayerId,
+                                CharacterLibrary.Instance.Characters[_selectedIndex].Id,
+                                out CharacterPreview preview))
+                        {
+                            preview.Character.Play(CharacterAnimation.Character_Winning, true);
+                        }
+                    } 
 
                     _up.gameObject.SetActive(false);
                     _down.gameObject.SetActive(false);
-                    _maskRect.gameObject.SetActive(false);
+                    //_maskRect.gameObject.SetActive(false);
                     _statusText.text = "Ready";
+                    _statusText.color = _readyColor;
                     break;
             }
 
             _state = target;
         }
 
-        [ClientRpc]
-        public void Rpc_SetState(State target)
+        public void Cmd_SetState(CharacterSelectSlotState target)
         {
-            SetState(target);
+            CommandClient
+                .Instance
+                .Cmd_CharacterSelectSlot_SetState(
+                    gameObject,
+                    target);
         }
-        
+
+        [ClientRpc]
+        public void Rpc_SetState(CharacterSelectSlotState target)
+        {
+            FSM_SetState(target);
+        }
+
+
+        #endregion
+
         public IEnumerator PunchScale(bool previous)
         {
             iTween.Stop(_up.gameObject);
@@ -332,6 +377,8 @@ namespace Cirrus.Circuit.UI
         [ClientRpc]
         public void Rpc_Scroll(bool up)
         {
+            if (_state != CharacterSelectSlotState.Selecting) return;
+
             _selectedIndex = up ? _selectedIndex - 1 : _selectedIndex + 1;
             _selectedIndex = Mathf.Clamp(_selectedIndex, 0, CharacterLibrary.Instance.Characters.Length - 1);
             _offset = up ? _offset - _portraitHeight : _offset + _portraitHeight;
@@ -362,22 +409,26 @@ namespace Cirrus.Circuit.UI
         {            
             if (!hasAuthority) return;
 
-            CommandClient.Instance.Cmd_CharacterSelectSlot_Scroll(gameObject, up);
+            CommandClient
+                .Instance
+                .Cmd_CharacterSelectSlot_Scroll(gameObject, up);
         }
 
         public void HandleAction0()
         {
             switch (_state)
             {
-                case State.Selecting:
+                case CharacterSelectSlotState.Selecting:                    
                     break;
 
-                case State.Ready:
-                    CharacterSelectInterface.Instance.SetState(CharacterSelectInterface.State.Select);
-                    Cmd_SetState(State.Selecting);
+                case CharacterSelectSlotState.Ready:
+                    CharacterSelectInterface
+                        .Instance
+                        .SetState(CharacterSelectInterface.State.Select);
+                    Cmd_SetState(CharacterSelectSlotState.Selecting);
                     break;
 
-                case State.Closed:
+                case CharacterSelectSlotState.Closed:
                     break;
             }
         }
@@ -386,19 +437,23 @@ namespace Cirrus.Circuit.UI
         {
             switch (_state)
             {
-                case State.Selecting:
+                case CharacterSelectSlotState.Selecting:
                     Controls.Player player = (Controls.Player) args[0];
                     //Debug.Log("Assigned id: " + CharacterLibrary.Instance.Characters[_selectedIndex].Id);
                     player._session.CharacterId = CharacterLibrary.Instance.Characters[_selectedIndex].Id;
-                    Cmd_SetState(State.Ready);
+                    Cmd_SetState(CharacterSelectSlotState.Ready);
                     break;                    
 
-                case State.Ready:
+                case CharacterSelectSlotState.Ready:
                     // Try to change the state of the select screen, not the slot
-                    CharacterSelectInterface.Instance.SetState(CharacterSelectInterface.State.Ready);
+                    CharacterSelectInterface
+                        .Instance
+                        .SetState(
+                            CharacterSelectInterface.State.Ready);
                     break;
 
-                case State.Closed:
+                case CharacterSelectSlotState.Closed:
+                    Cmd_SetState(CharacterSelectSlotState.Selecting);
                     break;
             }            
         }              

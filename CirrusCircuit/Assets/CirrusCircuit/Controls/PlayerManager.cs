@@ -35,9 +35,12 @@ namespace Cirrus.Circuit.Controls
             return name;
         }
 
-        public Player GetPlayer(int localId)
+        public bool GetPlayer(int localId, out Player player)
         {
-            return LocalPlayers[localId];
+            player = null;
+            if (localId < 0 || localId >= PlayerMax) return false;
+            player = LocalPlayers[localId];
+            return true;
         }
 
         public Color GetColor(int id)

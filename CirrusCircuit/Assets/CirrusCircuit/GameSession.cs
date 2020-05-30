@@ -22,16 +22,6 @@ namespace Cirrus.Circuit
 {    
     public class GameSession : NetworkBehaviour
     {
-        //public enum State
-        //{
-        //    Round,
-        //    LevelSelection,
-        //}
-
-        //[SerializeField]
-        //[SyncVar()]
-        //private State _state;
-
         public static Delegate<bool> OnStartClientStaticHandler;
 
         protected static GameSession _instance;
@@ -49,7 +39,10 @@ namespace Cirrus.Circuit
             {
                 _characterSelectReadyCount = value < 0 ? 0 : value;
                 _characterSelectReadyCount = value > CharacterSelectOpenCount ? CharacterSelectOpenCount : value;
-                CommandClient.Instance.Cmd_GameSession_SetCharacterSelectReadyCount(gameObject, _characterSelectReadyCount);
+                CommandClient.Instance
+                    .Cmd_GameSession_SetCharacterSelectReadyCount(
+                        gameObject, 
+                        _characterSelectReadyCount);
             }
         }
 
@@ -63,7 +56,10 @@ namespace Cirrus.Circuit
             set
             {
                 _characterSelectOpenCount = value < 0 ? 0 : value;
-                CommandClient.Instance.Cmd_GameSession_SetCharacterSelectOpenCount(gameObject, _characterSelectOpenCount);
+                CommandClient.Instance
+                    .Cmd_GameSession_SetCharacterSelectOpenCount(
+                        gameObject, 
+                        _characterSelectOpenCount);
             }
         }
 
@@ -85,7 +81,10 @@ namespace Cirrus.Circuit
             set
             {
                 _roundIndex = value < 0 ? 0 : value;
-                CommandClient.Instance.Cmd_GameSession_SetCharacterSelectOpenCount(gameObject, _characterSelectOpenCount);
+                CommandClient.Instance
+                    .Cmd_GameSession_SetCharacterSelectOpenCount(
+                        gameObject, 
+                        _characterSelectOpenCount);
             }
         }
 
@@ -103,7 +102,10 @@ namespace Cirrus.Circuit
             set
             {
                 _playerCount = value < 0 ? 0 : value;                
-                CommandClient.Instance.Cmd_GameSession_SetPlayerCount(gameObject, _playerCount);
+                CommandClient.Instance
+                    .Cmd_GameSession_SetPlayerCount(
+                        gameObject, 
+                        _playerCount);
             }
         }
 
@@ -119,8 +121,6 @@ namespace Cirrus.Circuit
             return _players[i].GetComponent<PlayerSession>();
         }
 
-        public Delegate<Gem, int, float> OnScoreValueAddedHandler;
-
         [SyncVar]
         [SerializeField]        
         public int _selectedLevelIndex;
@@ -135,10 +135,11 @@ namespace Cirrus.Circuit
             }
         }
 
-        public Level SelectedLevel => Game.Instance._levels[_selectedLevelIndex];        
-    
-        ////////   
+        public Level SelectedLevel => Game.Instance._levels[_selectedLevelIndex];
 
+
+
+        #region Unity Engine
         public virtual void OnValidate()
         {
             
@@ -154,22 +155,7 @@ namespace Cirrus.Circuit
 
         }
 
-
-        public IEnumerator NewRoundCoroutine()
-        {
-            yield return new WaitForEndOfFrame();
-
-            //OnNewRoundHandler?.Invoke(_round);
-
-            //_round.OnRoundBeginHandler += _currentLevel.OnBeginRound;
-
-            //_round.OnRoundEndHandler += OnRoundEnd;
-
-            //_round.BeginIntermission();
-
-            yield return null;
-        }
-
+        #endregion
 
         public override void OnStartClient()
         {
@@ -183,64 +169,20 @@ namespace Cirrus.Circuit
             OnStartClientStaticHandler?.Invoke(true);
             _instance = null;
         }
-
-        public void OnLevelCompleted(World.Level.Rule rule)
-        {
-            //_round.Terminate();
-            //OnRoundEnd();
-        }
-
     
-        // TODO: Simulate LeftStick continuous axis with WASD  
-
-        public void OnLevelSelect()
-        {
-            //OnLevelSelectHandler?.Invoke();
-        }        
 
         public void OnRoundEnd()
         {
             _roundIndex++;
-
         }
 
-        private void OnPodiumFinished()
+        public bool Cmd_RemovePlayer(PlayerSession player)
         {
-            //if (_state == State.FinalPodium)
-            //    SetState(State.LevelSelection);
-            
-            //else SetState(State.Round);
-            
-        }
+            CommandClient.Instance.Cmd_GameSession_RemovePlayer(
+                gameObject, 
+                player.gameObject);
 
-        public bool Join(Player player)
-        {
-            //if (_controllers.Count >= _selectedLevelIndex.CharacterCount)
-            //    return false;
-
-            //_controllers.Add(player);
-
-            return false;
-        }
-
-        public bool Leave(Player player)
-        {
-            //if (_controllers.Count >= _selectedLevelIndex.CharacterCount)
-            //    return false;
-
-            //_controllers.Remove(player);
-
-            return false;
-        }
-
-        //public void Join(Player player)
-        //{
-        //    //switch (_state)
-        //    //{
-        //    //    case State.LevelSelection:
-        //    //        break;
-        //    //}
-        //}
-        
+            return true;
+        }        
     }
 }

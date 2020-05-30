@@ -8,14 +8,23 @@ namespace Cirrus.Circuit.UI
     public delegate void OnCharacterSelectReady(int numPlayers);
 
     public class CharacterSelectInterface : BaseSingleton<CharacterSelectInterface>
-    {        
+    {
+        public enum State
+        {
+            Disabled,
+            Select,
+            Ready,
+        }
+
+        private State _state;
+
         public OnCharacterSelectReady OnCharacterSelectReadyHandler;
 
         [SerializeField]
         [UnityEngine.Serialization.FormerlySerializedAs("slots")]        
         public CharacterSelectSlot[] _slots;
 
-        [SerializeField]        
+        [SerializeField]
         private UnityEngine.UI.Text _readyText;
 
 
@@ -32,6 +41,7 @@ namespace Cirrus.Circuit.UI
             }
         }
 
+        #region Unity Engine
 
         public override void OnValidate()
         {
@@ -49,27 +59,53 @@ namespace Cirrus.Circuit.UI
             OnCharacterSelectReadyHandler += Game.Instance.OnCharacterSelected;
         }
 
+        #endregion
+
+
+        #region Mirror
+
+        public void OnClientStarted(bool enable)
+        {
+
+        }       
+
+        public void SetAuthority(Mirror.NetworkConnection conn, int serverPlayerId)
+        {
+            CharacterSelectSlot playerSlot = null;
+            foreach (var slot in _slots)
+            {
+                if (slot == null) continue;
+                if (slot.ServerPlayerId >= 0) continue;
+
+                playerSlot = slot;
+                break;
+            }
+
+            if (playerSlot != null)
+            {
+                playerSlot.SetAuthority(conn, serverPlayerId);
+                playerSlot.Cmd_SetState(CharacterSelectSlotState.Selecting);
+            }
+        }
+
+        #endregion
+
         public void OnCharacterSelect(bool enable)
         {
             Enabled = enable;
         }
 
-        public void OnClientStarted(bool enable)
+        public void HandleAction1()
         {
 
         }
-        
 
-
-        public enum State
+        public void HandleAction0()
         {
-            Disabled,
-            Select,
-            Ready,
+
         }
 
-        private State _state;
-       
+
         public bool SetState(State target)
         {
             switch (target)
@@ -110,28 +146,6 @@ namespace Cirrus.Circuit.UI
             }
 
             return false;
-        }
-
-
-        public void HandleAction1()
-        {
-
-        }
-
-        public void HandleAction0()
-        {
-
-        }
-
-        //public void OnLocalCharacterScroll(int playerId, bool scroll)
-        //{
-        //    _slots[playerId].CmdScroll(scroll);
-        //}
-
-
-        public void SetAuthority(Mirror.NetworkConnection conn, int serverPlayerId)
-        {
-            _slots[serverPlayerId].SetAuthority(conn, serverPlayerId);                    
         }
     }
 }

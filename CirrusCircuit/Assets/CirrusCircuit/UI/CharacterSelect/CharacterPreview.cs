@@ -8,6 +8,13 @@ namespace Cirrus.Circuit.UI
 {
     public class CharacterPreview : MonoBehaviour
     {
+        /*
+         
+            if (_characterSpotlightAnchor.childCount != 0)
+                _characterSpotlightAnchor.GetChild(0)
+                    .Rotate(Vector3.up * Time.deltaTime * _characterSpotlightRotateSpeed);
+        */
+
         public const float DistanceBetween = 10f;
 
         [SerializeField]
@@ -18,8 +25,11 @@ namespace Cirrus.Circuit.UI
 
         [SerializeField]
         private Character _character;
+        public Character Character => _character;
 
         private CharacterAsset _characterAsset;
+        public CharacterAsset CharacterAsset => _characterAsset;
+
 
         private RenderTexture _renderTexture;
         public RenderTexture RenderTexture => _renderTexture;
@@ -64,7 +74,12 @@ namespace Cirrus.Circuit.UI
                     Vector3.up);
 
                       
-            _character.FSM_SetState(World.Objects.ObjectState.CharacterSelect);
+            _character.FSM_SetState(
+                World.Objects
+                .ObjectState
+                .CharacterSelect);
+
+
             UpdateCamera();
 
         }

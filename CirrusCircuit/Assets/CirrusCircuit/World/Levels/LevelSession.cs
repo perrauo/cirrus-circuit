@@ -205,23 +205,27 @@ namespace Cirrus.Circuit.World
             foreach (var info in PlaceholderInfos)
             {
                 PlayerSession player = GameSession.Instance.GetPlayer(info.PlayerId);
-                Player localPlayer = PlayerManager.Instance.GetPlayer(player.LocalId);
-                player.Score = 0;
+                if (PlayerManager.Instance.GetPlayer(
+                    player.LocalId, 
+                    out Player localPlayer))
+                {    
+                    player.Score = 0;
 
-                info.Session._object =
-                    info.Character.Create(
-                        Level.GridToWorld(info.Position),
-                        transform,
-                        info.Rotation);
-                _characters.Add((Character)info.Session._object);
-                info.Session._object._session = info.Session;
-                info.Session._object.ColorId = info.PlayerId;
-                info.Session._object.Color = player.Color;
-                info.Session._object._gridPosition = info.Position;
-                (info.Session._object.Transform.position, info.Session._object._gridPosition) = RegisterObject(info.Session._object);
+                    info.Session._object =
+                        info.Character.Create(
+                            Level.GridToWorld(info.Position),
+                            transform,
+                            info.Rotation);
+                    _characters.Add((Character)info.Session._object);
+                    info.Session._object._session = info.Session;
+                    info.Session._object.ColorId = info.PlayerId;
+                    info.Session._object.Color = player.Color;
+                    info.Session._object._gridPosition = info.Position;
+                    (info.Session._object.Transform.position, info.Session._object._gridPosition) = RegisterObject(info.Session._object);
 
-                if (player.ServerId == localPlayer.ServerId)
-                    localPlayer._character = (Character)info.Session._object;
+                    if (player.ServerId == localPlayer.ServerId)
+                        localPlayer._character = (Character)info.Session._object;
+                }
             }
 
             foreach (var session in ObjectSessions)
@@ -613,11 +617,12 @@ namespace Cirrus.Circuit.World
                     if (Get(
                         position.SetY(position.y - i),
                         out BaseObject target))
-                    {
+                    {                            
                         if (target is Gem) continue;
                         if (target is Character) continue;
                         if (target is Door) continue;
                         if (target is Portal) continue;
+                        if (target is Slope) continue;
 
                         return position;
                     }

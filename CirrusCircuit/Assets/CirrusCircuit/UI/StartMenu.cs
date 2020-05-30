@@ -47,13 +47,9 @@ namespace Cirrus.Circuit.UI
         {
             base.Awake();
 
-            _exitButton.onClick.AddListener(OnExitClick);
-            //_playButton.onClick.AddListener(() => Game.Instance.StartLocal());
+            _exitButton.onClick.AddListener(OnExitClick);            
             _joinButton.onClick.AddListener(OnJoinClicked);
-            _hostButton.onClick.AddListener(OnHostClicked);
-
-           
-            //GameSession.OnStartClientStaticHandler += OnSessionStart;
+            _hostButton.onClick.AddListener(OnHostClicked);                       
         }
 
         public override void Start()

@@ -18,6 +18,7 @@ namespace Cirrus.Circuit.UI
 
         public override void Awake() {
             _characterPlayerPreviews = new Dictionary<Tuple<int, int>, CharacterPreview>();
+            _characterPlayerPreviews.Clear();
         }                
 
         public bool GetCharacterPreview(
@@ -42,9 +43,10 @@ namespace Cirrus.Circuit.UI
             {
                 if (res == null) continue;
 
-                CharacterPreview preview = _previewTemplate.Create(
-                    transform,
-                    (playerId * CharacterLibrary.Instance.Characters.Length) + i);
+                CharacterPreview preview = 
+                    _previewTemplate.Create(
+                        transform,
+                        (playerId * CharacterLibrary.Instance.Characters.Length) + i);
                 
                 _characterPlayerPreviews.Add(
                     Utils.MakePair(playerId, res.Id),

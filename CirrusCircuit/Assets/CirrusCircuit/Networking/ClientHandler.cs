@@ -41,12 +41,12 @@ namespace Cirrus.Circuit.Networking
             _conn = conn;
         }
 
-        public override bool RequestPlayerJoin(int localId)
+        public override bool RequestJoinPlayer(int localId)
         {
             return _conn.Send(new ClientPlayerMessage
             {
                 LocalPlayerId = localId,
-                Id = ClientPlayerMessageId.Join
+                Type = ClientPlayerMessageType.Join
             });            
         }
 
@@ -55,7 +55,7 @@ namespace Cirrus.Circuit.Networking
             _conn.Send(new ClientPlayerMessage
             {
                 LocalPlayerId = localId,
-                Id = ClientPlayerMessageId.Leave
+                Type = ClientPlayerMessageType.Leave
             });
 
             return true;

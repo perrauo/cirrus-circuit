@@ -42,7 +42,8 @@ namespace Cirrus.Circuit.World.Objects.Characters
         }    
 
         public Character Create(Vector3 position, Transform parent)
-        {
+        {                        
+
             return Instantiate(
                 Character.gameObject,
                 position,

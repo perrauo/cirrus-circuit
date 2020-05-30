@@ -87,11 +87,14 @@ namespace Cirrus.Circuit.Networking
             if (obj == null) return;
 
             //Debug.Log("RPC SELECT OUTER CMD");
-            if (obj.TryGetComponent(out CharacterSelectSlot slot)) slot._serverPlayerId = id;
+            if (obj.TryGetComponent(out CharacterSelectSlot slot)) 
+                slot._serverPlayerId = id;
         }
 
         [Command]
-        public void Cmd_CharacterSelectSlot_SetState(GameObject obj, CharacterSelectSlot.State target)
+        public void Cmd_CharacterSelectSlot_SetState(
+            GameObject obj, 
+            CharacterSelectSlotState target)
         {
             if (obj == null) return;
 
@@ -104,7 +107,9 @@ namespace Cirrus.Circuit.Networking
         }
 
         [Command]
-        public void Cmd_CharacterSelectSlot_Scroll(GameObject obj, bool scroll)
+        public void Cmd_CharacterSelectSlot_Scroll(
+            GameObject obj, 
+            bool scroll)
         {
             if (obj == null) return;
 
@@ -167,7 +172,6 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-
         [Command]
         public void Cmd_LevelSession_OnRainTimeout(GameObject obj, Vector3Int pos, int objectId)
         {
@@ -219,6 +223,16 @@ namespace Cirrus.Circuit.Networking
         #endregion
 
         #region Game Session
+
+        [Command]
+        public void Cmd_GameSession_RemovePlayer(GameObject game, GameObject player)
+        { 
+            if (game == null) return;
+            if (player == null) return;
+            
+            if(game.TryGetComponent(out GameSession sess)) sess._players.Remove(player);            
+        }
+
 
         [Command]
         public void Cmd_GameSession_SetPlayerCount(GameObject obj, int count)
