@@ -253,8 +253,8 @@ namespace Cirrus.Circuit.UI
 
                     if (_state == State.Ready) GameSession.Instance.CharacterSelectReadyCount--;
 
-                    if (_characterSpotlightAnchor.transform.childCount != 0)
-                        Destroy(_characterSpotlightAnchor.GetChild(0).gameObject);
+                    //if (_characterSpotlightAnchor.transform.childCount != 0)
+                    //    Destroy(_characterSpotlightAnchor.GetChild(0).gameObject);
 
                     _up.gameObject.SetActive(true);
                     _down.gameObject.SetActive(true);
@@ -265,21 +265,25 @@ namespace Cirrus.Circuit.UI
                 case State.Ready:
                     if (_state != State.Ready) GameSession.Instance.CharacterSelectReadyCount++;
 
-                    Vector3 position =
-                    CameraController.Instance.Camera.ScreenToWorldPoint(
-                        _characterSpotlightAnchor.position);
+                    //CharacterRosterPreview.Instance.GetCharacterPreview(
 
-                    // TODO maybe select locked character??
-                    CharacterAsset resource = CharacterLibrary.Instance.Characters[_selectedIndex];
-                    Character character =
-                        resource.Create(
-                            _characterSpotlightAnchor,
-                            Quaternion.Euler(new Vector3(0, 180, 0)));
 
-                    character.transform.localScale = new Vector3(
-                        _characterSpotlightSize,
-                        _characterSpotlightSize,
-                        _characterSpotlightSize);
+
+                    //Vector3 position =
+                    //CameraController.Instance.Camera.ScreenToWorldPoint(
+                    //    _characterSpotlightAnchor.position);
+
+                    //// TODO maybe select locked character??
+                    //CharacterAsset resource = CharacterLibrary.Instance.Characters[_selectedIndex];
+                    //Character character =
+                    //    resource.Create(
+                    //        _characterSpotlightAnchor,
+                    //        Quaternion.Euler(new Vector3(0, 180, 0)));
+
+                    //character.transform.localScale = new Vector3(
+                    //    _characterSpotlightSize,
+                    //    _characterSpotlightSize,
+                    //    _characterSpotlightSize);
 
                     _up.gameObject.SetActive(false);
                     _down.gameObject.SetActive(false);
