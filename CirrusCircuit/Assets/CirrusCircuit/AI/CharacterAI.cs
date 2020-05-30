@@ -9,12 +9,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Cirrus.Circuit.World.Objects.Characters;
 
-
-namespace Cirrus.Circuit.Controls.AI
-{
-    public class AIController : MonoBehaviour
+namespace Cirrus.Circuit.AI
+{    
+    public class CharacterAI : MonoBehaviour
     {
-
+        [SerializeField]
+        private Character _character;
+                
+        public void Awake()
+        {
+            
+        }
     }
 }
