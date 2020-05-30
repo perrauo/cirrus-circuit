@@ -4,3 +4,6 @@
 [submodule "CirrusCircuit/Assets/External/Mirror"]
 	path = CirrusCircuit/Assets/External/Mirror
 	url = https://github.com/vis2k/Mirror.git
+[submodule "CirrusCircuit/Assets/External/Simple-optimized-A-Pathfinder"]
+	path = CirrusCircuit/Assets/External/Simple-optimized-A-Pathfinder
+	url = https://github.com/OliPerraul/Simple-optimized-A-Pathfinder.git
