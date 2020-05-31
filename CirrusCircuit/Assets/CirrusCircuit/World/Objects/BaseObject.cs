@@ -471,10 +471,7 @@ namespace Cirrus.Circuit.World.Objects
             }
 
 
-            if (result.Moved != null)
-            {
-                result.Moved.Interact(this);
-            }
+            if (result.Moved != null) result.Moved.Interact(this);
 
             if (
                 result.Move.Position != result.Destination &&
