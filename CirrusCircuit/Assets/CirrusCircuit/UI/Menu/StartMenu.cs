@@ -21,7 +21,13 @@ namespace Cirrus.Circuit.UI
         private UnityEngine.UI.Button _joinButton;
 
         [SerializeField]
+        private UnityEngine.UI.Button _settingsButton;
+
+        [SerializeField]
         private UnityEngine.UI.InputField _joinInput;
+
+        [SerializeField]
+        private GameObject _content;
 
 
         public override void OnValidate()
@@ -51,7 +57,12 @@ namespace Cirrus.Circuit.UI
 
             _exitButton.onClick.AddListener(OnExitClick);            
             _joinButton.onClick.AddListener(OnJoinClicked);            
-            _hostButton.onClick.AddListener(OnHostClicked);                       
+            _hostButton.onClick.AddListener(OnHostClicked);
+            _settingsButton.onClick.AddListener(() => {
+                Enabled = false;
+                SettingsMenu.Instance.Enabled = true;
+                
+            });
         }
 
         public override void Start()

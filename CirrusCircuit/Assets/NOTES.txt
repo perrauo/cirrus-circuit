@@ -2,3 +2,6 @@
 
 Failure Spectrum:
     - How many mystakes can happen to the player before he fails completely
+
+
+Pressing forward moves the character front
