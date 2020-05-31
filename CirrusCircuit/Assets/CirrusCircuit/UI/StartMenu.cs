@@ -47,8 +47,10 @@ namespace Cirrus.Circuit.UI
         {
             base.Awake();
 
+            _joinInput.onValueChanged.AddListener((x) => Settings.IpAddress.Set(x));
+
             _exitButton.onClick.AddListener(OnExitClick);            
-            _joinButton.onClick.AddListener(OnJoinClicked);
+            _joinButton.onClick.AddListener(OnJoinClicked);            
             _hostButton.onClick.AddListener(OnHostClicked);                       
         }
 
@@ -57,11 +59,13 @@ namespace Cirrus.Circuit.UI
             base.Start();
 
             Game.Instance.OnMenuHandler += (x) => Enabled = x;
+            _joinInput.text = Settings.IpAddress.String;
         }
 
         public void OnHostClicked()
         {
-            if(CustomNetworkManager.Instance.StartHost(_joinInput.text)) Game.Instance.JoinSession();
+            Settings.IpAddress.Set(_joinInput.text);
+            if (CustomNetworkManager.Instance.StartHost(_joinInput.text)) Game.Instance.JoinSession();
             else Debug.Log("Unable to host");
         }
 
@@ -70,6 +74,8 @@ namespace Cirrus.Circuit.UI
             // TODO erro
             if (_joinInput == null) return;
             if (string.IsNullOrEmpty(_joinInput.text)) return;
+
+            Settings.IpAddress.Set(_joinInput.text);
 
             CustomNetworkManager.Instance.StartClient(_joinInput.text);
 
