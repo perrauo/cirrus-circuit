@@ -34,7 +34,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
         [SerializeField]
         private Guide _guide;
 
-        public const float MoveDelay = 0.1f;
+        public const float MoveDelay = 0.01f;
         
         public const float RotationSpeed = 0.6f;
 
