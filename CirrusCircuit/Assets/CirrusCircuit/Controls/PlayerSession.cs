@@ -117,7 +117,7 @@ namespace Cirrus.Circuit.Controls
             foreach (var slot in CharacterSelectInterface.Instance._slots)
             {
                 if (slot == null) continue;
-                if (slot.ServerPlayerId == _serverId) playerSlot = slot;
+                if (slot._index == _serverId) playerSlot = slot;
             }
 
             PlayerManager.Instance.LocalPlayers[_localId]._characterSlot = playerSlot;
