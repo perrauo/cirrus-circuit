@@ -523,7 +523,8 @@ namespace Cirrus.Circuit.World.Objects
                 case MoveType.Falling:
                     return LevelSession.GetMoveResults(
                         move,
-                        out results);
+                        out results,
+                        isRecursiveCall);
 
                 case MoveType.Direction:
                     results = new List<MoveResult>();
