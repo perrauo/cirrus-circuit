@@ -462,20 +462,6 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-        [Command]
-        public void Cmd_ObjectSession_SetState(GameObject obj, ObjectState state)
-        {
-            //AssertGameObjectNull(obj);
-            if (obj == null) return;
-
-            if (obj.TryGetComponent(out ObjectSession session))
-            {
-                Cmd_ObjectSession_Move_mutex.WaitOne();
-                session.Rpc_SetState(state);
-                Cmd_ObjectSession_Move_mutex.ReleaseMutex();
-            }
-        }
-
         // TODO validate the move
         [Command]
         public void Cmd_ObjectSession_Move(GameObject obj, NetworkMove netAction)
@@ -512,6 +498,23 @@ namespace Cirrus.Circuit.Networking
             if ((session = obj.GetComponent<ObjectSession>()) != null)
             {
                 session._index = idx;
+            }
+        }
+
+
+        private Mutex Cmd_ObjectSession_SetState_mutex = new Mutex();
+
+        [Command]
+        public void Cmd_ObjectSession_SetState(GameObject obj, ObjectState state)
+        {
+            //AssertGameObjectNull(obj);
+            if (obj == null) return;
+
+            if (obj.TryGetComponent(out ObjectSession session))
+            {
+                Cmd_ObjectSession_SetState_mutex.WaitOne();
+                session.Rpc_SetState(state);
+                Cmd_ObjectSession_SetState_mutex.ReleaseMutex();
             }
         }
 

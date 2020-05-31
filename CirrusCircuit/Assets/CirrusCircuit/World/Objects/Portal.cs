@@ -157,7 +157,8 @@ namespace Cirrus.Circuit.World.Objects
                               Step = enterResult.Step,
                               User = enterResult.Moved                              
                           },
-                          out moveResults))
+                          out moveResults,
+                          recursive:true))
                         {
                             return true;
                         }

@@ -147,6 +147,7 @@ namespace Cirrus.Circuit.World
 
         #endregion
 
+
         public Vector3Int GetFallThroughPosition(bool isLandingGuaranteed = true)
         {
             for (int k = 0; k < FallTrials; k++)
@@ -559,9 +560,12 @@ namespace Cirrus.Circuit.World
 
         #region Move
 
+        public Mutex _moveMutex = new Mutex();
+
         public bool GetMoveResults(
             Move move, 
-            out IEnumerable<MoveResult> results)
+            out IEnumerable<MoveResult> results,
+            bool recursive=false)
         {
             results = new List<MoveResult>();
             
@@ -571,122 +575,152 @@ namespace Cirrus.Circuit.World
                 Move = move,                                
             };
 
-            if (!GetExitResult(
-                move,
-                out ExitResult exitResult,
-                out IEnumerable<MoveResult> exitMoveResults))                          
+            if(!recursive) _moveMutex.WaitOne();
+
+            do
             {
-                return false;
-            }
-
-            result.Direction = move.Type == MoveType.Falling ? 
-                move.User._direction : 
-                exitResult.Step.SetY(0);
-
-            result.Destination = move.Position + exitResult.Step;
-            result.Position = exitResult.Position;
-            result.Offset = exitResult.Offset;
-
-            if (!Level.IsInsideBounds(result.Destination)) return false;
-
-            if (Get(
-                // Object pushed into
-                move.Position + exitResult.Step,
-                out result.Moved))
-            {
-                // Object moved into is movable
-                if (result.Moved.GetMoveResults(
-                    new Move
-                    {
-                        Position = result.Moved._gridPosition,
-                        Entered = result.Moved._entered,
-                        Source = move.User,
-                        User = result.Moved,
-                        Type = move.Type,
-                        Step = exitResult.Step.SetY(0)
-                    },
-                    out IEnumerable<MoveResult> movedResults))
+                if (!GetExitResult(
+                    move,
+                    out ExitResult exitResult,
+                    out IEnumerable<MoveResult> exitMoveResults))
                 {
-                    ((List<MoveResult>)results).AddRange(movedResults);
+                    result = null;
+                    break;
                 }
-                // Object moved into is enterable (or no object)
-                else if (GetEnterResults(
-                    result.Moved,
-                    new Move {
-                        Step = exitResult.Step,
-                        Position = move.Position,
-                        Entered = move.Entered,
-                        Source = move.Source,
-                        Type = move.Type,
-                        User = move.User                      
-                    },
-                    out EnterResult enterResult,
-                    out IEnumerable<MoveResult> moveResults))
-                {
-                    result.Moved = enterResult.Moved;
-                    result.Entered = enterResult.Entered;
-                    result.Position = enterResult.Position;
-                    result.Scale = enterResult.Scale;
-                    result.Direction = 
-                        enterResult.MoveType == MoveType.Climbing ?
-                            result.Direction : 
-                            enterResult.Step.SetY(0);                    
-                    result.Destination = enterResult.Destination;
-                    result.Offset = enterResult.Offset;
-                    result.PitchAngle = enterResult.PitchAngle;
-                    result.MoveType = enterResult.MoveType;
-                    //result.MoveType = enterResult.MoveType;
 
-                    ((List<MoveResult>)results).AddRange(moveResults);
+                result.Direction = move.Type == MoveType.Falling ?
+                    move.User._direction :
+                    exitResult.Step.SetY(0);
+
+                result.Destination = move.Position + exitResult.Step;
+                result.Position = exitResult.Position;
+                result.Offset = exitResult.Offset;
+
+                if (!Level.IsInsideBounds(result.Destination))
+                {
+                    result = null;
+                    break;
                 }
-                else result = null;
-            }
-            // No object moved into
-            else if (Level.IsInsideBounds(
-                move.Position + 
-                move.Step + 
-                Vector3Int.down))
-            {
+
                 if (Get(
-                    move.Position + 
-                    move.Step + 
-                    Vector3Int.down,
-                    out BaseObject slope))
-                {                        
-                    // Handle stepping on a slope
-                    if (slope is Slope)
-                    {
-                        var slopeMove = move.Copy();
-                        slopeMove.Step = move.Step + Vector3Int.down;
-                        if (GetEnterResults(
-                            slope,
-                            slopeMove,
-                            out EnterResult enterResult,
-                            out IEnumerable<MoveResult> downhillMoveResults))
+                    // Object pushed into
+                    move.Position + exitResult.Step,
+                    out result.Moved))
+                {
+                    // Object moved into is movable
+                    if (result.Moved.GetMoveResults(
+                        new Move
                         {
-                            result.Moved = enterResult.Moved;
-                            result.Entered = enterResult.Entered;
-                            result.Direction = enterResult.Step.SetY(0);
-                            result.Destination = enterResult.Destination;
-                            result.Offset = enterResult.Offset;
-                            result.PitchAngle = enterResult.PitchAngle;
-                            result.MoveType = enterResult.MoveType;
-                            result.Position = enterResult.Position;
-                            result.Scale = enterResult.Scale;
-
-                            ((List<MoveResult>)results).AddRange(downhillMoveResults);
-                        }
-                        else result = null;// cant move object in the slope, cant move myself
+                            Position = result.Moved._gridPosition,
+                            Entered = result.Moved._entered,
+                            Source = move.User,
+                            User = result.Moved,
+                            Type = move.Type,
+                            Step = exitResult.Step.SetY(0)
+                        },
+                        out IEnumerable<MoveResult> movedResults,
+                        recursive: true))
+                    {
+                        ((List<MoveResult>)results).AddRange(movedResults);
                     }
-                }                
+                    // Object moved into is enterable (or no object)
+                    else if (GetEnterResults(
+                        result.Moved,
+                        new Move
+                        {
+                            Step = exitResult.Step,
+                            Position = move.Position,
+                            Entered = move.Entered,
+                            Source = move.Source,
+                            Type = move.Type,
+                            User = move.User
+                        },
+                        out EnterResult enterResult,
+                        out IEnumerable<MoveResult> moveResults))
+                    {
+                        result.Moved = enterResult.Moved;
+                        result.Entered = enterResult.Entered;
+                        result.Position = enterResult.Position;
+                        result.Scale = enterResult.Scale;
+                        result.Direction =
+                            enterResult.MoveType == MoveType.Climbing ?
+                                result.Direction :
+                                enterResult.Step.SetY(0);
+                        result.Destination = enterResult.Destination;
+                        result.Offset = enterResult.Offset;
+                        result.PitchAngle = enterResult.PitchAngle;
+                        result.MoveType = enterResult.MoveType;
+                        //result.MoveType = enterResult.MoveType;
+
+                        ((List<MoveResult>)results).AddRange(moveResults);
+                    }
+                    else result = null;
+                }
+                // No object moved into
+                else if (Level.IsInsideBounds(
+                    move.Position +
+                    move.Step +
+                    Vector3Int.down))
+                {
+                    if (Get(
+                        move.Position +
+                        move.Step +
+                        Vector3Int.down,
+                        out BaseObject slope))
+                    {
+                        // Handle stepping on a slope
+                        if (slope is Slope)
+                        {
+                            var slopeMove = move.Copy();
+                            slopeMove.Step = move.Step + Vector3Int.down;
+                            if (GetEnterResults(
+                                slope,
+                                slopeMove,
+                                out EnterResult enterResult,
+                                out IEnumerable<MoveResult> downhillMoveResults))
+                            {
+                                result.Moved = enterResult.Moved;
+                                result.Entered = enterResult.Entered;
+                                result.Direction = enterResult.Step.SetY(0);
+                                result.Destination = enterResult.Destination;
+                                result.Offset = enterResult.Offset;
+                                result.PitchAngle = enterResult.PitchAngle;
+                                result.MoveType = enterResult.MoveType;
+                                result.Position = enterResult.Position;
+                                result.Scale = enterResult.Scale;
+
+                                ((List<MoveResult>)results).AddRange(downhillMoveResults);
+                            }
+                            else result = null;// cant move object in the slope, cant move myself
+                        }
+                    }
+                }
+
             }
+            while (false);
+
+            if(!recursive) _moveMutex.ReleaseMutex();
 
             // Add action result
             if(result != null) ((List<MoveResult>)results).Add(result);
+
             return result != null;
         }
 
-        public void Move(MoveResult result)
+        public virtual void ApplyMoveResults(IEnumerable<MoveResult> results)
+        {
+            _moveMutex.WaitOne();
+
+            foreach (var result in results)
+            {
+                if (result == null) continue;
+                result.Move.User.ApplyMoveResult(result);
+            }
+
+            _moveMutex.ReleaseMutex();
+        }
+
+        public void ApplyMoveResult(MoveResult result)
         {
             if (
                 result.Move.Entered == null &&

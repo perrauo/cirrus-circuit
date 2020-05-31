@@ -226,9 +226,9 @@ namespace Cirrus.Circuit.World.Objects.Characters
             }
         }
 
-        public override void Move(MoveResult result)
+        public override void ApplyMoveResult(MoveResult result)
         {
-            base.Move(result);
+            base.ApplyMoveResult(result);
 
             switch (result.MoveType)
             {

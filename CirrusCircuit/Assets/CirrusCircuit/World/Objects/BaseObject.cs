@@ -394,7 +394,7 @@ namespace Cirrus.Circuit.World.Objects
             _session.Cmd_Move(move);
         }
 
-        public virtual void Move(MoveResult result)
+        public virtual void ApplyMoveResult(MoveResult result)
         {
             ObjectState state = _state;
 
@@ -499,23 +499,13 @@ namespace Cirrus.Circuit.World.Objects
             FSM_SetState(
                 state,
                 this);
-            LevelSession.Instance.Move(result);
+            LevelSession.Instance.ApplyMoveResult(result);
         }
-
-
-        public virtual void Move(IEnumerable<MoveResult> results)
-        {
-            foreach (var result in results)
-            {
-                if (result == null) continue;
-                result.Move.User.Move(result);
-            }
-        }
-
 
         public virtual bool GetMoveResults(
             Move move,
-            out IEnumerable<MoveResult> results)
+            out IEnumerable<MoveResult> results,
+            bool recursive=false)
         {
             results = null;
 
@@ -594,7 +584,8 @@ namespace Cirrus.Circuit.World.Objects
                         Entered = _entered,
                         Step = move.Step.SetY(0)
                     },
-                    out moveResults
+                    out moveResults,
+                    recursive: true
                     );
             }
 
@@ -908,12 +899,6 @@ namespace Cirrus.Circuit.World.Objects
         #endregion
 
         #endregion
-
-#if UNITY_EDITOR
-
-        public BaseObject SelectedTemplate = null;
-
-#endif
     }
 }
 
