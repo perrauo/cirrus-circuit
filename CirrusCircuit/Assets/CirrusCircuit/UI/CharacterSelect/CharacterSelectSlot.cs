@@ -139,6 +139,18 @@ namespace Cirrus.Circuit.UI
 
         public virtual void Awake()
         {
+
+        }
+       
+
+        public virtual void Start()
+        {            
+            if (_imageTemplate == null) DebugUtils.Assert(false, "Portrait template is null");
+            else _imageTemplate.gameObject.SetActive(true);
+            _portraits = new List<RawImage>();
+
+            // TODO do not load all character preview at once
+            // Only when player enter
             if (!CharacterRosterPreview
                 .Instance
                 .GetCharacterPreview(
@@ -151,13 +163,6 @@ namespace Cirrus.Circuit.UI
 
                 AddCharacterPortraits();
             }
-        }
-
-        public virtual void Start()
-        {            
-            if (_imageTemplate == null) DebugUtils.Assert(false, "Portrait template is null");
-            else _imageTemplate.gameObject.SetActive(true);
-            _portraits = new List<RawImage>();
 
         }
 
