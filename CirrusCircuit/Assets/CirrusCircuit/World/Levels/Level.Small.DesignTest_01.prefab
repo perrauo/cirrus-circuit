@@ -49,11 +49,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 1681991749280965456}
-  _fallbackColors: []
   _transform: {fileID: 7100702795363722712}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 3, y: 2, z: 7}
@@ -62,9 +67,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &1681991749280965456
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -466,11 +470,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 563179693387014227}
-  _fallbackColors: []
   _transform: {fileID: 8218420561505380059}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 3, y: 2, z: 3}
@@ -479,9 +488,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &563179693387014227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -595,6 +603,117 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!1 &1406107254394710471
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1146206304527236181}
+  m_Layer: 0
+  m_Name: Row (6)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1146206304527236181
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1406107254394710471}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 12}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 3140461956876366513}
+  m_Father: {fileID: 7045167835388505489}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1645233182765644458
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3752857644243845200}
+  - component: {fileID: 7493693319622520609}
+  - component: {fileID: 7058882842275806693}
+  m_Layer: 0
+  m_Name: V1.Ground.Middle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3752857644243845200
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645233182765644458}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
+  m_LocalPosition: {x: -0.024208, y: 0.002, z: 0.019}
+  m_LocalScale: {x: 101, y: 101, z: 99.60035}
+  m_Children: []
+  m_Father: {fileID: 3140461956876366513}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &7493693319622520609
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645233182765644458}
+  m_Mesh: {fileID: 7998454507344954347, guid: fd51eb5d1f3a34cc5a61d8d1bc0ae388, type: 3}
+--- !u!23 &7058882842275806693
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645233182765644458}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: f66a4c97c4b8b4d5f83078214db6947c, type: 2}
+  - {fileID: 2100000, guid: 99b25bf67fce64d57826577288b0591d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!1 &1681741448210730458
 GameObject:
   m_ObjectHideFlags: 0
@@ -675,36 +794,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!1 &1823336889427204183
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4026029442472811533}
-  m_Layer: 0
-  m_Name: Row (7)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4026029442472811533
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1823336889427204183}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 14}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 7045167835388505489}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2258707745593649374
 GameObject:
   m_ObjectHideFlags: 0
@@ -846,6 +935,174 @@ Transform:
   m_Father: {fileID: 7045167835388505489}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2480018028824506354
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8054124099587146707}
+  - component: {fileID: 6380182063706708116}
+  - component: {fileID: 5004303444840716446}
+  m_Layer: 0
+  m_Name: V1.Ground.Corner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &8054124099587146707
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2480018028824506354}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
+  m_LocalPosition: {x: 0.038, y: -0.069, z: -0.04}
+  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_Children: []
+  m_Father: {fileID: 3140461956876366513}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &6380182063706708116
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2480018028824506354}
+  m_Mesh: {fileID: 2778733449087029614, guid: 8ddc553155b8548db8a6e6bfc36ee0f7, type: 3}
+--- !u!23 &5004303444840716446
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2480018028824506354}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: f66a4c97c4b8b4d5f83078214db6947c, type: 2}
+  - {fileID: 2100000, guid: 99b25bf67fce64d57826577288b0591d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!1 &2718801201302293451
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2148397839805358499}
+  - component: {fileID: 2372460250598306498}
+  - component: {fileID: 2904465077397346954}
+  m_Layer: 0
+  m_Name: Solid.Block (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2148397839805358499
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2718801201302293451}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 8315192130563011651}
+  - {fileID: 791678765364744637}
+  - {fileID: 7180277398255920615}
+  m_Father: {fileID: 3401073631792576060}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2372460250598306498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2718801201302293451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c828eaddb44da53459118299ab503ee1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _session: {fileID: 0}
+  _visual: {fileID: 2904465077397346954}
+  _transform: {fileID: 2148397839805358499}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
+  _visitor: {fileID: 0}
+  _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
+  _targetPosition: {x: 0, y: 0, z: 0}
+  _offset: {x: 0, y: 0, z: 0}
+  _gridPosition: {x: 3, y: 2, z: 7}
+  _targetScale: 1
+  _colorId: 0
+  _color: {r: 1, g: 0, b: 0, a: 1}
+  _nextColor: {r: 1, g: 0, b: 0, a: 1}
+  _nextColorIndex: 0
+  _state: 0
+  SelectedTemplate: {fileID: 0}
+--- !u!114 &2904465077397346954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2718801201302293451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c207cb311c8305440a7b4d8450d9c1d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Parent: {fileID: 0}
+  _meshRenderers: []
+  _spriteRenderers: []
+  _images: []
+  _texts: []
+  _outlines: []
+  _barcolors: []
 --- !u!1 &2808764413730667447
 GameObject:
   m_ObjectHideFlags: 0
@@ -926,7 +1183,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!1 &2930441194815010910
+--- !u!1 &3232287585029563875
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -934,28 +1191,86 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7571126087849324585}
+  - component: {fileID: 3140461956876366513}
+  - component: {fileID: 4445483346403890532}
+  - component: {fileID: 7424862888492807391}
   m_Layer: 0
-  m_Name: Row (6)
+  m_Name: Solid.Block (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7571126087849324585
+--- !u!4 &3140461956876366513
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2930441194815010910}
+  m_GameObject: {fileID: 3232287585029563875}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 12}
+  m_LocalPosition: {x: 2, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 7045167835388505489}
-  m_RootOrder: 6
+  m_Children:
+  - {fileID: 3657652082701460347}
+  - {fileID: 8054124099587146707}
+  - {fileID: 3752857644243845200}
+  m_Father: {fileID: 1146206304527236181}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4445483346403890532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3232287585029563875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c828eaddb44da53459118299ab503ee1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _session: {fileID: 0}
+  _visual: {fileID: 7424862888492807391}
+  _transform: {fileID: 3140461956876366513}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
+  _visitor: {fileID: 0}
+  _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
+  _targetPosition: {x: 0, y: 0, z: 0}
+  _offset: {x: 0, y: 0, z: 0}
+  _gridPosition: {x: 3, y: 2, z: 7}
+  _targetScale: 1
+  _colorId: 0
+  _color: {r: 1, g: 0, b: 0, a: 1}
+  _nextColor: {r: 1, g: 0, b: 0, a: 1}
+  _nextColorIndex: 0
+  _state: 0
+  SelectedTemplate: {fileID: 0}
+--- !u!114 &7424862888492807391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3232287585029563875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c207cb311c8305440a7b4d8450d9c1d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Parent: {fileID: 0}
+  _meshRenderers: []
+  _spriteRenderers: []
+  _images: []
+  _texts: []
+  _outlines: []
+  _barcolors: []
 --- !u!1 &3320007896749104246
 GameObject:
   m_ObjectHideFlags: 0
@@ -1146,6 +1461,85 @@ Transform:
   m_Father: {fileID: 2667521896390771305}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3855868534285044496
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8315192130563011651}
+  - component: {fileID: 9085380190164301820}
+  - component: {fileID: 6654557006916332915}
+  m_Layer: 0
+  m_Name: default
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &8315192130563011651
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3855868534285044496}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2148397839805358499}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &9085380190164301820
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3855868534285044496}
+  m_Mesh: {fileID: 4300000, guid: d0797e58f26656546a914f4b3643af6c, type: 3}
+--- !u!23 &6654557006916332915
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3855868534285044496}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 025153c09f2f8a64f842611d16a6ebd2, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!1 &3895663417495966376
 GameObject:
   m_ObjectHideFlags: 0
@@ -1195,11 +1589,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 2307392013963192097}
-  _fallbackColors: []
   _transform: {fileID: 6185942338974114217}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 3, y: 2, z: 5}
@@ -1208,9 +1607,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &2307392013963192097
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1384,6 +1782,7 @@ MonoBehaviour:
   m_Material: {fileID: 2100000, guid: 91533f58a95361746bd590073c27a5ba, type: 2}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1555,6 +1954,7 @@ MonoBehaviour:
   m_Material: {fileID: 2100000, guid: 91533f58a95361746bd590073c27a5ba, type: 2}
   m_Color: {r: 0, g: 0, b: 0, a: 0.5019608}
   m_RaycastTarget: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1688,6 +2088,7 @@ MonoBehaviour:
   m_Material: {fileID: 2100000, guid: 91533f58a95361746bd590073c27a5ba, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1928,11 +2329,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 5783648950182494784}
-  _fallbackColors: []
   _transform: {fileID: 2710822914897265864}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 3, y: 2, z: 4}
@@ -1941,9 +2347,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &5783648950182494784
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2034,11 +2439,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 3901265924283645449}
-  _fallbackColors: []
   _transform: {fileID: 2667521896390771305}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 3, y: 3, z: 1}
@@ -2047,9 +2457,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 3
+  SelectedTemplate: {fileID: 0}
   _progressBar: {fileID: 4742211882545431958}
   _comboAmount: 0
   _textMultiplier: {fileID: 4741054936245984682}
@@ -2181,11 +2590,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 4581010711818987008}
-  _fallbackColors: []
   _transform: {fileID: 7322348820999513272}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 5, y: 1, z: 3}
@@ -2194,10 +2608,9 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
-  _connection: 0
+  SelectedTemplate: {fileID: 0}
+  _link: 0
 --- !u!114 &4581010711818987008
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2984,11 +3397,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758953788515691}
-  _fallbackColors: []
   _transform: {fileID: 6135758953788515692}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 6, y: 2, z: 9}
@@ -2997,9 +3415,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758953788515691
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3145,11 +3562,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758953798070563}
-  _fallbackColors: []
   _transform: {fileID: 6135758953798070564}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 3, y: 2, z: 2}
@@ -3158,9 +3580,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758953798070563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3482,11 +3903,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758953816404908}
-  _fallbackColors: []
   _transform: {fileID: 6135758953816404909}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 8, y: 2, z: 5}
@@ -3495,9 +3921,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758953816404908
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3645,11 +4070,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758953845085110}
-  _fallbackColors: []
   _transform: {fileID: 6135758953845085111}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 5, y: 2, z: 4}
@@ -3658,9 +4088,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758953845085110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4012,6 +4441,7 @@ MonoBehaviour:
   m_Material: {fileID: 2100000, guid: 91533f58a95361746bd590073c27a5ba, type: 2}
   m_Color: {r: 0, g: 0.70026994, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -4170,11 +4600,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758953919800939}
-  _fallbackColors: []
   _transform: {fileID: 6135758954517492758}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 10, y: 3, z: 3}
@@ -4183,9 +4618,8 @@ MonoBehaviour:
   _color: {r: 1, g: 1, b: 1, a: 1}
   _nextColor: {r: 1, g: 1, b: 1, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
   _isStaircase: 0
 --- !u!114 &6135758953919800939
 MonoBehaviour:
@@ -4254,11 +4688,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758953929128500}
-  _fallbackColors: []
   _transform: {fileID: 6135758953929128501}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 5, y: 2, z: 8}
@@ -4267,9 +4706,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758953929128500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4336,11 +4774,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758953943307944}
-  _fallbackColors: []
   _transform: {fileID: 6135758953943307945}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 10, y: 2, z: 5}
@@ -4349,9 +4792,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758953943307944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4419,11 +4861,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758953971810728}
-  _fallbackColors: []
   _transform: {fileID: 6135758953971810729}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 3, y: 2, z: 8}
@@ -4432,9 +4879,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758953971810728
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4753,11 +5199,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758953981322586}
-  _fallbackColors: []
   _transform: {fileID: 6135758953981322587}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 9, y: 2, z: 10}
@@ -4766,9 +5217,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758953981322586
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5075,11 +5525,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954009592427}
-  _fallbackColors: []
   _transform: {fileID: 6135758954009592428}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 8, y: 2, z: 3}
@@ -5088,9 +5543,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954009592427
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5282,6 +5736,7 @@ MonoBehaviour:
   m_Material: {fileID: 2100000, guid: 91533f58a95361746bd590073c27a5ba, type: 2}
   m_Color: {r: 0, g: 0, b: 0, a: 0.5019608}
   m_RaycastTarget: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -5502,11 +5957,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954027484362}
-  _fallbackColors: []
   _transform: {fileID: 6135758954027484363}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 9, y: 2, z: 5}
@@ -5515,9 +5975,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954027484362
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5983,11 +6442,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954065081827}
-  _fallbackColors: []
   _transform: {fileID: 6135758954065081828}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 4, y: 2, z: 8}
@@ -5996,9 +6460,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954065081827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6065,11 +6528,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954069129220}
-  _fallbackColors: []
   _transform: {fileID: 6135758954069129221}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 10, y: 2, z: 8}
@@ -6078,9 +6546,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954069129220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6388,11 +6855,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954113625806}
-  _fallbackColors: []
   _transform: {fileID: 6135758954113625807}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 4, y: 2, z: 7}
@@ -6401,9 +6873,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954113625806
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6740,11 +7211,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954147063565}
-  _fallbackColors: []
   _transform: {fileID: 6135758954147063566}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 10, y: 2, z: 6}
@@ -6753,9 +7229,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954147063565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7633,11 +8108,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954203327318}
-  _fallbackColors: []
   _transform: {fileID: 6135758954203327319}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 3, y: 2, z: 10}
@@ -7646,9 +8126,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954203327318
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7983,11 +8462,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954222872344}
-  _fallbackColors: []
   _transform: {fileID: 6135758954222872345}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 9, y: 3, z: 11}
@@ -7996,9 +8480,8 @@ MonoBehaviour:
   _color: {r: 0, g: 0.70026994, b: 1, a: 1}
   _nextColor: {r: 0, g: 0.70026994, b: 1, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 3
+  SelectedTemplate: {fileID: 0}
   _progressBar: {fileID: 6135758954155517673}
   _comboAmount: 0
   _textMultiplier: {fileID: 6135758954252579115}
@@ -8144,6 +8627,7 @@ MonoBehaviour:
   m_Material: {fileID: 2100000, guid: 91533f58a95361746bd590073c27a5ba, type: 2}
   m_Color: {r: 0, g: 0.70026994, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -8224,11 +8708,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954261174290}
-  _fallbackColors: []
   _transform: {fileID: 6135758954261174291}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 5, y: 2, z: 9}
@@ -8237,9 +8726,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954261174290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8386,11 +8874,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954284323217}
-  _fallbackColors: []
   _transform: {fileID: 6135758954284323218}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 5, y: 2, z: 2}
@@ -8399,9 +8892,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954284323217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8548,11 +9040,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954310401034}
-  _fallbackColors: []
   _transform: {fileID: 6135758954310401035}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 9, y: 4, z: 1}
@@ -8561,10 +9058,9 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
-  _connection: 0
+  SelectedTemplate: {fileID: 0}
+  _link: 0
 --- !u!114 &6135758954310401034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8875,11 +9371,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954342488158}
-  _fallbackColors: []
   _transform: {fileID: 6135758954342488159}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 7, y: 2, z: 7}
@@ -8888,9 +9389,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954342488158
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8958,11 +9458,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954346060219}
-  _fallbackColors: []
   _transform: {fileID: 6135758954346060220}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 4, y: 2, z: 10}
@@ -8971,9 +9476,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954346060219
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9041,11 +9545,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954350192147}
-  _fallbackColors: []
   _transform: {fileID: 6135758954350192148}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 5, y: 2, z: 10}
@@ -9054,9 +9563,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954350192147
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9361,11 +9869,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954404256438}
-  _fallbackColors: []
   _transform: {fileID: 6135758954404256439}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 10, y: 2, z: 4}
@@ -9374,9 +9887,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954404256438
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10003,11 +10515,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954468058047}
-  _fallbackColors: []
   _transform: {fileID: 6135758954468058032}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 8, y: 2, z: 6}
@@ -10016,9 +10533,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954468058047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10085,11 +10601,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954481592310}
-  _fallbackColors: []
   _transform: {fileID: 6135758954788119428}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 6, y: 3, z: 8}
@@ -10098,9 +10619,8 @@ MonoBehaviour:
   _color: {r: 1, g: 1, b: 1, a: 1}
   _nextColor: {r: 1, g: 1, b: 1, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
   _isStaircase: 0
 --- !u!114 &6135758954481592310
 MonoBehaviour:
@@ -10249,11 +10769,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954504957803}
-  _fallbackColors: []
   _transform: {fileID: 6135758954504957804}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 5, y: 2, z: 5}
@@ -10262,9 +10787,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954504957803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10332,11 +10856,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954510417515}
-  _fallbackColors: []
   _transform: {fileID: 6135758954510417516}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 10, y: 2, z: 10}
@@ -10345,9 +10874,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954510417515
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10524,11 +11052,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954539047002}
-  _fallbackColors: []
   _transform: {fileID: 6135758954539047003}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 3, y: 4, z: 11}
@@ -10537,10 +11070,9 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
-  _connection: 0
+  SelectedTemplate: {fileID: 0}
+  _link: 0
 --- !u!114 &6135758954539047002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10770,11 +11302,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954571353705}
-  _fallbackColors: []
   _transform: {fileID: 6135758954571353706}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 19, y: 4, z: 8}
@@ -10783,10 +11320,9 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
-  _connection: 0
+  SelectedTemplate: {fileID: 0}
+  _link: 0
 --- !u!114 &6135758954571353705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10858,11 +11394,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954602241002}
-  _fallbackColors: []
   _transform: {fileID: 6135758954602241003}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 2, y: 2, z: 10}
@@ -10871,9 +11412,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954602241002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10954,11 +11494,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954602855651}
-  _fallbackColors: []
   _transform: {fileID: 6135758954602855652}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 6, y: 4, z: 5}
@@ -10967,9 +11512,8 @@ MonoBehaviour:
   _color: {r: 0, g: 0.70026994, b: 1, a: 1}
   _nextColor: {r: 0, g: 0.70026994, b: 1, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
   GemType: 0
   _value: 1
   IsRequired: 0
@@ -11041,11 +11585,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954613128812}
-  _fallbackColors: []
   _transform: {fileID: 6135758954613128813}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 6, y: 2, z: 4}
@@ -11054,9 +11603,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954613128812
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11282,11 +11830,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954635837853}
-  _fallbackColors: []
   _transform: {fileID: 6135758954635837854}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 11, y: 4, z: 3}
@@ -11295,10 +11848,9 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
-  _connection: 0
+  SelectedTemplate: {fileID: 0}
+  _link: 0
 --- !u!114 &6135758954635837853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11561,11 +12113,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954653925226}
-  _fallbackColors: []
   _transform: {fileID: 6135758954653925227}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 5, y: 2, z: 6}
@@ -11574,9 +12131,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954653925226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11657,11 +12213,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954656946777}
-  _fallbackColors: []
   _transform: {fileID: 6135758954656946778}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 9, y: 3, z: 3}
@@ -11670,9 +12231,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
   GemType: 0
   _value: 1
   IsRequired: 1
@@ -12028,11 +12588,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954679656966}
-  _fallbackColors: []
   _transform: {fileID: 6135758954679656967}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 7, y: 2, z: 6}
@@ -12041,9 +12606,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954679656966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12350,11 +12914,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954713758931}
-  _fallbackColors: []
   _transform: {fileID: 6135758954713758932}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 9, y: 2, z: 2}
@@ -12363,9 +12932,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954713758931
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12592,11 +13160,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954728526684}
-  _fallbackColors: []
   _transform: {fileID: 6135758954728526685}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 5, y: 3, z: 5}
@@ -12605,9 +13178,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954728526684
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12993,11 +13565,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954778412108}
-  _fallbackColors: []
   _transform: {fileID: 6135758954778412109}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 4, y: 2, z: 6}
@@ -13006,9 +13583,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954778412108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13185,11 +13761,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954789183000}
-  _fallbackColors: []
   _transform: {fileID: 6135758954789183001}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 10, y: 2, z: 9}
@@ -13198,9 +13779,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954789183000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13267,11 +13847,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954793516237}
-  _fallbackColors: []
   _transform: {fileID: 6135758954793516238}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 10, y: 2, z: 7}
@@ -13280,9 +13865,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954793516237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13350,11 +13934,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954802880000}
-  _fallbackColors: []
   _transform: {fileID: 6135758954802880001}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 5, y: 2, z: 3}
@@ -13363,9 +13952,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954802880000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13464,11 +14052,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954819137015}
-  _fallbackColors: []
   _transform: {fileID: 6135758954819136904}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 7, y: 2, z: 8}
@@ -13477,9 +14070,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954819137015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14057,11 +14649,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954875485439}
-  _fallbackColors: []
   _transform: {fileID: 6135758954875485424}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 6, y: 2, z: 3}
@@ -14070,9 +14667,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954875485439
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14553,11 +15149,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954902262977}
-  _fallbackColors: []
   _transform: {fileID: 6135758954902262978}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 7, y: 3, z: 7}
@@ -14566,9 +15167,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954902262977
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14716,11 +15316,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954919832343}
-  _fallbackColors: []
   _transform: {fileID: 6135758954919832360}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 4, y: 2, z: 5}
@@ -14729,9 +15334,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954919832343
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14958,11 +15562,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954964225804}
-  _fallbackColors: []
   _transform: {fileID: 6135758954964225805}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 4, y: 2, z: 4}
@@ -14971,9 +15580,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954964225804
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15166,11 +15774,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954980073773}
-  _fallbackColors: []
   _transform: {fileID: 6135758954980073774}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 6, y: 4, z: 6}
@@ -15179,9 +15792,8 @@ MonoBehaviour:
   _color: {r: 1, g: 1, b: 1, a: 1}
   _nextColor: {r: 1, g: 1, b: 1, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
   GemType: 0
   _value: 1
   IsRequired: 0
@@ -15253,11 +15865,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954985151495}
-  _fallbackColors: []
   _transform: {fileID: 6135758954985151512}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 7, y: 2, z: 3}
@@ -15266,9 +15883,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954985151495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15415,11 +16031,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758954989174134}
-  _fallbackColors: []
   _transform: {fileID: 6135758954989174135}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 8, y: 2, z: 2}
@@ -15428,9 +16049,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758954989174134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15498,11 +16118,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955005907403}
-  _fallbackColors: []
   _transform: {fileID: 6135758955005907404}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 6, y: 2, z: 8}
@@ -15511,9 +16136,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955005907403
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15595,6 +16219,7 @@ MonoBehaviour:
   m_Material: {fileID: 2100000, guid: 91533f58a95361746bd590073c27a5ba, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -16280,11 +16905,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955073733697}
-  _fallbackColors: []
   _transform: {fileID: 6135758955073733698}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 2, y: 2, z: 3}
@@ -16293,9 +16923,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955073733697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16363,11 +16992,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955074942704}
-  _fallbackColors: []
   _transform: {fileID: 6135758955074942705}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 6, y: 2, z: 10}
@@ -16376,9 +17010,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955074942704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16683,11 +17316,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955098617174}
-  _fallbackColors: []
   _transform: {fileID: 6135758954667006374}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 6, y: 3, z: 4}
@@ -16696,9 +17334,8 @@ MonoBehaviour:
   _color: {r: 1, g: 1, b: 1, a: 1}
   _nextColor: {r: 1, g: 1, b: 1, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
   _isStaircase: 0
 --- !u!114 &6135758955098617174
 MonoBehaviour:
@@ -16767,11 +17404,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955108960485}
-  _fallbackColors: []
   _transform: {fileID: 6135758955108960486}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 9, y: 2, z: 4}
@@ -16780,9 +17422,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955108960485
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16850,11 +17491,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955132382766}
-  _fallbackColors: []
   _transform: {fileID: 6135758955132382767}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 8, y: 2, z: 10}
@@ -16863,9 +17509,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955132382766
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17012,11 +17657,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955143273117}
-  _fallbackColors: []
   _transform: {fileID: 6135758955143273118}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 4, y: 2, z: 3}
@@ -17025,9 +17675,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955143273117
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17493,11 +18142,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955217298608}
-  _fallbackColors: []
   _transform: {fileID: 6135758955217298609}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 8, y: 2, z: 4}
@@ -17506,9 +18160,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955217298608
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17735,11 +18388,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955240761838}
-  _fallbackColors: []
   _transform: {fileID: 6135758955240761839}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 8, y: 2, z: 7}
@@ -17748,9 +18406,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955240761838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17818,11 +18475,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955243609132}
-  _fallbackColors: []
   _transform: {fileID: 6135758955243609133}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 7, y: 2, z: 10}
@@ -17831,9 +18493,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955243609132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17901,11 +18562,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955246860229}
-  _fallbackColors: []
   _transform: {fileID: 6135758955246860230}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 9, y: 2, z: 8}
@@ -17914,9 +18580,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955246860229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17984,11 +18649,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955265849805}
-  _fallbackColors: []
   _transform: {fileID: 6135758955265849806}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 7, y: 2, z: 5}
@@ -17997,9 +18667,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955265849805
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18146,11 +18815,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955282716306}
-  _fallbackColors: []
   _transform: {fileID: 6135758955282716307}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 2, y: 2, z: 6}
@@ -18159,9 +18833,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955282716306
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18229,11 +18902,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955288215914}
-  _fallbackColors: []
   _transform: {fileID: 6135758955288215915}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 2, y: 2, z: 2}
@@ -18242,9 +18920,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955288215914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18470,11 +19147,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955312285525}
-  _fallbackColors: []
   _transform: {fileID: 6135758955312285526}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 6, y: 2, z: 2}
@@ -18483,9 +19165,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955312285525
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18711,11 +19392,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955342071712}
-  _fallbackColors: []
   _transform: {fileID: 6135758955342071713}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 10, y: 2, z: 3}
@@ -18724,9 +19410,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955342071712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18793,11 +19478,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955350804469}
-  _fallbackColors: []
   _transform: {fileID: 6135758955350804470}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 2, y: 2, z: 7}
@@ -18806,9 +19496,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955350804469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19115,11 +19804,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955381821908}
-  _fallbackColors: []
   _transform: {fileID: 6135758955381821909}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 7, y: 2, z: 9}
@@ -19128,9 +19822,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955381821908
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19278,11 +19971,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955394961076}
-  _fallbackColors: []
   _transform: {fileID: 6135758955394961077}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 6, y: 2, z: 5}
@@ -19291,9 +19989,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955394961076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19441,11 +20138,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955398446843}
-  _fallbackColors: []
   _transform: {fileID: 6135758955398446844}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 8, y: 2, z: 9}
@@ -19454,9 +20156,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955398446843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19856,11 +20557,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955435038501}
-  _fallbackColors: []
   _transform: {fileID: 6135758955435038502}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 8, y: 2, z: 8}
@@ -19869,9 +20575,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955435038501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19939,11 +20644,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955441677914}
-  _fallbackColors: []
   _transform: {fileID: 6135758955441677915}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 9, y: 2, z: 7}
@@ -19952,9 +20662,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955441677914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20115,11 +20824,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955471690812}
-  _fallbackColors: []
   _transform: {fileID: 6135758955471690813}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 6, y: 3, z: 5}
@@ -20128,9 +20842,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955471690812
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20357,11 +21070,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955495496046}
-  _fallbackColors: []
   _transform: {fileID: 6135758955495496047}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 5, y: 2, z: 7}
@@ -20370,9 +21088,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955495496046
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20598,11 +21315,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955509210183}
-  _fallbackColors: []
   _transform: {fileID: 6135758955509210200}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 10, y: 2, z: 2}
@@ -20611,9 +21333,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955509210183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20759,11 +21480,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955523515272}
-  _fallbackColors: []
   _transform: {fileID: 6135758955523515273}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 2, y: 2, z: 5}
@@ -20772,9 +21498,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955523515272
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20842,11 +21567,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955524276184}
-  _fallbackColors: []
   _transform: {fileID: 6135758955524276185}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 9, y: 2, z: 6}
@@ -20855,9 +21585,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955524276184
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21178,11 +21907,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955537870197}
-  _fallbackColors: []
   _transform: {fileID: 6135758955537870198}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 3, y: 3, z: 9}
@@ -21191,9 +21925,8 @@ MonoBehaviour:
   _color: {r: 0, g: 0.70026994, b: 1, a: 1}
   _nextColor: {r: 0, g: 0.70026994, b: 1, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
   GemType: 0
   _value: 1
   IsRequired: 1
@@ -21344,11 +22077,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955565413398}
-  _fallbackColors: []
   _transform: {fileID: 6135758955565413399}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 9, y: 2, z: 9}
@@ -21357,9 +22095,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955565413398
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21427,11 +22164,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955576841680}
-  _fallbackColors: []
   _transform: {fileID: 6135758955576841681}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 4, y: 2, z: 9}
@@ -21440,9 +22182,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955576841680
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21668,11 +22409,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955615636519}
-  _fallbackColors: []
   _transform: {fileID: 6135758955615636536}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 4, y: 2, z: 2}
@@ -21681,9 +22427,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955615636519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21750,11 +22495,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955622395825}
-  _fallbackColors: []
   _transform: {fileID: 6135758955622395826}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 7, y: 2, z: 2}
@@ -21763,9 +22513,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955622395825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21992,11 +22741,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955671512889}
-  _fallbackColors: []
   _transform: {fileID: 6135758954866811101}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 2, y: 3, z: 9}
@@ -22005,9 +22759,8 @@ MonoBehaviour:
   _color: {r: 1, g: 1, b: 1, a: 1}
   _nextColor: {r: 1, g: 1, b: 1, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
   _isStaircase: 0
 --- !u!114 &6135758955671512889
 MonoBehaviour:
@@ -22235,11 +22988,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955679982233}
-  _fallbackColors: []
   _transform: {fileID: 6135758955679982234}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 2, y: 2, z: 4}
@@ -22248,9 +23006,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955679982233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22398,11 +23155,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955691419138}
-  _fallbackColors: []
   _transform: {fileID: 6135758955691419139}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 6, y: 2, z: 7}
@@ -22411,9 +23173,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955691419138
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22734,11 +23495,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955702495557}
-  _fallbackColors: []
   _transform: {fileID: 6135758955702495558}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 2, y: 2, z: 9}
@@ -22747,9 +23513,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955702495557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23056,11 +23821,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955720711883}
-  _fallbackColors: []
   _transform: {fileID: 6135758955720711884}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 9, y: 2, z: 3}
@@ -23069,9 +23839,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955720711883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23139,11 +23908,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955721211296}
-  _fallbackColors: []
   _transform: {fileID: 6135758955721211297}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 7, y: 2, z: 4}
@@ -23152,9 +23926,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955721211296
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23302,11 +24075,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955736973379}
-  _fallbackColors: []
   _transform: {fileID: 6135758955736973380}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 3, y: 2, z: 9}
@@ -23315,9 +24093,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955736973379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23384,11 +24161,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955741006049}
-  _fallbackColors: []
   _transform: {fileID: 6135758955741006050}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 1, y: 4, z: 9}
@@ -23397,10 +24179,9 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
-  _connection: 0
+  SelectedTemplate: {fileID: 0}
+  _link: 0
 --- !u!114 &6135758955741006049
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23471,11 +24252,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955743876161}
-  _fallbackColors: []
   _transform: {fileID: 6135758955743876162}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 2, y: 2, z: 8}
@@ -23484,9 +24270,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955743876161
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23713,11 +24498,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955779461440}
-  _fallbackColors: []
   _transform: {fileID: 6135758955779461441}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 6, y: 3, z: 7}
@@ -23726,9 +24516,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955779461440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24035,11 +24824,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955793887341}
-  _fallbackColors: []
   _transform: {fileID: 6135758955793887342}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 7, y: 3, z: 6}
@@ -24048,9 +24842,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955793887341
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24198,11 +24991,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955833840031}
-  _fallbackColors: []
   _transform: {fileID: 6135758955833840016}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 5, y: 3, z: 6}
@@ -24211,9 +25009,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &6135758955833840031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24584,11 +25381,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 6135758955861629617}
-  _fallbackColors: []
   _transform: {fileID: 6135758955861629618}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 6, y: 4, z: 7}
@@ -24597,9 +25399,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
   GemType: 0
   _value: 1
   IsRequired: 0
@@ -24684,6 +25485,7 @@ MonoBehaviour:
   m_Material: {fileID: 2100000, guid: 91533f58a95361746bd590073c27a5ba, type: 2}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -24716,36 +25518,6 @@ MonoBehaviour:
   m_EffectColor: {r: 1, g: 1, b: 1, a: 1}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
---- !u!1 &6192451873706800293
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 9077889681956526087}
-  m_Layer: 0
-  m_Name: Row (9)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &9077889681956526087
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6192451873706800293}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 18}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 7045167835388505489}
-  m_RootOrder: 9
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6250040283917295318
 GameObject:
   m_ObjectHideFlags: 0
@@ -25123,36 +25895,6 @@ Transform:
   m_Father: {fileID: 7045167835388505489}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &6663139505207126974
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6039209059947972081}
-  m_Layer: 0
-  m_Name: Row (8)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6039209059947972081
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6663139505207126974}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 16}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 7045167835388505489}
-  m_RootOrder: 8
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7045167835388505502
 GameObject:
   m_ObjectHideFlags: 0
@@ -25186,10 +25928,8 @@ Transform:
   - {fileID: 6963493945556967785}
   - {fileID: 6738012154289821247}
   - {fileID: 3756821943261745447}
-  - {fileID: 7571126087849324585}
-  - {fileID: 4026029442472811533}
-  - {fileID: 6039209059947972081}
-  - {fileID: 9077889681956526087}
+  - {fileID: 1146206304527236181}
+  - {fileID: 3401073631792576060}
   m_Father: {fileID: 7045167836137276361}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -33340,7 +34080,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  _name: Small DesignTest01
+  _name: Small DesignTest_01
   DistanceLevelSelection: 35
   CameraSize: 10
   TargetPosition: {x: 0, y: 0, z: 0}
@@ -33507,11 +34247,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 8078299216317020979}
-  _fallbackColors: []
   _transform: {fileID: 416164401903893947}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 6, y: 2, z: 6}
@@ -33520,9 +34265,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &8078299216317020979
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33801,6 +34545,37 @@ Transform:
   m_Father: {fileID: 7045167835388505489}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7705758301889839942
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3401073631792576060}
+  m_Layer: 0
+  m_Name: Row (7)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3401073631792576060
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7705758301889839942}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 14}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 2148397839805358499}
+  m_Father: {fileID: 7045167835388505489}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7716299224177378861
 GameObject:
   m_ObjectHideFlags: 0
@@ -33869,11 +34644,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 7155333583377076140}
-  _fallbackColors: []
   _transform: {fileID: 638668605138548012}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 10, y: 3, z: 2}
@@ -33882,9 +34662,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
   _camera: {fileID: 0}
 --- !u!1 &7980160727716689871
 GameObject:
@@ -33935,11 +34714,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 8694924850715607622}
-  _fallbackColors: []
   _transform: {fileID: 970513703015171278}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 3, y: 2, z: 6}
@@ -33948,9 +34732,8 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &8694924850715607622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33970,6 +34753,85 @@ MonoBehaviour:
   _texts: []
   _outlines: []
   _barcolors: []
+--- !u!1 &8008619938354239314
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3657652082701460347}
+  - component: {fileID: 6963010177378419228}
+  - component: {fileID: 8669259931297360176}
+  m_Layer: 0
+  m_Name: default
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &3657652082701460347
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8008619938354239314}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3140461956876366513}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &6963010177378419228
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8008619938354239314}
+  m_Mesh: {fileID: 4300000, guid: d0797e58f26656546a914f4b3643af6c, type: 3}
+--- !u!23 &8669259931297360176
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8008619938354239314}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 025153c09f2f8a64f842611d16a6ebd2, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!1 &8172285905195178404
 GameObject:
   m_ObjectHideFlags: 0
@@ -34017,6 +34879,166 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8172285905195178404}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: f66a4c97c4b8b4d5f83078214db6947c, type: 2}
+  - {fileID: 2100000, guid: 99b25bf67fce64d57826577288b0591d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!1 &8196504968840439451
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7180277398255920615}
+  - component: {fileID: 3481597678807218059}
+  - component: {fileID: 5228671157467302940}
+  m_Layer: 0
+  m_Name: V1.Ground.Middle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7180277398255920615
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8196504968840439451}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
+  m_LocalPosition: {x: -0.024208, y: 0.002, z: 0.019}
+  m_LocalScale: {x: 101, y: 101, z: 99.60035}
+  m_Children: []
+  m_Father: {fileID: 2148397839805358499}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &3481597678807218059
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8196504968840439451}
+  m_Mesh: {fileID: 7998454507344954347, guid: fd51eb5d1f3a34cc5a61d8d1bc0ae388, type: 3}
+--- !u!23 &5228671157467302940
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8196504968840439451}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: f66a4c97c4b8b4d5f83078214db6947c, type: 2}
+  - {fileID: 2100000, guid: 99b25bf67fce64d57826577288b0591d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!1 &8509934562369222541
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 791678765364744637}
+  - component: {fileID: 4399893233615744486}
+  - component: {fileID: 8755038429211629412}
+  m_Layer: 0
+  m_Name: V1.Ground.Corner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &791678765364744637
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8509934562369222541}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
+  m_LocalPosition: {x: 0.038, y: -0.069, z: -0.04}
+  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_Children: []
+  m_Father: {fileID: 2148397839805358499}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &4399893233615744486
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8509934562369222541}
+  m_Mesh: {fileID: 2778733449087029614, guid: 8ddc553155b8548db8a6e6bfc36ee0f7, type: 3}
+--- !u!23 &8755038429211629412
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8509934562369222541}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -34269,11 +35291,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _session: {fileID: 0}
   _visual: {fileID: 3835297640839159451}
-  _fallbackColors: []
   _transform: {fileID: 5606692823176646125}
-  _destination: {fileID: 0}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
   _visitor: {fileID: 0}
   _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
   _gridPosition: {x: 6, y: 1, z: 3}
@@ -34282,10 +35309,9 @@ MonoBehaviour:
   _color: {r: 1, g: 0, b: 0, a: 1}
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
-  _level: {fileID: 7045167836137276360}
-  _levelSession: {fileID: 0}
   _state: 0
-  _connection: 0
+  SelectedTemplate: {fileID: 0}
+  _link: 0
 --- !u!114 &3835297640839159451
 MonoBehaviour:
   m_ObjectHideFlags: 0
