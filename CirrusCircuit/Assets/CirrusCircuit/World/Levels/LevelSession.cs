@@ -252,7 +252,7 @@ namespace Cirrus.Circuit.World
 
         public override void Destroy()
         {
-            _randomDropRainTimer.OnTimeLimitHandler -= Cmd_OnRainTimeout;
+            if(_randomDropRainTimer != null) _randomDropRainTimer.OnTimeLimitHandler -= Cmd_OnRainTimeout;
             Game.Instance.OnRoundInitHandler -= OnRoundInit;
 
             foreach (var obj in _objects)
