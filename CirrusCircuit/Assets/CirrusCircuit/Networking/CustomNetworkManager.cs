@@ -92,8 +92,15 @@ namespace Cirrus.Circuit.Networking
 
         public override void OnClientConnect(NetworkConnection conn)
         {
-            base.OnClientConnect(conn);
+            if (_handler == null)
+            {
+                _handler = new ClientHandler(this);
+                Game.Instance.JoinSession();
+            }
+
+            base.OnClientConnect(conn);            
             _handler.OnClientConnect(conn);
+
         }
 
         public override void OnClientDisconnect(NetworkConnection conn)
@@ -167,8 +174,7 @@ namespace Cirrus.Circuit.Networking
         {
             _handler = null;
             if (NetworkUtils.ParseAddress(hostAddress, out IPAddress adrs, out ushort port))
-            {
-                _handler = new ClientHandler(this);
+            {                
                 Transport.port = port;
                 _isStarted = true;
                 StartClient(NetworkUtils.ToUri(adrs, TelepathyTransport.Scheme));

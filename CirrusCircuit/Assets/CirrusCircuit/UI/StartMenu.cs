@@ -71,8 +71,8 @@ namespace Cirrus.Circuit.UI
             if (_joinInput == null) return;
             if (string.IsNullOrEmpty(_joinInput.text)) return;
 
-            if (CustomNetworkManager.Instance.StartClient(_joinInput.text)) Game.Instance.JoinSession();
-            else Debug.Log("Unable to join");
+            CustomNetworkManager.Instance.StartClient(_joinInput.text);
+
         }
         
         public void OnExitClick()
