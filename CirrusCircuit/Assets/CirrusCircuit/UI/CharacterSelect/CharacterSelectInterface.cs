@@ -136,7 +136,9 @@ namespace Cirrus.Circuit.UI
                         .CharacterSelectReadyCount == 1 ||
                         GameSession
                         .Instance
-                        .CharacterSelectReadyCount != GameSession.Instance.CharacterSelectOpenCount)
+                        .CharacterSelectReadyCount != GameSession
+                        .Instance
+                        .CharacterSelectOpenCount)
                     {
                         return false;
                     }

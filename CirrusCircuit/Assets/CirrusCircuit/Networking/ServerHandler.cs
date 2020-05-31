@@ -82,7 +82,10 @@ namespace Cirrus.Circuit.Networking
             leavingPlayer.gameObject.Destroy();
 
             GameSession.Instance.PlayerCount--;
-            GameSession.Instance.CharacterSelectOpenCount--;
+            GameSession.Instance.CharacterSelectOpenCount =
+                GameSession.Instance.CharacterSelectOpenCount == 0 ?
+                0 :
+                GameSession.Instance.CharacterSelectOpenCount - 1;
 
             return true;
         }

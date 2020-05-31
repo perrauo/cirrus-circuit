@@ -191,7 +191,6 @@ namespace Cirrus.Circuit.UI
 
         public void SetAuthority(NetworkConnection conn, int serverPlayerId)
         {
-            Cmd_SetState(CharacterSelectSlotState.Selecting);
             netIdentity.AssignClientAuthority(conn);
         }
 
@@ -277,7 +276,10 @@ namespace Cirrus.Circuit.UI
                         }
                         else if (_state == CharacterSelectSlotState.Ready)
                         {
-                            GameSession.Instance.CharacterSelectReadyCount--;
+                             GameSession.Instance.CharacterSelectReadyCount =
+                               GameSession.Instance.CharacterSelectReadyCount == 0 ?
+                               0 :
+                               GameSession.Instance.CharacterSelectReadyCount - 1;
                         }
 
                         if (
