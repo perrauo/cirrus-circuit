@@ -86,16 +86,7 @@ namespace Cirrus.Circuit.UI
 
         public void SetAuthority(Mirror.NetworkConnection conn, int serverPlayerId)
         {
-            CharacterSelectSlot playerSlot = null;
-            foreach (var slot in _slots)
-            {
-                if (slot == null) continue;
-                if (slot._index >= 0) continue;
-
-                playerSlot = slot;
-                break;
-            }
-
+            CharacterSelectSlot playerSlot = _slots[serverPlayerId];
             if (playerSlot != null)
             {
                 playerSlot.SetAuthority(conn, serverPlayerId);

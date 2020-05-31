@@ -139,7 +139,7 @@ namespace Cirrus.Circuit.UI
 
         public virtual void Awake()
         {
-            _index = -1;
+
         }
 
         public virtual void Start()

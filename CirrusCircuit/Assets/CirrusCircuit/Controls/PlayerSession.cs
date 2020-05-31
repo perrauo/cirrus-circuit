@@ -113,14 +113,15 @@ namespace Cirrus.Circuit.Controls
             GameSession.Instance.LocalPlayers.Add(PlayerManager.Instance.LocalPlayers[_localId]);
             PlayerManager.Instance.LocalPlayers[_localId]._session = this;
 
-            CharacterSelectSlot playerSlot = null;
-            foreach (var slot in CharacterSelectInterface.Instance._slots)
-            {
-                if (slot == null) continue;
-                if (slot._index == _serverId) playerSlot = slot;
-            }
+            PlayerManager
+                .Instance
+                .LocalPlayers[_localId]
+                ._characterSlot = 
+            CharacterSelectInterface
+                .Instance
+                ._slots[_serverId];
 
-            PlayerManager.Instance.LocalPlayers[_localId]._characterSlot = playerSlot;
+
         }       
     }
 }

@@ -71,17 +71,13 @@ namespace Cirrus.Circuit.UI
             _character.Transform.rotation =
                 Quaternion.LookRotation(
                     Vector3.forward,
-                    Vector3.up);
-
-                      
+                    Vector3.up);                      
             _character.FSM_SetState(
                 World.Objects
                 .ObjectState
                 .CharacterSelect);
 
-
             UpdateCamera();
-
         }
 
 
