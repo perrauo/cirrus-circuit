@@ -598,25 +598,6 @@ namespace Cirrus.Circuit.World.Objects
 
         #endregion
 
-        #region Idle
-
-        public virtual void Cmd_Idle()
-        {
-
-            _session.Cmd_Idle();
-        }
-
-
-        // TODO play some anim
-        public virtual void Idle()
-        {
-            FSM_SetState(ObjectState.Idle, null);
-        }
-
-
-        #endregion
-
-
 
         #region Land
 
@@ -658,7 +639,7 @@ namespace Cirrus.Circuit.World.Objects
                     out BaseObject obj))
                 {
                     if (_state == ObjectState.Falling) Cmd_Land();
-                    else Cmd_Idle();
+                    else Cmd_FSM_SetState(ObjectState.Idle);
                 }
                 else Cmd_Fall();
             }
@@ -677,7 +658,7 @@ namespace Cirrus.Circuit.World.Objects
             {
                 if (_state == ObjectState.Falling) Cmd_Land();
 
-                else Cmd_Idle();
+                else Cmd_FSM_SetState(ObjectState.Idle);
             }
         }
         public virtual void Cmd_Fall()
@@ -877,10 +858,10 @@ namespace Cirrus.Circuit.World.Objects
                                 _gridPosition + Vector3Int.down,
                                 out BaseObject obj))
                             {
-                                if (_state == ObjectState.Falling) Cmd_Land();
-                                else Cmd_Idle();
+                                if (_state == ObjectState.Falling) Cmd_FSM_SetState(ObjectState.Falling);
+                                else Cmd_FSM_SetState(ObjectState.Idle);
                             }
-                            else Cmd_Fall();
+                            else Cmd_FSM_SetState(ObjectState.Falling);
                         }
                         // If arrived on a slope
                         else if (
@@ -896,7 +877,7 @@ namespace Cirrus.Circuit.World.Objects
                             out BaseObject _))
                         {                            
                             if (_state == ObjectState.Falling) Cmd_Land();
-                            else Cmd_Idle();                            
+                            else Cmd_FSM_SetState(ObjectState.Idle);                            
                         }
                     }
 

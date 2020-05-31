@@ -150,7 +150,7 @@ namespace Cirrus.Circuit.World.Objects
         {
             _mutex.WaitOne();
 
-            _object.Idle();
+            _object.Cmd_FSM_SetState(ObjectState.Idle);
 
             _mutex.ReleaseMutex();
         }

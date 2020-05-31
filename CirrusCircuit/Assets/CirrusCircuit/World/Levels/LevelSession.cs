@@ -193,7 +193,7 @@ namespace Cirrus.Circuit.World
             {
                 if (obj == null) continue;
 
-                obj.Cmd_Idle();
+                obj.Cmd_FSM_SetState(ObjectState.Idle);
             }
 
             if (CustomNetworkManager.IsServer)
@@ -726,10 +726,13 @@ namespace Cirrus.Circuit.World
         {
             if (sessionObj.TryGetComponent(out ObjectSession session))
             {
-                Spawn(
-                    session,
-                    ObjectLibrary.Instance.Get(spawnId),
-                    pos);
+                if (ObjectLibrary.Instance.Get(spawnId, out Spawnable spawnable))
+                {
+                    Spawn(
+                        session,
+                        spawnable,
+                        pos);
+                }
             }
         }
 
@@ -747,7 +750,7 @@ namespace Cirrus.Circuit.World
                 session._object = obj;                
                 obj._session = session;                
                 (obj.Transform.position, obj._gridPosition) = RegisterObject(obj);
-                obj.Cmd_Idle();
+                obj.Cmd_FSM_SetState(ObjectState.Idle);
             }
         }
 
@@ -777,18 +780,10 @@ namespace Cirrus.Circuit.World
         [ClientRpc]
         public void Rpc_OnRainTimeout(Vector3Int pos, int objectId)
         {
-            OnRainTimeout(
-                pos, 
-                objectId);
-        }
-
-        public void OnRainTimeout(Vector3Int pos, int objectId)
-        {
             Cmd_Spawn(
-                objectId, 
+                objectId,
                 pos);
         }
-
 
         #endregion
     }
