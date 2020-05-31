@@ -650,7 +650,7 @@ namespace Cirrus.Circuit.World.Objects
                     if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
                     else Cmd_FSM_SetState(ObjectState.Idle);
                 }
-                else Cmd_PerformAction(ObjectAction.Land);
+                else Cmd_FSM_SetState(ObjectState.Falling);
             }
             // If arrived on a slope
             else if (
