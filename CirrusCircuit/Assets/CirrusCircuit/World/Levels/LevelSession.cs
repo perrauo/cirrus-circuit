@@ -750,7 +750,14 @@ namespace Cirrus.Circuit.World
                 session._object = obj;                
                 obj._session = session;                
                 (obj.Transform.position, obj._gridPosition) = RegisterObject(obj);
-                obj.Cmd_FSM_SetState(ObjectState.Idle);
+
+                if (Get(
+                    obj._gridPosition + Vector3Int.down,
+                    out BaseObject _))
+                {
+                    obj.Cmd_FSM_SetState(ObjectState.Idle);
+                }
+                else obj.Cmd_Fall();
             }
         }
 
