@@ -513,6 +513,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  _readyColor: {r: 0, g: 0, b: 0, a: 1}
+  _joinColor: {r: 1, g: 1, b: 1, a: 1}
   _imageTemplate: {fileID: 7927132579822434436}
   _portraits: []
   _rect: {fileID: 7237438527225496072}
@@ -535,8 +537,9 @@ MonoBehaviour:
   _characterSpotlightRotateSpeed: 20
   _selectedIndex: 0
   _disabledArrowAlpha: 0.35
-  _state: 0
+  _state: 1
   _camera: {fileID: 0}
+  _serverPlayerId: -1
 --- !u!114 &7342072201252681412
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -646,7 +649,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -665,7 +668,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: New Text
+  m_Text: Join
 --- !u!1 &8441759748608348089
 GameObject:
   m_ObjectHideFlags: 0

@@ -112,7 +112,16 @@ namespace Cirrus.Circuit.Controls
             Debug.Log("Assigned server id with success: " + _serverId);
             GameSession.Instance.LocalPlayers.Add(PlayerManager.Instance.LocalPlayers[_localId]);
             PlayerManager.Instance.LocalPlayers[_localId]._session = this;
-            PlayerManager.Instance.LocalPlayers[_localId]._characterSlot = CharacterSelectInterface.Instance._slots[_serverId];
+
+            PlayerManager
+                .Instance
+                .LocalPlayers[_localId]
+                ._characterSlot = 
+            CharacterSelectInterface
+                .Instance
+                ._slots[_serverId];
+
+
         }       
     }
 }

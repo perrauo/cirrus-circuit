@@ -49,7 +49,10 @@ namespace Cirrus.Circuit.Controls
 
         public int LocalId => _localId;
 
-        public int ServerId => _session.ServerId;
+        public int ServerId => 
+            _session == null || _session.gameObject == null ? 
+                -1 : 
+            _session.ServerId;
 
         public Player(int localId, InputDevice device, InputControlScheme scheme)
         {

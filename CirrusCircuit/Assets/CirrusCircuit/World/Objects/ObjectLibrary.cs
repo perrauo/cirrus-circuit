@@ -14,9 +14,13 @@ namespace Cirrus.Circuit.World.Objects
 
         public Gem[] Gems;
 
-        public Spawnable Get(int id)
+        public bool Get(int id, out Spawnable spawnable)
         {
-            return Objects[id];
+            spawnable = null;
+            if (id < 0 || id >= Objects.Count) return false;
+
+            spawnable = Objects[id];
+            return true;
         }
 
         public bool TryGet(int id, out Spawnable spawnable)

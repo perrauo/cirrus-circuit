@@ -39,6 +39,8 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 {
                     if (stateInfo.loop) return;
                     if (stateInfo.normalizedTime <= stateInfo.length) return;
+
+
                 }
             }
             if(normalizedTime < 0) _animator.Play((int)animation);

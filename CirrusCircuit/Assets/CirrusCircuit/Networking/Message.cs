@@ -37,7 +37,7 @@ namespace Cirrus.Circuit.Networking
         public GameObject Session;
     }
 
-    public enum ClientPlayerMessageId
+    public enum ClientPlayerMessageType
     {   
         Join,
         Leave
@@ -45,7 +45,7 @@ namespace Cirrus.Circuit.Networking
 
     public class ClientPlayerMessage : MessageBase
     {
-        public ClientPlayerMessageId Id = ClientPlayerMessageId.Join;
+        public ClientPlayerMessageType Type = ClientPlayerMessageType.Join;
 
         public string Name;
 

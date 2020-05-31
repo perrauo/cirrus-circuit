@@ -81,17 +81,20 @@ namespace Cirrus.Circuit.Networking
 
         #region Character Select Slot
 
-        [Command]
-        public void Cmd_CharacterSelectSlot_SetPlayerServerId(GameObject obj, int id)
-        {
-            if (obj == null) return;
+        //[Command]
+        //public void Cmd_CharacterSelectSlot_SetPlayerServerId(GameObject obj, int id)
+        //{
+        //    if (obj == null) return;
 
-            //Debug.Log("RPC SELECT OUTER CMD");
-            if (obj.TryGetComponent(out CharacterSelectSlot slot)) slot._serverPlayerId = id;
-        }
+        //    //Debug.Log("RPC SELECT OUTER CMD");
+        //    if (obj.TryGetComponent(out CharacterSelectSlot slot)) 
+        //        slot._slotIndex = id;
+        //}
 
         [Command]
-        public void Cmd_CharacterSelectSlot_SetState(GameObject obj, CharacterSelectSlot.State target)
+        public void Cmd_CharacterSelectSlot_SetState(
+            GameObject obj, 
+            CharacterSelectSlotState target)
         {
             if (obj == null) return;
 
@@ -104,12 +107,15 @@ namespace Cirrus.Circuit.Networking
         }
 
         [Command]
-        public void Cmd_CharacterSelectSlot_Scroll(GameObject obj, bool scroll)
+        public void Cmd_CharacterSelectSlot_Scroll(
+            GameObject obj, 
+            bool scroll)
         {
             if (obj == null) return;
 
             if (obj.TryGetComponent(out CharacterSelectSlot slot)) slot.Rpc_Scroll(scroll);
         }
+
 
 
         #endregion
@@ -167,7 +173,6 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-
         [Command]
         public void Cmd_LevelSession_OnRainTimeout(GameObject obj, Vector3Int pos, int objectId)
         {
@@ -219,6 +224,16 @@ namespace Cirrus.Circuit.Networking
         #endregion
 
         #region Game Session
+
+        [Command]
+        public void Cmd_GameSession_RemovePlayer(GameObject game, GameObject player)
+        { 
+            if (game == null) return;
+            if (player == null) return;
+            
+            if(game.TryGetComponent(out GameSession sess)) sess._players.Remove(player);            
+        }
+
 
         [Command]
         public void Cmd_GameSession_SetPlayerCount(GameObject obj, int count)
@@ -323,6 +338,29 @@ namespace Cirrus.Circuit.Networking
         private Mutex Cmd_ObjectSession_Interact_mutex = new Mutex();
 
         [Command]
+        public void Cmd_ObjectSession_PerformAction(GameObject gameObject, ObjectAction action)
+        {
+            //AssertGameObjectNull(obj);
+            if (gameObject == null) return;
+
+            ObjectSession session;
+            if ((session = gameObject.GetComponent<ObjectSession>()) != null)
+            {
+                Cmd_ObjectSession_Interact_mutex.WaitOne();
+
+                // Server holds the truth
+                //if (session.IsFallAllowed())
+                {
+                    session.Rpc_PerformAction(action);
+                }
+
+                Cmd_ObjectSession_Interact_mutex.ReleaseMutex();
+            }
+        }
+
+
+
+        [Command]
         public void Cmd_ObjectSession_Interact(GameObject obj, GameObject sourceObj)
         {
             //AssertGameObjectNull(obj);
@@ -391,20 +429,6 @@ namespace Cirrus.Circuit.Networking
         }
 
         [Command]
-        public void Cmd_ObjectSession_Idle(GameObject obj)
-        {
-            //AssertGameObjectNull(obj);
-            if (obj == null) return;
-
-            if (obj.TryGetComponent(out ObjectSession session))
-            {
-                Cmd_ObjectSession_Move_mutex.WaitOne();
-                session.Rpc_Idle();
-                Cmd_ObjectSession_Move_mutex.ReleaseMutex();
-            }
-        }
-
-        [Command]
         public void Cmd_ObjectSession_Slide(GameObject obj)
         {
             //AssertGameObjectNull(obj);
@@ -451,23 +475,6 @@ namespace Cirrus.Circuit.Networking
                 Cmd_ObjectSession_Move_mutex.ReleaseMutex();
             }
         }
-
-
-        // Replace by set state
-        [Command]
-        public void Cmd_ObjectSession_Land(GameObject obj)
-        {
-            //AssertGameObjectNull(obj);
-            if (obj == null) return;
-
-            if (obj.TryGetComponent(out ObjectSession session))
-            {
-                Cmd_ObjectSession_Move_mutex.WaitOne();
-                session.Rpc_Land();
-                Cmd_ObjectSession_Move_mutex.ReleaseMutex();
-            }
-        }
-
 
         // TODO validate the move
         [Command]

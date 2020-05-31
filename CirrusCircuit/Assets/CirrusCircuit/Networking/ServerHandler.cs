@@ -21,7 +21,7 @@ namespace Cirrus.Circuit.Networking
         public ServerHandler(CustomNetworkManager net) : base(net)
         {
             NetworkServer.RegisterHandler<ClientConnectedMessage>(OnClientConnectedMessage);
-            NetworkServer.RegisterHandler<ClientPlayerMessage>(OnPlayerJoinMessage);
+            NetworkServer.RegisterHandler<ClientPlayerMessage>(OnClientPlayerMessage);
         }
 
         public override void Stop()
@@ -52,8 +52,48 @@ namespace Cirrus.Circuit.Networking
             return _connections.TryGetValue(connectionId, out client);
         }
 
+        public bool LeavePlayer(NetworkConnection conn, int serverPlayerId)
+        {
+            PlayerSession leavingPlayer = null;
+            foreach (var player in GameSession.Instance.Players)
+            {
+                if (player == null) continue;
+                if (player.ServerId == serverPlayerId) leavingPlayer = player;
+            }
 
-        public bool DoPlayerJoin(NetworkConnection conn, int localPlayerId)
+            if (leavingPlayer == null) return false;
+
+            if (!PlayerManager.Instance.GetPlayer(leavingPlayer.LocalId, out Player localPlayer)) return false;
+
+            if (!_players.TryGetValue(conn.connectionId, out List<int> playersPerConnection)) return false;
+
+            if (playersPerConnection == null) return false;
+
+            GameSession.Instance.Cmd_RemovePlayer(leavingPlayer);                
+                
+            playersPerConnection.Remove(leavingPlayer.LocalId);            
+
+            localPlayer._characterSlot.RemoveAuthority();
+
+            localPlayer._characterSlot = null;
+            localPlayer._session = null;
+
+            NetworkServer.Destroy(leavingPlayer.gameObject);
+            leavingPlayer.gameObject.Destroy();
+
+            GameSession.Instance.PlayerCount--;
+            GameSession.Instance.CharacterSelectOpenCount =
+                GameSession.Instance.CharacterSelectOpenCount == 0 ?
+                0 :
+                GameSession.Instance.CharacterSelectOpenCount - 1;
+
+            return true;
+        }
+
+
+        public bool JoinPlayer(
+            NetworkConnection conn, 
+            int localPlayerId)
         {
             if (GameSession.Instance.PlayerCount == PlayerManager.PlayerMax) return false;
 
@@ -74,20 +114,24 @@ namespace Cirrus.Circuit.Networking
                 conn.connectionId, 
                 out CommandClient clientConnection))
             {
-                PlayerSession session = NetworkingLibrary.Instance.PlayerSession.Create();
-                session._connectionId = conn.connectionId;
-                session._serverId = GameSession.Instance.PlayerCount++;
-                session._color = PlayerManager.Instance.GetColor(session._serverId);
-                session._name = PlayerManager.Instance.GetName(session._serverId);                        
-                session._localId = localPlayerId;
+                PlayerSession playerSession = NetworkingLibrary.Instance.PlayerSession.Create();
+                playerSession._connectionId = conn.connectionId;
+                playerSession._serverId = GameSession.Instance.PlayerCount++;
+                playerSession._color = PlayerManager.Instance.GetColor(playerSession._serverId);
+                playerSession._name = PlayerManager.Instance.GetName(playerSession._serverId);
+                playerSession._localId = localPlayerId;
                 playersPerConnection.Add(localPlayerId);
 
-                NetworkServer.Spawn(session.gameObject);                    
+                NetworkServer.Spawn(playerSession.gameObject);
+                playerSession.netIdentity.AssignClientAuthority(conn);       
+                GameSession.Instance._players.Add(playerSession.gameObject);
+                playerSession.netIdentity.AssignClientAuthority(conn);
 
-                session.netIdentity.AssignClientAuthority(conn);       
-
-                GameSession.Instance._players.Add(session.gameObject);
-                CharacterSelectInterface.Instance.SetAuthority(conn, session._serverId);
+                CharacterSelectInterface
+                    .Instance
+                    .SetAuthority(
+                        conn, 
+                        playerSession.ServerId);
 
                 return true;                    
             }
@@ -95,22 +139,37 @@ namespace Cirrus.Circuit.Networking
             return false;
         }
 
-        public override bool RequestPlayerJoin(int localPlayerId)
+        public override bool RequestJoinPlayer(int localPlayerId)
         {
             // Debug.Log("On network player created");
-            return DoPlayerJoin(NetworkServer.localConnection, localPlayerId);
+            return JoinPlayer(
+                NetworkServer.localConnection,
+                localPlayerId);
         }
 
         public override bool RequestPlayerLeave(int localPlayerId)
         {
-            return false;
-            //// Debug.Log("On network player created");
-            //return DoPlayerJoin(NetworkServer.localConnection, localPlayerId);
+            return LeavePlayer(
+                NetworkServer.localConnection,
+                localPlayerId);
         }
 
-        public void OnPlayerJoinMessage(NetworkConnection conn, ClientPlayerMessage message)
+        public void OnClientPlayerMessage(NetworkConnection conn, ClientPlayerMessage message)
         {
-            DoPlayerJoin(conn, message.LocalPlayerId);
+            switch (message.Type)
+            {
+                case ClientPlayerMessageType.Join:
+                        JoinPlayer(
+                            conn,
+                            message.LocalPlayerId);
+                    break;
+
+                case ClientPlayerMessageType.Leave:
+                    LeavePlayer(
+                        conn,
+                        message.LocalPlayerId);
+                    break;
+            }
         }
 
         public void OnClientConnectedMessage(NetworkConnection conn, ClientConnectedMessage message)

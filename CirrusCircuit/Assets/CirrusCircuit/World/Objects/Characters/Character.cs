@@ -249,19 +249,24 @@ namespace Cirrus.Circuit.World.Objects.Characters
             return false;
         }
 
-        public override void Land()
+        public override void PerformAction(ObjectAction action)
         {
-            base.Land();
-            Play(CharacterAnimation.Character_Landing);
-        }
+            base.PerformAction(action);
 
+            switch (action)
+            {
+                case ObjectAction.Land:
+                    Play(CharacterAnimation.Character_Falling);
+                    break;
+            }
+        }
 
         public override void FSM_Update()
         {
            base.FSM_Update();
         }
 
-        public void DoAction0()
+        public void HandleAction0()
         {
             //throw new NotImplementedException();
         }
@@ -281,7 +286,9 @@ namespace Cirrus.Circuit.World.Objects.Characters
             _animatorWrapper.Play(animation, normalizedTime, reset);
         }
 
-        public void Play(CharacterAnimation animation, bool reset = true)
+        public void Play(
+            CharacterAnimation animation, 
+            bool reset = true)
         {
             _animatorWrapper.Play(animation, reset);
         }

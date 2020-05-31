@@ -64,7 +64,7 @@ namespace Cirrus.Circuit
             InitRound,
             Round,
             Score,
-            WaitingNextRound,
+            //WaitingNextRound,
             Podium,
             FinalPodium
         }        
@@ -422,8 +422,7 @@ namespace Cirrus.Circuit
                         case State.Menu:
                         case State.Round:
                         case State.CharacterSelection:
-                        case State.InitRound:
-                        case State.WaitingNextRound:
+                        case State.InitRound:                        
                         case State.LevelSelection:
                         case State.Score:
                         case State.Podium:
@@ -442,8 +441,7 @@ namespace Cirrus.Circuit
                         case State.Menu:
                         case State.Round:
                         case State.CharacterSelection:
-                        case State.InitRound:
-                        case State.WaitingNextRound:
+                        case State.InitRound:                        
                         case State.LevelSelection:
                         case State.Score:
                         case State.Podium:
@@ -462,8 +460,7 @@ namespace Cirrus.Circuit
                         case State.Menu:
                         case State.Round:
                         case State.CharacterSelection:
-                        case State.InitRound:
-                        case State.WaitingNextRound:
+                        case State.InitRound:                        
                         case State.LevelSelection:
                         case State.Score:
                         case State.Podium:
@@ -481,8 +478,7 @@ namespace Cirrus.Circuit
                         case State.Menu:
                         case State.Round:
                         case State.CharacterSelection:
-                        case State.InitRound:
-                        case State.WaitingNextRound:
+                        case State.InitRound:                        
                         case State.LevelSelection:
                         case State.Score:
                         case State.Podium:
@@ -499,8 +495,7 @@ namespace Cirrus.Circuit
                     {
                         case State.Menu:
                         case State.CharacterSelection:
-                        case State.InitRound:
-                        case State.WaitingNextRound:
+                        case State.InitRound:                        
                         case State.LevelSelection:
                         case State.Score:
                         case State.Podium:
@@ -516,28 +511,9 @@ namespace Cirrus.Circuit
                     {
                         case State.Menu:
                         case State.CharacterSelection:
-                        case State.InitRound:
-                        case State.WaitingNextRound:
+                        case State.InitRound:                        
                         case State.LevelSelection:
                         case State.Score:
-                        case State.Podium:
-                        case State.FinalPodium:
-
-                            destination = transition;
-                            return true;
-                    }
-                    break;
-
-
-                case State.WaitingNextRound:
-                    switch (transition)
-                    {
-                        case State.Menu:
-                        case State.Round:
-                        case State.CharacterSelection:
-                        case State.InitRound:
-                        case State.LevelSelection:
-                        //case State.Round:
                         case State.Podium:
                         case State.FinalPodium:
 
@@ -550,8 +526,7 @@ namespace Cirrus.Circuit
                     switch (transition)
                     {
                         case State.CharacterSelection:
-                        case State.InitRound:
-                        case State.WaitingNextRound:
+                        case State.InitRound:                        
                         case State.LevelSelection:
                         case State.Round:
                         case State.Podium:
@@ -566,8 +541,7 @@ namespace Cirrus.Circuit
                     switch (transition)
                     {
                         case State.CharacterSelection:
-                        case State.InitRound:
-                        case State.WaitingNextRound:
+                        case State.InitRound:                      
                         case State.LevelSelection:
                         case State.Round:
                         case State.Podium:
@@ -710,17 +684,6 @@ namespace Cirrus.Circuit
 
                     return true;
 
-                case State.WaitingNextRound:
-                    //Lobby.Characters.Clear();
-                    //Lobby.Characters.AddRange(_selectedLevel.Characters);
-
-
-                    _state = target;
-
-                    //OnWaiting();
-                    return true;
-
-
                 default:
                     return false;
             }
@@ -788,10 +751,6 @@ namespace Cirrus.Circuit
 
                     break;
 
-                case State.WaitingNextRound:
-
-                    break;
-
                 case State.Round:
                     if (player._character != null) player._character?.Cmd_Move(axis);
 
@@ -814,35 +773,24 @@ namespace Cirrus.Circuit
 
                 case State.CharacterSelection:
 
-                    //if (_controllers.Contains(controller))
-                    //{
-                    //    _controllers.Remove(controller);
-                    //    OnControllerJoinHandler?.Invoke(controller);
-                    //}
-                    //else
+                    if (player._characterSlot != null)
                     {
                         player._characterSlot.HandleAction0();
+
+                        if (
+                            player._characterSlot.State == 
+                            CharacterSelectSlotState.Selecting)
+                        {
+                            CustomNetworkManager
+                              .Instance
+                              .RequestPlayerLeave(player.ServerId);
+                        }
                     }
 
                     break;
 
-                case State.WaitingNextRound:
-
-                    //if (LocalPlayers.Contains(player))
-                    //{
-                    //    UI.HUD.Instance.Leave(player);
-                    //    LocalPlayers.Remove(player);
-                    //}
-                    //else
-                    //{
-                    //    foreach (Player other in PlayerManager.Instance.LocalPlayers) if (other == null) continue;
-                    //    SetState(State.LevelSelection);
-                    //}
-
-                    break;
-
                 case State.Round:
-                    if (player._character) player._character?.DoAction0();
+                    if (player._character) player._character?.HandleAction0();
 
                     break;
 
@@ -867,13 +815,17 @@ namespace Cirrus.Circuit
 
                 case State.CharacterSelection:
 
-                    if (player._characterSlot != null) player._characterSlot.HandleAction1(player);
+                    if (player.ServerId < 0)
+                    {
+                        CustomNetworkManager
+                              .Instance
+                              .RequestJoinPlayer(player);
+                    }
+                    else if(player._characterSlot != null)
+                    {
+                        player._characterSlot.HandleAction1(player);                        
+                    }
 
-                    else CustomNetworkManager.Instance.RequestPlayerJoin(player);
-
-                    break;
-
-                case State.WaitingNextRound:
                     break;
 
                 case State.Round:

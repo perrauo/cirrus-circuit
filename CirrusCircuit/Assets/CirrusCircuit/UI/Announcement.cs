@@ -44,10 +44,7 @@ namespace Cirrus.Circuit.UI
                 _text.text = _message;
                 _timer.Start();
             }
-
         }
-
-
 
         private bool _enabled = false;
 

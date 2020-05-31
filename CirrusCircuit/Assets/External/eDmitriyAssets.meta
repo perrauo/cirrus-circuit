@@ -1,5 +1,13 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
+<<<<<<< HEAD:CirrusCircuit/Assets/External/eDmitriyAssets.meta
 guid: 4b40bb4f1ae7d0f49a9a448ad81ea228
+=======
+guid: c5247f80a34a7b94aa81ba0c80b40886
+>>>>>>> 29b0d80dc386044abd7d5457c4fe848295bdb11e:CirrusCircuit/Assets/CirrusCircuit/AI.meta
+=======
+guid: 4b40bb4f1ae7d0f49a9a448ad81ea228
+>>>>>>> 29b0d80dc386044abd7d5457c4fe848295bdb11e
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

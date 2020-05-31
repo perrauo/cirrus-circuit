@@ -10,13 +10,18 @@ namespace Cirrus.Circuit.World.Objects.Characters
         [SerializeField]
         public CharacterAsset[] Characters;
 
+
+#if UNITY_EDITOR
         public void SortId()
         {
             foreach (var chara in Characters)
             {
                 chara._id = Array.IndexOf(Instance.Characters, chara);
+                EditorUtility.SetDirty(chara);
+
             }
         }
+#endif
     }
 
 #if UNITY_EDITOR

@@ -2,20 +2,30 @@
 using System.Collections;
 using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.Networking;
+using UnityEditor;
 
 namespace Cirrus.Circuit.UI
 {
     public delegate void OnCharacterSelectReady(int numPlayers);
 
     public class CharacterSelectInterface : BaseSingleton<CharacterSelectInterface>
-    {        
+    {
+        public enum State
+        {
+            Disabled,
+            Select,
+            Ready,
+        }
+
+        private State _state;
+
         public OnCharacterSelectReady OnCharacterSelectReadyHandler;
 
         [SerializeField]
         [UnityEngine.Serialization.FormerlySerializedAs("slots")]        
         public CharacterSelectSlot[] _slots;
 
-        [SerializeField]        
+        [SerializeField]
         private UnityEngine.UI.Text _readyText;
 
 
@@ -32,12 +42,26 @@ namespace Cirrus.Circuit.UI
             }
         }
 
+        #region Unity Engine
 
         public override void OnValidate()
         {
+#if UNITY_EDITOR
+
             base.OnValidate();
 
-            if (_slots.Length == 0) _slots = GetComponentsInChildren<CharacterSelectSlot>();
+            if (_slots.Length == 0)
+            {
+                _slots = GetComponentsInChildren<CharacterSelectSlot>();
+
+                for (int i = 0; i < _slots.Length; i++)
+                {
+                    _slots[i]._index = i;
+                    EditorUtility.SetDirty(_slots[i]);
+                }
+            }
+#endif
+
         }
 
         public override void Awake()
@@ -49,27 +73,45 @@ namespace Cirrus.Circuit.UI
             OnCharacterSelectReadyHandler += Game.Instance.OnCharacterSelected;
         }
 
+        #endregion
+
+
+        #region Mirror        
+
+
+        public void OnClientStarted(bool enable)
+        {
+
+        }       
+
+        public void SetAuthority(Mirror.NetworkConnection conn, int serverPlayerId)
+        {
+            CharacterSelectSlot playerSlot = _slots[serverPlayerId];
+            if (playerSlot != null)
+            {
+                playerSlot.SetAuthority(conn, serverPlayerId);
+                playerSlot.Cmd_SetState(CharacterSelectSlotState.Selecting);
+            }
+        }
+
+        #endregion
+
         public void OnCharacterSelect(bool enable)
         {
             Enabled = enable;
         }
 
-        public void OnClientStarted(bool enable)
+        public void HandleAction1()
         {
 
         }
-        
 
-
-        public enum State
+        public void HandleAction0()
         {
-            Disabled,
-            Select,
-            Ready,
+
         }
 
-        private State _state;
-       
+
         public bool SetState(State target)
         {
             switch (target)
@@ -94,7 +136,9 @@ namespace Cirrus.Circuit.UI
                         .CharacterSelectReadyCount == 1 ||
                         GameSession
                         .Instance
-                        .CharacterSelectReadyCount != GameSession.Instance.CharacterSelectOpenCount)
+                        .CharacterSelectReadyCount != GameSession
+                        .Instance
+                        .CharacterSelectOpenCount)
                     {
                         return false;
                     }
@@ -110,28 +154,6 @@ namespace Cirrus.Circuit.UI
             }
 
             return false;
-        }
-
-
-        public void HandleAction1()
-        {
-
-        }
-
-        public void HandleAction0()
-        {
-
-        }
-
-        //public void OnLocalCharacterScroll(int playerId, bool scroll)
-        //{
-        //    _slots[playerId].CmdScroll(scroll);
-        //}
-
-
-        public void SetAuthority(Mirror.NetworkConnection conn, int serverPlayerId)
-        {
-            _slots[serverPlayerId].SetAuthority(conn, serverPlayerId);                    
         }
     }
 }
