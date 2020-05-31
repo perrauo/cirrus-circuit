@@ -23,7 +23,10 @@ namespace Cirrus.Circuit.World.Objects
         public bool _isStaircase = false;
         public bool IsStaircase => _isStaircase;
 
-        public override bool GetMoveResults(Move move, out IEnumerable<MoveResult> result)
+        public override bool GetMoveResults(
+            Move move, 
+            out IEnumerable<MoveResult> result,
+            bool isRecursiveCall = false)
         {
             result = null;
             return false;

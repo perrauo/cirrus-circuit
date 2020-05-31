@@ -56,7 +56,10 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Enter
 
-        public override bool GetMoveResults(Move move, out IEnumerable<MoveResult> result)
+        public override bool GetMoveResults(
+            Move move, 
+            out IEnumerable<MoveResult> result,
+            bool isRecursiveCall = false)
         {
             result = null;
             return false;
@@ -158,7 +161,7 @@ namespace Cirrus.Circuit.World.Objects
                               User = enterResult.Moved                              
                           },
                           out moveResults,
-                          recursive:true))
+                          isRecursiveCall:true))
                         {
                             return true;
                         }

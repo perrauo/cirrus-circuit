@@ -505,7 +505,7 @@ namespace Cirrus.Circuit.World.Objects
         public virtual bool GetMoveResults(
             Move move,
             out IEnumerable<MoveResult> results,
-            bool recursive=false)
+            bool isRecursiveCall=false)
         {
             results = null;
 
@@ -585,7 +585,7 @@ namespace Cirrus.Circuit.World.Objects
                         Step = move.Step.SetY(0)
                     },
                     out moveResults,
-                    recursive: true
+                    isRecursiveCall: true
                     );
             }
 

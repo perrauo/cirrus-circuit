@@ -419,7 +419,7 @@ namespace Cirrus.Circuit.Networking
                     move,
                     out IEnumerable<MoveResult> results))
                 {
-                    session.Rpc_Move(
+                    LevelSession.Instance.Rpc_ApplyMoveResults(
                         results.Select(
                             x => x.ToNetworkMoveResult()).ToArray());
                 }
@@ -453,7 +453,7 @@ namespace Cirrus.Circuit.Networking
                     move,
                     out IEnumerable<MoveResult> results))
                 {
-                    session.Rpc_Move(
+                    LevelSession.Instance.Rpc_ApplyMoveResults(
                         results.Select(
                             x => x.ToNetworkMoveResult()).ToArray());
                 }
@@ -479,7 +479,8 @@ namespace Cirrus.Circuit.Networking
                     netAction.ToMove(), 
                     out IEnumerable<MoveResult> res))
                 {
-                    session.Rpc_Move(res.Select(x => x == null ? null : x.ToNetworkMoveResult()).ToArray());
+                    LevelSession.Instance.Rpc_ApplyMoveResults(
+                        res.Select(x => x == null ? null : x.ToNetworkMoveResult()).ToArray());
                 }
 
                 Cmd_ObjectSession_Move_mutex.ReleaseMutex();

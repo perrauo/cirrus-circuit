@@ -21,7 +21,8 @@ namespace Cirrus.Circuit.World.Objects
 
         public override bool GetMoveResults(
             Move move, 
-            out IEnumerable<MoveResult> results)
+            out IEnumerable<MoveResult> results,
+            bool isRecursiveCall = false)
         {
             results = null;
             return false;

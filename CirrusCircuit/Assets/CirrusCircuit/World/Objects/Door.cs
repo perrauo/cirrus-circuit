@@ -94,7 +94,10 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
-        public override bool GetMoveResults(Move move, out IEnumerable<MoveResult> res)
+        public override bool GetMoveResults(
+            Move move, 
+            out IEnumerable<MoveResult> res,
+            bool isRecursiveCall=false)
         {
             res = null;
             return false;

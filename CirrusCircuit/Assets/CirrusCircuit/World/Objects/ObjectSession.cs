@@ -81,17 +81,6 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Move
 
-
-        [ClientRpc]
-        public void Rpc_Move(NetworkMoveResult[] results)
-        {
-            _mutex.WaitOne();
-
-            _object.Move(results.Select(x =>x.ToMoveResult()));
-
-            _mutex.ReleaseMutex();
-        }
-
         public void Cmd_Move(Move move)
         {
             CommandClient
