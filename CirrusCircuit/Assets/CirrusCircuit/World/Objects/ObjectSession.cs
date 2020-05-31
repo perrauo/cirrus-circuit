@@ -103,7 +103,7 @@ namespace Cirrus.Circuit.World.Objects
 
         #endregion
 
-        internal void Cmd_FSM_SetState(ObjectState state)
+        public void Cmd_FSM_SetState(ObjectState state)
         {
             CommandClient
                 .Instance
@@ -116,8 +116,7 @@ namespace Cirrus.Circuit.World.Objects
             _object.FSM_SetState(state);
         }
 
-
-        internal void Cmd_PerformAction(ObjectAction action)
+        public void Cmd_PerformAction(ObjectAction action)
         {
             CommandClient
                 .Instance
