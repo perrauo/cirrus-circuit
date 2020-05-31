@@ -537,7 +537,7 @@ MonoBehaviour:
   _characterSpotlightRotateSpeed: 20
   _selectedIndex: 0
   _disabledArrowAlpha: 0.35
-  _state: 0
+  _state: 1
   _camera: {fileID: 0}
   _serverPlayerId: -1
 --- !u!114 &7342072201252681412

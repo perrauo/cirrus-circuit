@@ -266,8 +266,6 @@ namespace Cirrus.Circuit.UI
 
                         if (_state == CharacterSelectSlotState.Closed)
                         {
-                            Cmd_Scroll(true);
-
                             GameSession.Instance.CharacterSelectOpenCount =
                                 GameSession.Instance.CharacterSelectOpenCount >= Controls.PlayerManager.PlayerMax ?
                                     Controls.PlayerManager.PlayerMax :
