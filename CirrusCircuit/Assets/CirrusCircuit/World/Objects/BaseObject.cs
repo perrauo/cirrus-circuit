@@ -29,6 +29,17 @@ namespace Cirrus.Circuit.World.Objects
         Climbing
     }
 
+    [Serializable]
+    public enum ObjectAction
+    {
+        Unknown,
+        Land,
+        Emote0,
+        Emote1,
+        Emote2
+    }
+
+    [Serializable]
     public enum ObjectType
     {
         None,
@@ -125,7 +136,7 @@ namespace Cirrus.Circuit.World.Objects
 
                 if (_visual != null) _visual.Color = _color;
             }
-        }
+        }       
 
         [SerializeField]
         protected Color _nextColor;
@@ -344,6 +355,20 @@ namespace Cirrus.Circuit.World.Objects
         public virtual void Cmd_Interact(BaseObject source)
         {
             _session.Cmd_Interact(source);
+        }
+
+        #endregion
+
+        #region Perform Action
+
+        public void Cmd_PerformAction(ObjectAction action)
+        {
+            _session.Cmd_PerformAction(action);
+        }
+
+        public virtual void PerformAction(ObjectAction state)
+        {
+            
         }
 
         #endregion
@@ -610,22 +635,6 @@ namespace Cirrus.Circuit.World.Objects
         #endregion
 
 
-
-        #region Land
-
-        public virtual void Land()
-        {
-            FSM_SetState(ObjectState.Idle, null);
-        }
-        public virtual void Cmd_Land()
-        {
-            _session.Cmd_Land();
-        }
-
-
-        #endregion
-
-
         #region Fall
 
         public virtual void OnClimbFallTimeout()
@@ -638,10 +647,10 @@ namespace Cirrus.Circuit.World.Objects
                     _gridPosition + Vector3Int.down,
                     out BaseObject obj))
                 {
-                    if (_state == ObjectState.Falling) Cmd_Land();
+                    if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
                     else Cmd_FSM_SetState(ObjectState.Idle);
                 }
-                else Cmd_Fall();
+                else Cmd_PerformAction(ObjectAction.Land);
             }
             // If arrived on a slope
             else if (
@@ -656,14 +665,10 @@ namespace Cirrus.Circuit.World.Objects
                 _gridPosition + Vector3Int.down,
                 out BaseObject _))
             {
-                if (_state == ObjectState.Falling) Cmd_Land();
+                if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
 
                 else Cmd_FSM_SetState(ObjectState.Idle);
             }
-        }
-        public virtual void Cmd_Fall()
-        {
-            _session.Cmd_Fall();
         }
 
         #endregion
@@ -680,9 +685,6 @@ namespace Cirrus.Circuit.World.Objects
         {
             //InitState(ObjectState.Disabled, null);
         }
-
-
-        // Common to all state or subset of states
 
         public void Cmd_FSM_SetState(ObjectState state)
         {
@@ -723,7 +725,7 @@ namespace Cirrus.Circuit.World.Objects
                             _previousGridPosition + Vector3Int.up, 
                             out above))
                         {
-                            above.Cmd_Fall();
+                            above.Cmd_FSM_SetState(ObjectState.Falling);
                         }
 
                         _state = target;
@@ -876,7 +878,7 @@ namespace Cirrus.Circuit.World.Objects
                             _gridPosition + Vector3Int.down,
                             out BaseObject _))
                         {                            
-                            if (_state == ObjectState.Falling) Cmd_Land();
+                            if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
                             else Cmd_FSM_SetState(ObjectState.Idle);                            
                         }
                     }

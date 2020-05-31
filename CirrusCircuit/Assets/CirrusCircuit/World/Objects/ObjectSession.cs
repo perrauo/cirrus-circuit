@@ -79,7 +79,7 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
-        #region Action
+        #region Move
 
 
         [ClientRpc]
@@ -117,6 +117,20 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
+        internal void Cmd_PerformAction(ObjectAction action)
+        {
+            CommandClient
+                .Instance
+                .Cmd_ObjectSession_PerformAction(gameObject, action);
+        }
+
+        [ClientRpc]
+        public void Rpc_PerformAction(ObjectAction action)
+        {
+            _object.PerformAction(action);
+        }
+
+
 
         #region Interact
 
@@ -134,30 +148,6 @@ namespace Cirrus.Circuit.World.Objects
         #endregion
 
 
-
-        #region Idle
-
-        public void Cmd_Idle()
-        {
-            CommandClient
-                .Instance
-                .Cmd_ObjectSession_Idle(gameObject);
-        }
-
-
-        [ClientRpc]
-        public void Rpc_Idle()
-        {
-            _mutex.WaitOne();
-
-            _object.Cmd_FSM_SetState(ObjectState.Idle);
-
-            _mutex.ReleaseMutex();
-        }
-
-        #endregion
-
-
         #region Fall
 
         public void Cmd_Fall()
@@ -167,23 +157,6 @@ namespace Cirrus.Circuit.World.Objects
                 .Cmd_ObjectSession_Fall(gameObject);
         }
 
-
-        #endregion
-
-        #region Land
-
-        public void Cmd_Land()
-        {
-            CommandClient
-                .Instance
-                .Cmd_ObjectSession_Land(gameObject);
-        }
-
-        [ClientRpc]
-        public void Rpc_Land()
-        {
-            _object.Land();
-        }
 
         #endregion
 

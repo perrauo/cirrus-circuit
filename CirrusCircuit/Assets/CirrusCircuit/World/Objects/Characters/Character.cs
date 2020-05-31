@@ -249,12 +249,17 @@ namespace Cirrus.Circuit.World.Objects.Characters
             return false;
         }
 
-        public override void Land()
+        public override void PerformAction(ObjectAction action)
         {
-            base.Land();
-            Play(CharacterAnimation.Character_Landing);
-        }
+            base.PerformAction(action);
 
+            switch (action)
+            {
+                case ObjectAction.Land:
+                    Play(CharacterAnimation.Character_Falling);
+                    break;
+            }
+        }
 
         public override void FSM_Update()
         {

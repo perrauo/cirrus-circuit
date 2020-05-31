@@ -117,6 +117,7 @@ namespace Cirrus.Circuit.Networking
         }
 
 
+
         #endregion
 
         #region Player Session
@@ -337,6 +338,29 @@ namespace Cirrus.Circuit.Networking
         private Mutex Cmd_ObjectSession_Interact_mutex = new Mutex();
 
         [Command]
+        public void Cmd_ObjectSession_PerformAction(GameObject gameObject, ObjectAction action)
+        {
+            //AssertGameObjectNull(obj);
+            if (gameObject == null) return;
+
+            ObjectSession session;
+            if ((session = gameObject.GetComponent<ObjectSession>()) != null)
+            {
+                Cmd_ObjectSession_Interact_mutex.WaitOne();
+
+                // Server holds the truth
+                //if (session.IsFallAllowed())
+                {
+                    session.Rpc_PerformAction(action);
+                }
+
+                Cmd_ObjectSession_Interact_mutex.ReleaseMutex();
+            }
+        }
+
+
+
+        [Command]
         public void Cmd_ObjectSession_Interact(GameObject obj, GameObject sourceObj)
         {
             //AssertGameObjectNull(obj);
@@ -405,20 +429,6 @@ namespace Cirrus.Circuit.Networking
         }
 
         [Command]
-        public void Cmd_ObjectSession_Idle(GameObject obj)
-        {
-            //AssertGameObjectNull(obj);
-            if (obj == null) return;
-
-            if (obj.TryGetComponent(out ObjectSession session))
-            {
-                Cmd_ObjectSession_Move_mutex.WaitOne();
-                session.Rpc_Idle();
-                Cmd_ObjectSession_Move_mutex.ReleaseMutex();
-            }
-        }
-
-        [Command]
         public void Cmd_ObjectSession_Slide(GameObject obj)
         {
             //AssertGameObjectNull(obj);
@@ -465,23 +475,6 @@ namespace Cirrus.Circuit.Networking
                 Cmd_ObjectSession_Move_mutex.ReleaseMutex();
             }
         }
-
-
-        // Replace by set state
-        [Command]
-        public void Cmd_ObjectSession_Land(GameObject obj)
-        {
-            //AssertGameObjectNull(obj);
-            if (obj == null) return;
-
-            if (obj.TryGetComponent(out ObjectSession session))
-            {
-                Cmd_ObjectSession_Move_mutex.WaitOne();
-                session.Rpc_Land();
-                Cmd_ObjectSession_Move_mutex.ReleaseMutex();
-            }
-        }
-
 
         // TODO validate the move
         [Command]
