@@ -168,7 +168,7 @@ namespace Cirrus.Circuit.UI
         {
             base.OnStartClient();
 
-            FSM_SetState(CharacterSelectSlotState.Closed);
+            FSM_SetState(_state);
         }
 
         public void SetAuthority(NetworkConnection conn, int serverPlayerId)
