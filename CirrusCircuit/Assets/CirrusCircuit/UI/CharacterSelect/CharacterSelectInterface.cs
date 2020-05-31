@@ -54,9 +54,11 @@ namespace Cirrus.Circuit.UI
             {
                 _slots = GetComponentsInChildren<CharacterSelectSlot>();
 
-                for (int i = 0; i < _slots.Length; i++) _slots[i]._index = i;
-
-                EditorUtility.SetDirty(this);
+                for (int i = 0; i < _slots.Length; i++)
+                {
+                    _slots[i]._index = i;
+                    EditorUtility.SetDirty(_slots[i]);
+                }
             }
 #endif
 
