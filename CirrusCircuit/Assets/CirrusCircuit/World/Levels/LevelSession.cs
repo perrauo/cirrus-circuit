@@ -115,6 +115,8 @@ namespace Cirrus.Circuit.World
             }
         }
 
+        #region Unity Engine
+
         public void FixedUpdate()
         {
             transform.position = Vector3.Lerp(
@@ -141,6 +143,112 @@ namespace Cirrus.Circuit.World
                     _randomDropRainTimer.OnTimeLimitHandler += Cmd_OnRainTimeout;
                 }
             }
+        }
+
+        #endregion
+
+        public Vector3Int GetFallThroughPosition(bool isLandingGuaranteed = true)
+        {
+            for (int k = 0; k < FallTrials; k++)
+            {
+                Vector3Int position = new Vector3Int(
+
+                    UnityEngine.Random.Range(
+                        0,
+                        Level.Dimensions.x),
+
+                    Level.Dimensions.y - 1,
+
+                    UnityEngine.Random.Range(
+                        0,
+                        Level.Dimensions.z));
+
+                if (!isLandingGuaranteed) return position;
+
+                // Check for valid surface to fall on
+                for (int i = 0; i < Level.Dimensions.y; i++)
+                {
+                    if (Get(
+                        position.SetY(position.y - i),
+                        out BaseObject target))
+                    {
+                        if (target is Gem) continue;
+                        if (target is Character) continue;
+                        if (target is Door) continue;
+                        if (target is Portal) continue;
+                        if (target is Slope) continue;
+
+                        return position;
+                    }
+                }
+            }
+
+            Debug.Assert(false);
+            return Vector3Int.zero;
+        }
+
+        public void OnRoundStarted(int i)
+        {
+            foreach (var obj in _objects)
+            {
+                if (obj == null) continue;
+
+                obj.Cmd_Idle();
+            }
+
+            if (CustomNetworkManager.IsServer)
+            {
+                _randomDropRainTimer.Start();
+            }
+        }
+
+        public void OnRoundEnd()
+        {
+            //foreach (BaseObject obj in _objects)
+            //{
+            //    if (obj == null)
+            //        continue;
+
+            //    obj.OnRoundEnd();
+
+            //    obj.SetState(BaseObject.State.Disabled);
+            //}
+
+            //foreach (GameObject obj in _objects)
+            //{
+            //    if (obj == null)
+            //        continue;
+
+            //    //obj.OnRoundEnd();
+
+            //    //obj.SetState(BaseObject.State.Disabled);
+            //}
+
+            _randomDropRainTimer.Stop();
+        }
+
+        private void OnGemEntered(Gem gem, int player, float value)
+        {
+            OnScoreValueAddedHandler?.Invoke(gem, player, value);
+
+            if (gem.IsRequired)
+            {
+                RequiredGemCount++;
+                if (RequiredGemCount >= _requiredGems)
+                {
+                    OnLevelCompletedHandler?.Invoke(Level.Rule.RequiredGemsCollected);
+                }
+            }
+        }
+
+        public void OnLevelSelect()
+        {
+            //foreach (BaseObject obj in _objects)
+            //{
+            //    if (obj == null) continue;
+
+            //    obj.SetState(BaseObject.State.LevelSelect);
+            //}
         }
 
         public bool GetOtherPortal(
@@ -408,22 +516,6 @@ namespace Cirrus.Circuit.World
             return obj != null;
         }
 
-
-        public void Move(MoveResult result)
-        {
-            if (
-                result.Move.Entered == null &&
-                Get(result.Move.Position, out BaseObject previous) &&
-                previous == result.Move.User)
-            {
-                Set(result.Move.Position, null);
-            }
-
-            if (result.Entered == null) Set(result.Destination, result.Move.User);
-
-            OnMovedHandler?.Invoke(result);
-        }
-
         #region Exit
 
         public bool GetExitResult(
@@ -464,6 +556,8 @@ namespace Cirrus.Circuit.World
         }
 
         #endregion
+
+        #region Move
 
         public bool GetMoveResults(
             Move move, 
@@ -592,47 +686,22 @@ namespace Cirrus.Circuit.World
             return result != null;
         }
 
-        public Vector3Int GetFallThroughPosition(
-            bool isLandingGuaranteed = true)
+        public void Move(MoveResult result)
         {
-            for (int k = 0; k < FallTrials; k++)
+            if (
+                result.Move.Entered == null &&
+                Get(result.Move.Position, out BaseObject previous) &&
+                previous == result.Move.User)
             {
-                Vector3Int position = new Vector3Int(
-
-                    UnityEngine.Random.Range(
-                        0,
-                        Level.Dimensions.x),
-
-                    Level.Dimensions.y - 1,
-
-                    UnityEngine.Random.Range(
-                        0,
-                        Level.Dimensions.z));
-
-                if (!isLandingGuaranteed) return position;
-
-                // Check for valid surface to fall on
-                for (int i = 0; i < Level.Dimensions.y; i++)
-                {
-                    if (Get(
-                        position.SetY(position.y - i),
-                        out BaseObject target))
-                    {                            
-                        if (target is Gem) continue;
-                        if (target is Character) continue;
-                        if (target is Door) continue;
-                        if (target is Portal) continue;
-                        if (target is Slope) continue;
-
-                        return position;
-                    }
-                }
+                Set(result.Move.Position, null);
             }
 
-            Debug.Assert(false);
-            return Vector3Int.zero;
+            if (result.Entered == null) Set(result.Destination, result.Move.User);
+
+            OnMovedHandler?.Invoke(result);
         }
 
+        #endregion
 
         #region Spawn
 
@@ -685,7 +754,6 @@ namespace Cirrus.Circuit.World
 
         #endregion
 
-
         #region On Rain Timeout
 
         public void Cmd_OnRainTimeout()
@@ -716,70 +784,5 @@ namespace Cirrus.Circuit.World
 
 
         #endregion
-
-
-        public void OnRoundStarted(int i)
-        {
-            foreach (var obj in _objects)
-            {
-                if (obj == null) continue;
-
-                obj.Cmd_Idle();
-            }
-
-            if (CustomNetworkManager.IsServer)
-            {
-                _randomDropRainTimer.Start();
-            }
-        }
-
-        public void OnRoundEnd()
-        {
-            //foreach (BaseObject obj in _objects)
-            //{
-            //    if (obj == null)
-            //        continue;
-
-            //    obj.OnRoundEnd();
-
-            //    obj.SetState(BaseObject.State.Disabled);
-            //}
-
-            //foreach (GameObject obj in _objects)
-            //{
-            //    if (obj == null)
-            //        continue;
-
-            //    //obj.OnRoundEnd();
-
-            //    //obj.SetState(BaseObject.State.Disabled);
-            //}
-
-            _randomDropRainTimer.Stop();
-        }
-
-        private void OnGemEntered(Gem gem, int player, float value)
-        {
-            OnScoreValueAddedHandler?.Invoke(gem, player, value);
-
-            if (gem.IsRequired)
-            {
-                RequiredGemCount++;
-                if (RequiredGemCount >= _requiredGems)
-                {
-                    OnLevelCompletedHandler?.Invoke(Level.Rule.RequiredGemsCollected);
-                }
-            }
-        }
-
-        public void OnLevelSelect()
-        {
-            //foreach (BaseObject obj in _objects)
-            //{
-            //    if (obj == null) continue;
-
-            //    obj.SetState(BaseObject.State.LevelSelect);
-            //}
-        }
     }
 }
