@@ -139,7 +139,18 @@ namespace Cirrus.Circuit.UI
 
         public virtual void Awake()
         {
+            if (!CharacterRosterPreview
+                .Instance
+                .GetCharacterPreview(
+                    _index, 0,
+                    out CharacterPreview _))
+            {
+                CharacterRosterPreview
+                    .Instance
+                    .AddPlayerPreviews(_index);
 
+                AddCharacterPortraits();
+            }
         }
 
         public virtual void Start()
@@ -252,18 +263,6 @@ namespace Cirrus.Circuit.UI
 
                 case CharacterSelectSlotState.Selecting:
                     {
-                        if (!CharacterRosterPreview
-                            .Instance
-                            .GetCharacterPreview(
-                                _index, 0,
-                                out CharacterPreview _))
-                        {
-                            CharacterRosterPreview
-                                .Instance
-                                .AddPlayerPreviews(_index);
-                            AddCharacterPortraits();
-                        }
-
                         if (_state == CharacterSelectSlotState.Closed)
                         {
                             GameSession.Instance.CharacterSelectOpenCount =
