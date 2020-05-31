@@ -2,6 +2,7 @@
 using System.Collections;
 using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.Networking;
+using UnityEditor;
 
 namespace Cirrus.Circuit.UI
 {
@@ -45,16 +46,20 @@ namespace Cirrus.Circuit.UI
 
         public override void OnValidate()
         {
+#if UNITY_EDITOR
+
             base.OnValidate();
 
             if (_slots.Length == 0)
             {
                 _slots = GetComponentsInChildren<CharacterSelectSlot>();
 
-                for (int i = 0; i < _slots.Length; i++) _slots[i]._index = i; 
-            }
+                for (int i = 0; i < _slots.Length; i++) _slots[i]._index = i;
 
-            
+                EditorUtility.SetDirty(this);
+            }
+#endif
+
         }
 
         public override void Awake()
