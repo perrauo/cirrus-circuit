@@ -115,17 +115,19 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private CameraController _camera;
 
-        [SyncVar]
-        [SerializeField]
-        public int _serverPlayerId = -1;
-        public int ServerPlayerId {
-            get => _serverPlayerId;
-            set {
+        public int _index = -1;
+        
+        //[SyncVar]
+        //[SerializeField]
+        //public int _slotIndex = -1;
+        //public int ServerPlayerId {
+        //    get => _slotIndex;
+        //    set {
 
-                _serverPlayerId = value;
-                CommandClient.Instance.Cmd_CharacterSelectSlot_SetPlayerServerId(gameObject, _serverPlayerId);
-            }
-        }
+        //        _slotIndex = value;
+        //        CommandClient.Instance.Cmd_CharacterSelectSlot_SetPlayerServerId(gameObject, _slotIndex);
+        //    }
+        //}
 
         #region Unity Engine
 
@@ -137,7 +139,7 @@ namespace Cirrus.Circuit.UI
 
         public virtual void Awake()
         {
-            _serverPlayerId = -1;
+            _index = -1;
         }
 
         public virtual void Start()
@@ -173,14 +175,12 @@ namespace Cirrus.Circuit.UI
 
         public void SetAuthority(NetworkConnection conn, int serverPlayerId)
         {
-            ServerPlayerId = serverPlayerId;
             Cmd_SetState(CharacterSelectSlotState.Selecting);
             netIdentity.AssignClientAuthority(conn);
         }
 
         public void RemoveAuthority()
-        {
-            ServerPlayerId = -1;
+        {         
             netIdentity.RemoveClientAuthority();
             Cmd_SetState(CharacterSelectSlotState.Closed);            
         }
@@ -207,7 +207,7 @@ namespace Cirrus.Circuit.UI
                         CharacterRosterPreview
                         .Instance
                         .GetCharacterPreview(
-                            ServerPlayerId,
+                            _index,
                             res.Id,
                             out CharacterPreview preview))
                     {
@@ -255,12 +255,12 @@ namespace Cirrus.Circuit.UI
                         if (!CharacterRosterPreview
                             .Instance
                             .GetCharacterPreview(
-                                ServerPlayerId, 0,
+                                _index, 0,
                                 out CharacterPreview _))
                         {
                             CharacterRosterPreview
                                 .Instance
-                                .AddPlayerPreviews(ServerPlayerId);
+                                .AddPlayerPreviews(_index);
                             AddCharacterPortraits();
                         }
 
@@ -280,7 +280,7 @@ namespace Cirrus.Circuit.UI
                             CharacterRosterPreview
                             .Instance
                             .GetCharacterPreview(
-                                ServerPlayerId,
+                                _index,
                                 CharacterLibrary.Instance.Characters[_selectedIndex].Id,
                                 out CharacterPreview preview))
                         {
@@ -307,7 +307,7 @@ namespace Cirrus.Circuit.UI
                         if (CharacterRosterPreview
                             .Instance
                             .GetCharacterPreview(
-                                ServerPlayerId,
+                                _index,
                                 CharacterLibrary.Instance.Characters[_selectedIndex].Id,
                                 out CharacterPreview preview))
                         {

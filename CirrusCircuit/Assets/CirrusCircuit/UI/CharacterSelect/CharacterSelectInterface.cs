@@ -47,7 +47,14 @@ namespace Cirrus.Circuit.UI
         {
             base.OnValidate();
 
-            if (_slots.Length == 0) _slots = GetComponentsInChildren<CharacterSelectSlot>();
+            if (_slots.Length == 0)
+            {
+                _slots = GetComponentsInChildren<CharacterSelectSlot>();
+
+                for (int i = 0; i < _slots.Length; i++) _slots[i]._index = i; 
+            }
+
+            
         }
 
         public override void Awake()
@@ -62,7 +69,8 @@ namespace Cirrus.Circuit.UI
         #endregion
 
 
-        #region Mirror
+        #region Mirror        
+
 
         public void OnClientStarted(bool enable)
         {
@@ -75,7 +83,7 @@ namespace Cirrus.Circuit.UI
             foreach (var slot in _slots)
             {
                 if (slot == null) continue;
-                if (slot.ServerPlayerId >= 0) continue;
+                if (slot._index >= 0) continue;
 
                 playerSlot = slot;
                 break;
