@@ -96,7 +96,7 @@ namespace Cirrus.Circuit.World.Objects
         public Vector3 _offset;
 
         public virtual bool IsNetworked => true;
-
+        
         public virtual bool IsSlidable => false;
 
         Vector3Int _previousGridPosition;
@@ -637,6 +637,11 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Fall
 
+        public virtual void Cmd_Fall()
+        {
+            _session.Cmd_Fall();
+        }
+
         public virtual void OnClimbFallTimeout()
         {
             if (!CustomNetworkManager.IsServer) return;
@@ -650,7 +655,7 @@ namespace Cirrus.Circuit.World.Objects
                     if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
                     else Cmd_FSM_SetState(ObjectState.Idle);
                 }
-                else Cmd_PerformAction(ObjectAction.Land);
+                else Cmd_Fall();
             }
             // If arrived on a slope
             else if (
@@ -725,7 +730,7 @@ namespace Cirrus.Circuit.World.Objects
                             _previousGridPosition + Vector3Int.up, 
                             out above))
                         {
-                            above.Cmd_FSM_SetState(ObjectState.Falling);
+                            above.Cmd_Fall();
                         }
 
                         _state = target;
@@ -860,10 +865,11 @@ namespace Cirrus.Circuit.World.Objects
                                 _gridPosition + Vector3Int.down,
                                 out BaseObject obj))
                             {
-                                if (_state == ObjectState.Falling) Cmd_FSM_SetState(ObjectState.Falling);
+                                if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
+
                                 else Cmd_FSM_SetState(ObjectState.Idle);
                             }
-                            else Cmd_FSM_SetState(ObjectState.Falling);
+                            else Cmd_Fall();
                         }
                         // If arrived on a slope
                         else if (
