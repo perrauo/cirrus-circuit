@@ -92,12 +92,6 @@ namespace Cirrus.Circuit.Networking
 
         public override void OnClientConnect(NetworkConnection conn)
         {
-            if (_handler == null)
-            {
-                _handler = new ClientHandler(this);
-                Game.Instance.JoinSession();
-            }
-
             base.OnClientConnect(conn);            
             _handler.OnClientConnect(conn);
 
@@ -117,6 +111,12 @@ namespace Cirrus.Circuit.Networking
 
         public override void OnStartClient()
         {
+            if (_handler == null)
+            {
+                _handler = new ClientHandler(this);
+                Game.Instance.JoinSession();
+            }
+
             base.OnStartClient();
             _handler.OnStartClient();
         }

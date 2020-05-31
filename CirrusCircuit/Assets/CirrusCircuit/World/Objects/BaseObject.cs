@@ -96,7 +96,7 @@ namespace Cirrus.Circuit.World.Objects
         public Vector3 _offset;
 
         public virtual bool IsNetworked => true;
-        
+
         public virtual bool IsSlidable => false;
 
         Vector3Int _previousGridPosition;
@@ -105,10 +105,19 @@ namespace Cirrus.Circuit.World.Objects
 
         public Vector3Int Forward => Transform.forward.normalized.ToVector3Int();
 
-        public int RotationIndex {
-            get => Forward.DirectionToIndex();
-            set {
-                Transform.rotation = Quaternion.AngleAxis(value.IndexToAngle(), Vector3.up);
+        [HideInInspector]
+        [SerializeField]
+        public int _rotationIndex = 0;
+
+        public int RotationIndex
+        {
+            get => _rotationIndex;
+            set
+            {
+                _rotationIndex = value;
+                _rotationIndex = MathUtils.Wrap(_rotationIndex, 0, 4);
+
+                Transform.rotation = Quaternion.AngleAxis(_rotationIndex.IndexToAngle(), Vector3.up);
             }
         }
 
@@ -136,7 +145,7 @@ namespace Cirrus.Circuit.World.Objects
 
                 if (_visual != null) _visual.Color = _color;
             }
-        }       
+        }
 
         [SerializeField]
         protected Color _nextColor;
@@ -372,7 +381,7 @@ namespace Cirrus.Circuit.World.Objects
             {
                 case ObjectAction.Land:
                     FSM_SetState(ObjectState.Idle);
-                    break;                    
+                    break;
             }
         }
 
@@ -559,7 +568,8 @@ namespace Cirrus.Circuit.World.Objects
             out EnterResult result,
             out IEnumerable<MoveResult> moveResults)
         {
-            result = new EnterResult {
+            result = new EnterResult
+            {
                 Step = move.Step,
                 Entered = this,
                 Offset = Vector3.zero,
@@ -697,9 +707,9 @@ namespace Cirrus.Circuit.World.Objects
         {
             _session.Cmd_FSM_SetState(state);
         }
-        
+
         public virtual void FSM_SetState(
-            ObjectState target, 
+            ObjectState target,
             BaseObject source = null)
         {
             _state = target;
@@ -725,11 +735,11 @@ namespace Cirrus.Circuit.World.Objects
                 switch (target)
                 {
                     case ObjectState.Moving:
-                    case ObjectState.Falling:                    
+                    case ObjectState.Falling:
                     case ObjectState.Sliding:
 
                         if (LevelSession.Get(
-                            _previousGridPosition + Vector3Int.up, 
+                            _previousGridPosition + Vector3Int.up,
                             out above))
                         {
                             above.Cmd_Fall();
@@ -791,7 +801,7 @@ namespace Cirrus.Circuit.World.Objects
                 case ObjectState.Idle:
                 case ObjectState.Moving:
                 case ObjectState.Sliding:
-                case ObjectState.Climbing:                    
+                case ObjectState.Climbing:
 
                     Transform.position = Vector3.Lerp(
                         Transform.position,
@@ -814,7 +824,7 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
         public virtual void FSM_Update()
-        {            
+        {
             switch (_state)
             {
 
@@ -827,7 +837,7 @@ namespace Cirrus.Circuit.World.Objects
                 case ObjectState.LevelSelect:
                     return;
 
-                case ObjectState.Idle:                
+                case ObjectState.Idle:
                     return;
 
                 case ObjectState.Climbing:
@@ -882,12 +892,12 @@ namespace Cirrus.Circuit.World.Objects
                         {
                             Cmd_Slide();
                         }
-                        else if (LevelSession.Get(         
+                        else if (LevelSession.Get(
                             _gridPosition + Vector3Int.down,
                             out BaseObject _))
-                        {                            
+                        {
                             if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
-                            else Cmd_FSM_SetState(ObjectState.Idle);                            
+                            else Cmd_FSM_SetState(ObjectState.Idle);
                         }
                     }
 

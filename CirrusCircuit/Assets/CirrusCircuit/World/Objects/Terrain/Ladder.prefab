@@ -1,5 +1,40 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &8080915561851771810
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7782920105222043963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63a9a631742a0994a9b8f6c847411b0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _session: {fileID: 0}
+  _visual: {fileID: 8797730653149646002}
+  _transform: {fileID: 1137915838277110330}
+  _climbFallTimer:
+    _repeat: 0
+    _limit: 0.5
+    _time: 0
+    _isFixedUpdate: 0
+  _entered: {fileID: 0}
+  _visitor: {fileID: 0}
+  _direction: {x: 0, y: 0, z: 0}
+  _pitchAngle: 0
+  _targetPosition: {x: 0, y: 0, z: 0}
+  _offset: {x: 0, y: 0, z: 0}
+  _gridPosition: {x: 0, y: 0, z: 0}
+  _rotationIndex: 0
+  _targetScale: 1
+  _colorId: 0
+  _color: {r: 1, g: 0, b: 0, a: 1}
+  _nextColor: {r: 1, g: 0, b: 0, a: 1}
+  _nextColorIndex: 0
+  _state: 1
+  SelectedTemplate: {fileID: 0}
 --- !u!114 &8797730653149646002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19,34 +54,6 @@ MonoBehaviour:
   _texts: []
   _outlines: []
   _barcolors: []
---- !u!114 &8080915561851771810
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7782920105222043963}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63a9a631742a0994a9b8f6c847411b0a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _session: {fileID: 0}
-  _visual: {fileID: 8797730653149646002}
-  _transform: {fileID: 1137915838277110330}
-  _entered: {fileID: 0}
-  _visitor: {fileID: 0}
-  _direction: {x: 0, y: 0, z: 0}
-  _pitchAngle: 0
-  _targetPosition: {x: 0, y: 0, z: 0}
-  _offset: {x: 0, y: 0, z: 0}
-  _gridPosition: {x: 0, y: 0, z: 0}
-  _targetScale: 1
-  _colorId: 0
-  _color: {r: 1, g: 0, b: 0, a: 1}
-  _nextColor: {r: 1, g: 0, b: 0, a: 1}
-  _nextColorIndex: 0
-  _state: 1
 --- !u!1001 &1624148582309748932
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -54,6 +61,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 394093003567325412, guid: 06d9e1aa028280e4c97369fef81e3fdc,
+        type: 3}
+      propertyPath: _object
+      value: 
+      objectReference: {fileID: 8080915561851771810}
     - target: {fileID: 1819615786462522110, guid: 06d9e1aa028280e4c97369fef81e3fdc,
         type: 3}
       propertyPath: m_LocalPosition.x
