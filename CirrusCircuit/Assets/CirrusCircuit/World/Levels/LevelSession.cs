@@ -614,6 +614,12 @@ namespace Cirrus.Circuit.World
                     move.Position + exitResult.Step,
                     out result.Moved))
                 {
+                    if (result.Moved == move.User)
+                    {
+                        result = null;
+                        break;
+                    }
+
                     // Object moved into is movable
                     if (result.Moved.GetMoveResults(
                         new Move

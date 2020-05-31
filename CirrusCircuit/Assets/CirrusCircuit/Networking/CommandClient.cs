@@ -464,7 +464,7 @@ namespace Cirrus.Circuit.Networking
 
         // TODO validate the move
         [Command]
-        public void Cmd_ObjectSession_Move(GameObject obj, NetworkMove netAction)
+        public void Cmd_ObjectSession_Move(GameObject obj, NetworkMove netMove)
         {
             //AssertGameObjectNull(obj);
             if (obj == null) return;
@@ -476,11 +476,11 @@ namespace Cirrus.Circuit.Networking
 
                 // Server holds the truth
                 if (session._object.GetMoveResults(
-                    netAction.ToMove(), 
-                    out IEnumerable<MoveResult> res))
+                    netMove.ToMove(), 
+                    out IEnumerable<MoveResult> results))
                 {
                     LevelSession.Instance.Rpc_ApplyMoveResults(
-                        res.Select(x => x == null ? null : x.ToNetworkMoveResult()).ToArray());
+                        results.Select(x => x == null ? null : x.ToNetworkMoveResult()).ToArray());
                 }
 
                 Cmd_ObjectSession_Move_mutex.ReleaseMutex();
