@@ -366,9 +366,14 @@ namespace Cirrus.Circuit.World.Objects
             _session.Cmd_PerformAction(action);
         }
 
-        public virtual void PerformAction(ObjectAction state)
+        public virtual void PerformAction(ObjectAction action)
         {
-            
+            switch (action)
+            {
+                case ObjectAction.Land:
+                    FSM_SetState(ObjectState.Idle);
+                    break;                    
+            }
         }
 
         #endregion
