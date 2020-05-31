@@ -565,18 +565,14 @@ namespace Cirrus.Circuit.World
         [ClientRpc]
         public void Rpc_ApplyMoveResults(NetworkMoveResult[] results)
         {
-            _mutex.WaitOne();
-
-            ApplyMoveResults(results.Select(x => x.ToMoveResult()));
-
-            _mutex.ReleaseMutex();
+            ApplyMoveResults(results.Select(x => x.ToMoveResult()));         
         }
 
 
         public bool GetMoveResults(
             Move move, 
             out IEnumerable<MoveResult> results,
-            bool recursive=false)
+            bool isRecursiveCall=false)
         {
             results = new List<MoveResult>();
             
@@ -586,7 +582,7 @@ namespace Cirrus.Circuit.World
                 Move = move,                                
             };
 
-            if(!recursive) _moveMutex.WaitOne();
+            if(!isRecursiveCall) _moveMutex.WaitOne();
 
             do
             {
@@ -710,7 +706,7 @@ namespace Cirrus.Circuit.World
             }
             while (false);
 
-            if(!recursive) _moveMutex.ReleaseMutex();
+            if(!isRecursiveCall) _moveMutex.ReleaseMutex();
 
             // Add action result
             if(result != null) ((List<MoveResult>)results).Add(result);
