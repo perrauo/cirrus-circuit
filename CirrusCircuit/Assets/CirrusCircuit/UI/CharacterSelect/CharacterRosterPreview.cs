@@ -34,7 +34,7 @@ namespace Cirrus.Circuit.UI
         }
         
 
-        public void AddPlayerPreviews(int playerId)
+        public void AddPlayerPreviews(int slotIndex)
         {
             int i = 0;
             foreach (
@@ -46,10 +46,10 @@ namespace Cirrus.Circuit.UI
                 CharacterPreview preview = 
                     _previewTemplate.Create(
                         transform,
-                        (playerId * CharacterLibrary.Instance.Characters.Length) + i);
+                        (slotIndex * CharacterLibrary.Instance.Characters.Length) + i);
                 
                 _characterPlayerPreviews.Add(
-                    Utils.MakePair(playerId, res.Id),
+                    Utils.MakePair(slotIndex, res.Id),
                     preview);
 
                 i++;
