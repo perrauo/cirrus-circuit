@@ -26,10 +26,6 @@ namespace Cirrus.Circuit.UI
         [SerializeField]
         private UnityEngine.UI.InputField _joinInput;
 
-        [SerializeField]
-        private GameObject _content;
-
-
         public override void OnValidate()
         {
             base.OnValidate();

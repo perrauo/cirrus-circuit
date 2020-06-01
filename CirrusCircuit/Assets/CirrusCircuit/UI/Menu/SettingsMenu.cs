@@ -13,13 +13,13 @@ namespace Cirrus.Circuit.UI
         private Toggle _areControlsBoundToDirectionToggle;
 
         [SerializeField]
-        private Toggle _isGemSpawnEnabledToggle;
+        private Toggle _areGemsSpawnedToggle;
 
         [SerializeField]
-        private IntegerSliderField _numberOfRoundSlider;
+        private SliderField _numberOfRoundSlider;
 
         [SerializeField]
-        private IntegerSliderField _roundTimeSlider;
+        private SliderField _roundTimeSlider;
 
         [SerializeField]
         private Button _backButton;
@@ -47,12 +47,25 @@ namespace Cirrus.Circuit.UI
 
             });
 
+            _roundTimeSlider.Value.OnValueChangedHandler += (x) => Settings.RoundTime.Set((int)x);
+
+            _numberOfRoundSlider.Value.OnValueChangedHandler += (x) => Settings.NumberOfRounds.Set((int)x);
+
+            _areGemsSpawnedToggle.onValueChanged.AddListener(x => Settings.AreGemsSpawned.Set(x));
+
+            _areControlsBoundToDirectionToggle.onValueChanged.AddListener(x => Settings.AreControlsBoundToDirection.Set(x));
+
             Enabled = false;
         }
-
+        
         public override void Start()
         {
-            base.Start();                
+            base.Start();
+
+            _roundTimeSlider.Value.Set(Settings.RoundTime.Integer);
+            _numberOfRoundSlider.Value.Set(Settings.NumberOfRounds.Integer);
+            _areControlsBoundToDirectionToggle.SetIsOnWithoutNotify(Settings.AreControlsBoundToDirection.Boolean);
+            _areGemsSpawnedToggle.SetIsOnWithoutNotify(Settings.AreGemsSpawned.Boolean);            
         }
 
         // Update is called once per frame
