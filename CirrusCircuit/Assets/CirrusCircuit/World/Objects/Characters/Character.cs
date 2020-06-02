@@ -173,6 +173,13 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
         Vector2Int _inputDirection2 = Vector2Int.zero;
 
+        // Input scheme world :
+        // Press one direction, if not in same direction as player, then just rotate
+
+        // Input scheme local
+        // Press left, right, back, to rotate
+        // Press forward to move forward
+
         public IEnumerator Coroutine_Cmd_Move(Vector2 axis)
         {          
             bool isAxisHorizontal = Mathf.Abs(axis.x) > 0.5f;
