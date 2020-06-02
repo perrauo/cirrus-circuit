@@ -15,6 +15,7 @@ using UnityEngine;
 
 using UnityInputs = UnityEngine.InputSystem;
 //using Cirrus.Circuit.Playable;
+using UnityEngine.Assertions;
 
 namespace Cirrus.Circuit.World.Objects.Characters
 {
@@ -143,41 +144,34 @@ namespace Cirrus.Circuit.World.Objects.Characters
         private Coroutine _moveCoroutine = null;
 
         public Vector2Int GetDirectionBoundStep(
-            float sign, 
+            int sign, 
             bool vertical)
         {
-            bool facingVertical = _direction.z != 0;
-            bool facingHorizontal = _direction.x != 0;
 
-            var axis = new Vector2(_direction.x, _direction.z);
+            var axis = new Vector2Int(_direction.x, _direction.z);
 
-            Vector2Int GetHorizontal()
+            if (vertical) return sign * axis;
+
+            else
             {
-                return
-                    (facingHorizontal ?
-                        sign * axis:
-                        sign * Vector2.Perpendicular(axis)
-                                                
-                    ).ToVector2Int();
+                if (axis == Vector2Int.right) return sign * Vector2Int.down;
+
+                else if (axis == Vector2Int.up) return sign * Vector2Int.right;
+
+                else if (axis == Vector2Int.left) return sign * Vector2Int.up;
+
+                else if (axis == Vector2Int.down) return sign * Vector2Int.left;
+
+                else
+                {
+                    Debug.Assert(false, "Unknown direction");
+                    return Vector2Int.down;
+                }
             }
-
-            Vector2Int GetVertical()
-            {
-                return
-                    (facingVertical ? 
-                        sign * axis : 
-                        sign * -Vector2.Perpendicular(axis)
-                        
-                    ).ToVector2Int();                    
-
-            }
-
-            if (vertical) return GetVertical();
-
-            else return GetHorizontal();
-
 
         }
+
+        Vector2Int _inputDirection2 = Vector2Int.zero;
 
         public IEnumerator Coroutine_Cmd_Move(Vector2 axis)
         {          
@@ -198,12 +192,12 @@ namespace Cirrus.Circuit.World.Objects.Characters
                     isAxisVertical;
 
             Vector2Int signAxis = new Vector2Int(
-                Math.Sign(axis.x), 
-                Math.Sign(axis.y));
+                MathUtils.Sign(axis.x) * (isAxisHorizontal ? 1 : 0), 
+                MathUtils.Sign(axis.y) * (isAxisVertical ? 1 : 0));
 
-            int sign = isMovingVertical ? signAxis.y : signAxis.x;     
+            int sign = isMovingVertical ? signAxis.y : signAxis.x;
 
-            Vector2Int inputDirection =
+            _inputDirection2 =
                 Settings.AreControlsBoundToDirection.Boolean ?
                     GetDirectionBoundStep(
                         sign,
@@ -215,9 +209,9 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 User = this,
                 Position = _gridPosition,
                 Step = new Vector3Int(
-                    inputDirection.x * StepSize,
+                    _inputDirection2.x * StepSize,
                     0,
-                    inputDirection.y * StepSize)
+                    _inputDirection2.y * StepSize)
             };
 
 
@@ -238,7 +232,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 _preserveInputDirection && 
                 _inputDirection == move.Step)
             {
-                move.Step = _direction;
+                move.Step = _direction * StepSize;
             }
             else
             {
