@@ -22,6 +22,15 @@ namespace Cirrus.Circuit
 {    
     public class GameSession : NetworkBehaviour
     {
+        public static GameSession Instance
+        {
+            get
+            {
+                if (_instance == null) _instance = FindObjectOfType<GameSession>();
+                return _instance;
+            }
+        }
+
         public static Delegate<bool> OnStartClientStaticHandler;
 
         protected static GameSession _instance;
@@ -60,15 +69,6 @@ namespace Cirrus.Circuit
                     .Cmd_GameSession_SetCharacterSelectOpenCount(
                         gameObject, 
                         _characterSelectOpenCount);
-            }
-        }
-
-        public static GameSession Instance
-        {
-            get
-            {
-                if (_instance == null) _instance = FindObjectOfType<GameSession>();
-                return _instance;
             }
         }
 
@@ -145,7 +145,7 @@ namespace Cirrus.Circuit
             
         }
 
-        void Awake()
+        public virtual void Awake()
         {
             
         }

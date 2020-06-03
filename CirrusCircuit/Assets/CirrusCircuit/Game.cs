@@ -96,9 +96,9 @@ namespace Cirrus.Circuit
         public float _cameraSizeSpeed = 0.8f;
         public float CameraSizeSpeed => _cameraSizeSpeed;
 
-        [SerializeField]
-        public float _roundTime = 60f;
-        public float RoundTime => _roundTime;
+        //[SerializeField]
+        //public float _roundTime = 60f;
+        //public float RoundTime => _roundTime;
 
         [SerializeField]
         public float _countdownTime = 5f;
@@ -109,9 +109,9 @@ namespace Cirrus.Circuit
         public int _countDown = 3;
         public int CountDown => _countDown;
     
-        [SerializeField]
-        private int _numRounds = 3;
-        public int NumRounds => _numRounds;
+        //[SerializeField]
+        //private int _numRounds = 3;
+        //public int NumRounds => _numRounds;
     
         [SerializeField]
         public float _podiumTransitionSpeed = 0.2f;
@@ -223,7 +223,7 @@ namespace Cirrus.Circuit
             {
                 GameSession.Instance.RoundIndex++;
 
-                if (GameSession.Instance.RoundIndex < NumRounds) Cmd_SetState(State.Podium);
+                if (GameSession.Instance.RoundIndex < Settings.NumberOfRounds.Integer) Cmd_SetState(State.Podium);
 
                 else
                 {
@@ -645,7 +645,7 @@ namespace Cirrus.Circuit
                         LevelSession.Create();
                         RoundSession.Create(
                             CountDown,
-                            RoundTime,
+                            Settings.RoundTime.Integer,
                             CountdownTime,
                             IntermissionTime,
                             GameSession.Instance._roundIndex);

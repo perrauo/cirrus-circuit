@@ -13,7 +13,7 @@ namespace Cirrus.Circuit
 
         public static PlayerPref RoundTime = new PlayerPref("RoundTime", 30);
 
-        public static PlayerPref AreControlsBoundToDirection = new PlayerPref("AreControlsBoundToDirection", false);
+        public static PlayerPref IsUsingAlternateControlScheme = new PlayerPref("UseAlternativeControlScheme", false);
         // TODO is player 2,3,4 bound to direction
 
         public static PlayerPref AreGemsSpawned = new PlayerPref("AreGemsSpawned", true);

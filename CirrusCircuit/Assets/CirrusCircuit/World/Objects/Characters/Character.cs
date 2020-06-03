@@ -15,6 +15,7 @@ using UnityEngine;
 
 using UnityInputs = UnityEngine.InputSystem;
 //using Cirrus.Circuit.Playable;
+using Cirrus;
 using UnityEngine.Assertions;
 
 namespace Cirrus.Circuit.World.Objects.Characters
@@ -143,35 +144,78 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
         private Coroutine _moveCoroutine = null;
 
-        public Vector2Int GetDirectionBoundStep(
+        public bool GetMoveAlt(
             int sign, 
-            bool vertical)
+            bool vertical, 
+            ref Move move)
         {
+            move.Type = MoveType.Moving;
 
             var axis = new Vector2Int(_direction.x, _direction.z);
 
-            if (vertical) return sign * axis;
+            if (vertical && sign > 0)
+            {
+                move.Step = _direction;
+                move.Type = MoveType.Moving;
+            }
+            else if (vertical) move.Step = -_direction;
+
+            else if (axis == Vector2Int.right) move.Step = (sign * Vector2Int.down).ToVector3IntAlt();
+
+            else if (axis == Vector2Int.right) move.Step = (sign * Vector2Int.down).ToVector3IntAlt();
+
+            else if (axis == Vector2Int.up) move.Step = (sign * Vector2Int.right).ToVector3IntAlt();
+
+            else if (axis == Vector2Int.left) move.Step = (sign * Vector2Int.up).ToVector3IntAlt();
+
+            else if (axis == Vector2Int.down) move.Step = (sign * Vector2Int.left).ToVector3IntAlt();
 
             else
             {
-                if (axis == Vector2Int.right) return sign * Vector2Int.down;
-
-                else if (axis == Vector2Int.up) return sign * Vector2Int.right;
-
-                else if (axis == Vector2Int.left) return sign * Vector2Int.up;
-
-                else if (axis == Vector2Int.down) return sign * Vector2Int.left;
-
-                else
-                {
-                    Debug.Assert(false, "Unknown direction");
-                    return Vector2Int.down;
-                }
+                Debug.Assert(false, "Unknown direction");
+                return false;
             }
+            
+
+            move.Type = move.Step == _direction ? MoveType.Moving : MoveType.Direction;
+            return true;
+        }
+
+
+        public bool GetMove(
+            int sign,
+            bool vertical,
+            ref Move move)
+        {
+            move = new Move();
+
+            return false;
+
+            //bool res = vertical ? signAxis.SetX(0) : signAxis.SetY(0);
+
+            //var axis = new Vector2Int(_direction.x, _direction.z);
+
+            //if (vertical) return sign * axis;
+
+            //else
+            //{
+            //    if (axis == Vector2Int.right) return sign * Vector2Int.down;
+
+            //    else if (axis == Vector2Int.up) return sign * Vector2Int.right;
+
+            //    else if (axis == Vector2Int.left) return sign * Vector2Int.up;
+
+            //    else if (axis == Vector2Int.down) return sign * Vector2Int.left;
+
+            //    else
+            //    {
+            //        Debug.Assert(false, "Unknown direction");
+            //        return Vector2Int.down;
+            //    }
+            //}
 
         }
 
-        Vector2Int _inputDirection2 = Vector2Int.zero;
 
         // Input scheme world :
         // Press one direction, if not in same direction as player, then just rotate
@@ -180,76 +224,72 @@ namespace Cirrus.Circuit.World.Objects.Characters
         // Press left, right, back, to rotate
         // Press forward to move forward
 
+    //                if (
+    //        _preserveInputDirection &&
+    //        _inputDirection == move.Step)
+    //    {
+    //        move.Step = _direction* StepSize;
+    //}
+    //    else
+    //    {
+    //        _inputDirection = move.Step;
+    //        _preserveInputDirection = false;
+    //    }
+
         public IEnumerator Coroutine_Cmd_Move(Vector2 axis)
         {          
             bool isAxisHorizontal = Mathf.Abs(axis.x) > 0.5f;
             bool isAxisVertical = Mathf.Abs(axis.y) > 0.5f;
-            
+
             if (!isAxisHorizontal && !isAxisVertical)
             {
                 _moveCoroutine = null;
-                yield return null;
+                yield break;
             }
-
-            bool wasMovingVertical = _direction.z != 0;
-
+           
             bool isMovingVertical =
-                (isAxisHorizontal && isAxisVertical) ?                    
-                    !wasMovingVertical :
+                (isAxisHorizontal && isAxisVertical) ?
+                    _direction.z == 0 :
                     isAxisVertical;
 
             Vector2Int signAxis = new Vector2Int(
-                MathUtils.Sign(axis.x) * (isAxisHorizontal ? 1 : 0), 
+                MathUtils.Sign(axis.x) * (isAxisHorizontal ? 1 : 0),
                 MathUtils.Sign(axis.y) * (isAxisVertical ? 1 : 0));
 
             int sign = isMovingVertical ? signAxis.y : signAxis.x;
 
-            _inputDirection2 =
-                Settings.AreControlsBoundToDirection.Boolean ?
-                    GetDirectionBoundStep(
-                        sign,
-                        isMovingVertical) :
-                    isMovingVertical ? signAxis.SetX(0) : signAxis.SetY(0);
-
-            Move move = new Move
+            var move = new Move()
             {
                 User = this,
                 Position = _gridPosition,
-                Step = new Vector3Int(
-                    _inputDirection2.x * StepSize,
-                    0,
-                    _inputDirection2.y * StepSize)
+                Type = MoveType.Direction
             };
 
+            Debug.Log(axis);
 
-            switch (_state)
+            if (Settings.IsUsingAlternateControlScheme.Boolean ?
+                GetMoveAlt(
+                    sign,
+                    isMovingVertical,
+                    ref move) :
+                GetMove(
+                    sign,
+                    isMovingVertical,
+                    ref move))
             {
-                case ObjectState.Disabled:
-                case ObjectState.Falling:                    
-                    move.Type = MoveType.Direction;                    
-                    break;
+                switch (_state)
+                {
+                    case ObjectState.Disabled:
+                    case ObjectState.Falling:
+                        move.Type = MoveType.Direction;
+                        break;
+                }
 
-                default:
-                    move.Type = MoveType.Moving;
-                    break;
-            }          
-
-
-            if (
-                _preserveInputDirection && 
-                _inputDirection == move.Step)
-            {
-                move.Step = _direction * StepSize;
-            }
-            else
-            {
-                _inputDirection = move.Step;
-                _preserveInputDirection = false;
+                Cmd_Move(move);
+                yield return new WaitForSeconds(MoveDelay);
             }
 
-            Cmd_Move(move);            
 
-            yield return new WaitForSeconds(MoveDelay);
 
             _moveCoroutine = null;
             yield return null;
