@@ -174,10 +174,9 @@ namespace Cirrus.Circuit.World.Objects.Characters
             {
                 Debug.Assert(false, "Unknown direction");
                 return false;
-            }
-            
+            }            
 
-            move.Type = move.Step == _direction ? MoveType.Moving : MoveType.Direction;
+            //move.Type = move.Step == _direction ? MoveType.Moving : MoveType.Direction;
             return true;
         }
 
