@@ -435,7 +435,6 @@ namespace Cirrus.Circuit.World.Objects
                     _targetPosition = Level.GridToWorld(result.Destination);
                     _targetPosition += result.Offset;
                     Transform.position = _targetPosition;
-                    _direction = result.Direction;
                     _pitchAngle = result.PitchAngle;
                     break;
 
@@ -460,7 +459,6 @@ namespace Cirrus.Circuit.World.Objects
                     _gridPosition = result.Destination;
                     _targetPosition = Level.GridToWorld(result.Destination);
                     _targetPosition += result.Offset;
-                    _direction = result.Direction;
                     _pitchAngle = 0;
 
                     state = ObjectState.Falling;
