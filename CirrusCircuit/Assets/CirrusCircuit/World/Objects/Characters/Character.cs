@@ -153,11 +153,8 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
             var axis = new Vector2Int(_direction.x, _direction.z);
 
-            if (vertical && sign > 0)
-            {
-                move.Step = _direction;
-                move.Type = MoveType.Moving;
-            }
+            if (vertical && sign > 0) move.Step = _direction;
+
             else if (vertical) move.Step = -_direction;
 
             else if (axis == Vector2Int.right) move.Step = (sign * Vector2Int.down).ToVector3IntAlt();
@@ -174,9 +171,9 @@ namespace Cirrus.Circuit.World.Objects.Characters
             {
                 Debug.Assert(false, "Unknown direction");
                 return false;
-            }            
+            }
 
-            //move.Type = move.Step == _direction ? MoveType.Moving : MoveType.Direction;
+            move.Type = move.Step == _direction ? MoveType.Moving : MoveType.Direction;
             return true;
         }
 
@@ -186,33 +183,11 @@ namespace Cirrus.Circuit.World.Objects.Characters
             bool vertical,
             ref Move move)
         {
-            move = new Move();
 
-            return false;
+            move.Step = vertical ? new Vector3Int(0, 0, sign) : new Vector3Int(sign, 0, 0);
+            move.Type = MoveType.Moving;            
 
-            //bool res = vertical ? signAxis.SetX(0) : signAxis.SetY(0);
-
-            //var axis = new Vector2Int(_direction.x, _direction.z);
-
-            //if (vertical) return sign * axis;
-
-            //else
-            //{
-            //    if (axis == Vector2Int.right) return sign * Vector2Int.down;
-
-            //    else if (axis == Vector2Int.up) return sign * Vector2Int.right;
-
-            //    else if (axis == Vector2Int.left) return sign * Vector2Int.up;
-
-            //    else if (axis == Vector2Int.down) return sign * Vector2Int.left;
-
-            //    else
-            //    {
-            //        Debug.Assert(false, "Unknown direction");
-            //        return Vector2Int.down;
-            //    }
-            //}
-
+            return true;
         }
 
 

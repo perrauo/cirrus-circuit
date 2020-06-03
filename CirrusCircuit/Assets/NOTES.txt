@@ -5,3 +5,7 @@ Failure Spectrum:
 
 
 Pressing forward moves the character front
+
+Shared doors
+
+Door that change color

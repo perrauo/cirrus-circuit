@@ -47,9 +47,9 @@ namespace Cirrus.Circuit.UI
 
             });
 
-            _roundTimeSlider.Value.OnValueChangedHandler += (x) => Settings.RoundTime.Set((int)x);
+            _roundTimeSlider.OnValueChangedHandler += (x) => Settings.RoundTime.Set((int)x);
 
-            _numberOfRoundSlider.Value.OnValueChangedHandler += (x) => Settings.NumberOfRounds.Set((int)x);
+            _numberOfRoundSlider.OnValueChangedHandler += (x) => Settings.NumberOfRounds.Set((int)x);
 
             _areGemsSpawnedToggle.onValueChanged.AddListener(x => Settings.AreGemsSpawned.Set(x));
 
@@ -62,8 +62,8 @@ namespace Cirrus.Circuit.UI
         {
             base.Start();
 
-            _roundTimeSlider.Value.Set(Settings.RoundTime.Integer);
-            _numberOfRoundSlider.Value.Set(Settings.NumberOfRounds.Integer);
+            _roundTimeSlider.Value = Settings.RoundTime.Integer;
+            _numberOfRoundSlider.Value = Settings.NumberOfRounds.Integer;
             _areControlsBoundToDirectionToggle.SetIsOnWithoutNotify(Settings.IsUsingAlternateControlScheme.Boolean);
             _areGemsSpawnedToggle.SetIsOnWithoutNotify(Settings.AreGemsSpawned.Boolean);            
         }
