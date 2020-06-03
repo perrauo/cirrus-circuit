@@ -9,3 +9,7 @@ Pressing forward moves the character front
 Shared doors
 
 Door that change color
+
+Designated area for games to fall from
+
+Gem spawn without falling

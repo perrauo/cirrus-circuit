@@ -410,7 +410,7 @@ namespace Cirrus.Circuit.Networking
                     {
                         Type = MoveType.Teleport,
                         User = session._object,
-                        Position = LevelSession.Instance.GetFallThroughPosition(true),
+                        Position = LevelSession.Instance.GetFallPosition(true),
                         Step = Vector3Int.down
                     };
 

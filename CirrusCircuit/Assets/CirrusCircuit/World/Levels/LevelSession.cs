@@ -60,8 +60,6 @@ namespace Cirrus.Circuit.World
         public PlaceholderInfoSyncList _placeholderInfos = new PlaceholderInfoSyncList();
         public IEnumerable<PlaceholderInfo> PlaceholderInfos => _placeholderInfos;
 
-        private const int FallTrials = 100;
-
         public Delegate<Level.Rule> OnLevelCompletedHandler;
 
         public Door.OnScoreValueAdded OnScoreValueAddedHandler;
@@ -147,9 +145,11 @@ namespace Cirrus.Circuit.World
 
         #endregion
 
-
-        public Vector3Int GetFallThroughPosition(bool isLandingGuaranteed = true)
+        // TODO designated area for gem to fall through
+        public Vector3Int GetFallPosition(bool isLandingGuaranteed = true)
         {
+            const int FallTrials = 100;
+
             for (int k = 0; k < FallTrials; k++)
             {
                 Vector3Int position = new Vector3Int(
@@ -167,7 +167,10 @@ namespace Cirrus.Circuit.World
                 if (!isLandingGuaranteed) return position;
 
                 // Check for valid surface to fall on
-                for (int i = 0; i < Level.Dimensions.y; i++)
+                for (
+                    int i = 0; 
+                    i < Level.Dimensions.y;
+                    i++)
                 {
                     if (Get(
                         position.SetY(position.y - i),
@@ -176,8 +179,7 @@ namespace Cirrus.Circuit.World
                         if (target is Gem) continue;
                         if (target is Character) continue;
                         if (target is Door) continue;
-                        if (target is Portal) continue;
-                        if (target is Slope) continue;
+                        if (target is Portal) continue;                    
 
                         return position;
                     }
@@ -815,7 +817,7 @@ namespace Cirrus.Circuit.World
 
         public void Cmd_OnRainTimeout()
         {
-            Vector3Int position = GetFallThroughPosition();
+            Vector3Int position = GetFallPosition();
 
             Gem gem = ObjectLibrary.Instance.Gems[
                 UnityEngine.Random.Range(

@@ -68,7 +68,7 @@ namespace Cirrus.Circuit
             Podium,
             FinalPodium
         }        
-
+       
         [SerializeField]
         public State _state = State.Menu;
 
@@ -146,6 +146,9 @@ namespace Cirrus.Circuit
 
         //Threading.CoroutineBarrier _roundInitBarrier;
 
+        [SerializeField]
+        private int _seed = -1;
+
         public override void OnValidate()
         {
             base.OnValidate();
@@ -157,7 +160,11 @@ namespace Cirrus.Circuit
         {
             base.Awake();
 
-            if (IsSeedRandomized) Random.InitState(Environment.TickCount);
+            if (IsSeedRandomized)
+            {
+                _seed = Environment.TickCount;
+                Random.InitState(_seed);
+            }
         }
 
         public override void Start()
