@@ -404,7 +404,7 @@ namespace Cirrus.Circuit.World.Objects
                 out IEnumerable<MoveResult> results,
                 false))
             {
-                CommandClient.Instance.Cmd_LevelSession_ApplyMoveResult(
+                LevelSession.Instance.Rpc_ApplyMoveResults(
                     results
                     .Select(x => x.ToNetworkMoveResult())
                     .ToArray());
