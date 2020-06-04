@@ -136,24 +136,24 @@ namespace Cirrus.Circuit.World.Objects
         #endregion
 
 
-        #region Fall
+        //#region Fall
 
-        public void Cmd_Fall()
-        {
-            CommandClient
-                .Instance
-                .Cmd_ObjectSession_Fall(gameObject);
-        }
+        //public void Cmd_Fall()
+        //{
+        //    CommandClient
+        //        .Instance
+        //        .Cmd_ObjectSession_Fall(gameObject);
+        //}
 
 
-        #endregion
+        //#endregion
 
-        public void Cmd_Slide()
-        {
-            CommandClient
-                .Instance
-                .Cmd_ObjectSession_Slide(gameObject);
-        }
+        //public void Cmd_Slide()
+        //{
+        //    CommandClient
+        //        .Instance
+        //        .Cmd_ObjectSession_Slide(gameObject);
+        //}
 
     }
 }
