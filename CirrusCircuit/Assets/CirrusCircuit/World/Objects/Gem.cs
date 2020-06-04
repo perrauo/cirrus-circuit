@@ -38,7 +38,6 @@ namespace Cirrus.Circuit.World.Objects
             base.Awake();
         }
 
-
         public virtual void OnMoved(MoveResult result)
         {
             if (!CustomNetworkManager.IsServer) return;
@@ -56,7 +55,6 @@ namespace Cirrus.Circuit.World.Objects
                 Cmd_Server_Slide();
             }
         }
-
 
         public override bool GetEnterResults(
             Move move, 

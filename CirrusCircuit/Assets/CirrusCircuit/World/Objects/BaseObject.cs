@@ -297,22 +297,42 @@ namespace Cirrus.Circuit.World.Objects
 
         }
 
-
-        // TODO remove
-        public void Respond(ObjectSession.CommandResponse res)
+        public virtual void Server_BecomeUnstable()
         {
-            switch (res.Id)
+            if (_entered == null)
             {
-                case ObjectSession.CommandId.LevelSession_IsFallThroughAllowed:
+                if (LevelSession.Get(
+                    _gridPosition + Vector3Int.down,
+                    out BaseObject obj))
+                {
+                    if (obj.IsStable)
+                    {
+                        if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
 
-
-                    break;
-
-                case ObjectSession.CommandId.LevelSession_IsMoveAllowed:
-
-                    break;
+                        else Cmd_FSM_SetState(ObjectState.Idle);
+                    }
+                    else Cmd_Server_Fall();
+                }
+                else Cmd_Server_Fall();
+            }
+            // If arrived on a slope
+            else if (
+                IsSlidable &&
+                _entered != null &&
+                _entered is Slope &&
+                !((Slope)_entered).IsStaircase)
+            {
+                Cmd_Server_Slide();
+            }
+            else if (LevelSession.Get(
+                _gridPosition + Vector3Int.down,
+                out BaseObject _))
+            {
+                if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
+                else Cmd_FSM_SetState(ObjectState.Idle);
             }
         }
+
 
         public virtual void Accept(BaseObject source)
         {
@@ -566,7 +586,6 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Enter
 
-
         public virtual void Enter(BaseObject visitor)
         {
             _visitor = visitor;
@@ -685,21 +704,21 @@ namespace Cirrus.Circuit.World.Objects
             Move move =
                 Level.Instance.IsInsideBoundsY(
                     _gridPosition + Vector3Int.down) ?
-                new Move
-                {
-                    Type = MoveType.Falling,
-                    User = this,
-                    Position = _gridPosition,
-                    Step = Vector3Int.down
-                } :
-                // Probably move this inside get move results
-                new Move
-                {
-                    Type = MoveType.Teleport,
-                    User = this,
-                    Position = LevelSession.Instance.GetFallPosition(true),
-                    Step = Vector3Int.down
-                };
+                        new Move
+                        {
+                            Type = MoveType.Falling,
+                            User = this,
+                            Position = _gridPosition,
+                            Step = Vector3Int.down
+                        } :
+                        // Probably move this inside get move results
+                        new Move
+                        {
+                            Type = MoveType.Teleport,
+                            User = this,
+                            Position = LevelSession.Instance.GetFallPosition(true),
+                            Step = Vector3Int.down
+                        };
 
             return Cmd_Server_Move(move);            
         }
@@ -708,34 +727,7 @@ namespace Cirrus.Circuit.World.Objects
         {
             if (!CustomNetworkManager.IsServer) return;
 
-            if (_entered == null)
-            {
-                if (LevelSession.Get(
-                    _gridPosition + Vector3Int.down,
-                    out BaseObject obj))
-                {
-                    if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
-                    else Cmd_FSM_SetState(ObjectState.Idle);
-                }
-                else Cmd_Server_Fall();
-            }
-            // If arrived on a slope
-            else if (
-                IsSlidable &&
-                _entered != null &&
-                _entered is Slope &&
-                !((Slope)_entered).IsStaircase)
-            {
-                Cmd_Server_Slide();
-            }
-            else if (LevelSession.Get(
-                _gridPosition + Vector3Int.down,
-                out BaseObject _))
-            {
-                if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
-
-                else Cmd_FSM_SetState(ObjectState.Idle);
-            }
+            Server_BecomeUnstable();
         }
 
         #endregion
@@ -873,6 +865,7 @@ namespace Cirrus.Circuit.World.Objects
                     break;
             }
         }
+
         public virtual void FSM_Update()
         {
             switch (_state)
@@ -913,47 +906,15 @@ namespace Cirrus.Circuit.World.Objects
 
                     if (_hasArrived) break;
 
+                    if (!CustomNetworkManager.IsServer) break;
+
                     if (VectorUtils.IsCloseEnough(
                         Transform.position,
                         _targetPosition))
                     {
                         _hasArrived = true;
 
-                        if (!CustomNetworkManager.IsServer) break;
-
-                        if (_entered == null)
-                        {
-                            if (LevelSession.Get(
-                                _gridPosition + Vector3Int.down,
-                                out BaseObject obj))
-                            {
-                                if (obj.IsStable)
-                                {
-                                    if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
-
-                                    else Cmd_FSM_SetState(ObjectState.Idle);
-                                }
-                                else Cmd_Server_Fall();
-
-                            }
-                            else Cmd_Server_Fall();
-                        }
-                        // If arrived on a slope
-                        else if (
-                            IsSlidable &&
-                            _entered != null &&
-                            _entered is Slope &&
-                            !((Slope)_entered).IsStaircase)
-                        {
-                            Cmd_Server_Slide();
-                        }
-                        else if (LevelSession.Get(
-                            _gridPosition + Vector3Int.down,
-                            out BaseObject _))
-                        {
-                            if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
-                            else Cmd_FSM_SetState(ObjectState.Idle);
-                        }
+                        Server_BecomeUnstable();
                     }
 
                     break;

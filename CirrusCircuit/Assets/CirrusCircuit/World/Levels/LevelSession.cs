@@ -15,7 +15,7 @@ using Cirrus.Circuit.Networking;
 using UnityEditor.Experimental.GraphView;
 
 namespace Cirrus.Circuit.World
-{    
+{
     public class LevelSession : CustomNetworkBehaviour
     {
         public class MoveInfo
@@ -97,7 +97,7 @@ namespace Cirrus.Circuit.World
                 CommandClient
                     .Instance
                     .Cmd_LevelSession_SetRequiredGemCount(
-                        gameObject, 
+                        gameObject,
                         _requiredGemCount);
             }
         }
@@ -115,7 +115,7 @@ namespace Cirrus.Circuit.World
                 CommandClient
                     .Instance
                     .Cmd_LevelSession_SetRequiredGems(
-                        gameObject, 
+                        gameObject,
                         _requiredGems);
             }
         }
@@ -134,7 +134,7 @@ namespace Cirrus.Circuit.World
         {
             _mutex = new Mutex(false);
 
-            Game.Instance.OnRoundInitHandler += OnRoundInit;            
+            Game.Instance.OnRoundInitHandler += OnRoundInit;
 
             if (CustomNetworkManager.IsServer)
             {
@@ -175,7 +175,7 @@ namespace Cirrus.Circuit.World
 
                 // Check for valid surface to fall on
                 for (
-                    int i = 0; 
+                    int i = 0;
                     i < Level.Dimensions.y;
                     i++)
                 {
@@ -183,7 +183,7 @@ namespace Cirrus.Circuit.World
                         position.SetY(position.y - i),
                         out BaseObject target))
                     {
-                        if (target is Solid) continue; 
+                        if (target is Solid) continue;
                         if (target is Gem) continue;
                         if (target is Character) continue;
                         if (target is Door) continue;
@@ -264,7 +264,7 @@ namespace Cirrus.Circuit.World
         }
 
         public bool GetOtherPortal(
-            Portal portal, 
+            Portal portal,
             out Portal other)
         {
             other = null;
@@ -313,8 +313,8 @@ namespace Cirrus.Circuit.World
                         _portals[portal.Link] = Utils.MakePair(tuple.Item1, portal);
                     }
                     else _portals.Add(portal.Link, Utils.MakePair(portal, portal));
-                        
-                }                
+
+                }
 
                 res.Color = PlayerManager.Instance.GetColor(res.ColorId);
 
@@ -326,9 +326,9 @@ namespace Cirrus.Circuit.World
             {
                 PlayerSession player = GameSession.Instance.GetPlayer(info.PlayerId);
                 if (PlayerManager.Instance.GetPlayer(
-                    player.LocalId, 
+                    player.LocalId,
                     out Player localPlayer))
-                {    
+                {
                     player.Score = 0;
 
                     info.Session._object =
@@ -372,7 +372,7 @@ namespace Cirrus.Circuit.World
 
         public override void Destroy()
         {
-            if(_randomDropRainTimer != null) _randomDropRainTimer.OnTimeLimitHandler -= Cmd_OnRainTimeout;
+            if (_randomDropRainTimer != null) _randomDropRainTimer.OnTimeLimitHandler -= Cmd_OnRainTimeout;
             Game.Instance.OnRoundInitHandler -= OnRoundInit;
 
             foreach (var obj in _objects)
@@ -390,7 +390,7 @@ namespace Cirrus.Circuit.World
                     if (sess.gameObject == null) continue;
 
                     NetworkServer.Destroy(sess.gameObject);
-                    Destroy(sess.gameObject);                    
+                    Destroy(sess.gameObject);
                 }
 
                 NetworkServer.Destroy(gameObject);
@@ -409,8 +409,8 @@ namespace Cirrus.Circuit.World
             foreach (
                 var obj in
                 GameSession.Instance.SelectedLevel.Objects)
-            {               
-                if (obj != null && 
+            {
+                if (obj != null &&
                     obj.IsNetworked)
                 {
                     var objectSession = NetworkingLibrary.Instance.ObjectSession.Create();
@@ -482,8 +482,8 @@ namespace Cirrus.Circuit.World
             BaseObject obj)
         {
             int i = VectorUtils.ToIndex(
-                pos, 
-                Level.Dimensions.x, 
+                pos,
+                Level.Dimensions.x,
                 Level.Dimensions.y);
 
             _objects[i] = obj;
@@ -536,7 +536,7 @@ namespace Cirrus.Circuit.World
             out IEnumerable<MoveResult> moveResults)
         {
             moveResults = new MoveResult[0];
-            
+
             result = new ExitResult { Step = move.Step };
             if (move.User._entered != null)
             {
@@ -544,8 +544,8 @@ namespace Cirrus.Circuit.World
                     move,
                     out result,
                     out moveResults
-                    );                                                                    
-            }          
+                    );
+            }
 
             return true;
         }
@@ -558,7 +558,7 @@ namespace Cirrus.Circuit.World
             BaseObject entered,
             Move move,
             out EnterResult enterResult,
-            out IEnumerable<MoveResult> moveResults)            
+            out IEnumerable<MoveResult> moveResults)
         {
             return entered.GetEnterResults(
                 move,
@@ -577,23 +577,24 @@ namespace Cirrus.Circuit.World
         public void Rpc_ApplyMoveResults(NetworkMoveResult[] results)
         {
             ApplyMoveResults(
-                results.Select(x => x.ToMoveResult()));         
+                results.Select(x => x.ToMoveResult()));
         }
 
         public bool GetMoveResults(
-            Move move, 
+            Move move,
             out IEnumerable<MoveResult> results,
-            bool isRecursiveCall=false)
+            bool isRecursiveCall = false)
         {
             results = new List<MoveResult>();
-            
-            var result = new MoveResult { 
+
+            var result = new MoveResult
+            {
                 MoveType = move.Type,
                 Position = move.Position,
-                Move = move,                                
+                Move = move,
             };
 
-            if(!isRecursiveCall) _moveMutex.WaitOne();
+            if (!isRecursiveCall) _moveMutex.WaitOne();
 
             do
             {
@@ -619,8 +620,7 @@ namespace Cirrus.Circuit.World
                     result = null;
                     break;
                 }
-
-                if (Get(
+                else if (Get(
                     // Object pushed into
                     move.Position + exitResult.Step,
                     out result.Moved))
@@ -630,9 +630,8 @@ namespace Cirrus.Circuit.World
                         result = null;
                         break;
                     }
-
-                    // Object moved into is movable
-                    if (result.Moved.GetMoveResults(
+                    else if (result.Moved.GetMoveResults(
+                        // Object moved into is movable
                         new Move
                         {
                             Position = result.Moved._gridPosition,
@@ -646,6 +645,7 @@ namespace Cirrus.Circuit.World
                         isRecursiveCall: true))
                     {
                         ((List<MoveResult>)results).AddRange(movedResults);
+                        break;
                     }
                     // Object moved into is enterable (or no object)
                     else if (GetEnterResults(
@@ -677,30 +677,49 @@ namespace Cirrus.Circuit.World
                         //result.MoveType = enterResult.MoveType;
 
                         ((List<MoveResult>)results).AddRange(moveResults);
+                        break;
                     }
-                    else result = null;
+                    else 
+                    {
+                        result = null;
+                        break;
+                    }
                 }
                 // No object moved into
                 else if (
-                    move.Type != MoveType.Falling &&                    
+                    move.Type != MoveType.Teleport &&
+                    move.Type != MoveType.Falling &&
                     Level.IsInsideBounds(
                         move.Position +
                         move.Step +
                         Vector3Int.down))
                 {
-                    if (Get(
+                    BaseObject below;
+
+                    if (!Get(
                         move.Position +
-                        move.Step +
                         Vector3Int.down,
-                        out BaseObject slope))
+                        out below))
+                    {
+                        result.Entered = null;
+                        result.Moved = null;
+                        result.Destination = move.Position + Vector3Int.down;
+                        result.MoveType = MoveType.Falling;
+                        break;
+                    }
+                    else if (Get(
+                       move.Position +
+                       move.Step +
+                       Vector3Int.down,
+                       out below))
                     {
                         // Handle stepping on a slope
-                        if (slope is Slope)
+                        if (below is Slope)
                         {
                             var slopeMove = move.Copy();
                             slopeMove.Step = move.Step + Vector3Int.down;
                             if (GetEnterResults(
-                                slope,
+                                below,
                                 slopeMove,
                                 out EnterResult enterResult,
                                 out IEnumerable<MoveResult> downhillMoveResults))
@@ -716,19 +735,27 @@ namespace Cirrus.Circuit.World
                                 result.Scale = enterResult.Scale;
 
                                 ((List<MoveResult>)results).AddRange(downhillMoveResults);
+                                break;
                             }
-                            else result = null;// cant move object in the slope, cant move myself
-                        }
+                            else
+                            {
+                                result = null;
+                                break;
+                            }
+                        }                   
                     }
-                }
 
+                    // not slope, do nothing, result is good
+                    break;
+                }
+                // else we're falling
             }
             while (false);
 
-            if(!isRecursiveCall) _moveMutex.ReleaseMutex();
+            if (!isRecursiveCall) _moveMutex.ReleaseMutex();
 
             // Add action result
-            if(result != null) ((List<MoveResult>)results).Add(result);
+            if (result != null) ((List<MoveResult>)results).Add(result);
 
             return result != null;
         }
@@ -807,8 +834,8 @@ namespace Cirrus.Circuit.World
 
             if (gobj.TryGetComponent(out BaseObject obj))
             {
-                session._object = obj;                
-                obj._session = session;                
+                session._object = obj;
+                obj._session = session;
                 (obj.Transform.position, obj._gridPosition) = RegisterObject(obj);
 
                 if (Get(
@@ -838,7 +865,7 @@ namespace Cirrus.Circuit.World
             if (gem.TryGetComponent(out Spawnable spawn))
             {
                 Rpc_OnRainTimeout(
-                    position, 
+                    position,
                     spawn.Id);
             }
         }

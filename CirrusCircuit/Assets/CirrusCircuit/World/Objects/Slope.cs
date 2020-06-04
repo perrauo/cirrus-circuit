@@ -70,17 +70,27 @@ namespace Cirrus.Circuit.World.Objects
                 out moveResults
                 ))
             {
-                var dir = move.Step.SetY(0);
-
-                // Moving up or moving down
-                if ((move.Step.y >= 0 &&
-                    dir == _direction) ||
-                    (move.Step.y != 0 &&
-                    dir == -_direction))                    
+                if (move.Step.y < 0)
+                // If falling down
                 {
-                    enterResult.PitchAngle = dir == _direction ? VisitorAngle : -VisitorAngle;
+                    enterResult.PitchAngle = move.User._direction  == _direction ? VisitorAngle : -VisitorAngle;
                     enterResult.Offset = Vector3.up * Level.CellSize / 2;
                     return true;
+                }
+                else
+                {
+                    var dir = move.Step.SetY(0);
+
+                    // Moving up or moving down
+                    if ((move.Step.y >= 0 &&
+                        dir == _direction) ||
+                        (move.Step.y != 0 &&
+                        dir == -_direction))
+                    {
+                        enterResult.PitchAngle = dir == _direction ? VisitorAngle : -VisitorAngle;
+                        enterResult.Offset = Vector3.up * Level.CellSize / 2;
+                        return true;
+                    }
                 }
             }
 

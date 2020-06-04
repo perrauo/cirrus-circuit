@@ -55,6 +55,10 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
         private CharacterAnimatorWrapper _animatorWrapper;
 
+        private Coroutine _moveCoroutine = null;
+
+        private bool _wasMovingVertical = false;
+
         public override Color Color {
 
             get => _color;            
@@ -116,8 +120,6 @@ namespace Cirrus.Circuit.World.Objects.Characters
             base.FixedUpdate();
         }
 
-        private bool _wasMovingVertical = false;
-
         public void OnMoveIdleTransitionTimeout()
         {
             Play(CharacterAnimation.Character_Idle);
@@ -141,8 +143,6 @@ namespace Cirrus.Circuit.World.Objects.Characters
         {
             //Game.Instance.HandleAction1(this);
         }
-
-        private Coroutine _moveCoroutine = null;
 
         public bool GetMoveAlt(
             int sign, 
@@ -177,38 +177,29 @@ namespace Cirrus.Circuit.World.Objects.Characters
             return true;
         }
 
-
         public bool GetMove(
             int sign,
             bool vertical,
             ref Move move)
         {
-
             move.Step = vertical ? new Vector3Int(0, 0, sign) : new Vector3Int(sign, 0, 0);
-            move.Type = MoveType.Moving;            
+            move.Type = MoveType.Moving;
+
+            if (
+                _preserveInputDirection && 
+                _inputDirection == move.Step)
+            {
+                move.Step = _direction;
+            }
+            else
+            {
+                _inputDirection = move.Step;
+                _preserveInputDirection = false;
+            }
 
             return true;
         }
 
-
-        // Input scheme world :
-        // Press one direction, if not in same direction as player, then just rotate
-
-        // Input scheme local
-        // Press left, right, back, to rotate
-        // Press forward to move forward
-
-    //                if (
-    //        _preserveInputDirection &&
-    //        _inputDirection == move.Step)
-    //    {
-    //        move.Step = _direction* StepSize;
-    //}
-    //    else
-    //    {
-    //        _inputDirection = move.Step;
-    //        _preserveInputDirection = false;
-    //    }
 
         public IEnumerator Coroutine_Cmd_Move(Vector2 axis)
         {          

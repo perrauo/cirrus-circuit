@@ -46,6 +46,13 @@ namespace Cirrus.Circuit.World.Objects
                 MoveType = MoveType.Climbing
             };
 
+            if (!LevelSession.Instance.Get(
+                _gridPosition + Vector3Int.up, out BaseObject _
+                ))
+            {
+                result.Destination = _gridPosition + Vector3Int.up;                
+            }
+
             return true;
 
             //return base.GetEnterResults(move, out result, out moveResults);
