@@ -142,6 +142,18 @@ namespace Cirrus.Circuit.Networking
 
         #region Level Session
 
+        Mutex Cmd_ObjectSession_ApplyMoveResult_mutex = new Mutex();
+
+        [Command]
+        public void Cmd_LevelSession_ApplyMoveResult(NetworkMoveResult[] results)
+        {
+            Cmd_ObjectSession_ApplyMoveResult_mutex.WaitOne();
+
+            LevelSession.Instance.Rpc_ApplyMoveResults(results);                
+
+            Cmd_ObjectSession_ApplyMoveResult_mutex.ReleaseMutex();            
+        }
+
         [Command]
         public void Cmd_LevelSession_UpdateObjectSessions(GameObject obj)
         {
@@ -358,8 +370,6 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-
-
         [Command]
         public void Cmd_ObjectSession_Interact(GameObject obj, GameObject sourceObj)
         {
@@ -486,8 +496,6 @@ namespace Cirrus.Circuit.Networking
                 Cmd_ObjectSession_Move_mutex.ReleaseMutex();
             }
         }
-
-
 
         [Command]
         public void Cmd_ObjectSession_SetIndex(GameObject obj, int idx)

@@ -52,7 +52,6 @@ namespace Cirrus.Circuit.World
         [SyncVar]
         [SerializeField]
         public GameObjectSyncList _objectSessions = new GameObjectSyncList();
-
         public IEnumerable<ObjectSession> ObjectSessions => _objectSessions.Select(x => x.GetComponent<ObjectSession>());
 
         [SyncVar]
@@ -95,7 +94,11 @@ namespace Cirrus.Circuit.World
             set
             {
                 _requiredGemCount = value;
-                CommandClient.Instance.Cmd_LevelSession_SetRequiredGemCount(gameObject, _requiredGemCount);
+                CommandClient
+                    .Instance
+                    .Cmd_LevelSession_SetRequiredGemCount(
+                        gameObject, 
+                        _requiredGemCount);
             }
         }
 
@@ -109,7 +112,11 @@ namespace Cirrus.Circuit.World
             set
             {
                 _requiredGems = value;
-                CommandClient.Instance.Cmd_LevelSession_SetRequiredGems(gameObject, _requiredGems);
+                CommandClient
+                    .Instance
+                    .Cmd_LevelSession_SetRequiredGems(
+                        gameObject, 
+                        _requiredGems);
             }
         }
 
@@ -136,7 +143,7 @@ namespace Cirrus.Circuit.World
                         start: false,
                         repeat: true);
 
-                if (Game.Instance.IsRainEnabled)
+                if (Settings.AreGemsSpawned.Boolean)
                 {
                     _randomDropRainTimer.OnTimeLimitHandler += Cmd_OnRainTimeout;
                 }
@@ -148,7 +155,7 @@ namespace Cirrus.Circuit.World
         // TODO designated area for gem to fall through
         public Vector3Int GetFallPosition(bool isLandingGuaranteed = true)
         {
-            const int FallTrials = 100;
+            const int FallTrials = 1000;
 
             for (int k = 0; k < FallTrials; k++)
             {
@@ -176,10 +183,12 @@ namespace Cirrus.Circuit.World
                         position.SetY(position.y - i),
                         out BaseObject target))
                     {
+                        if (target is Solid) continue; 
                         if (target is Gem) continue;
                         if (target is Character) continue;
                         if (target is Door) continue;
-                        if (target is Portal) continue;                    
+                        if (target is Portal) continue;
+                        if (target is Ladder) continue;
 
                         return position;
                     }
@@ -567,9 +576,9 @@ namespace Cirrus.Circuit.World
         [ClientRpc]
         public void Rpc_ApplyMoveResults(NetworkMoveResult[] results)
         {
-            ApplyMoveResults(results.Select(x => x.ToMoveResult()));         
+            ApplyMoveResults(
+                results.Select(x => x.ToMoveResult()));         
         }
-
 
         public bool GetMoveResults(
             Move move, 
@@ -597,13 +606,13 @@ namespace Cirrus.Circuit.World
                     break;
                 }
 
-                result.Direction = move.Type == MoveType.Falling ?
-                    move.User._direction :
-                    exitResult.Step.SetY(0);
-
                 result.Destination = move.Position + exitResult.Step;
                 result.Position = exitResult.Position;
                 result.Offset = exitResult.Offset;
+
+                result.Direction = move.Type == MoveType.Falling ?
+                    move.User._direction :
+                    exitResult.Step.SetY(0);
 
                 if (!Level.IsInsideBounds(result.Destination))
                 {
@@ -672,10 +681,12 @@ namespace Cirrus.Circuit.World
                     else result = null;
                 }
                 // No object moved into
-                else if (Level.IsInsideBounds(
-                    move.Position +
-                    move.Step +
-                    Vector3Int.down))
+                else if (
+                    move.Type != MoveType.Falling &&                    
+                    Level.IsInsideBounds(
+                        move.Position +
+                        move.Step +
+                        Vector3Int.down))
                 {
                     if (Get(
                         move.Position +
@@ -806,7 +817,7 @@ namespace Cirrus.Circuit.World
                 {
                     obj.Cmd_FSM_SetState(ObjectState.Idle);
                 }
-                else obj.Cmd_Fall();
+                else obj.Cmd_Server_Fall();
             }
         }
 

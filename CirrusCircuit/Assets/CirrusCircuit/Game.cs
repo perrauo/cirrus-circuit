@@ -80,9 +80,9 @@ namespace Cirrus.Circuit
         public bool IsSeedRandomized => _randomizeSeed;
 
 
-        [SerializeField]
-        private bool _isRainEnabled = false;
-        public bool IsRainEnabled => _isRainEnabled;
+        //[SerializeField]
+        //private bool _isRainEnabled = false;
+        //public bool IsRainEnabled => _isRainEnabled;
 
 
         [SerializeField]

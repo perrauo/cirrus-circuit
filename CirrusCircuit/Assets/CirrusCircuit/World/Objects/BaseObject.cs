@@ -11,6 +11,7 @@ using Cirrus.Circuit.Networking;
 using Cirrus.Circuit.Cameras;
 using UnityEditor;
 using MathUtils = Cirrus.MathUtils;
+using System.Linq;
 //using System.Numerics;
 
 namespace Cirrus.Circuit.World.Objects
@@ -98,6 +99,8 @@ namespace Cirrus.Circuit.World.Objects
         public virtual bool IsNetworked => true;
 
         public virtual bool IsSlidable => false;
+
+        public virtual bool IsStable => true;
 
         Vector3Int _previousGridPosition;
 
@@ -394,6 +397,30 @@ namespace Cirrus.Circuit.World.Objects
             _session.Cmd_Move(move);
         }
 
+        public virtual bool Cmd_Server_Move(Move move)
+        {
+#if UNITY_EDITOR
+            if (!CustomNetworkManager.IsServer)
+            {
+                Debug.Assert(CustomNetworkManager.IsServer, "Server move should not be called from a client");
+                return false;
+            }
+#endif
+            if (LevelSession.GetMoveResults(
+                move,
+                out IEnumerable<MoveResult> results,
+                false))
+            {
+                CommandClient.Instance.Cmd_LevelSession_ApplyMoveResult(
+                    results
+                    .Select(x => x.ToNetworkMoveResult())
+                    .ToArray());
+                return true;
+            }
+
+            return false;
+        }
+
         public virtual void ApplyMoveResult(MoveResult result)
         {
             ObjectState state = _state;
@@ -459,7 +486,7 @@ namespace Cirrus.Circuit.World.Objects
                     _gridPosition = result.Destination;
                     _targetPosition = Level.GridToWorld(result.Destination);
                     _targetPosition += result.Offset;
-                    _pitchAngle = 0;
+                    _pitchAngle = 0;                    
 
                     state = ObjectState.Falling;
 
@@ -505,7 +532,7 @@ namespace Cirrus.Circuit.World.Objects
             out IEnumerable<MoveResult> results,
             bool isRecursiveCall=false)
         {
-            results = null;
+             results = null;
 
             if (move.Source != null &&
                 move.Type == MoveType.Sliding)
@@ -611,7 +638,11 @@ namespace Cirrus.Circuit.World.Objects
             result = new ExitResult
             {
                 Step = move.Step,
-                Offset = Vector3.zero
+                Offset = Vector3.zero,
+                Destination = move.Position + move.Step,
+                Entered = null,
+                Moved = null,
+                Position = move.Position
             };
 
             return true;
@@ -639,9 +670,42 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Fall
 
-        public virtual void Cmd_Fall()
+        public virtual bool Cmd_Server_Fall()
         {
-            _session.Cmd_Fall();
+            if (!CustomNetworkManager.IsServer) return false;
+
+            Move move =
+                Level.Instance.IsInsideBoundsY(
+                    _gridPosition + Vector3Int.down) ?
+                new Move
+                {
+                    Type = MoveType.Falling,
+                    User = this,
+                    Position = _gridPosition,
+                    Step = Vector3Int.down
+                } :
+                // Probably move this inside get move results
+                new Move
+                {
+                    Type = MoveType.Teleport,
+                    User = this,
+                    Position = LevelSession.Instance.GetFallPosition(true),
+                    Step = Vector3Int.down
+                };
+
+            // Server holds the truth
+            if (GetMoveResults(
+                move,
+                out IEnumerable<MoveResult> results))
+            {
+                LevelSession.Instance.Rpc_ApplyMoveResults(                
+                    results
+                    .Select(x => x.ToNetworkMoveResult())
+                    .ToArray());
+                return true;
+            }
+
+            return false;            
         }
 
         public virtual void OnClimbFallTimeout()
@@ -657,7 +721,7 @@ namespace Cirrus.Circuit.World.Objects
                     if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
                     else Cmd_FSM_SetState(ObjectState.Idle);
                 }
-                else Cmd_Fall();
+                else Cmd_Server_Fall();
             }
             // If arrived on a slope
             else if (
@@ -732,7 +796,7 @@ namespace Cirrus.Circuit.World.Objects
                             _previousGridPosition + Vector3Int.up,
                             out above))
                         {
-                            above.Cmd_Fall();
+                            above.Cmd_Server_Fall();
                         }
 
                         _state = target;
@@ -867,11 +931,16 @@ namespace Cirrus.Circuit.World.Objects
                                 _gridPosition + Vector3Int.down,
                                 out BaseObject obj))
                             {
-                                if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
+                                if (obj.IsStable)
+                                {
+                                    if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
 
-                                else Cmd_FSM_SetState(ObjectState.Idle);
+                                    else Cmd_FSM_SetState(ObjectState.Idle);
+                                }
+                                else Cmd_Server_Fall();
+
                             }
-                            else Cmd_Fall();
+                            else Cmd_Server_Fall();
                         }
                         // If arrived on a slope
                         else if (

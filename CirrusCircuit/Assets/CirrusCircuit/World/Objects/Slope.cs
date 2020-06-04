@@ -16,6 +16,7 @@ namespace Cirrus.Circuit.World.Objects
     {
         // TODO
         //public override bool IsNetworked => false;
+        public override bool IsStable => false;
 
         public const float VisitorAngle = 20;
 
@@ -43,9 +44,7 @@ namespace Cirrus.Circuit.World.Objects
                 out exitResult,
                 out moveResults
                 ))
-            {                
-                
-
+            {                                
                 ////Same direction(Look up)
                 if (exitResult.Step.SetY(0) == _direction)
                 {
