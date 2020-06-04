@@ -185,13 +185,13 @@ namespace Cirrus.Circuit.Networking
             }
         }
 
-        [Command]
-        public void Cmd_LevelSession_OnRainTimeout(GameObject obj, Vector3Int pos, int objectId)
-        {
-            if (obj == null) return;
+        // [Command]
+        // public void Cmd_LevelSession_OnRainTimeout(GameObject obj, Vector3Int pos, int objectId)
+        // {
+        //     if (obj == null) return;
 
-            if (obj.TryGetComponent(out LevelSession session)) session.Rpc_OnRainTimeout(pos, objectId);
-        }
+        //     if (obj.TryGetComponent(out LevelSession session)) session.Rpc_OnRainTimeout(pos, objectId);
+        // }
 
         [Command]
         public void Cmd_LevelSession_SetRequiredGemCount(GameObject obj, int count)
@@ -467,56 +467,56 @@ namespace Cirrus.Circuit.Networking
         //    }
         //}
 
-        [Command]
-        public void Cmd_OnStartIntermissionTimeout(GameObject obj)
-        {
-            //AssertGameObjectNull(obj);
-            if (obj == null) return;
+        // [Command]
+        // public void Cmd_OnStartIntermissionTimeout(GameObject obj)
+        // {
+        //     //AssertGameObjectNull(obj);
+        //     if (obj == null) return;
             
-            if(obj.TryGetComponent(out RoundSession session))
-            {
-                session.Rpc_OnStartIntermissionTimeout();
-            }
-        }
+        //     if(obj.TryGetComponent(out RoundSession session))
+        //     {
+        //         session.Rpc_OnStartIntermissionTimeout();
+        //     }
+        // }
 
 
-        [Command]
-        public void Cmd_RoundSession_OnRoundTimeout(GameObject obj)
-        {
-            //AssertGameObjectNull(obj);
-            if (obj == null) return;
+        // [Command]
+        // public void Cmd_RoundSession_OnRoundTimeout(GameObject obj)
+        // {
+        //     //AssertGameObjectNull(obj);
+        //     if (obj == null) return;
 
-            if (obj.TryGetComponent(out RoundSession session))
-            {
-                session.Rpc_OnRoundTimeout();
-            }
-        }
+        //     if (obj.TryGetComponent(out RoundSession session))
+        //     {
+        //         session.Rpc_OnRoundTimeout();
+        //     }
+        // }
 
 
-        [Command]
-        public void Cmd_RoundSession_OnCountdownTimeout(GameObject obj)
-        {
-            //AssertGameObjectNull(obj);
-            if (obj == null) return;
+        // [Command]
+        // public void Cmd_RoundSession_OnCountdownTimeout(GameObject obj)
+        // {
+        //     //AssertGameObjectNull(obj);
+        //     if (obj == null) return;
             
-            if (obj.TryGetComponent(out RoundSession session))
-            {
-                session.Rpc_OnCountDownTimeout();
-            }
-        }
+        //     if (obj.TryGetComponent(out RoundSession session))
+        //     {
+        //         session.Rpc_OnCountDownTimeout();
+        //     }
+        // }
 
 
-        [Command]
-        public void Cmd_RoundSession_OnRoundEnd(GameObject obj)
-        {
-            //AssertGameObjectNull(obj);
-            if (obj == null) return;
+        // [Command]
+        // public void Cmd_RoundSession_OnRoundEnd(GameObject obj)
+        // {
+        //     //AssertGameObjectNull(obj);
+        //     if (obj == null) return;
             
-            if (obj.TryGetComponent(out RoundSession session))
-            {
-                session.Rpc_OnRoundEnd();
-            }
-        }
+        //     if (obj.TryGetComponent(out RoundSession session))
+        //     {
+        //         session.Rpc_OnRoundEnd();
+        //     }
+        // }
 
         #endregion
 

@@ -837,8 +837,7 @@ namespace Cirrus.Circuit.World
 
             if (gem.TryGetComponent(out Spawnable spawn))
             {
-                CommandClient.Instance.Cmd_LevelSession_OnRainTimeout(
-                    gameObject, 
+                Rpc_OnRainTimeout(
                     position, 
                     spawn.Id);
             }

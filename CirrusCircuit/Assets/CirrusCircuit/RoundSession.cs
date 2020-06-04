@@ -175,7 +175,7 @@ namespace Cirrus.Circuit
 
         public void Cmd_OnStartIntermissionTimeout()
         {
-            CommandClient.Instance.Cmd_OnStartIntermissionTimeout(gameObject);
+            Rpc_OnStartIntermissionTimeout();
         }
 
 
@@ -199,7 +199,7 @@ namespace Cirrus.Circuit
 
         private void Cmd_OnRoundTimeout()
         {
-            CommandClient.Instance.Cmd_RoundSession_OnRoundTimeout(gameObject);
+            Rpc_OnRoundTimeout();
         }
 
         [ClientRpc]
@@ -228,7 +228,7 @@ namespace Cirrus.Circuit
 
         private void Cmd_OnCountDownTimeout()
         {
-            CommandClient.Instance.Cmd_RoundSession_OnCountdownTimeout(gameObject);
+            Rpc_OnCountDownTimeout();
         }
 
         [ClientRpc]
@@ -268,7 +268,7 @@ namespace Cirrus.Circuit
 
         public void Cmd_OnRoundEnd()
         {
-            CommandClient.Instance.Cmd_RoundSession_OnRoundEnd(gameObject);
+            Rpc_OnRoundEnd();
         }
 
         [ClientRpc]
