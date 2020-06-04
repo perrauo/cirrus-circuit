@@ -399,13 +399,6 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual bool Cmd_Server_Move(Move move)
         {
-#if UNITY_EDITOR
-            if (!CustomNetworkManager.IsServer)
-            {
-                Debug.Assert(CustomNetworkManager.IsServer, "Server move should not be called from a client");
-                return false;
-            }
-#endif
             if (LevelSession.GetMoveResults(
                 move,
                 out IEnumerable<MoveResult> results,
@@ -659,9 +652,24 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Land
 
-        public virtual void Cmd_Slide()
+        public virtual bool Cmd_Server_Slide()
         {
-            _session.Cmd_Slide();
+            if (!CustomNetworkManager.IsServer) return false;
+
+            if (_entered == null) return false;
+
+            Move move =
+                new Move
+                {
+                    Type = MoveType.Sliding,
+                    User = this,
+                    Position = _gridPosition,
+                    Step = -_entered._direction,
+                    Entered = _entered,
+                };
+
+            return Cmd_Server_Move(move);
+
         }
 
 
@@ -693,19 +701,7 @@ namespace Cirrus.Circuit.World.Objects
                     Step = Vector3Int.down
                 };
 
-            // Server holds the truth
-            if (GetMoveResults(
-                move,
-                out IEnumerable<MoveResult> results))
-            {
-                LevelSession.Instance.Rpc_ApplyMoveResults(                
-                    results
-                    .Select(x => x.ToNetworkMoveResult())
-                    .ToArray());
-                return true;
-            }
-
-            return false;            
+            return Cmd_Server_Move(move);            
         }
 
         public virtual void OnClimbFallTimeout()
@@ -730,7 +726,7 @@ namespace Cirrus.Circuit.World.Objects
                 _entered is Slope &&
                 !((Slope)_entered).IsStaircase)
             {
-                Cmd_Slide();
+                Cmd_Server_Slide();
             }
             else if (LevelSession.Get(
                 _gridPosition + Vector3Int.down,
@@ -949,7 +945,7 @@ namespace Cirrus.Circuit.World.Objects
                             _entered is Slope &&
                             !((Slope)_entered).IsStaircase)
                         {
-                            Cmd_Slide();
+                            Cmd_Server_Slide();
                         }
                         else if (LevelSession.Get(
                             _gridPosition + Vector3Int.down,
