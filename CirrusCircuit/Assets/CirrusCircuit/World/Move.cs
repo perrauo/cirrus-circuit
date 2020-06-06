@@ -62,6 +62,7 @@ namespace Cirrus.Circuit.World
         public BaseObject Moved;
         public BaseObject Entered;
         public float Scale = 1;
+        public MoveResult NextResult;
     }
 
 
@@ -89,6 +90,7 @@ namespace Cirrus.Circuit.World
         public GameObject Moved;
         public GameObject Entered;
         public float Scale = 1;
+        public GameObject NextResult;
     }
  
 

@@ -142,17 +142,17 @@ namespace Cirrus.Circuit.Networking
 
         #region Level Session
 
-        Mutex Cmd_ObjectSession_ApplyMoveResult_mutex = new Mutex();
+        //Mutex Cmd_ObjectSession_ApplyMoveResult_mutex = new Mutex();
 
-        [Command]
-        public void Cmd_LevelSession_ApplyMoveResult(NetworkMoveResult[] results)
-        {
-            Cmd_ObjectSession_ApplyMoveResult_mutex.WaitOne();
+        //[Command]
+        //public void Cmd_LevelSession_ApplyMoveResult(NetworkMoveResult[] results)
+        //{
+        //    Cmd_ObjectSession_ApplyMoveResult_mutex.WaitOne();
 
-            LevelSession.Instance.Rpc_ApplyMoveResults(results);                
+        //    LevelSession.Instance.Rpc_ApplyMoveResults(results);                
 
-            Cmd_ObjectSession_ApplyMoveResult_mutex.ReleaseMutex();            
-        }
+        //    Cmd_ObjectSession_ApplyMoveResult_mutex.ReleaseMutex();            
+        //}
 
         [Command]
         public void Cmd_LevelSession_UpdateObjectSessions(GameObject obj)
@@ -409,10 +409,13 @@ namespace Cirrus.Circuit.Networking
                 // Server holds the truth
                 if (session._object.GetMoveResults(
                     netMove.ToMove(), 
-                    out IEnumerable<MoveResult> results))
+                    out IEnumerable<MoveResult> results,
+                    lockResults:true))
                 {
                     LevelSession.Instance.Rpc_ApplyMoveResults(
-                        results.Select(x => x == null ? null : x.ToNetworkMoveResult()).ToArray());
+                        results
+                        .Select(x => x == null ? null : x.ToNetworkMoveResult())
+                        .ToArray());
                 }
 
                 Cmd_ObjectSession_Move_mutex.ReleaseMutex();

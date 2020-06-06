@@ -12,6 +12,7 @@ using Cirrus.Circuit.Cameras;
 using UnityEditor;
 using MathUtils = Cirrus.MathUtils;
 using System.Linq;
+using System.Threading;
 //using System.Numerics;
 
 namespace Cirrus.Circuit.World.Objects
@@ -180,6 +181,8 @@ namespace Cirrus.Circuit.World.Objects
         protected ObjectState _state = ObjectState.Disabled;
 
         protected bool _preserveInputDirection = false;
+
+        private Mutex _applyResultmutex = new Mutex();
 
 
         #region Unity Engine
@@ -422,7 +425,8 @@ namespace Cirrus.Circuit.World.Objects
             if (LevelSession.GetMoveResults(
                 move,
                 out IEnumerable<MoveResult> results,
-                false))
+                false,
+                true))
             {
                 LevelSession.Instance.Rpc_ApplyMoveResults(
                     results
@@ -436,49 +440,49 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void ApplyMoveResult(MoveResult result)
         {
-            ObjectState state = _state;
+            _applyResultmutex.WaitOne();
 
-            _pitchAngle = 0;
-
-            switch (result.MoveType)
+            do
             {
-                case MoveType.Direction:
+
+                ObjectState state = _state;
+
+                _pitchAngle = 0;
+
+                if (result.MoveType == MoveType.Direction)
+                {
                     _direction = result.Direction;
-                    return;
-
-                case MoveType.Moving:
-
+                    break;
+                }
+                else if (result.MoveType == MoveType.Moving)
+                {
                     _gridPosition = result.Destination;
                     _targetPosition = Level.GridToWorld(result.Destination);
                     _targetPosition += result.Offset;
                     _direction = result.Direction;
                     _pitchAngle = result.PitchAngle;
                     state = ObjectState.Moving;
-
-
-                    break;
-
-                case MoveType.Climbing:
-
+                }
+                else if (result.MoveType == MoveType.Climbing)
+                {
                     _gridPosition = result.Destination;
                     _targetPosition = Level.GridToWorld(result.Destination);
                     _targetPosition += result.Offset;
                     _direction = result.Direction;
                     _pitchAngle = result.PitchAngle;
                     state = ObjectState.Climbing;
-
-
-                    break;
-
-                case MoveType.Teleport:
+                }
+                else if (result.MoveType == MoveType.Teleport)
+                {
                     _gridPosition = result.Destination;
                     _targetPosition = Level.GridToWorld(result.Destination);
                     _targetPosition += result.Offset;
                     Transform.position = _targetPosition;
                     _pitchAngle = result.PitchAngle;
-                    break;
 
-                case MoveType.UsingPortal:
+                }
+                else if (result.MoveType == MoveType.UsingPortal)
+                {
                     // TODO preserve input direction timer
                     // TODO Timer restarted inside Cmd move
                     _preserveInputDirection = true;
@@ -492,58 +496,58 @@ namespace Cirrus.Circuit.World.Objects
                     _pitchAngle = result.PitchAngle;
                     _exitPortalTimer.Start();
                     state = ObjectState.Moving;
-                    break;
-
-                case MoveType.Falling:
-
+                }
+                else if (result.MoveType == MoveType.Falling)
+                {
                     _gridPosition = result.Destination;
                     _targetPosition = Level.GridToWorld(result.Destination);
                     _targetPosition += result.Offset;
-                    _pitchAngle = 0;                    
-
+                    _pitchAngle = 0;
                     state = ObjectState.Falling;
-
-                    break;
-
-
-                case MoveType.Sliding:
-
+                }
+                else if (result.MoveType == MoveType.Sliding)
+                {
                     _gridPosition = result.Destination;
                     _targetPosition = Level.GridToWorld(result.Destination);
                     _targetPosition += result.Offset;
                     _direction = result.Direction;
                     _pitchAngle = result.PitchAngle;
                     state = ObjectState.Sliding;
-                    break;
+                }
+
+                if (result.Moved != null) result.Moved.Interact(this);
+
+                if (
+                    result.Move.Position != result.Destination &&
+                    _entered != null)
+                {
+                    _entered.Exit(this);
+                    _entered = null;
+                }
+
+                if (result.Entered != null)
+                {
+                    _entered = result.Entered;
+                    result.Entered.Enter(this);
+                }
+
+                FSM_SetState(
+                    state,
+                    this);
+                LevelSession
+                    .Instance
+                    .ApplyMoveResult(result);
             }
+            while (false);
 
-
-            if (result.Moved != null) result.Moved.Interact(this);
-
-            if (
-                result.Move.Position != result.Destination &&
-                _entered != null)
-            {
-                _entered.Exit(this);
-                _entered = null;
-            }
-
-            if (result.Entered != null)
-            {
-                _entered = result.Entered;
-                result.Entered.Enter(this);
-            }
-
-            FSM_SetState(
-                state,
-                this);
-            LevelSession.Instance.ApplyMoveResult(result);
+            _applyResultmutex.ReleaseMutex();
         }
 
         public virtual bool GetMoveResults(
             Move move,
             out IEnumerable<MoveResult> results,
-            bool isRecursiveCall=false)
+            bool isRecursiveCall=false,
+            bool lockResults = true)
         {
              results = null;
 
@@ -562,7 +566,8 @@ namespace Cirrus.Circuit.World.Objects
                     return LevelSession.GetMoveResults(
                         move,
                         out results,
-                        isRecursiveCall);
+                        isRecursiveCall,
+                        lockResults);
 
                 case MoveType.Direction:
                     results = new List<MoveResult>();

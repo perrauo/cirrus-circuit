@@ -118,8 +118,6 @@ namespace Cirrus.Circuit.World.Objects
             _object.PerformAction(action);
         }
 
-
-
         #region Interact
 
         public void Cmd_Interact(BaseObject source)

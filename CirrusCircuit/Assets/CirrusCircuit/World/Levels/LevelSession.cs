@@ -13,6 +13,7 @@ using System.Threading;
 using UnityEngine;
 using Cirrus.Circuit.Networking;
 using UnityEditor.Experimental.GraphView;
+using Cirrus.Threading;
 
 namespace Cirrus.Circuit.World
 {
@@ -66,6 +67,9 @@ namespace Cirrus.Circuit.World
         private static LevelSession _instance;
 
         public Delegate<MoveResult> OnMovedHandler;
+
+        public Mutex _moveMutex = new Mutex();
+        public Mutex _resultLockMutex = new Mutex();
 
         public static LevelSession Instance
         {
@@ -367,7 +371,6 @@ namespace Cirrus.Circuit.World
         public override void OnStartClient()
         {
             base.OnStartClient();
-
         }
 
         public override void Destroy()
@@ -537,7 +540,17 @@ namespace Cirrus.Circuit.World
         {
             moveResults = new MoveResult[0];
 
-            result = new ExitResult { Step = move.Step };
+            result = new ExitResult
+            {
+                Step = move.Step,
+                Destination = move.Position + move.Step,
+                Position = move.Position,
+                Entered = move.User._entered,
+                Moved = null,
+                Offset = Vector3.zero
+            };
+
+
             if (move.User._entered != null)
             {
                 return move.User._entered.GetExitResult(
@@ -569,9 +582,65 @@ namespace Cirrus.Circuit.World
 
         #endregion
 
-        #region Move
+        #region Apply move result
+        public void ApplyMoveResult(MoveResult result)
+        {
+            // Clear move position
+            int idx = VectorUtils.ToIndex(result.Move.Position, 20, 20);
+            if (_objects[idx] != result.Move.User)
+            {
+                Debug.Log("");
+            }
 
-        public Mutex _moveMutex = new Mutex();
+
+            if (
+                result.Move.Entered == null &&
+                Get(result.Move.Position, out BaseObject previous))
+            {
+                if (previous == result.Move.User)
+                {
+                    Set(
+                        result.Move.Position,
+                        null);
+                }
+                else 
+                {
+                    Debug.Log("");
+                }
+            }
+
+            if (result.Entered == null)
+            {
+                if(_objects.Contains(result.Move.User))
+                {
+                    Debug.Log("");
+                }
+                
+                Set(result.Destination, result.Move.User);
+            }
+
+            OnMovedHandler?.Invoke(result);
+        }
+
+        public virtual void ApplyMoveResults(IEnumerable<MoveResult> results)
+        {
+            _moveMutex.WaitOne();
+
+            // TODO wait til acquired?
+
+            foreach (var result in results)
+            {
+                if (result == null) continue;
+                
+                result
+                    .Move
+                    .User
+                    .ApplyMoveResult(result);
+            }
+
+            _moveMutex.ReleaseMutex();
+        }
+
 
         [ClientRpc]
         public void Rpc_ApplyMoveResults(NetworkMoveResult[] results)
@@ -580,10 +649,18 @@ namespace Cirrus.Circuit.World
                 results.Select(x => x.ToMoveResult()));
         }
 
+        #endregion
+
+
+        #region Move
+  
         public bool GetMoveResults(
             Move move,
             out IEnumerable<MoveResult> results,
-            bool isRecursiveCall = false)
+            bool isRecursiveCall = false,
+            // We do not lock the results if we simply query the level
+            // without intent to change it
+            bool lockResults = true)
         {
             results = new List<MoveResult>();
 
@@ -594,7 +671,11 @@ namespace Cirrus.Circuit.World
                 Move = move,
             };
 
-            if (!isRecursiveCall) _moveMutex.WaitOne();
+            if (!isRecursiveCall)
+            {
+                if (lockResults) _resultLockMutex.WaitOne();
+                else _moveMutex.WaitOne();
+            }
 
             do
             {
@@ -622,7 +703,7 @@ namespace Cirrus.Circuit.World
                 }
                 else if (Get(
                     // Object pushed into
-                    move.Position + exitResult.Step,
+                    result.Destination,
                     out result.Moved))
                 {
                     if (result.Moved == move.User)
@@ -630,12 +711,19 @@ namespace Cirrus.Circuit.World
                         result = null;
                         break;
                     }
+                    else if (result.Moved == move.Source)
+                    {
+                        // TODO
+                        // This shoudl not occur because of mutexd
+                        result = null;
+                        break;
+                    }
                     else if (result.Moved.GetMoveResults(
                         // Object moved into is movable
                         new Move
                         {
-                            Position = result.Moved._gridPosition,
-                            Entered = result.Moved._entered,
+                            Position = result.Destination,
+                            Entered = null,
                             Source = move.User,
                             User = result.Moved,
                             Type = move.Type,
@@ -701,10 +789,13 @@ namespace Cirrus.Circuit.World
                         Vector3Int.down,
                         out below))
                     {
+                        bool fallthrough = Level.Instance.IsInsideBoundsY(move.Position + Vector3Int.down);                                                       
                         result.Entered = null;
                         result.Moved = null;
+                        result.Position = fallthrough ? GetFallPosition(true) : move.Position;
                         result.Destination = move.Position + Vector3Int.down;
-                        result.MoveType = MoveType.Falling;
+                        result.MoveType = fallthrough ? MoveType.Teleport : MoveType.Falling;
+
                         break;
                     }
                     else if (Get(
@@ -752,40 +843,21 @@ namespace Cirrus.Circuit.World
             }
             while (false);
 
-            if (!isRecursiveCall) _moveMutex.ReleaseMutex();
+            if (!isRecursiveCall)
+            {
+                if (lockResults)
+                {
+                    if (result == null)
+                    {
+                        _resultLockMutex.ReleaseMutex();
+                    }
+                }
+                else _moveMutex.ReleaseMutex();
+            }
 
-            // Add action result
             if (result != null) ((List<MoveResult>)results).Add(result);
 
             return result != null;
-        }
-
-        public virtual void ApplyMoveResults(IEnumerable<MoveResult> results)
-        {
-            _moveMutex.WaitOne();
-
-            foreach (var result in results)
-            {
-                if (result == null) continue;
-                result.Move.User.ApplyMoveResult(result);
-            }
-
-            _moveMutex.ReleaseMutex();
-        }
-
-        public void ApplyMoveResult(MoveResult result)
-        {
-            if (
-                result.Move.Entered == null &&
-                Get(result.Move.Position, out BaseObject previous) &&
-                previous == result.Move.User)
-            {
-                Set(result.Move.Position, null);
-            }
-
-            if (result.Entered == null) Set(result.Destination, result.Move.User);
-
-            OnMovedHandler?.Invoke(result);
         }
 
         #endregion
