@@ -1,0 +1,213 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5218939497813947411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c003a7a0d755aa545bb11466551b062a, type: 3}
+  m_Name: Sharpen
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  settings:
+    renderPassEvent: 600
+    intensity: 0.25
+--- !u!114 &-3912662967253614884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dffd90785e594e545a93a297144491aa, type: 3}
+  m_Name: Sobel Outline
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  settings:
+    renderPassEvent: 600
+    threshold: 0.399
+    outlineColor: {r: 1, g: 1, b: 1, a: 1}
+    backgroundColor: {r: 0, g: 0, b: 0, a: 1}
+--- !u!114 &-1600692656772908949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dffd90785e594e545a93a297144491aa, type: 3}
+  m_Name: Sobel Outline
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  settings:
+    renderPassEvent: 600
+    threshold: 0.451
+    outlineColor: {r: 0.49056602, g: 0.21431315, b: 0.0763617, a: 1}
+    backgroundColor: {r: 0.6132076, g: 0.357389, b: 0.14173195, a: 0}
+--- !u!114 &-1368301567595849902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e959d238d7e523e49939b627d13f2cfc, type: 3}
+  m_Name: Painting
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  settings:
+    renderPassEvent: 600
+    kernelSize: 5
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de640fe3d0db1804a85f9fc8f5cadab6, type: 3}
+  m_Name: SnapshotRenderer
+  m_EditorClassIdentifier: 
+  m_RendererFeatures:
+  - {fileID: 7856850382794786619}
+  - {fileID: -1600692656772908949}
+  - {fileID: 1143758186705976920}
+  - {fileID: 5710723569233815700}
+  - {fileID: 249366143661500737}
+  - {fileID: 5296236148122724658}
+  - {fileID: -1368301567595849902}
+  - {fileID: -5218939497813947411}
+  - {fileID: -3912662967253614884}
+  m_RendererFeatureMap: 3b07e0b7cb23096d6b78796e8232c9e958fe8dcb0272df0f94e8a15ad490404f41e9f3bb2fed75033229704fb702804952d7d64df9d002eded4b8b882d9a92b7dcbe05efc26db3c9
+  postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
+  shaders:
+    blitPS: {fileID: 4800000, guid: c17132b1f77d20942aa75f8429c0f8bc, type: 3}
+    copyDepthPS: {fileID: 4800000, guid: d6dae50ee9e1bfa4db75f19f99355220, type: 3}
+    screenSpaceShadowPS: {fileID: 4800000, guid: 0f854b35a0cf61a429bd5dcfea30eddd,
+      type: 3}
+    samplingPS: {fileID: 4800000, guid: 04c410c9937594faa893a11dceb85f7e, type: 3}
+    fallbackErrorPS: {fileID: 4800000, guid: e6e9a19c3678ded42a3bc431ebef7dbd, type: 3}
+  m_OpaqueLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_TransparentLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_DefaultStencilState:
+    overrideStencilState: 0
+    stencilReference: 0
+    stencilCompareFunction: 8
+    passOperation: 0
+    failOperation: 0
+    zFailOperation: 0
+  m_ShadowTransparentReceive: 1
+--- !u!114 &249366143661500737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 975bd39b8808f6a4ca999ba1edc68379, type: 3}
+  m_Name: Pixelate
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  settings:
+    renderPassEvent: 600
+    pixelSize: 6
+--- !u!114 &1143758186705976920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a19035aaa47e5954da5737133e5d9d17, type: 3}
+  m_Name: Game Boy
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  settings:
+    renderPassEvent: 600
+    darkest: {r: 0.11, g: 0.21, b: 0.08, a: 1}
+    dark: {r: 0.24, g: 0.38, b: 0.21, a: 1}
+    light: {r: 0.57, g: 0.67, b: 0.21, a: 1}
+    lightest: {r: 0.75, g: 0.82, b: 0.46, a: 1}
+--- !u!114 &5296236148122724658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 393c99904222aec40913d9e9dc404967, type: 3}
+  m_Name: Sepia Tone
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  settings:
+    renderPassEvent: 600
+    strength: 1
+--- !u!114 &5710723569233815700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc5ecaac2b941147bf1260176d37b4d, type: 3}
+  m_Name: Fancy Neon
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  settings:
+    renderPassEvent: 600
+    colorSensitivity: 0.1
+    colorStrength: 0.5
+    depthSensitivity: 0.01
+    depthStrength: 0.75
+    normalSensitivity: 0.1
+    normalStrength: 0.75
+    depthThreshold: 0.99
+    saturationFloor: 0.75
+    lightnessFloor: 0.75
+--- !u!114 &7856850382794786619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33025a380cadc544e80fb4d06662d9ff, type: 3}
+  m_Name: Fancy Outline
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  settings:
+    renderPassEvent: 600
+    outlineColor: {r: 0.11320752, g: 0.043440714, b: 0.0090779625, a: 1}
+    colorSensitivity: 0
+    colorStrength: 0.034
+    depthSensitivity: 0.01
+    depthStrength: 0.115
+    normalSensitivity: 0.046
+    normalStrength: 0.104
+    depthThreshold: 0.01
