@@ -314,9 +314,9 @@ namespace Cirrus.Circuit.World.Objects
 
                         else Cmd_FSM_SetState(ObjectState.Idle);
                     }
-                    else Cmd_Server_Fall();
+                    else Server_Fall();
                 }
-                else Cmd_Server_Fall();
+                else Server_Fall();
             }
             // If arrived on a slope
             else if (
@@ -325,7 +325,7 @@ namespace Cirrus.Circuit.World.Objects
                 _entered is Slope &&
                 !((Slope)_entered).IsStaircase)
             {
-                Cmd_Server_Slide();
+                Server_Slide();
             }
             else if (LevelSession.Get(
                 _gridPosition + Vector3Int.down,
@@ -420,18 +420,16 @@ namespace Cirrus.Circuit.World.Objects
             _session.Cmd_Move(move);
         }
 
-        public virtual bool Cmd_Server_Move(Move move)
+        public virtual bool Server_Move(Move move)
         {
             if (LevelSession.GetMoveResults(
                 move,
                 out IEnumerable<MoveResult> results,
                 false,
-                true))
+                move.Type.IsLocking()))
             {
-                LevelSession.Instance.Rpc_ApplyMoveResults(
-                    results
-                    .Select(x => x.ToNetworkMoveResult())
-                    .ToArray());
+                LevelSession.Instance.ApplyMoveResults(results);                    
+
                 return true;
             }
 
@@ -456,7 +454,9 @@ namespace Cirrus.Circuit.World.Objects
                 }
                 else if (result.MoveType == MoveType.Moving)
                 {
-                    _gridPosition = result.Destination;
+                    // Clear move position
+                    int idx = VectorUtils.ToIndex(result.Move.Position, 20, 20);
+                     _gridPosition = result.Destination;
                     _targetPosition = Level.GridToWorld(result.Destination);
                     _targetPosition += result.Offset;
                     _direction = result.Direction;
@@ -479,7 +479,6 @@ namespace Cirrus.Circuit.World.Objects
                     _targetPosition += result.Offset;
                     Transform.position = _targetPosition;
                     _pitchAngle = result.PitchAngle;
-
                 }
                 else if (result.MoveType == MoveType.UsingPortal)
                 {
@@ -534,9 +533,6 @@ namespace Cirrus.Circuit.World.Objects
                 FSM_SetState(
                     state,
                     this);
-                LevelSession
-                    .Instance
-                    .ApplyMoveResult(result);
             }
             while (false);
 
@@ -624,7 +620,7 @@ namespace Cirrus.Circuit.World.Objects
                         Source = move.User,
                         Type = move.Type,
                         User = _visitor,
-                        Entered = _entered,
+                        Entered = _visitor._entered,
                         Step = move.Step.SetY(0)
                     },
                     out moveResults,
@@ -676,7 +672,7 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Land
 
-        public virtual bool Cmd_Server_Slide()
+        public virtual bool Server_Slide()
         {
             if (!CustomNetworkManager.IsServer) return false;
 
@@ -692,7 +688,7 @@ namespace Cirrus.Circuit.World.Objects
                     Entered = _entered,
                 };
 
-            return Cmd_Server_Move(move);
+            return Server_Move(move);
 
         }
 
@@ -702,30 +698,18 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Fall
 
-        public virtual bool Cmd_Server_Fall()
+        public virtual bool Server_Fall()
         {
             if (!CustomNetworkManager.IsServer) return false;
 
-            Move move =
-                Level.Instance.IsInsideBoundsY(
-                    _gridPosition + Vector3Int.down) ?
-                        new Move
-                        {
-                            Type = MoveType.Falling,
-                            User = this,
-                            Position = _gridPosition,
-                            Step = Vector3Int.down
-                        } :
-                        // Probably move this inside get move results
-                        new Move
-                        {
-                            Type = MoveType.Teleport,
-                            User = this,
-                            Position = LevelSession.Instance.GetFallPosition(true),
-                            Step = Vector3Int.down
-                        };
-
-            return Cmd_Server_Move(move);            
+            return Server_Move(new Move
+            {
+                Type = MoveType.Falling,
+                User = this,
+                Position = _gridPosition,
+                Step = Vector3Int.down,
+                Entered = _entered
+            });            
         }
 
         public virtual void OnClimbFallTimeout()
@@ -789,7 +773,7 @@ namespace Cirrus.Circuit.World.Objects
                             _previousGridPosition + Vector3Int.up,
                             out above))
                         {
-                            above.Cmd_Server_Fall();
+                            above.Server_Fall();
                         }
 
                         _state = target;

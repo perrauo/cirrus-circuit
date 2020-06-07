@@ -117,6 +117,10 @@ namespace Cirrus.Circuit.World.Objects
             out EnterResult enterResult, 
             out IEnumerable<MoveResult> results)
         {
+            results = new MoveResult[0];
+            enterResult = null;
+            if (move.User is Characters.Character) return false;            
+
             return base.GetEnterResults(
                 move, 
                 out enterResult, 

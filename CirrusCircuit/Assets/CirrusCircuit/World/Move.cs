@@ -22,7 +22,7 @@ namespace Cirrus.Circuit.World
         public BaseObject Source;
         public BaseObject Entered; // Entered object from which we start
         public BaseObject User;
-        public Vector3Int Step;        
+        public Vector3Int Step;
         public Vector3Int Position;
         public MoveType Type;
     }
@@ -62,7 +62,6 @@ namespace Cirrus.Circuit.World
         public BaseObject Moved;
         public BaseObject Entered;
         public float Scale = 1;
-        public MoveResult NextResult;
     }
 
 
@@ -90,12 +89,22 @@ namespace Cirrus.Circuit.World
         public GameObject Moved;
         public GameObject Entered;
         public float Scale = 1;
-        public GameObject NextResult;
     }
  
 
     public static class MoveUtils
     {
+        public static bool IsLocking(this MoveType type)
+        {
+            switch (type)
+            {
+                case MoveType.Direction:
+                case MoveType.Unknown:
+                    return false;
+                default: return true;
+            }
+        }
+
         public static MoveResult ToMoveResult(this NetworkMoveResult net)
         {
             ObjectSession sess;

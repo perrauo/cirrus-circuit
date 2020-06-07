@@ -406,16 +406,15 @@ namespace Cirrus.Circuit.Networking
             {
                 Cmd_ObjectSession_Move_mutex.WaitOne();
 
+
                 // Server holds the truth
                 if (session._object.GetMoveResults(
                     netMove.ToMove(), 
                     out IEnumerable<MoveResult> results,
-                    lockResults:true))
+                    isRecursiveCall:false,
+                    netMove.Type.IsLocking()))
                 {
-                    LevelSession.Instance.Rpc_ApplyMoveResults(
-                        results
-                        .Select(x => x == null ? null : x.ToNetworkMoveResult())
-                        .ToArray());
+                    LevelSession.Instance.ApplyMoveResults(results);
                 }
 
                 Cmd_ObjectSession_Move_mutex.ReleaseMutex();

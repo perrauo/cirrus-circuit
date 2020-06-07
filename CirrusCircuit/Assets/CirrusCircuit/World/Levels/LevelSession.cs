@@ -70,6 +70,7 @@ namespace Cirrus.Circuit.World
 
         public Mutex _moveMutex = new Mutex();
         public Mutex _resultLockMutex = new Mutex();
+        public bool _isResultLocked = false;
 
         public static LevelSession Instance
         {
@@ -585,14 +586,6 @@ namespace Cirrus.Circuit.World
         #region Apply move result
         public void ApplyMoveResult(MoveResult result)
         {
-            // Clear move position
-            int idx = VectorUtils.ToIndex(result.Move.Position, 20, 20);
-            if (_objects[idx] != result.Move.User)
-            {
-                Debug.Log("");
-            }
-
-
             if (
                 result.Move.Entered == null &&
                 Get(result.Move.Position, out BaseObject previous))
@@ -603,57 +596,59 @@ namespace Cirrus.Circuit.World
                         result.Move.Position,
                         null);
                 }
-                else 
-                {
-                    Debug.Log("");
-                }
             }
 
             if (result.Entered == null)
             {
-                if(_objects.Contains(result.Move.User))
-                {
-                    Debug.Log("");
-                }
-                
                 Set(result.Destination, result.Move.User);
             }
 
             OnMovedHandler?.Invoke(result);
         }
 
-        public virtual void ApplyMoveResults(IEnumerable<MoveResult> results)
+
+        public void ApplyMoveResults(IEnumerable<MoveResult> results)
         {
-            _moveMutex.WaitOne();
 
-            // TODO wait til acquired?
-
-            foreach (var result in results)
+            foreach(var res in results)
             {
-                if (result == null) continue;
-                
-                result
-                    .Move
-                    .User
-                    .ApplyMoveResult(result);
+                if (res == null) continue;
+
+                // TODO only one rpc call
+                res.Move.User._session.Rpc_ApplyMoveResult(res.ToNetworkMoveResult());
+                ApplyMoveResult(res);
             }
 
-            _moveMutex.ReleaseMutex();
-        }
-
-
-        [ClientRpc]
-        public void Rpc_ApplyMoveResults(NetworkMoveResult[] results)
-        {
-            ApplyMoveResults(
-                results.Select(x => x.ToMoveResult()));
+            if (CustomNetworkManager.IsServer && _isResultLocked)
+            {
+                _isResultLocked = false;
+                _resultLockMutex.ReleaseMutex();
+            }
         }
 
         #endregion
 
 
         #region Move
-  
+
+        public bool IsMoveStale(Move move)
+        {
+            if (move.Position != move.User._gridPosition) return true;
+
+            else if (move.Entered == null)
+            {
+                int i = VectorUtils.ToIndex(
+                    move.Position,
+                    Level.Instance.Dimensions.x,
+                    Level.Instance.Dimensions.y);
+
+                if (move.User != _objects[i]) return true;
+            }
+            else if (move.Entered._visitor != move.User) return true;            
+
+            return false;
+        }
+
         public bool GetMoveResults(
             Move move,
             out IEnumerable<MoveResult> results,
@@ -673,12 +668,24 @@ namespace Cirrus.Circuit.World
 
             if (!isRecursiveCall)
             {
-                if (lockResults) _resultLockMutex.WaitOne();
-                else _moveMutex.WaitOne();
+                _moveMutex.WaitOne();
+
+                if (lockResults)
+                {
+                    _resultLockMutex.WaitOne();
+                    _isResultLocked = true;
+                }
             }
 
             do
             {
+                /// Check if move is stale
+                if (IsMoveStale(move))
+                {
+                    result = null;
+                    break;
+                }
+
                 if (!GetExitResult(
                     move,
                     out ExitResult exitResult,
@@ -696,25 +703,14 @@ namespace Cirrus.Circuit.World
                     move.User._direction :
                     exitResult.Step.SetY(0);
 
-                if (!Level.IsInsideBounds(result.Destination))
-                {
-                    result = null;
-                    break;
-                }
-                else if (Get(
+                if (Get(
                     // Object pushed into
                     result.Destination,
                     out result.Moved))
                 {
-                    if (result.Moved == move.User)
+                    if (result.Moved == move.User ||
+                        result.Moved == move.Source)
                     {
-                        result = null;
-                        break;
-                    }
-                    else if (result.Moved == move.Source)
-                    {
-                        // TODO
-                        // This shoudl not occur because of mutexd
                         result = null;
                         break;
                     }
@@ -723,7 +719,7 @@ namespace Cirrus.Circuit.World
                         new Move
                         {
                             Position = result.Destination,
-                            Entered = null,
+                            Entered = result.Moved._entered,
                             Source = move.User,
                             User = result.Moved,
                             Type = move.Type,
@@ -738,6 +734,8 @@ namespace Cirrus.Circuit.World
                     // Object moved into is enterable (or no object)
                     else if (GetEnterResults(
                         result.Moved,
+                        // Current move
+                        // VVVVVVVVVVVVVVVVV
                         new Move
                         {
                             Step = exitResult.Step,
@@ -767,79 +765,80 @@ namespace Cirrus.Circuit.World
                         ((List<MoveResult>)results).AddRange(moveResults);
                         break;
                     }
-                    else 
+                    else
                     {
                         result = null;
                         break;
                     }
                 }
                 // No object moved into
-                else if (
-                    move.Type != MoveType.Teleport &&
-                    move.Type != MoveType.Falling &&
-                    Level.IsInsideBounds(
+                else
+                {
+                    if (move.Type == MoveType.Falling)
+                    {
+                        bool fallthrough = !Level.Instance.IsInsideBoundsY(result.Destination);
+
+                        result.Entered = null;
+                        result.Moved = null;
+                        result.Position = move.Position;
+                        result.Destination = fallthrough ? GetFallPosition(true) : result.Destination;
+                        result.MoveType = fallthrough ? MoveType.Teleport : MoveType.Falling;
+                        break;
+
+                    }
+                    else if (
+                        move.Type != MoveType.Falling &&
+                        Level.IsInsideBounds(
                         move.Position +
                         move.Step +
                         Vector3Int.down))
-                {
-                    BaseObject below;
-
-                    if (!Get(
-                        move.Position +
-                        Vector3Int.down,
-                        out below))
                     {
-                        bool fallthrough = Level.Instance.IsInsideBoundsY(move.Position + Vector3Int.down);                                                       
-                        result.Entered = null;
-                        result.Moved = null;
-                        result.Position = fallthrough ? GetFallPosition(true) : move.Position;
-                        result.Destination = move.Position + Vector3Int.down;
-                        result.MoveType = fallthrough ? MoveType.Teleport : MoveType.Falling;
+                        BaseObject below;
 
+                        if (Get(
+                           move.Position +
+                           move.Step +
+                           Vector3Int.down,
+                           out below))
+                        {
+                            // Handle stepping on a slope
+                            if (below is Slope)
+                            {
+                                var slopeMove = move.Copy();
+                                slopeMove.Step = move.Step + Vector3Int.down;
+                                if (GetEnterResults(
+                                    below,
+                                    slopeMove,
+                                    out EnterResult enterResult,
+                                    out IEnumerable<MoveResult> downhillMoveResults))
+                                {
+                                    result.Moved = enterResult.Moved;
+                                    result.Entered = enterResult.Entered;
+                                    result.Direction = enterResult.Step.SetY(0);
+                                    result.Destination = enterResult.Destination;
+                                    result.Offset = enterResult.Offset;
+                                    result.PitchAngle = enterResult.PitchAngle;
+                                    result.MoveType = enterResult.MoveType;
+                                    result.Position = enterResult.Position;
+                                    result.Scale = enterResult.Scale;
+
+                                    ((List<MoveResult>)results).AddRange(downhillMoveResults);
+                                    break;
+                                }
+                                else
+                                {
+                                    result = null;
+                                    break;
+                                }
+                            }
+                        }
+
+                        // not slope, do nothing, result is good
                         break;
                     }
-                    else if (Get(
-                       move.Position +
-                       move.Step +
-                       Vector3Int.down,
-                       out below))
-                    {
-                        // Handle stepping on a slope
-                        if (below is Slope)
-                        {
-                            var slopeMove = move.Copy();
-                            slopeMove.Step = move.Step + Vector3Int.down;
-                            if (GetEnterResults(
-                                below,
-                                slopeMove,
-                                out EnterResult enterResult,
-                                out IEnumerable<MoveResult> downhillMoveResults))
-                            {
-                                result.Moved = enterResult.Moved;
-                                result.Entered = enterResult.Entered;
-                                result.Direction = enterResult.Step.SetY(0);
-                                result.Destination = enterResult.Destination;
-                                result.Offset = enterResult.Offset;
-                                result.PitchAngle = enterResult.PitchAngle;
-                                result.MoveType = enterResult.MoveType;
-                                result.Position = enterResult.Position;
-                                result.Scale = enterResult.Scale;
-
-                                ((List<MoveResult>)results).AddRange(downhillMoveResults);
-                                break;
-                            }
-                            else
-                            {
-                                result = null;
-                                break;
-                            }
-                        }                   
-                    }
-
-                    // not slope, do nothing, result is good
-                    break;
+                    // else we're simply walking
                 }
-                // else we're falling
+
             }
             while (false);
 
@@ -849,10 +848,12 @@ namespace Cirrus.Circuit.World
                 {
                     if (result == null)
                     {
+                        _isResultLocked = false;
                         _resultLockMutex.ReleaseMutex();
                     }
                 }
-                else _moveMutex.ReleaseMutex();
+
+                _moveMutex.ReleaseMutex();
             }
 
             if (result != null) ((List<MoveResult>)results).Add(result);
@@ -916,7 +917,7 @@ namespace Cirrus.Circuit.World
                 {
                     obj.Cmd_FSM_SetState(ObjectState.Idle);
                 }
-                else obj.Cmd_Server_Fall();
+                else obj.Server_Fall();
             }
         }
 

@@ -227,10 +227,9 @@ namespace Cirrus.Circuit.World.Objects.Characters
             {
                 User = this,
                 Position = _gridPosition,
-                Type = MoveType.Direction
+                Type = MoveType.Direction,
+                Entered = _entered,                
             };
-
-            Debug.Log(axis);
 
             if (Settings.IsUsingAlternateControlScheme.Boolean ?
                 GetMoveAlt(

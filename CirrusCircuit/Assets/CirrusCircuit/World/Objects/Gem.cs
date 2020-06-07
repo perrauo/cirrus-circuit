@@ -52,7 +52,7 @@ namespace Cirrus.Circuit.World.Objects
                 _entered is Slope &&
                 !((Slope)_entered).IsStaircase)
             {
-                Cmd_Server_Slide();
+                Server_Slide();
             }
         }
 
