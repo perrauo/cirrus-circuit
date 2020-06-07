@@ -865,6 +865,11 @@ namespace Cirrus.Circuit.World
                                         break;
                                     }
                                 }
+                                else if (below is Quicksand)
+                                { 
+                                
+                                
+                                }
                                 //else
                                 //{
                                 //    if (below._visitor != null)
