@@ -30,6 +30,7 @@ namespace Cirrus.Circuit.World.Objects
         public override bool IsSolid => false;
 
         private Timer _timer;
+        private Timer _struggleTimer;        
 
         public bool _doesDestroyObjects = false;
 
@@ -50,9 +51,11 @@ namespace Cirrus.Circuit.World.Objects
             base.Awake();
 
             _timer = new Timer(_sinkTime, start: false, repeat: false);
-            
-            if(CustomNetworkManager.IsServer) _timer.OnTimeLimitHandler += OnTimeout;
-    }
+
+            _struggleTimer = new Timer(_sinkTime, start: false, repeat: false);            
+
+            if (CustomNetworkManager.IsServer) _timer.OnTimeLimitHandler += OnTimeout;
+        }
 
         public override bool GetExitResult(
             Move move,
@@ -68,7 +71,9 @@ namespace Cirrus.Circuit.World.Objects
             {
                 exitResult.Offset = Vector3.zero;
 
-                if (_struggleCount + 1 == _numStruggleRequired)
+                if (
+                    _struggleTimer.IsActive &&
+                    _struggleCount + 1 == _numStruggleRequired)
                 {
                     exitResult.Step = move.Step + Vector3Int.up;
                     exitResult.MoveType = MoveType.Moving;
@@ -110,9 +115,9 @@ namespace Cirrus.Circuit.World.Objects
 
         public override void ReenterVisitor()
         {
-            base.ReenterVisitor();
+            base.ReenterVisitor();            
 
-            _struggleCount++;
+            _struggleCount++;            
         }
 
 
@@ -123,11 +128,19 @@ namespace Cirrus.Circuit.World.Objects
         
         }
 
+
+        public void OnStruggleTimeout()
+        {
+            // TODO
+
+        }
+
         public override void EnterVisitor(BaseObject visitor)
         {
             base.EnterVisitor(visitor);
             _struggleCount = 0;
             _timer.Start(_sinkTime);
+            _struggleTimer.Start(_struggleTimeLimit);
         }
 
                 

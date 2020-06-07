@@ -112,13 +112,13 @@ namespace Cirrus.Circuit.World.Objects
         {
             get
             {
-                if (_below == null) return _offset;
-                else
+                if (_below != null && _below._visitor != null)
                 {
-                    return 
-                        _offset + 
-                        (_below._visitor == null ? _below.Offset : _below._visitor.Offset);
+                    if (_below == this) return _offset;
+                    else return _offset + _below._visitor.Offset * 2;
                 }
+                
+                return _offset;
             }
 
         }
@@ -343,7 +343,12 @@ namespace Cirrus.Circuit.World.Objects
 
                         else Cmd_FSM_SetState(ObjectState.Idle);
                     }
-                    else Server_Fall();
+                    else if (!Server_Fall())
+                    {
+                        if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
+
+                        else Cmd_FSM_SetState(ObjectState.Idle);
+                    }
                 }
                 else Server_Fall();
             }
@@ -560,13 +565,10 @@ namespace Cirrus.Circuit.World.Objects
                     else result.User.Enter(result.Entered);
                 }
 
-                if (!LevelSession.Get(
+                LevelSession.Get(
                     _levelPosition + Vector3Int.down,
-                    out _below))
-                {
-                    _below = null;
-                }
-
+                    out _below);               
+                
                 FSM_SetState(
                     state,
                     this);
@@ -675,6 +677,9 @@ namespace Cirrus.Circuit.World.Objects
 
             if (_visitor != null)
             {
+                // Ebter from above
+                if (move.Step.SetY(0) == Vector3Int.zero) return false;
+
                 result.Moved = _visitor;
                 return _visitor.GetMoveResults(
                     new Move

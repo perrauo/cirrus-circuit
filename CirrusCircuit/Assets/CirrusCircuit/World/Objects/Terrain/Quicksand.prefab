@@ -45,7 +45,8 @@ MonoBehaviour:
   _pitchAngle: 0
   _targetPosition: {x: 0, y: 0, z: 0}
   _offset: {x: 0, y: 0, z: 0}
-  _gridPosition: {x: 0, y: 0, z: 0}
+  _below: {fileID: 0}
+  _levelPosition: {x: 0, y: 0, z: 0}
   _rotationIndex: 0
   _targetScale: 1
   _colorId: 0
@@ -53,7 +54,10 @@ MonoBehaviour:
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
   _state: 1
-  _sinkTime: 1
+  _sinkTime: 2
+  _isStruggleAllowed: 1
+  _numStruggleRequired: 3
+  _struggleTimeLimit: 1
   _doesDestroyObjects: 0
 --- !u!1001 &1624148582309748932
 PrefabInstance:

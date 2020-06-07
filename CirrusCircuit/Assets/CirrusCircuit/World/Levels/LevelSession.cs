@@ -617,9 +617,8 @@ namespace Cirrus.Circuit.World
             {
                 if (res == null) continue;
 
-                res.Move.User.ApplyMoveResult(res);
                 ApplyMoveResult(res);
-                
+                res.Move.User.ApplyMoveResult(res);                
             }
 
             foreach (var res in results)
