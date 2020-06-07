@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c003a7a0d755aa545bb11466551b062a, type: 3}
   m_Name: Sharpen
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   settings:
     renderPassEvent: 600
     intensity: 0.25
@@ -46,10 +46,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dffd90785e594e545a93a297144491aa, type: 3}
   m_Name: Sobel Outline
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   settings:
     renderPassEvent: 600
-    threshold: 0.451
+    threshold: 0.25
     outlineColor: {r: 0.49056602, g: 0.21431315, b: 0.0763617, a: 1}
     backgroundColor: {r: 0.6132076, g: 0.357389, b: 0.14173195, a: 0}
 --- !u!114 &-1368301567595849902

@@ -60,8 +60,12 @@ namespace Cirrus.Circuit.World
         public Vector3Int Direction;
         public MoveType MoveType;
         public BaseObject Moved;
-        public BaseObject Entered;
+        public BaseObject Entered;        
         public float Scale = 1;
+
+        public BaseObject User => Move.User;
+        public BaseObject PreviousEntered => Move.Entered;
+        public Vector3Int PreviousPosition => Move.Position;
     }
 
 
@@ -88,6 +92,7 @@ namespace Cirrus.Circuit.World
         public MoveType MoveType;
         public GameObject Moved;
         public GameObject Entered;
+        //public GameObject Exited;
         public float Scale = 1;
     }
  
@@ -119,6 +124,12 @@ namespace Cirrus.Circuit.World
                     net.Entered.TryGetComponent(out sess) ?
                         sess._object :
                         null,
+                //Exited = net.Exited == null ?
+                //    null :
+                //    net.Exited.TryGetComponent(out sess) ?
+                //        sess._object :
+                //        null,
+
 
                 Moved = net.Moved == null ?
                     null :
@@ -146,6 +157,7 @@ namespace Cirrus.Circuit.World
                 Move = result.Move == null ? null : result.Move.ToNetworkMove(),
                 Destination = result.Destination,
                 Entered = result.Entered == null ? null : result.Entered._session.gameObject,
+                //Exited = result.Exited == null ? null : result.Exited._session.gameObject,
                 Moved = result.Moved == null ? null : result.Moved._session.gameObject,
                 //State = result.State,
 
@@ -198,6 +210,7 @@ namespace Cirrus.Circuit.World
                 Destination = result.Destination,
                 Move = result.Move,
                 Entered = result.Entered,
+                //Exited = result.Exited,                
                 Moved = result.Moved,
                 Offset = result.Offset,
                 PitchAngle = result.PitchAngle,

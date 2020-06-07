@@ -127,10 +127,17 @@ namespace Cirrus.Circuit.World.Objects
                 out results);
         }
 
-        public override void Enter(BaseObject visitor)            
+        public override void Enter(BaseObject entered)            
         {
-            base.Enter(visitor);
+            base.Enter(entered);
 
+            if (entered != null)
+            {
+                AcceptVisitor(this);
+            }
+        }
+        public override void AcceptVisitor(BaseObject visitor)
+        {
             switch (visitor.Type)
             {
                 case ObjectType.Gem:
@@ -149,25 +156,8 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
+
         #endregion
-
-        public override void Accept(BaseObject source)
-        {            
-            switch (source.Type)
-            {
-                case ObjectType.Gem:
-                    iTween.Init(Transform.gameObject);
-                    iTween.Stop(Transform.gameObject);
-                    
-                    //_visual.Parent.transform.localScale = new Vector3(1, 1, 1);
-                    //StartCoroutine(PunchScale());
-                    //source._targetScale = 0;
-
-                    return;
-                default:
-                    return;
-            }
-        }
 
 
         IEnumerator PunchValueCoroutine()

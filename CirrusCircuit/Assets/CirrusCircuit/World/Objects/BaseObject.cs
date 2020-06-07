@@ -337,11 +337,6 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
-        public virtual void Accept(BaseObject source)
-        {
-            //source.SetState
-        }
-
         public virtual void Disable()
         {
             FSM_SetState(ObjectState.Disabled, null);
@@ -517,17 +512,15 @@ namespace Cirrus.Circuit.World.Objects
                 if (result.Moved != null) result.Moved.Interact(this);
 
                 if (
-                    result.Move.Position != result.Destination &&
-                    _entered != null)
+                    _entered != null &&
+                    result.Entered != _entered)                    
                 {
-                    _entered.Exit(this);
-                    _entered = null;
+                    result.User.Exit();                    
                 }
 
                 if (result.Entered != null)
-                {
-                    _entered = result.Entered;
-                    result.Entered.Enter(this);
+                {                    
+                    result.User.Enter(result.Entered);
                 }
 
                 FSM_SetState(
@@ -574,6 +567,7 @@ namespace Cirrus.Circuit.World.Objects
                         Destination = move.Position,
                         Offset = Vector3.zero,
                         Entered = null,
+                        //Exited = null,
                         Moved = null,
                         Direction = move.Step.SetY(0)
                     });
@@ -587,9 +581,18 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Enter
 
-        public virtual void Enter(BaseObject visitor)
+        public virtual void AcceptVisitor(BaseObject visitor)
         {
             _visitor = visitor;
+        }
+
+        public virtual void Enter(BaseObject entered)
+        {
+            _entered = entered;
+            if (_entered != null)
+            {
+                _entered.AcceptVisitor(this);
+            }
         }
 
         public virtual bool GetEnterResults(
@@ -635,13 +638,6 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Exit
 
-        //public virtual void OnExited()
-        //{
-        //    _exitScaleTimer.Start();
-        //    _targetScale = 0;
-        //}
-
-        // Ramp exit with offset
         public virtual bool GetExitResult(
             Move move,
             out ExitResult result,
@@ -661,9 +657,21 @@ namespace Cirrus.Circuit.World.Objects
             return true;
         }
 
-        public virtual void Exit(BaseObject visitor)
+        public virtual void ExitVisitor(BaseObject visitor)
         {
-            if (_visitor == visitor) _visitor = null;
+#if UNITY_EDITOR
+            Debug.Assert(_visitor == visitor);
+#endif
+            _visitor = null;
+        }
+
+        public virtual void Exit()
+        {
+            if (_entered != null)
+            {                
+                _entered.ExitVisitor(this);
+                _entered = null;
+            }
         }
 
 

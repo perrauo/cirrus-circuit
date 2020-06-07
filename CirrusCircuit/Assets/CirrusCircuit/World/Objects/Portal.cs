@@ -110,9 +110,9 @@ namespace Cirrus.Circuit.World.Objects
         //}
 
 
-        public override void Exit(BaseObject source)
+        public override void ExitVisitor(BaseObject source)
         {
-            base.Exit(source);
+            base.ExitVisitor(source);
 
             StartCoroutine(PunchScaleCoroutine());
             //source.OnExited();
@@ -195,24 +195,24 @@ namespace Cirrus.Circuit.World.Objects
             return false;
         }
 
-        public override void Enter(BaseObject visitor)
+        public override void Enter(BaseObject entered)
         {
-            StartCoroutine(PunchScaleCoroutine());
+            if (entered != null)
+            {
+                entered.AcceptVisitor(this);
+            }
+
             return;
         }
 
-
-        #endregion
-
-
-
-        public override void Accept(BaseObject source)
+        public override void AcceptVisitor(BaseObject visitor)
         {
-            switch (source.Type)
+            switch (visitor.Type)
             {
                 case ObjectType.Gem:
                     iTween.Init(Transform.gameObject);
                     iTween.Stop(Transform.gameObject);
+                    StartCoroutine(PunchScaleCoroutine());
 
                     //_visual.Parent.transform.localScale = new Vector3(1, 1, 1);
                     //StartCoroutine(PunchScale());
@@ -223,5 +223,9 @@ namespace Cirrus.Circuit.World.Objects
                     return;
             }
         }
+
+
+        #endregion
+
     }
 }

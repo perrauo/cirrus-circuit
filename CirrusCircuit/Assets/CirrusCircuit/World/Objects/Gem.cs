@@ -44,6 +44,8 @@ namespace Cirrus.Circuit.World.Objects
 
             if (result.Move.User == this) return;
 
+            if (result.Moved == this) return;
+
             if (!_hasArrived) return;            
 
             if (

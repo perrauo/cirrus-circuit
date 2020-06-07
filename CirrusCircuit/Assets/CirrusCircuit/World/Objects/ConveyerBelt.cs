@@ -101,7 +101,7 @@ namespace Cirrus.Circuit.World.Objects
 
         }
 
-        public override void Accept(BaseObject source)
+        public override void AcceptVisitor(BaseObject source)
         {
             //source.RampIdle();
         }

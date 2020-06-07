@@ -585,39 +585,52 @@ namespace Cirrus.Circuit.World
 
         #region Apply move result
         public void ApplyMoveResult(MoveResult result)
-        {
+        {            
             if (
                 result.Move.Entered == null &&
-                Get(result.Move.Position, out BaseObject previous))
+                Get(
+                    result.Move.Position, 
+                    out BaseObject previous))
             {
-                if (previous == result.Move.User)
-                {
-                    Set(
+#if UNITY_EDITOR
+                Debug.Assert(previous == result.User);
+#endif
+                Set(
                         result.Move.Position,
-                        null);
-                }
+                        null);                
             }
 
             if (result.Entered == null)
             {
-                Set(result.Destination, result.Move.User);
+                Set(result.Destination, result.User);
             }
-
-            OnMovedHandler?.Invoke(result);
         }
 
 
         public void ApplyMoveResults(IEnumerable<MoveResult> results)
         {
 
-            foreach(var res in results)
+            // Moves are immediately applied to the server instead
+            foreach (var res in results)
             {
                 if (res == null) continue;
 
-                // TODO only one rpc call
-                res.Move.User._session.Rpc_ApplyMoveResult(res.ToNetworkMoveResult());
+                res.Move.User.ApplyMoveResult(res);
                 ApplyMoveResult(res);
+                
             }
+
+            foreach (var res in results)
+            {
+                if (res == null) continue;
+
+                OnMovedHandler?.Invoke(res);
+            }
+
+            // Apply client moves
+           Rpc_ApplyMoveResults(results
+                .Select(x => x.ToNetworkMoveResult())
+                .ToArray());
 
             if (CustomNetworkManager.IsServer && _isResultLocked)
             {
@@ -626,8 +639,20 @@ namespace Cirrus.Circuit.World
             }
         }
 
-        #endregion
+        [ClientRpc]
+        public void Rpc_ApplyMoveResults(NetworkMoveResult[] results)
+        {
+            if (CustomNetworkManager.IsServer) return;
 
+            foreach (var res in results.Select(x => x.ToMoveResult()))
+            {
+                if (res == null) continue;
+
+                res.Move.User.ApplyMoveResult(res);
+            }
+        }
+
+        #endregion
 
         #region Move
 
