@@ -226,7 +226,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
             var move = new Move()
             {
                 User = this,
-                Position = _gridPosition,
+                Position = _levelPosition,
                 Type = MoveType.Direction,
                 Entered = _entered,                
             };

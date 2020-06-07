@@ -14,7 +14,8 @@ namespace Cirrus.Circuit.World
         Falling,
         Moving,
         Direction,
-        Climbing
+        Climbing,
+        Struggle
     }
 
     public class Move
@@ -35,6 +36,7 @@ namespace Cirrus.Circuit.World
         public BaseObject Moved;
         public Vector3Int Position;
         public Vector3Int Destination;
+        public MoveType MoveType = MoveType.Unknown;
     }
 
     public class EnterResult

@@ -143,7 +143,7 @@ namespace Cirrus.Circuit.World.Objects
                 {
                     enterResult.Step = otherPortal.Transform.forward.ToVector3Int();
                     enterResult.MoveType = MoveType.UsingPortal;
-                    enterResult.Position = otherPortal._gridPosition;
+                    enterResult.Position = otherPortal._levelPosition;
                     enterResult.Destination = enterResult.Position + enterResult.Step;
                     enterResult.Offset = Vector3.up * Level.CellSize / 2;
                     enterResult.Scale = EnterScale;
@@ -199,13 +199,13 @@ namespace Cirrus.Circuit.World.Objects
         {
             if (entered != null)
             {
-                entered.AcceptVisitor(this);
+                entered.EnterVisitor(this);
             }
 
             return;
         }
 
-        public override void AcceptVisitor(BaseObject visitor)
+        public override void EnterVisitor(BaseObject visitor)
         {
             switch (visitor.Type)
             {

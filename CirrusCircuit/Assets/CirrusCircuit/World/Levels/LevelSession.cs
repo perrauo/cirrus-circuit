@@ -324,7 +324,7 @@ namespace Cirrus.Circuit.World
                 res.Color = PlayerManager.Instance.GetColor(res.ColorId);
 
                 res.gameObject.SetActive(true);
-                (res.Transform.position, res._gridPosition) = RegisterObject(res);
+                (res.Transform.position, res._levelPosition) = RegisterObject(res);
             }
 
             foreach (var info in PlaceholderInfos)
@@ -345,8 +345,9 @@ namespace Cirrus.Circuit.World
                     info.Session._object._session = info.Session;
                     info.Session._object.ColorId = info.PlayerId;
                     info.Session._object.Color = player.Color;
-                    info.Session._object._gridPosition = info.Position;
-                    (info.Session._object.Transform.position, info.Session._object._gridPosition) = RegisterObject(info.Session._object);
+                    info.Session._object._levelPosition = info.Position;
+                    (info.Session._object.Transform.position, info.Session._object._levelPosition) = RegisterObject(info.Session._object);
+                    info.Session._object._targetPosition = info.Session._object.Transform.position;
 
                     if (player.ServerId == localPlayer.ServerId)
                         localPlayer._character = (Character)info.Session._object;
@@ -435,7 +436,7 @@ namespace Cirrus.Circuit.World
                         var info = new PlaceholderInfo()
                         {
                             _session = objectSession.gameObject,
-                            Position = obj._gridPosition,
+                            Position = obj._levelPosition,
                             Rotation = obj.Transform.rotation
                         };
 
@@ -512,7 +513,7 @@ namespace Cirrus.Circuit.World
 
         public void UnregisterObject(BaseObject obj)
         {
-            Set(obj._gridPosition, null);
+            Set(obj._levelPosition, null);
         }
 
 
@@ -546,15 +547,16 @@ namespace Cirrus.Circuit.World
                 Step = move.Step,
                 Destination = move.Position + move.Step,
                 Position = move.Position,
-                Entered = move.User._entered,
+                Entered = null,
                 Moved = null,
-                Offset = Vector3.zero
+                Offset = Vector3.zero,
+                MoveType = move.Type
             };
 
 
-            if (move.User._entered != null)
+            if (move.Entered != null)
             {
-                return move.User._entered.GetExitResult(
+                return move.Entered.GetExitResult(
                     move,
                     out result,
                     out moveResults
@@ -658,7 +660,7 @@ namespace Cirrus.Circuit.World
 
         public bool IsMoveStale(Move move)
         {
-            if (move.Position != move.User._gridPosition) return true;
+            if (move.Position != move.User._levelPosition) return true;
 
             else if (move.Entered == null)
             {
@@ -720,150 +722,164 @@ namespace Cirrus.Circuit.World
                     break;
                 }
 
+                result.Entered = exitResult.Entered;
                 result.Destination = move.Position + exitResult.Step;
                 result.Position = exitResult.Position;
                 result.Offset = exitResult.Offset;
+                result.MoveType = exitResult.MoveType;
+                result.Direction = exitResult.Step.SetY(0);
 
-                result.Direction = move.Type == MoveType.Falling ?
-                    move.User._direction :
-                    exitResult.Step.SetY(0);
-
-                if (Get(
-                    // Object pushed into
-                    result.Destination,
-                    out result.Moved))
+                if (result.MoveType == MoveType.Struggle)
                 {
-                    if (result.Moved == move.User ||
-                        result.Moved == move.Source)
-                    {
-                        result = null;
-                        break;
-                    }
-                    else if (result.Moved.GetMoveResults(
-                        // Object moved into is movable
-                        new Move
-                        {
-                            Position = result.Destination,
-                            Entered = result.Moved._entered,
-                            Source = move.User,
-                            User = result.Moved,
-                            Type = move.Type,
-                            Step = exitResult.Step.SetY(0)
-                        },
-                        out IEnumerable<MoveResult> movedResults,
-                        isRecursiveCall: true))
-                    {
-                        ((List<MoveResult>)results).AddRange(movedResults);
-                        break;
-                    }
-                    // Object moved into is enterable (or no object)
-                    else if (GetEnterResults(
-                        result.Moved,
-                        // Current move
-                        // VVVVVVVVVVVVVVVVV
-                        new Move
-                        {
-                            Step = exitResult.Step,
-                            Position = move.Position,
-                            Entered = move.Entered,
-                            Source = move.Source,
-                            Type = move.Type,
-                            User = move.User
-                        },
-                        out EnterResult enterResult,
-                        out IEnumerable<MoveResult> moveResults))
-                    {
-                        result.Moved = enterResult.Moved;
-                        result.Entered = enterResult.Entered;
-                        result.Position = enterResult.Position;
-                        result.Scale = enterResult.Scale;
-                        result.Direction =
-                            enterResult.MoveType == MoveType.Climbing ?
-                                result.Direction :
-                                enterResult.Step.SetY(0);
-                        result.Destination = enterResult.Destination;
-                        result.Offset = enterResult.Offset;
-                        result.PitchAngle = enterResult.PitchAngle;
-                        result.MoveType = enterResult.MoveType;
-                        //result.MoveType = enterResult.MoveType;
-
-                        ((List<MoveResult>)results).AddRange(moveResults);
-                        break;
-                    }
-                    else
-                    {
-                        result = null;
-                        break;
-                    }
+                    break;
                 }
-                // No object moved into
                 else
                 {
-                    if (move.Type == MoveType.Falling)
+                    if (move.Type == MoveType.Falling) result.Direction = move.User._direction;                        
+
+                    if (Get(
+                        // Object pushed into
+                        result.Destination,
+                        out result.Moved))
                     {
-                        bool fallthrough = !Level.Instance.IsInsideBoundsY(result.Destination);
-
-                        result.Entered = null;
-                        result.Moved = null;
-                        result.Position = move.Position;
-                        result.Destination = fallthrough ? GetFallPosition(true) : result.Destination;
-                        result.MoveType = fallthrough ? MoveType.Teleport : MoveType.Falling;
-                        break;
-
-                    }
-                    else if (
-                        move.Type != MoveType.Falling &&
-                        Level.IsInsideBounds(
-                        move.Position +
-                        move.Step +
-                        Vector3Int.down))
-                    {
-                        BaseObject below;
-
-                        if (Get(
-                           move.Position +
-                           move.Step +
-                           Vector3Int.down,
-                           out below))
+                        if (result.Moved == move.User ||
+                            result.Moved == move.Source)
                         {
-                            // Handle stepping on a slope
-                            if (below is Slope)
-                            {
-                                var slopeMove = move.Copy();
-                                slopeMove.Step = move.Step + Vector3Int.down;
-                                if (GetEnterResults(
-                                    below,
-                                    slopeMove,
-                                    out EnterResult enterResult,
-                                    out IEnumerable<MoveResult> downhillMoveResults))
-                                {
-                                    result.Moved = enterResult.Moved;
-                                    result.Entered = enterResult.Entered;
-                                    result.Direction = enterResult.Step.SetY(0);
-                                    result.Destination = enterResult.Destination;
-                                    result.Offset = enterResult.Offset;
-                                    result.PitchAngle = enterResult.PitchAngle;
-                                    result.MoveType = enterResult.MoveType;
-                                    result.Position = enterResult.Position;
-                                    result.Scale = enterResult.Scale;
-
-                                    ((List<MoveResult>)results).AddRange(downhillMoveResults);
-                                    break;
-                                }
-                                else
-                                {
-                                    result = null;
-                                    break;
-                                }
-                            }
+                            result = null;
+                            break;
                         }
+                        else if (result.Moved.GetMoveResults(
+                            // Object moved into is movable
+                            new Move
+                            {
+                                Position = result.Destination,
+                                Entered = result.Moved._entered,
+                                Source = move.User,
+                                User = result.Moved,
+                                Type = move.Type,
+                                Step = exitResult.Step.SetY(0)
+                            },
+                            out IEnumerable<MoveResult> movedResults,
+                            isRecursiveCall: true))
+                        {
+                            ((List<MoveResult>)results).AddRange(movedResults);
+                            break;
+                        }
+                        // Object moved into is enterable (or no object)
+                        else if (GetEnterResults(
+                            result.Moved,
+                            // Current move
+                            // VVVVVVVVVVVVVVVVV
+                            new Move
+                            {
+                                Step = exitResult.Step,
+                                Position = move.Position,
+                                Entered = move.Entered,
+                                Source = move.Source,
+                                Type = move.Type,
+                                User = move.User
+                            },
+                            out EnterResult enterResult,
+                            out IEnumerable<MoveResult> moveResults))
+                        {
+                            result.Moved = enterResult.Moved;
+                            result.Entered = enterResult.Entered;
+                            result.Position = enterResult.Position;
+                            result.Scale = enterResult.Scale;
+                            result.Direction =
+                                enterResult.MoveType == MoveType.Climbing ?
+                                    result.Direction :
+                                    enterResult.Step.SetY(0);
+                            result.Destination = enterResult.Destination;
+                            result.Offset = enterResult.Offset;
+                            result.PitchAngle = enterResult.PitchAngle;
+                            result.MoveType = enterResult.MoveType;
+                            //result.MoveType = enterResult.MoveType;
 
-                        // not slope, do nothing, result is good
-                        break;
+                            ((List<MoveResult>)results).AddRange(moveResults);
+                            break;
+                        }
+                        else
+                        {
+                            result = null;
+                            break;
+                        }
                     }
-                    // else we're simply walking
-                }
+                    // No object moved into
+                    else
+                    {
+                        if (move.Type == MoveType.Falling)
+                        {
+                            bool fallthrough = !Level.Instance.IsInsideBoundsY(result.Destination);
 
+                            result.Entered = null;
+                            result.Moved = null;
+                            result.Position = move.Position;
+                            result.Destination = fallthrough ? GetFallPosition(true) : result.Destination;
+                            result.MoveType = fallthrough ? MoveType.Teleport : MoveType.Falling;
+                            break;
+
+                        }
+                        else if (
+                            move.Type != MoveType.Falling &&
+                            Level.IsInsideBounds(
+                            move.Position +
+                            move.Step +
+                            Vector3Int.down))
+                        {
+                            BaseObject below;
+
+                            if (Get(
+                               move.Position +
+                               move.Step +
+                               Vector3Int.down,
+                               out below))
+                            {
+                                // Handle stepping on a slope
+                                if (below is Slope)
+                                {
+                                    var slopeMove = move.Copy();
+                                    slopeMove.Step = move.Step + Vector3Int.down;
+                                    if (GetEnterResults(
+                                        below,
+                                        slopeMove,
+                                        out EnterResult enterResult,
+                                        out IEnumerable<MoveResult> downhillMoveResults))
+                                    {
+                                        result.Moved = enterResult.Moved;
+                                        result.Entered = enterResult.Entered;
+                                        result.Direction = enterResult.Step.SetY(0);
+                                        result.Destination = enterResult.Destination;
+                                        result.Offset = enterResult.Offset;
+                                        result.PitchAngle = enterResult.PitchAngle;
+                                        result.MoveType = enterResult.MoveType;
+                                        result.Position = enterResult.Position;
+                                        result.Scale = enterResult.Scale;
+
+                                        ((List<MoveResult>)results).AddRange(downhillMoveResults);
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        result = null;
+                                        break;
+                                    }
+                                }
+                                //else
+                                //{
+                                //    if (below._visitor != null)
+                                //    {
+                                //        result.Offset = below._visitor._offset;
+                                //    }
+                                //}
+                            }
+
+                            // not slope, do nothing, result is good
+                            break;
+                        }
+                        // else we're simply walking
+                    }
+                }
             }
             while (false);
 
@@ -934,10 +950,10 @@ namespace Cirrus.Circuit.World
             {
                 session._object = obj;
                 obj._session = session;
-                (obj.Transform.position, obj._gridPosition) = RegisterObject(obj);
+                (obj.Transform.position, obj._levelPosition) = RegisterObject(obj);
 
                 if (Get(
-                    obj._gridPosition + Vector3Int.down,
+                    obj._levelPosition + Vector3Int.down,
                     out BaseObject _))
                 {
                     obj.Cmd_FSM_SetState(ObjectState.Idle);

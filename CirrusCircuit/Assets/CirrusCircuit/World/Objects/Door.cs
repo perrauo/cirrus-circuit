@@ -133,10 +133,10 @@ namespace Cirrus.Circuit.World.Objects
 
             if (entered != null)
             {
-                AcceptVisitor(this);
+                EnterVisitor(this);
             }
         }
-        public override void AcceptVisitor(BaseObject visitor)
+        public override void EnterVisitor(BaseObject visitor)
         {
             switch (visitor.Type)
             {

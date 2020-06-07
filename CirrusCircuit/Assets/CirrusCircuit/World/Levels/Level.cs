@@ -244,7 +244,7 @@ namespace Cirrus.Circuit.World
     #region Editor
 #if UNITY_EDITOR
     [UnityEditor.CustomEditor(typeof(Level))]
-    public class LevelCustomInspector : UnityEditor.Editor
+    public class LevelCustomInspector : Editor
     {
         private Level _level;
 

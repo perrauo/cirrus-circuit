@@ -16,7 +16,7 @@ namespace Cirrus.Circuit.World.Objects
     {
         // TODO
         //public override bool IsNetworked => false;
-        public override bool IsStable => false;
+        public override bool IsSolid => false;
 
         public const float VisitorAngle = 20;
 

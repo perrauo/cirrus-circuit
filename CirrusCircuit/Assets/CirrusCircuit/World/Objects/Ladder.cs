@@ -48,10 +48,10 @@ namespace Cirrus.Circuit.World.Objects
             };
 
             if (!LevelSession.Instance.Get(
-                _gridPosition + Vector3Int.up, out BaseObject _
+                _levelPosition + Vector3Int.up, out BaseObject _
                 ))
             {
-                result.Destination = _gridPosition + Vector3Int.up;                
+                result.Destination = _levelPosition + Vector3Int.up;                
             }
 
             return true;

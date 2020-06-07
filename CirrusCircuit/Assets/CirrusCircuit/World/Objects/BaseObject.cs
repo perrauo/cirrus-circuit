@@ -45,16 +45,26 @@ namespace Cirrus.Circuit.World.Objects
     public enum ObjectType
     {
         None,
+
+        Character = MoveableObjectType.Character,
+        Gem = MoveableObjectType.Gem,
+
         Default,
-        Character,
         CharacterPlaceholder,
-        Gem,
         Door,
         Portal,
         Solid,
         Slope,
         Ladder,
-        ConveyerBelt
+        ConveyerBelt,
+        Quicksand
+    }
+
+    [Serializable]
+    public enum MoveableObjectType
+    {
+        Character = 1 << 0,
+        Gem = 1 << 1,
     }
 
     public abstract partial class BaseObject : MonoBehaviour
@@ -95,17 +105,36 @@ namespace Cirrus.Circuit.World.Objects
 
         public Vector3 _targetPosition;
 
+        [SerializeField]
         public Vector3 _offset;
+
+        public Vector3 Offset
+        {
+            get
+            {
+                if (_below == null) return _offset;
+                else
+                {
+                    return 
+                        _offset + 
+                        (_below._visitor == null ? _below.Offset : _below._visitor.Offset);
+                }
+            }
+
+        }
+
+        [SerializeField]
+        private BaseObject _below;
 
         public virtual bool IsNetworked => true;
 
         public virtual bool IsSlidable => false;
 
-        public virtual bool IsStable => true;
+        public virtual bool IsSolid => true;
 
         Vector3Int _previousGridPosition;
 
-        public Vector3Int _gridPosition;
+        public Vector3Int _levelPosition;
 
         public Vector3Int Forward => Transform.forward.normalized.ToVector3Int();
 
@@ -278,7 +307,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public void Register(Level level)
         {
-            (transform.position, _gridPosition) = level.RegisterObject(this);
+            (transform.position, _levelPosition) = level.RegisterObject(this);
             Transform.position = transform.position;
         }
 
@@ -286,7 +315,7 @@ namespace Cirrus.Circuit.World.Objects
         {
             if (level.RegisterObject(this, pos))
             {
-                _gridPosition = pos;
+                _levelPosition = pos;
                 transform.position = level.GridToWorld(pos);
                 Transform.position = transform.position;
                 return true;
@@ -300,15 +329,15 @@ namespace Cirrus.Circuit.World.Objects
 
         }
 
-        public virtual void Server_BecomeUnstable()
-        {
+        public virtual void Server_ReactToEnvironment()
+        {            
             if (_entered == null)
             {
                 if (LevelSession.Get(
-                    _gridPosition + Vector3Int.down,
+                    _levelPosition + Vector3Int.down,
                     out BaseObject obj))
                 {
-                    if (obj.IsStable)
+                    if (obj.IsSolid)
                     {
                         if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
 
@@ -318,22 +347,28 @@ namespace Cirrus.Circuit.World.Objects
                 }
                 else Server_Fall();
             }
-            // If arrived on a slope
-            else if (
-                IsSlidable &&
-                _entered != null &&
-                _entered is Slope &&
-                !((Slope)_entered).IsStaircase)
+            // If arrived inside a slope
+            else if (_entered is Slope)
             {
-                Server_Slide();
+                Slope slope = (Slope)_entered;
+
+                //!((Slope)_entered).IsStaircase)
+                if (!IsSlidable || slope.IsStaircase) Cmd_FSM_SetState(ObjectState.Idle);
+                else Server_Slide();
             }
-            else if (LevelSession.Get(
-                _gridPosition + Vector3Int.down,
-                out BaseObject _))
+            // If arrived inside a quicksand
+            else if (_entered is Quicksand)
             {
-                if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
-                else Cmd_FSM_SetState(ObjectState.Idle);
+                Cmd_FSM_SetState(ObjectState.Idle);
             }
+
+            //else if (LevelSession.Get(
+            //    _gridPosition + Vector3Int.down,
+            //    out BaseObject _))
+            //{
+            //    if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
+            //    else Cmd_FSM_SetState(ObjectState.Idle);
+            //}
         }
 
 
@@ -366,7 +401,7 @@ namespace Cirrus.Circuit.World.Objects
         public void OnExitScaleTimeout()
         {
             _targetScale = 1;
-            _targetPosition -= _offset;
+            _offset = Vector3.zero;
         }
 
 
@@ -435,13 +470,12 @@ namespace Cirrus.Circuit.World.Objects
         {
             _applyResultmutex.WaitOne();
 
+            ObjectState state = _state;
+            _pitchAngle = 0;
+            _below = null;
+
             do
-            {
-
-                ObjectState state = _state;
-
-                _pitchAngle = 0;
-
+            {                
                 if (result.MoveType == MoveType.Direction)
                 {
                     _direction = result.Direction;
@@ -451,16 +485,17 @@ namespace Cirrus.Circuit.World.Objects
                 {
                     // Clear move position
                     int idx = VectorUtils.ToIndex(result.Move.Position, 20, 20);
-                     _gridPosition = result.Destination;
+                     _levelPosition = result.Destination;
                     _targetPosition = Level.GridToWorld(result.Destination);
                     _targetPosition += result.Offset;
                     _direction = result.Direction;
                     _pitchAngle = result.PitchAngle;
+                    _offset = result.Offset;
                     state = ObjectState.Moving;
                 }
                 else if (result.MoveType == MoveType.Climbing)
                 {
-                    _gridPosition = result.Destination;
+                    _levelPosition = result.Destination;
                     _targetPosition = Level.GridToWorld(result.Destination);
                     _targetPosition += result.Offset;
                     _direction = result.Direction;
@@ -469,7 +504,7 @@ namespace Cirrus.Circuit.World.Objects
                 }
                 else if (result.MoveType == MoveType.Teleport)
                 {
-                    _gridPosition = result.Destination;
+                    _levelPosition = result.Destination;
                     _targetPosition = Level.GridToWorld(result.Destination);
                     _targetPosition += result.Offset;
                     Transform.position = _targetPosition;
@@ -480,10 +515,10 @@ namespace Cirrus.Circuit.World.Objects
                     // TODO preserve input direction timer
                     // TODO Timer restarted inside Cmd move
                     _preserveInputDirection = true;
-                    _gridPosition = result.Destination;
+                    _levelPosition = result.Destination;
                     _targetPosition = Level.GridToWorld(result.Destination);
                     _offset = result.Offset;
-                    _targetPosition += _offset;
+                    //_targetPosition += _offset;
                     _targetScale = result.Scale;
                     Transform.position = Level.GridToWorld(result.Position);
                     _direction = result.Direction;
@@ -493,7 +528,7 @@ namespace Cirrus.Circuit.World.Objects
                 }
                 else if (result.MoveType == MoveType.Falling)
                 {
-                    _gridPosition = result.Destination;
+                    _levelPosition = result.Destination;
                     _targetPosition = Level.GridToWorld(result.Destination);
                     _targetPosition += result.Offset;
                     _pitchAngle = 0;
@@ -501,9 +536,9 @@ namespace Cirrus.Circuit.World.Objects
                 }
                 else if (result.MoveType == MoveType.Sliding)
                 {
-                    _gridPosition = result.Destination;
+                    _levelPosition = result.Destination;
                     _targetPosition = Level.GridToWorld(result.Destination);
-                    _targetPosition += result.Offset;
+                    _offset = result.Offset;
                     _direction = result.Direction;
                     _pitchAngle = result.PitchAngle;
                     state = ObjectState.Sliding;
@@ -513,14 +548,23 @@ namespace Cirrus.Circuit.World.Objects
 
                 if (
                     _entered != null &&
-                    result.Entered != _entered)                    
+                    result.Entered != result.PreviousEntered)                    
                 {
                     result.User.Exit();                    
                 }
 
                 if (result.Entered != null)
-                {                    
-                    result.User.Enter(result.Entered);
+                {
+                    if (result.Entered == result.PreviousEntered) result.User.Reenter();
+
+                    else result.User.Enter(result.Entered);
+                }
+
+                if (!LevelSession.Get(
+                    _levelPosition + Vector3Int.down,
+                    out _below))
+                {
+                    _below = null;
                 }
 
                 FSM_SetState(
@@ -552,6 +596,7 @@ namespace Cirrus.Circuit.World.Objects
                 case MoveType.Moving:
                 case MoveType.Teleport:
                 case MoveType.Falling:
+                case MoveType.Struggle:
                     return LevelSession.GetMoveResults(
                         move,
                         out results,
@@ -581,7 +626,7 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Enter
 
-        public virtual void AcceptVisitor(BaseObject visitor)
+        public virtual void EnterVisitor(BaseObject visitor)
         {
             _visitor = visitor;
         }
@@ -591,9 +636,24 @@ namespace Cirrus.Circuit.World.Objects
             _entered = entered;
             if (_entered != null)
             {
-                _entered.AcceptVisitor(this);
+                _entered.EnterVisitor(this);
             }
         }
+
+
+        public virtual void ReenterVisitor()
+        {
+            
+        }
+
+        public virtual void Reenter()
+        {            
+            if (_entered != null)
+            {
+                _entered.ReenterVisitor();
+            }
+        }
+
 
         public virtual bool GetEnterResults(
             Move move,
@@ -619,7 +679,7 @@ namespace Cirrus.Circuit.World.Objects
                 return _visitor.GetMoveResults(
                     new Move
                     {
-                        Position = _visitor._gridPosition,
+                        Position = _visitor._levelPosition,
                         Source = move.User,
                         Type = move.Type,
                         User = _visitor,
@@ -651,7 +711,8 @@ namespace Cirrus.Circuit.World.Objects
                 Destination = move.Position + move.Step,
                 Entered = null,
                 Moved = null,
-                Position = move.Position
+                Position = move.Position,
+                MoveType = move.Type
             };
 
             return true;
@@ -691,7 +752,7 @@ namespace Cirrus.Circuit.World.Objects
                 {
                     Type = MoveType.Sliding,
                     User = this,
-                    Position = _gridPosition,
+                    Position = _levelPosition,
                     Step = -_entered._direction,
                     Entered = _entered,
                 };
@@ -714,7 +775,7 @@ namespace Cirrus.Circuit.World.Objects
             {
                 Type = MoveType.Falling,
                 User = this,
-                Position = _gridPosition,
+                Position = _levelPosition,
                 Step = Vector3Int.down,
                 Entered = _entered
             });            
@@ -724,7 +785,7 @@ namespace Cirrus.Circuit.World.Objects
         {
             if (!CustomNetworkManager.IsServer) return;
 
-            Server_BecomeUnstable();
+            Server_ReactToEnvironment();
         }
 
         #endregion
@@ -757,7 +818,7 @@ namespace Cirrus.Circuit.World.Objects
             {
                 case ObjectState.Falling:
                 case ObjectState.Moving:
-                case ObjectState.Sliding:
+                case ObjectState.Sliding:                    
                     _hasArrived = false;
                     break;
                 default:
@@ -844,7 +905,7 @@ namespace Cirrus.Circuit.World.Objects
 
                     Transform.position = Vector3.Lerp(
                         Transform.position,
-                        _targetPosition,
+                        _targetPosition + Offset,
                         StepSpeed);
 
                     float scale =
@@ -884,8 +945,9 @@ namespace Cirrus.Circuit.World.Objects
 
                     if (_hasArrived) break;
 
+                    // TODO: only apply offset to visual
                     if (VectorUtils.IsCloseEnough(
-                        Transform.position,
+                        Transform.position - Offset,
                         _targetPosition))
                     {
                         _hasArrived = true;
@@ -906,12 +968,12 @@ namespace Cirrus.Circuit.World.Objects
                     if (!CustomNetworkManager.IsServer) break;
 
                     if (VectorUtils.IsCloseEnough(
-                        Transform.position,
+                        Transform.position - Offset,
                         _targetPosition))
                     {
                         _hasArrived = true;
 
-                        Server_BecomeUnstable();
+                        Server_ReactToEnvironment();
                     }
 
                     break;
