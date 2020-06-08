@@ -56,14 +56,14 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Enter
 
-        public override bool GetMoveResults(
+        public override ReturnType GetMoveResults(
             Move move, 
             out IEnumerable<MoveResult> result,
             bool isRecursiveCall = false,
             bool lockResults = true)
         {
             result = null;
-            return false;
+            return ReturnType.Failed;
         }
 
         #endregion
@@ -122,7 +122,7 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Enter
 
-        public override bool GetEnterResults(
+        public override ReturnType GetEnterResults(
             Move move,
             out EnterResult enterResult,
             out IEnumerable<MoveResult> moveResults)
@@ -130,7 +130,7 @@ namespace Cirrus.Circuit.World.Objects
             if (base.GetEnterResults(
                 move,
                 out enterResult,
-                out moveResults))
+                out moveResults) > 0)
             {
                 enterResult.Entered = null;
                 moveResults = new MoveResult[0];
@@ -162,9 +162,9 @@ namespace Cirrus.Circuit.World.Objects
                               User = enterResult.Moved                              
                           },
                           out moveResults,
-                          isRecursiveCall:true))
+                          isRecursiveCall:true) > 0)
                         {
-                            return true;
+                            return ReturnType.Succeeded;
                         }
                         else if (enterResult.Moved.GetEnterResults(
                            new Move
@@ -178,21 +178,21 @@ namespace Cirrus.Circuit.World.Objects
                                
                            },
                           out EnterResult nextEnterResult,
-                          out moveResults))
+                          out moveResults) > 0)
                         {
                             enterResult.Position = nextEnterResult.Position;
                             enterResult.Step = nextEnterResult.Step;
                             enterResult.Destination = nextEnterResult.Position + nextEnterResult.Step;
                             enterResult.Entered = nextEnterResult.Entered;
                             enterResult.Moved = nextEnterResult.Moved;
-                            return true;
+                            return ReturnType.Succeeded;
                         }
                     }
-                    else return true;
+                    else return ReturnType.Succeeded; ;
                 }
             }
 
-            return false;
+            return ReturnType.Failed; ;
         }
 
         public override void Enter(BaseObject entered)

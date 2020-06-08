@@ -19,17 +19,17 @@ namespace Cirrus.Circuit.World.Objects
             base.Awake();
         }
 
-        public override bool GetMoveResults(
+        public override ReturnType GetMoveResults(
             Move move, 
             out IEnumerable<MoveResult> results,
             bool isRecursiveCall = false,
             bool lockResults = true)
         {
             results = null;
-            return false;
+            return ReturnType.Failed;
         }
 
-        public override bool GetEnterResults(
+        public override ReturnType GetEnterResults(
             Move move, 
             out EnterResult result, 
             out IEnumerable<MoveResult> moveResults)
@@ -54,7 +54,7 @@ namespace Cirrus.Circuit.World.Objects
                 result.Destination = _levelPosition + Vector3Int.up;                
             }
 
-            return true;
+            return ReturnType.Succeeded;
 
             //return base.GetEnterResults(move, out result, out moveResults);
         }

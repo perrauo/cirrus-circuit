@@ -12,24 +12,24 @@ namespace Cirrus.Circuit.World.Objects
 
         public override ObjectType Type => ObjectType.Solid;
 
-        public override bool GetMoveResults(
+        public override ReturnType GetMoveResults(
             Move move, 
             out IEnumerable<MoveResult> res,
             bool isRecursiveCall = false,
             bool lockResults = true)
         {
             res = null;
-            return false;
+            return ReturnType.Failed;
         }
 
-        public override bool GetEnterResults(
+        public override ReturnType GetEnterResults(
             Move move,
             out EnterResult result,
             out IEnumerable<MoveResult> results)
         {
             result = new EnterResult();
             results = new MoveResult[0];
-            return false;
+            return ReturnType.Failed;
         }
 
         // Start is called before the first frame update

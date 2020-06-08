@@ -293,14 +293,14 @@ namespace Cirrus.Circuit.World.Objects.Characters
             }
         }
 
-        public override bool GetEnterResults(
+        public override ReturnType GetEnterResults(
             Move move, 
             out EnterResult result, 
             out IEnumerable<MoveResult> moveResults)
         {
             result = null;
             moveResults = null;
-            return false;
+            return ReturnType.Failed;
         }
 
         public override void PerformAction(ObjectAction action)

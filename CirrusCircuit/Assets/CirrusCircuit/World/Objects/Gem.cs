@@ -58,14 +58,14 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
-        public override bool GetEnterResults(
+        public override ReturnType GetEnterResults(
             Move move, 
             out EnterResult result, 
             out IEnumerable<MoveResult> moveResults)
         {
             result = null;
             moveResults = null;
-            return false;
+            return ReturnType.Failed;
         }
 
         // Update is called once per frame

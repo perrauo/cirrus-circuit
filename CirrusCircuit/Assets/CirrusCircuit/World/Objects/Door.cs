@@ -94,14 +94,14 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
-        public override bool GetMoveResults(
+        public override ReturnType GetMoveResults(
             Move move, 
             out IEnumerable<MoveResult> res,
             bool isRecursiveCall=false,
             bool lockResults = false)
         {
             res = null;
-            return false;
+            return ReturnType.Failed;
         }
 
         #region Exit
@@ -112,14 +112,14 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Enter
 
-        public override bool GetEnterResults(
+        public override ReturnType GetEnterResults(
             Move move, 
             out EnterResult enterResult, 
             out IEnumerable<MoveResult> results)
         {
             results = new MoveResult[0];
             enterResult = null;
-            if (move.User is Characters.Character) return false;            
+            if (move.User is Characters.Character) return ReturnType.Failed;            
 
             return base.GetEnterResults(
                 move, 

@@ -412,7 +412,7 @@ namespace Cirrus.Circuit.Networking
                     netMove.ToMove(), 
                     out IEnumerable<MoveResult> results,
                     isRecursiveCall:false,
-                    netMove.Type.IsLocking()))
+                    netMove.Type.IsLocking()) > 0)
                 {
                     LevelSession.Instance.ApplyMoveResults(results);
                 }

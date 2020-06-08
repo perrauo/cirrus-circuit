@@ -4,7 +4,14 @@ using System;
 using UnityEngine;
 
 namespace Cirrus.Circuit.World
-{    
+{
+    public enum ReturnType
+    {
+        Failed = -1,
+        Succeeded = 1,        
+        Passed  = 2
+    }
+
     public enum MoveType
     { 
         Unknown,
@@ -25,6 +32,7 @@ namespace Cirrus.Circuit.World
         public BaseObject User;
         public Vector3Int Step;
         public Vector3Int Position;
+        public Vector3Int Destination;
         public MoveType Type;
     }
 
@@ -80,6 +88,7 @@ namespace Cirrus.Circuit.World
         public MoveType Type;
         public Vector3Int Step;
         public Vector3Int Position;
+        public Vector3Int Destination;
     }
 
     [Serializable]
@@ -187,7 +196,8 @@ namespace Cirrus.Circuit.World
                 Source = net.Source == null ? null : net.Source.TryGetComponent(out sess) ? sess._object : null,
                 User = net.User == null ? null : net.User.TryGetComponent(out sess) ? sess._object : null,
                 Entered = net.Entered == null ? null : net.Entered.TryGetComponent(out sess) ? sess._object : null,
-                Type = net.Type
+                Type = net.Type,
+                Destination = net.Destination
             };
         }
 
@@ -196,6 +206,7 @@ namespace Cirrus.Circuit.World
             return new NetworkMove
             {
                 Position = move.Position,
+                Destination = move.Destination,
                 Step = move.Step,
                 Source = move.Source == null ? null : move.Source._session.gameObject,
                 User = move.User == null ? null : move.User._session.gameObject,

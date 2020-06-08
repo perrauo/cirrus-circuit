@@ -570,7 +570,7 @@ namespace Cirrus.Circuit.World
 
         #region Enter
 
-        public bool GetEnterResults(
+        public ReturnType GetEnterResults(
             BaseObject entered,
             Move move,
             out EnterResult enterResult,
@@ -675,7 +675,7 @@ namespace Cirrus.Circuit.World
             return false;
         }
 
-        public bool GetMoveResults(
+        public ReturnType GetMoveResults(
             Move move,
             out IEnumerable<MoveResult> results,
             bool isRecursiveCall = false,
@@ -684,6 +684,7 @@ namespace Cirrus.Circuit.World
             bool lockResults = true)
         {
             results = new List<MoveResult>();
+            ReturnType ret = ReturnType.Succeeded;
 
             var result = new MoveResult
             {
@@ -704,10 +705,11 @@ namespace Cirrus.Circuit.World
             }
 
             do
-            {
+            {                
                 /// Check if move is stale
                 if (IsMoveStale(move))
                 {
+                    ret = ReturnType.Failed;
                     result = null;
                     break;
                 }
@@ -716,7 +718,8 @@ namespace Cirrus.Circuit.World
                     move,
                     out ExitResult exitResult,
                     out IEnumerable<MoveResult> exitMoveResults))
-                {
+                {                    
+                    ret = ReturnType.Failed;
                     result = null;
                     break;
                 }
@@ -730,6 +733,29 @@ namespace Cirrus.Circuit.World
 
                 if (result.MoveType == MoveType.Struggle)
                 {
+                    // Result of children passed but not me
+                    // TODO propagate passed
+                    ret = ReturnType.Passed;
+                    break;
+                }
+                else if (result.MoveType == MoveType.Teleport)
+                {
+                    if (Get(move.Destination, out BaseObject _))
+                    {
+                        ret = ReturnType.Failed;
+                        result = null;
+                        break;
+                    }
+                    else
+                    {
+                        result.Entered = null;
+                        result.Moved = null;
+                        result.Position = move.Position;
+                        result.Destination = move.Destination;
+                        result.MoveType = MoveType.Teleport;
+                        result.Offset = Vector3.zero;
+                    }
+
                     break;
                 }
                 else
@@ -744,10 +770,12 @@ namespace Cirrus.Circuit.World
                         if (result.Moved == move.User ||
                             result.Moved == move.Source)
                         {
+                            ret = ReturnType.Failed;
                             result = null;
                             break;
                         }
-                        else if (result.Moved.GetMoveResults(
+                        else if ((
+                            ret = result.Moved.GetMoveResults(
                             // Object moved into is movable
                             new Move
                             {
@@ -759,13 +787,17 @@ namespace Cirrus.Circuit.World
                                 Step = exitResult.Step.SetY(0)
                             },
                             out IEnumerable<MoveResult> movedResults,
-                            isRecursiveCall: true))
-                        {
+                            isRecursiveCall: true)) > 0)
+                        {                            
                             ((List<MoveResult>)results).AddRange(movedResults);
+                            if (ret == ReturnType.Passed) result = null;
+                            
                             break;
                         }
                         // Object moved into is enterable (or no object)
-                        else if (GetEnterResults(
+                        else if ((
+                            ret =
+                            GetEnterResults(
                             result.Moved,
                             // Current move
                             // VVVVVVVVVVVVVVVVV
@@ -779,7 +811,7 @@ namespace Cirrus.Circuit.World
                                 User = move.User
                             },
                             out EnterResult enterResult,
-                            out IEnumerable<MoveResult> moveResults))
+                            out IEnumerable<MoveResult> moveResults)) > 0)
                         {
                             result.Moved = enterResult.Moved;
                             result.Entered = enterResult.Entered;
@@ -796,10 +828,13 @@ namespace Cirrus.Circuit.World
                             //result.MoveType = enterResult.MoveType;
 
                             ((List<MoveResult>)results).AddRange(moveResults);
+                            if (ret == ReturnType.Passed) result = null;
+
                             break;
                         }
                         else
                         {
+                            ret = ReturnType.Failed;
                             result = null;
                             break;
                         }
@@ -810,7 +845,6 @@ namespace Cirrus.Circuit.World
                         if (move.Type == MoveType.Falling)
                         {
                             bool fallthrough = !Level.Instance.IsInsideBoundsY(result.Destination);
-
                             result.Entered = null;
                             result.Moved = null;
                             result.Position = move.Position;
@@ -839,11 +873,43 @@ namespace Cirrus.Circuit.World
                                 {
                                     var slopeMove = move.Copy();
                                     slopeMove.Step = move.Step + Vector3Int.down;
-                                    if (GetEnterResults(
+                                    if ((ret = GetEnterResults(
                                         below,
                                         slopeMove,
                                         out EnterResult enterResult,
-                                        out IEnumerable<MoveResult> downhillMoveResults))
+                                        out IEnumerable<MoveResult> downhillMoveResults)) 
+                                        > 0)
+                                    {
+                                        result.Moved = enterResult.Moved;
+                                        result.Entered = enterResult.Entered;
+                                        result.Direction = enterResult.Step.SetY(0);
+                                        result.Destination = enterResult.Destination;
+                                        result.Offset = enterResult.Offset;
+                                        result.PitchAngle = enterResult.PitchAngle;
+                                        result.MoveType = enterResult.MoveType;
+                                        result.Position = enterResult.Position;
+                                        result.Scale = enterResult.Scale;
+
+                                        if (ret == ReturnType.Passed) result = null;
+                                        ((List<MoveResult>)results).AddRange(downhillMoveResults);
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        ret = ReturnType.Failed;
+                                        result = null;
+                                        break;
+                                    }
+                                }
+                                else if (below is Quicksand)
+                                {
+                                    var quicksandMove = move.Copy();
+                                    quicksandMove.Step = move.Step + Vector3Int.down;
+                                    if ((ret = GetEnterResults(
+                                        below,
+                                        quicksandMove,
+                                        out EnterResult enterResult,
+                                        out IEnumerable<MoveResult> downhillMoveResults)) > 0)
                                     {
                                         result.Moved = enterResult.Moved;
                                         result.Entered = enterResult.Entered;
@@ -856,18 +922,16 @@ namespace Cirrus.Circuit.World
                                         result.Scale = enterResult.Scale;
 
                                         ((List<MoveResult>)results).AddRange(downhillMoveResults);
+                                        if (ret == ReturnType.Passed) result = null;
+
                                         break;
                                     }
                                     else
                                     {
+                                        ret = ReturnType.Failed;
                                         result = null;
                                         break;
                                     }
-                                }
-                                else if (below is Quicksand)
-                                { 
-                                
-                                
                                 }
                                 //else
                                 //{
@@ -891,7 +955,7 @@ namespace Cirrus.Circuit.World
             {
                 if (lockResults)
                 {
-                    if (result == null)
+                    if (ret == ReturnType.Failed)
                     {
                         _isResultLocked = false;
                         _resultLockMutex.ReleaseMutex();
@@ -901,9 +965,12 @@ namespace Cirrus.Circuit.World
                 _moveMutex.ReleaseMutex();
             }
 
-            if (result != null) ((List<MoveResult>)results).Add(result);
+            if (result != null)
+            {
+                ((List<MoveResult>)results).Add(result);
+            }
 
-            return result != null;
+            return ret;
         }
 
         #endregion

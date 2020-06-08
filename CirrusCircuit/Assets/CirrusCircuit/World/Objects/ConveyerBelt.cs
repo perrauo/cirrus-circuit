@@ -19,14 +19,14 @@ namespace Cirrus.Circuit.World.Objects
         public bool _isStaircase = false;
         public bool IsStaircase => _isStaircase;
 
-        public override bool GetMoveResults(
+        public override ReturnType GetMoveResults(
             Move move, 
             out IEnumerable<MoveResult> result, 
             bool recursive=false,
             bool lockResults = true)
         {
             result = null;
-            return false;
+            return ReturnType.Failed;
         }
 
         public override bool GetExitResult(
@@ -56,7 +56,7 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
-        public override bool GetEnterResults(
+        public override ReturnType GetEnterResults(
             Move move,
             out EnterResult enterResult,
             out IEnumerable<MoveResult> moveResults
@@ -66,7 +66,7 @@ namespace Cirrus.Circuit.World.Objects
                 move,
                 out enterResult,
                 out moveResults
-                ))
+                ) > 0)
             {
                 var dir = move.Step.SetY(0);
 
@@ -78,11 +78,11 @@ namespace Cirrus.Circuit.World.Objects
                 {
                     enterResult.PitchAngle = dir == _direction ? VisitorAngle : -VisitorAngle;
                     enterResult.Offset = Vector3.up * Level.CellSize / 2;
-                    return true;
+                    return ReturnType.Succeeded;
                 }
             }
 
-            return false;
+            return ReturnType.Succeeded;
         }
 
         // Start is called before the first frame update

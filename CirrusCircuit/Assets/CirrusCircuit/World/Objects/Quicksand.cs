@@ -36,14 +36,14 @@ namespace Cirrus.Circuit.World.Objects
 
         // struggling out
 
-        public override bool GetMoveResults(
+        public override ReturnType GetMoveResults(
             Move move,
             out IEnumerable<MoveResult> result,
             bool isRecursiveCall = false,
             bool lockResults = true)
-        {
+        {            
             result = null;
-            return false;
+            return ReturnType.Failed;
         }
 
         public override void Awake()
@@ -95,22 +95,17 @@ namespace Cirrus.Circuit.World.Objects
             return false;
         }
 
-        public override bool GetEnterResults(
+        public override ReturnType GetEnterResults(
             Move move,
             out EnterResult enterResult,
             out IEnumerable<MoveResult> moveResults
             )
         {
-            if (base.GetEnterResults(
+            return base.GetEnterResults(
                 move,
                 out enterResult,
                 out moveResults
-                ))
-            {
-                return true;
-            }
-
-            return false;
+                );
         }
 
         public override void ReenterVisitor()
@@ -123,9 +118,19 @@ namespace Cirrus.Circuit.World.Objects
 
 
         public void OnTimeout()
-        { 
-             // TODO
-        
+        {
+            if (_visitor == null) return;
+
+            // TODO
+            _visitor.Server_Move(new Move
+            {
+                Destination = LevelSession.Instance.GetFallPosition(true),
+                Type = MoveType.Teleport,
+                Source = null,
+                Position = _levelPosition,
+                Entered = _entered,
+                User = _visitor
+            });        
         }
 
 
@@ -141,9 +146,7 @@ namespace Cirrus.Circuit.World.Objects
             _struggleCount = 0;
             _timer.Start(_sinkTime);
             _struggleTimer.Start(_struggleTimeLimit);
-        }
-
-                
+        }                
 
         public override void FixedUpdate()
         {
@@ -154,7 +157,6 @@ namespace Cirrus.Circuit.World.Objects
                 _visitor._offset = 
                     BaseOffset * Vector3.up -
                     (_timer.Time / _sinkTime) * (Level.CellSize) * Vector3.up;
-
             }
         }
 

@@ -461,7 +461,9 @@ namespace Cirrus.Circuit.World.Objects
                 move,
                 out IEnumerable<MoveResult> results,
                 false,
-                move.Type.IsLocking()))
+                move.Type.IsLocking())
+                > 0
+                )
             {
                 LevelSession.Instance.ApplyMoveResults(results);                    
 
@@ -578,7 +580,7 @@ namespace Cirrus.Circuit.World.Objects
             _applyResultmutex.ReleaseMutex();
         }
 
-        public virtual bool GetMoveResults(
+        public virtual ReturnType GetMoveResults(
             Move move,
             out IEnumerable<MoveResult> results,
             bool isRecursiveCall=false,
@@ -589,7 +591,7 @@ namespace Cirrus.Circuit.World.Objects
             if (move.Source != null &&
                 move.Type == MoveType.Sliding)
             {
-                return false;
+                return ReturnType.Failed;
             }
 
             switch (move.Type)
@@ -618,8 +620,8 @@ namespace Cirrus.Circuit.World.Objects
                         Moved = null,
                         Direction = move.Step.SetY(0)
                     });
-                    return true;
-                default: return false;
+                    return ReturnType.Succeeded;
+                default: return ReturnType.Failed;
             }
         }
 
@@ -657,7 +659,7 @@ namespace Cirrus.Circuit.World.Objects
         }
 
 
-        public virtual bool GetEnterResults(
+        public virtual ReturnType GetEnterResults(
             Move move,
             out EnterResult result,
             out IEnumerable<MoveResult> moveResults)
@@ -678,7 +680,7 @@ namespace Cirrus.Circuit.World.Objects
             if (_visitor != null)
             {
                 // Ebter from above
-                if (move.Step.SetY(0) == Vector3Int.zero) return false;
+                if (move.Step.SetY(0) == Vector3Int.zero) return ReturnType.Failed;
 
                 result.Moved = _visitor;
                 return _visitor.GetMoveResults(
@@ -696,7 +698,7 @@ namespace Cirrus.Circuit.World.Objects
                     );
             }
 
-            return true;
+            return ReturnType.Succeeded;
         }
 
         #endregion
@@ -783,7 +785,7 @@ namespace Cirrus.Circuit.World.Objects
                 Position = _levelPosition,
                 Step = Vector3Int.down,
                 Entered = _entered
-            });            
+            });
         }
 
         public virtual void OnClimbFallTimeout()
