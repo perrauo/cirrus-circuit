@@ -462,11 +462,9 @@ namespace Cirrus.Circuit.World.Objects
                 out IEnumerable<MoveResult> results,
                 false,
                 move.Type.IsLocking())
-                > 0
-                )
+                > 0)                
             {
                 LevelSession.Instance.ApplyMoveResults(results);                    
-
                 return true;
             }
 
@@ -620,7 +618,7 @@ namespace Cirrus.Circuit.World.Objects
                         Moved = null,
                         Direction = move.Step.SetY(0)
                     });
-                    return ReturnType.Succeeded;
+                    return ReturnType.Succeeded_Result;
                 default: return ReturnType.Failed;
             }
         }
@@ -683,7 +681,7 @@ namespace Cirrus.Circuit.World.Objects
                 if (move.Step.SetY(0) == Vector3Int.zero) return ReturnType.Failed;
 
                 result.Moved = _visitor;
-                return _visitor.GetMoveResults(
+                if (_visitor.GetMoveResults(
                     new Move
                     {
                         Position = _visitor._levelPosition,
@@ -695,10 +693,14 @@ namespace Cirrus.Circuit.World.Objects
                     },
                     out moveResults,
                     isRecursiveCall: true
-                    );
+                    ) > 0)
+                {
+                    return ReturnType.Succeeded_Result_Enter;
+                }
+                else return ReturnType.Failed;
             }
 
-            return ReturnType.Succeeded;
+            return ReturnType.Succeeded_Result_Enter;
         }
 
         #endregion

@@ -57,7 +57,7 @@ MonoBehaviour:
   _sinkTime: 2
   _isStruggleAllowed: 1
   _numStruggleRequired: 3
-  _struggleTimeLimit: 1
+  _struggleTimeLimit: 10
   _doesDestroyObjects: 0
 --- !u!1001 &1624148582309748932
 PrefabInstance:

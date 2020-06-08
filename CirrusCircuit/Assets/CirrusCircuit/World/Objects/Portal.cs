@@ -14,14 +14,16 @@ namespace Cirrus.Circuit.World.Objects
         // TODO
         // When coming out of the portal make it so that successive keypress in same direction
         // moves the character forward even if not the same direction
-
-
-        public override ObjectType Type => ObjectType.Portal;
-
+        [Header("----------------------------", order = 0)]
+        [Header("Portal", order = 1)]
+        [Header("----------------------------", order = 2)]
         [SerializeField]
         private Number _link;
         public int Link => (int)_link;
 
+
+        public override ObjectType Type => ObjectType.Portal;
+        
         private const float PunchScaleAmount = 1f;
 
         private const float PunchScaleTime = 1f;
@@ -164,7 +166,7 @@ namespace Cirrus.Circuit.World.Objects
                           out moveResults,
                           isRecursiveCall:true) > 0)
                         {
-                            return ReturnType.Succeeded;
+                            return ReturnType.Succeeded_Result_Move;
                         }
                         else if (enterResult.Moved.GetEnterResults(
                            new Move
@@ -185,10 +187,10 @@ namespace Cirrus.Circuit.World.Objects
                             enterResult.Destination = nextEnterResult.Position + nextEnterResult.Step;
                             enterResult.Entered = nextEnterResult.Entered;
                             enterResult.Moved = nextEnterResult.Moved;
-                            return ReturnType.Succeeded;
+                            return ReturnType.Succeeded_Result_Enter;
                         }
                     }
-                    else return ReturnType.Succeeded; ;
+                    else return ReturnType.Succeeded_Result_Move; ;
                 }
             }
 

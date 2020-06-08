@@ -55,7 +55,7 @@ namespace Cirrus.Circuit.World.Objects
             return false;
         }
 
-
+        // TODO
         public override ReturnType GetEnterResults(
             Move move,
             out EnterResult enterResult,
@@ -78,11 +78,11 @@ namespace Cirrus.Circuit.World.Objects
                 {
                     enterResult.PitchAngle = dir == _direction ? VisitorAngle : -VisitorAngle;
                     enterResult.Offset = Vector3.up * Level.CellSize / 2;
-                    return ReturnType.Succeeded;
+                    return ReturnType.Succeeded_Result_Enter;
                 }
             }
 
-            return ReturnType.Succeeded;
+            return ReturnType.Failed;
         }
 
         // Start is called before the first frame update

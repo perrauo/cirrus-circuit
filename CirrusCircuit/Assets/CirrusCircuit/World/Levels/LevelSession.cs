@@ -684,7 +684,7 @@ namespace Cirrus.Circuit.World
             bool lockResults = true)
         {
             results = new List<MoveResult>();
-            ReturnType ret = ReturnType.Succeeded;
+            ReturnType ret = ReturnType.Succeeded_Result_Move;
 
             var result = new MoveResult
             {
@@ -734,8 +734,7 @@ namespace Cirrus.Circuit.World
                 if (result.MoveType == MoveType.Struggle)
                 {
                     // Result of children passed but not me
-                    // TODO propagate passed
-                    ret = ReturnType.Passed;
+                    ret = ReturnType.Succeeded_Result;                    
                     break;
                 }
                 else if (result.MoveType == MoveType.Teleport)
@@ -746,16 +745,13 @@ namespace Cirrus.Circuit.World
                         result = null;
                         break;
                     }
-                    else
-                    {
-                        result.Entered = null;
-                        result.Moved = null;
-                        result.Position = move.Position;
-                        result.Destination = move.Destination;
-                        result.MoveType = MoveType.Teleport;
-                        result.Offset = Vector3.zero;
-                    }
 
+                    result.Entered = null;
+                    result.Moved = null;
+                    result.Position = move.Position;
+                    result.Destination = move.Destination;
+                    result.MoveType = MoveType.Teleport;
+                    result.Offset = Vector3.zero;
                     break;
                 }
                 else
@@ -790,7 +786,7 @@ namespace Cirrus.Circuit.World
                             isRecursiveCall: true)) > 0)
                         {                            
                             ((List<MoveResult>)results).AddRange(movedResults);
-                            if (ret == ReturnType.Passed) result = null;
+                            if (ret < ReturnType.Succeeded_Result) result = null;
                             
                             break;
                         }
@@ -828,8 +824,7 @@ namespace Cirrus.Circuit.World
                             //result.MoveType = enterResult.MoveType;
 
                             ((List<MoveResult>)results).AddRange(moveResults);
-                            if (ret == ReturnType.Passed) result = null;
-
+                            if (ret < ReturnType.Succeeded_Result) result = null;
                             break;
                         }
                         else
@@ -854,7 +849,6 @@ namespace Cirrus.Circuit.World
 
                         }
                         else if (
-                            move.Type != MoveType.Falling &&
                             Level.IsInsideBounds(
                             move.Position +
                             move.Step +
@@ -880,17 +874,20 @@ namespace Cirrus.Circuit.World
                                         out IEnumerable<MoveResult> downhillMoveResults)) 
                                         > 0)
                                     {
-                                        result.Moved = enterResult.Moved;
-                                        result.Entered = enterResult.Entered;
-                                        result.Direction = enterResult.Step.SetY(0);
-                                        result.Destination = enterResult.Destination;
-                                        result.Offset = enterResult.Offset;
-                                        result.PitchAngle = enterResult.PitchAngle;
-                                        result.MoveType = enterResult.MoveType;
-                                        result.Position = enterResult.Position;
-                                        result.Scale = enterResult.Scale;
+                                        if (ret == ReturnType.Succeeded_NoResult) result = null;
+                                        else if (ret == ReturnType.Succeeded_Result_Enter)
+                                        {
+                                            result.Moved = enterResult.Moved;
+                                            result.Entered = enterResult.Entered;
+                                            result.Direction = enterResult.Step.SetY(0);
+                                            result.Destination = enterResult.Destination;
+                                            result.Offset = enterResult.Offset;
+                                            result.PitchAngle = enterResult.PitchAngle;
+                                            result.MoveType = enterResult.MoveType;
+                                            result.Position = enterResult.Position;
+                                            result.Scale = enterResult.Scale;
+                                        }
 
-                                        if (ret == ReturnType.Passed) result = null;
                                         ((List<MoveResult>)results).AddRange(downhillMoveResults);
                                         break;
                                     }
@@ -909,20 +906,23 @@ namespace Cirrus.Circuit.World
                                         below,
                                         quicksandMove,
                                         out EnterResult enterResult,
-                                        out IEnumerable<MoveResult> downhillMoveResults)) > 0)
+                                        out IEnumerable<MoveResult> downResults)) > 0)
                                     {
-                                        result.Moved = enterResult.Moved;
-                                        result.Entered = enterResult.Entered;
-                                        result.Direction = enterResult.Step.SetY(0);
-                                        result.Destination = enterResult.Destination;
-                                        result.Offset = enterResult.Offset;
-                                        result.PitchAngle = enterResult.PitchAngle;
-                                        result.MoveType = enterResult.MoveType;
-                                        result.Position = enterResult.Position;
-                                        result.Scale = enterResult.Scale;
+                                        if (ret == ReturnType.Succeeded_Result_Enter)
+                                        {
+                                            result.Moved = enterResult.Moved;
+                                            result.Entered = enterResult.Entered;
+                                            result.Direction = enterResult.Step.SetY(0);
+                                            result.Destination = enterResult.Destination;
+                                            result.Offset = enterResult.Offset;
+                                            result.PitchAngle = enterResult.PitchAngle;
+                                            result.MoveType = enterResult.MoveType;
+                                            result.Position = enterResult.Position;
+                                            result.Scale = enterResult.Scale;
+                                        }                                        
 
-                                        ((List<MoveResult>)results).AddRange(downhillMoveResults);
-                                        if (ret == ReturnType.Passed) result = null;
+                                        ((List<MoveResult>)results).AddRange(downResults);
+                                        if (ret < ReturnType.Succeeded_Result) result = null;
 
                                         break;
                                     }
@@ -955,7 +955,7 @@ namespace Cirrus.Circuit.World
             {
                 if (lockResults)
                 {
-                    if (ret == ReturnType.Failed)
+                    if (ret < 0)
                     {
                         _isResultLocked = false;
                         _resultLockMutex.ReleaseMutex();
@@ -965,7 +965,8 @@ namespace Cirrus.Circuit.World
                 _moveMutex.ReleaseMutex();
             }
 
-            if (result != null)
+            if (ret > ReturnType.Succeeded_NoResult &&
+                result != null)
             {
                 ((List<MoveResult>)results).Add(result);
             }

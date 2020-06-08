@@ -14,6 +14,13 @@ namespace Cirrus.Circuit.World.Objects
 
     public class Slope : BaseObject
     {
+        [Header("----------------------------", order = 0)]
+        [Header("Slope", order = 1)]
+        [Header("----------------------------", order = 2)]
+        [SerializeField]
+        public bool _isStaircase = false;
+        public bool IsStaircase => _isStaircase;
+
         // TODO
         //public override bool IsNetworked => false;
         public override bool IsSolid => false;
@@ -21,9 +28,7 @@ namespace Cirrus.Circuit.World.Objects
         public const float VisitorAngle = 20;
 
         public override ObjectType Type => ObjectType.Slope;
-        public bool _isStaircase = false;
-        public bool IsStaircase => _isStaircase;
-
+        
         public override ReturnType GetMoveResults(
             Move move, 
             out IEnumerable<MoveResult> result,
@@ -76,7 +81,7 @@ namespace Cirrus.Circuit.World.Objects
                 {
                     enterResult.PitchAngle = move.User._direction  == _direction ? VisitorAngle : -VisitorAngle;
                     enterResult.Offset = Vector3.up * Level.CellSize / 2;
-                    return ReturnType.Succeeded;
+                    return ReturnType.Succeeded_Result_Enter;
                 }
                 else
                 {
@@ -90,7 +95,7 @@ namespace Cirrus.Circuit.World.Objects
                     {
                         enterResult.PitchAngle = dir == _direction ? VisitorAngle : -VisitorAngle;
                         enterResult.Offset = Vector3.up * Level.CellSize / 2;
-                        return ReturnType.Succeeded;
+                        return ReturnType.Succeeded_Result_Enter;
                     }
                 }
             }

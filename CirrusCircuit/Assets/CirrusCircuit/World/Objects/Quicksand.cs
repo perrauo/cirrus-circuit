@@ -9,6 +9,9 @@ namespace Cirrus.Circuit.World.Objects
 
     public class Quicksand : BaseObject
     {
+        [Header("----------------------------", order = 0)]
+        [Header("Quicksand",order=1)]
+        [Header("----------------------------", order = 2)]
         [SerializeField]
         private float _sinkTime = 2f;
 
@@ -100,12 +103,32 @@ namespace Cirrus.Circuit.World.Objects
             out EnterResult enterResult,
             out IEnumerable<MoveResult> moveResults
             )
-        {
-            return base.GetEnterResults(
+        {            
+            if (_visitor != null &&
+                !_struggleTimer.IsActive)
+            {
+                moveResults = new MoveResult[0];
+                enterResult = new EnterResult
+                {
+                    Destination = _levelPosition + Vector3Int.up,
+                    Moved = null,
+                    Entered = null,
+                    PitchAngle = 0f,
+                    MoveType = MoveType.Moving,
+                    Offset = Vector3.zero,
+                    Position = move.Position,
+                    Scale = 1,
+                    Step = move.Step.SetY(0)
+                };
+
+                return ReturnType.Succeeded_Result_Move;
+            }
+            else return base.GetEnterResults(
                 move,
                 out enterResult,
                 out moveResults
                 );
+            
         }
 
         public override void ReenterVisitor()
