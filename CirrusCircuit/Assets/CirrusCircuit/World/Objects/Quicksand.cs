@@ -13,7 +13,19 @@ namespace Cirrus.Circuit.World.Objects
         [Header("Quicksand",order=1)]
         [Header("----------------------------", order = 2)]
         [SerializeField]
-        private float _sinkTime = 2f;
+        private float _sinkTime = 10f;
+
+        private Timer _timer;
+
+        [SerializeField]
+        private float _disappearTime = 2f;
+
+        private Timer _disappearTimer;
+
+        [SerializeField]
+        public float _struggleTimeLimit = 0.5f;
+
+        private Timer _struggleTimer;
 
         [SerializeField]
         private bool _isStruggleAllowed = true;
@@ -23,17 +35,11 @@ namespace Cirrus.Circuit.World.Objects
 
         private int _struggleCount = 0;
 
-        [SerializeField]
-        public float _struggleTimeLimit = 0.5f;
-
         public override ObjectType Type => ObjectType.Quicksand;
 
         public const float BaseOffset = .4f * Level.CellSize;
        
         public override bool IsSolid => false;
-
-        private Timer _timer;
-        private Timer _struggleTimer;        
 
         public bool _doesDestroyObjects = false;
 
@@ -54,10 +60,14 @@ namespace Cirrus.Circuit.World.Objects
             base.Awake();
 
             _timer = new Timer(_sinkTime, start: false, repeat: false);
+            _struggleTimer = new Timer(_sinkTime, start: false, repeat: false);
+            _disappearTimer = new Timer(_disappearTime, start: false, repeat: false);
 
-            _struggleTimer = new Timer(_sinkTime, start: false, repeat: false);            
-
-            if (CustomNetworkManager.IsServer) _timer.OnTimeLimitHandler += OnTimeout;
+            if (CustomNetworkManager.IsServer)
+            {
+                _timer.OnTimeLimitHandler += OnTimeout;
+                _disappearTimer.OnTimeLimitHandler += OnDisappearTimeout;
+            }
         }
 
         public override bool GetExitResult(
@@ -74,23 +84,25 @@ namespace Cirrus.Circuit.World.Objects
             {
                 exitResult.Offset = Vector3.zero;
 
-                if (
-                    _struggleTimer.IsActive &&
-                    _struggleCount + 1 == _numStruggleRequired)
+                if (move.Type == MoveType.Moving)
                 {
-                    exitResult.Step = move.Step + Vector3Int.up;
-                    exitResult.MoveType = MoveType.Moving;
-                    exitResult.Offset = Vector3.zero;
-                }
-                else
-                {
-                    exitResult.Step = Vector3Int.zero;
-                    exitResult.MoveType = MoveType.Struggle;
-                    exitResult.Entered = this;
-                    exitResult.Destination = _levelPosition;
-                    exitResult.Moved = null;                    
-                }
-
+                    if (
+                        _struggleTimer.IsActive &&
+                        _struggleCount + 1 == _numStruggleRequired)
+                    {
+                        exitResult.Step = move.Step + Vector3Int.up;
+                        exitResult.MoveType = MoveType.Moving;
+                        exitResult.Offset = Vector3.zero;
+                    }
+                    else
+                    {
+                        exitResult.Step = Vector3Int.zero;
+                        exitResult.MoveType = MoveType.Struggle;
+                        exitResult.Entered = this;
+                        exitResult.Destination = _levelPosition;
+                        exitResult.Moved = null;
+                    }
+                }                
 
                 return true;
             }
@@ -103,11 +115,13 @@ namespace Cirrus.Circuit.World.Objects
             out EnterResult enterResult,
             out IEnumerable<MoveResult> moveResults
             )
-        {            
-            if (_visitor != null &&
-                !_struggleTimer.IsActive)
-            {
-                moveResults = new MoveResult[0];
+        {
+            enterResult = null;
+            moveResults = new MoveResult[0];
+
+            if (_visitor != null && !_struggleTimer.IsActive)
+            {             
+                // Stepping on top of the visitor                                
                 enterResult = new EnterResult
                 {
                     Destination = _levelPosition + Vector3Int.up,
@@ -121,14 +135,13 @@ namespace Cirrus.Circuit.World.Objects
                     Step = move.Step.SetY(0)
                 };
 
-                return ReturnType.Succeeded_Result_Move;
+                return ReturnType.Succeeded_Next;                
             }
             else return base.GetEnterResults(
                 move,
                 out enterResult,
                 out moveResults
-                );
-            
+                );           
         }
 
         public override void ReenterVisitor()
@@ -138,24 +151,25 @@ namespace Cirrus.Circuit.World.Objects
             _struggleCount++;            
         }
 
-
-
-        public void OnTimeout()
+        public void OnDisappearTimeout()
         {
             if (_visitor == null) return;
 
-            // TODO
             _visitor.Server_Move(new Move
             {
+                Entered = this,
                 Destination = LevelSession.Instance.GetFallPosition(true),
                 Type = MoveType.Teleport,
                 Source = null,
                 Position = _levelPosition,
-                Entered = _entered,
                 User = _visitor
-            });        
-        }
+            });
+        }   
 
+        public void OnTimeout()
+        {
+
+        }
 
         public void OnStruggleTimeout()
         {
@@ -169,6 +183,7 @@ namespace Cirrus.Circuit.World.Objects
             _struggleCount = 0;
             _timer.Start(_sinkTime);
             _struggleTimer.Start(_struggleTimeLimit);
+            _disappearTimer.Start(_disappearTime);
         }                
 
         public override void FixedUpdate()
@@ -182,8 +197,5 @@ namespace Cirrus.Circuit.World.Objects
                     (_timer.Time / _sinkTime) * (Level.CellSize) * Vector3.up;
             }
         }
-
-
     }
-
 }

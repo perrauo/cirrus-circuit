@@ -54,10 +54,11 @@ MonoBehaviour:
   _nextColor: {r: 1, g: 0, b: 0, a: 1}
   _nextColorIndex: 0
   _state: 1
-  _sinkTime: 2
+  _sinkTime: 10
+  _dissapearTime: 2
   _isStruggleAllowed: 1
   _numStruggleRequired: 3
-  _struggleTimeLimit: 10
+  _struggleTimeLimit: 0.5
   _doesDestroyObjects: 0
 --- !u!1001 &1624148582309748932
 PrefabInstance:

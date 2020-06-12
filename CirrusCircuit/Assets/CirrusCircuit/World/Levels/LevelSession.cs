@@ -188,7 +188,7 @@ namespace Cirrus.Circuit.World
                         position.SetY(position.y - i),
                         out BaseObject target))
                     {
-                        if (target is Solid) continue;
+                        //if (target is Solid) continue;
                         if (target is Gem) continue;
                         if (target is Character) continue;
                         if (target is Door) continue;
@@ -684,7 +684,7 @@ namespace Cirrus.Circuit.World
             bool lockResults = true)
         {
             results = new List<MoveResult>();
-            ReturnType ret = ReturnType.Succeeded_Result_Move;
+            ReturnType ret = ReturnType.Succeeded_Next;
 
             var result = new MoveResult
             {
@@ -706,6 +706,9 @@ namespace Cirrus.Circuit.World
 
             do
             {                
+                // GEM Quicksand teleoport leads here:
+                // / /TODO dix
+                // GEM TELEPORT LEADS HERE/
                 /// Check if move is stale
                 if (IsMoveStale(move))
                 {
@@ -734,7 +737,7 @@ namespace Cirrus.Circuit.World
                 if (result.MoveType == MoveType.Struggle)
                 {
                     // Result of children passed but not me
-                    ret = ReturnType.Succeeded_Result;                    
+                    ret = ReturnType.Succeeded_End;                    
                     break;
                 }
                 else if (result.MoveType == MoveType.Teleport)
@@ -748,7 +751,7 @@ namespace Cirrus.Circuit.World
 
                     result.Entered = null;
                     result.Moved = null;
-                    result.Position = move.Position;
+                    result.Position = move.Destination;
                     result.Destination = move.Destination;
                     result.MoveType = MoveType.Teleport;
                     result.Offset = Vector3.zero;
@@ -786,7 +789,7 @@ namespace Cirrus.Circuit.World
                             isRecursiveCall: true)) > 0)
                         {                            
                             ((List<MoveResult>)results).AddRange(movedResults);
-                            if (ret < ReturnType.Succeeded_Result) result = null;
+                            if (ret < ReturnType.Succeeded_Next) result = null;
                             
                             break;
                         }
@@ -824,7 +827,7 @@ namespace Cirrus.Circuit.World
                             //result.MoveType = enterResult.MoveType;
 
                             ((List<MoveResult>)results).AddRange(moveResults);
-                            if (ret < ReturnType.Succeeded_Result) result = null;
+                            if (ret < ReturnType.Succeeded_Next) result = null;
                             break;
                         }
                         else
@@ -874,8 +877,8 @@ namespace Cirrus.Circuit.World
                                         out IEnumerable<MoveResult> downhillMoveResults)) 
                                         > 0)
                                     {
-                                        if (ret == ReturnType.Succeeded_NoResult) result = null;
-                                        else if (ret == ReturnType.Succeeded_Result_Enter)
+                                        if (ret < ReturnType.Succeeded_Next) result = null;
+                                        else
                                         {
                                             result.Moved = enterResult.Moved;
                                             result.Entered = enterResult.Entered;
@@ -908,7 +911,8 @@ namespace Cirrus.Circuit.World
                                         out EnterResult enterResult,
                                         out IEnumerable<MoveResult> downResults)) > 0)
                                     {
-                                        if (ret == ReturnType.Succeeded_Result_Enter)
+                                        if(ret < ReturnType.Succeeded_Next) result = null;
+                                        else
                                         {
                                             result.Moved = enterResult.Moved;
                                             result.Entered = enterResult.Entered;
@@ -921,8 +925,7 @@ namespace Cirrus.Circuit.World
                                             result.Scale = enterResult.Scale;
                                         }                                        
 
-                                        ((List<MoveResult>)results).AddRange(downResults);
-                                        if (ret < ReturnType.Succeeded_Result) result = null;
+                                        ((List<MoveResult>)results).AddRange(downResults);                                        
 
                                         break;
                                     }
@@ -965,8 +968,7 @@ namespace Cirrus.Circuit.World
                 _moveMutex.ReleaseMutex();
             }
 
-            if (ret > ReturnType.Succeeded_NoResult &&
-                result != null)
+            if (result != null)
             {
                 ((List<MoveResult>)results).Add(result);
             }

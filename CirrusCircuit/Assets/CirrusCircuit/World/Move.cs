@@ -7,12 +7,9 @@ namespace Cirrus.Circuit.World
 {
     public enum ReturnType
     {
-        Failed = -1,        
-        Succeeded_NoResult = 1,
-        Succeeded_Result = 2,
-        Succeeded_Result_Move = 3,
-        Succeeded_Result_Enter = 4,
-
+        Failed = -1,
+        Succeeded_End = 1,
+        Succeeded_Next = 2,       
     }
 
     public enum MoveType

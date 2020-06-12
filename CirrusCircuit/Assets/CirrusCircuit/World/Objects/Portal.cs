@@ -166,7 +166,7 @@ namespace Cirrus.Circuit.World.Objects
                           out moveResults,
                           isRecursiveCall:true) > 0)
                         {
-                            return ReturnType.Succeeded_Result_Move;
+                            return ReturnType.Succeeded_Next;
                         }
                         else if (enterResult.Moved.GetEnterResults(
                            new Move
@@ -187,10 +187,10 @@ namespace Cirrus.Circuit.World.Objects
                             enterResult.Destination = nextEnterResult.Position + nextEnterResult.Step;
                             enterResult.Entered = nextEnterResult.Entered;
                             enterResult.Moved = nextEnterResult.Moved;
-                            return ReturnType.Succeeded_Result_Enter;
+                            return ReturnType.Succeeded_Next;
                         }
                     }
-                    else return ReturnType.Succeeded_Result_Move; ;
+                    else return ReturnType.Succeeded_Next;
                 }
             }
 

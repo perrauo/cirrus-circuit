@@ -81,7 +81,7 @@ namespace Cirrus.Circuit.World.Objects
                 {
                     enterResult.PitchAngle = move.User._direction  == _direction ? VisitorAngle : -VisitorAngle;
                     enterResult.Offset = Vector3.up * Level.CellSize / 2;
-                    return ReturnType.Succeeded_Result_Enter;
+                    return ReturnType.Succeeded_Next;
                 }
                 else
                 {
@@ -95,7 +95,7 @@ namespace Cirrus.Circuit.World.Objects
                     {
                         enterResult.PitchAngle = dir == _direction ? VisitorAngle : -VisitorAngle;
                         enterResult.Offset = Vector3.up * Level.CellSize / 2;
-                        return ReturnType.Succeeded_Result_Enter;
+                        return ReturnType.Succeeded_Next;
                     }
                 }
             }
