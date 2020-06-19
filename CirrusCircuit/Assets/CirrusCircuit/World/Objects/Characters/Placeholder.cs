@@ -4,12 +4,16 @@ using UnityEngine;
 
 namespace Cirrus.Circuit.World.Objects.Characters
 {
+
     public class Placeholder : BaseObject
     {
-        public override ObjectType Type => ObjectType.CharacterPlaceholder;
-
+        [Header("----------------------------", order = 0)]
+        [Header("Placeholder", order = 1)]
+        [Header("----------------------------", order = 2)]
         [SerializeField]
         private CameraController _camera;
+
+        public override ObjectType Type => ObjectType.CharacterPlaceholder;
 
         //adjust this to change speed        
         private const float Speed = 5f;

@@ -87,7 +87,8 @@ namespace Cirrus.Circuit
                 TargetPosition, 
                 PositionSpeed);
 
-            for(int i = 0; i < _characters.Count; i++) {
+            for(int i = 0; i < _characters.Count; i++) 
+            {
                 _characters[i].Transform.position =
                 Vector3.Lerp(
                     _characters[i].Transform.position,

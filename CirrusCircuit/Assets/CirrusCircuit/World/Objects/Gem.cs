@@ -16,10 +16,10 @@ namespace Cirrus.Circuit.World.Objects
 
     public class Gem : BaseObject
     {
-        public override ObjectType Type => ObjectType.Gem;
 
-        public override bool IsSlidable => true;
-
+        [Header("----------------------------", order = 0)]
+        [Header("Gem", order = 1)]
+        [Header("----------------------------", order = 2)]
         [SerializeField]
         [FormerlySerializedAs("Type")]
         public GemType GemType;
@@ -32,6 +32,9 @@ namespace Cirrus.Circuit.World.Objects
 
         public bool IsRequired = false;
 
+        public override ObjectType Type => ObjectType.Gem;
+
+        public override bool IsSlidable => true;
 
         public override void Awake()
         {

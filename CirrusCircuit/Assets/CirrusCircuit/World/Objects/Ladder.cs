@@ -54,7 +54,7 @@ namespace Cirrus.Circuit.World.Objects
                 result.Destination = _levelPosition + Vector3Int.up;                
             }
 
-            return ReturnType.Succeeded;
+            return ReturnType.Succeeded_Next;
 
             //return base.GetEnterResults(move, out result, out moveResults);
         }

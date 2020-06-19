@@ -15,6 +15,9 @@ namespace Cirrus.Circuit.World.Objects
 
     public class Spawner : MonoBehaviour
     {
+        [Header("----------------------------", order = 0)]
+        [Header("Spawner", order = 1)]
+        [Header("----------------------------", order = 2)]
         [SerializeField]
         private Spawnable[] _spawnables;
 

@@ -29,12 +29,15 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
     public class Character : BaseObject, ICharacterAnimatorWrapper
     {
+        [Header("----------------------------", order = 0)]
+        [Header("Character", order = 1)]
+        [Header("----------------------------", order = 2)]
+        [SerializeField]
+        private Guide _guide;
+
         public override ObjectType Type => ObjectType.Character;
 
         public Player _controller;
-
-        [SerializeField]
-        private Guide _guide;
 
         public const float MoveDelay = 0.01f;
         

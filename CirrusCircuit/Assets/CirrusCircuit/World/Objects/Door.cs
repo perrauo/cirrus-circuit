@@ -8,6 +8,13 @@ namespace Cirrus.Circuit.World.Objects
 {
     public class Door : BaseObject
     {
+
+        [Header("----------------------------", order = 0)]
+        [Header("Door", order = 1)]
+        [Header("----------------------------", order = 2)]
+        [SerializeField]
+        private Cirrus.UI.ProgressBars.ProgressBar _progressBar;
+
         public override ObjectType Type => ObjectType.Door;
 
         public delegate void OnScoreValueAdded(
@@ -18,9 +25,6 @@ namespace Cirrus.Circuit.World.Objects
 
         public OnScoreValueAdded OnScoreValueAddedHandler;
 
-        [SerializeField]
-        private Cirrus.UI.ProgressBars.ProgressBar _progressBar;
-      
         private const int ComboRequired = 2;
 
         [SerializeField]

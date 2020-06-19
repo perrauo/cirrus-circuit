@@ -8,8 +8,8 @@ namespace Cirrus.Circuit.World
     public enum ReturnType
     {
         Failed = -1,
-        Succeeded = 1,        
-        Passed  = 2
+        Succeeded_End = 1,
+        Succeeded_Next = 2,       
     }
 
     public enum MoveType
@@ -243,7 +243,8 @@ namespace Cirrus.Circuit.World
                 Position = move.Position,
                 Source = move.Source,
                 Type = move.Type,
-                User = move.User
+                User = move.User,
+                Destination = move.Destination
             };
         }
     }

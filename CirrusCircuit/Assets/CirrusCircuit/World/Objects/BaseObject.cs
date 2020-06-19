@@ -449,7 +449,6 @@ namespace Cirrus.Circuit.World.Objects
         #endregion
 
         #region Move
-
         public virtual void Cmd_Move(Move move)
         {
             _session.Cmd_Move(move);
@@ -462,11 +461,9 @@ namespace Cirrus.Circuit.World.Objects
                 out IEnumerable<MoveResult> results,
                 false,
                 move.Type.IsLocking())
-                > 0
-                )
+                > 0)                
             {
                 LevelSession.Instance.ApplyMoveResults(results);                    
-
                 return true;
             }
 
@@ -516,6 +513,7 @@ namespace Cirrus.Circuit.World.Objects
                     _targetPosition += result.Offset;
                     Transform.position = _targetPosition;
                     _pitchAngle = result.PitchAngle;
+                    state = ObjectState.Falling;
                 }
                 else if (result.MoveType == MoveType.UsingPortal)
                 {
@@ -620,7 +618,7 @@ namespace Cirrus.Circuit.World.Objects
                         Moved = null,
                         Direction = move.Step.SetY(0)
                     });
-                    return ReturnType.Succeeded;
+                    return ReturnType.Succeeded_Next;
                 default: return ReturnType.Failed;
             }
         }
@@ -675,6 +673,8 @@ namespace Cirrus.Circuit.World.Objects
                 Scale = 1
             };
 
+            ReturnType ret;
+
             moveResults = new MoveResult[0];
 
             if (_visitor != null)
@@ -683,7 +683,7 @@ namespace Cirrus.Circuit.World.Objects
                 if (move.Step.SetY(0) == Vector3Int.zero) return ReturnType.Failed;
 
                 result.Moved = _visitor;
-                return _visitor.GetMoveResults(
+                if ((ret = _visitor.GetMoveResults(
                     new Move
                     {
                         Position = _visitor._levelPosition,
@@ -695,10 +695,14 @@ namespace Cirrus.Circuit.World.Objects
                     },
                     out moveResults,
                     isRecursiveCall: true
-                    );
+                    )) > 0)
+                {
+                    return ret;
+                }
+                else return ReturnType.Failed;
             }
 
-            return ReturnType.Succeeded;
+            return ReturnType.Succeeded_Next;
         }
 
         #endregion
@@ -745,7 +749,6 @@ namespace Cirrus.Circuit.World.Objects
 
         #endregion
 
-
         #region Land
 
         public virtual bool Server_Slide()
@@ -771,7 +774,6 @@ namespace Cirrus.Circuit.World.Objects
 
         #endregion
 
-
         #region Fall
 
         public virtual bool Server_Fall()
@@ -796,7 +798,6 @@ namespace Cirrus.Circuit.World.Objects
         }
 
         #endregion
-
 
         #region FSM
 
