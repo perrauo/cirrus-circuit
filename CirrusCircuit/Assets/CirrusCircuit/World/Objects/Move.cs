@@ -3,7 +3,7 @@ using Cirrus.Circuit.World.Objects;
 using System;
 using UnityEngine;
 
-namespace Cirrus.Circuit.World
+namespace Cirrus.Circuit.World.Objects
 {
     public enum ReturnType
     {
@@ -22,7 +22,35 @@ namespace Cirrus.Circuit.World
         Moving,
         Direction,
         Climbing,
-        Struggle
+        Struggle,
+
+        Disappear,
+        Reappear,
+        Color,
+    }
+
+    [Serializable]
+    public enum ActionType
+    {
+        Unknown,
+        Land,
+        Emote0,        
+        Emote1,
+        Emote2,
+
+        Color
+
+        // TODO put direction here as it does not change level data
+
+        //Disappear,
+        //Reappear,
+    }
+
+    // Changes an object without chaning the layout of the level
+    public class Action
+    {
+        public ActionType Type { get; set; } = ActionType.Unknown;
+        public int ColorID = -1;
     }
 
     public class Move

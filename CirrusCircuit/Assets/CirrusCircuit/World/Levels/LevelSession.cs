@@ -14,6 +14,7 @@ using UnityEngine;
 using Cirrus.Circuit.Networking;
 using UnityEditor.Experimental.GraphView;
 using Cirrus.Threading;
+using Action = Cirrus.Circuit.World.Objects.Action;
 
 namespace Cirrus.Circuit.World
 {
@@ -66,11 +67,13 @@ namespace Cirrus.Circuit.World
 
         private static LevelSession _instance;
 
-        public Delegate<MoveResult> OnMovedHandler;
+        public Delegate<MoveResult> OnMoveResultHandler;
+
+        public Delegate<BaseObject, Action> OnActionPerformedHandler;
 
         public Mutex _moveMutex = new Mutex();
-        public Mutex _resultLockMutex = new Mutex();
-        public bool _isResultLocked = false;
+        //public Mutex _resultLockMutex = new Mutex();
+        //public bool _isResultLocked = false;
 
         public static LevelSession Instance
         {
@@ -306,7 +309,7 @@ namespace Cirrus.Circuit.World
                     );
 
                 if (res is Door) ((Door)res).OnScoreValueAddedHandler += OnGemEntered;
-                else if (res is Gem) OnMovedHandler += ((Gem)res).OnMoved;
+                else if (res is Gem) OnMoveResultHandler += ((Gem)res).OnMoved;
                 //else if (res is Character) _characters.Add(res as Character);
                 else if (res is Portal)
                 {
@@ -321,7 +324,7 @@ namespace Cirrus.Circuit.World
 
                 }
 
-                res.Color = PlayerManager.Instance.GetColor(res.ColorId);
+                res.Color = PlayerManager.Instance.GetColor(res.ColorID);
 
                 res.gameObject.SetActive(true);
                 (res.Transform.position, res._levelPosition) = RegisterObject(res);
@@ -343,7 +346,7 @@ namespace Cirrus.Circuit.World
                             info.Rotation);
                     _characters.Add((Character)info.Session._object);
                     info.Session._object._session = info.Session;
-                    info.Session._object.ColorId = info.PlayerId;
+                    info.Session._object.ColorID = info.PlayerId;
                     info.Session._object.Color = player.Color;
                     info.Session._object._levelPosition = info.Position;
                     (info.Session._object.Transform.position, info.Session._object._levelPosition) = RegisterObject(info.Session._object);
@@ -364,7 +367,7 @@ namespace Cirrus.Circuit.World
                     obj._session = session;
                     session._object = obj;
 
-                    obj.Disable();
+                    obj.Lock();
                 }
             }
         }
@@ -624,20 +627,19 @@ namespace Cirrus.Circuit.World
             foreach (var res in results)
             {
                 if (res == null) continue;
-
-                OnMovedHandler?.Invoke(res);
+                OnMoveResultHandler?.Invoke(res);
             }
 
-            // Apply client moves
+            // Apply move on clients
            Rpc_ApplyMoveResults(results
                 .Select(x => x.ToNetworkMoveResult())
                 .ToArray());
 
-            if (CustomNetworkManager.IsServer && _isResultLocked)
-            {
-                _isResultLocked = false;
-                _resultLockMutex.ReleaseMutex();
-            }
+            //if (CustomNetworkManager.IsServer && _isResultLocked)
+            //{
+            //    _isResultLocked = false;
+            //    _resultLockMutex.ReleaseMutex();
+            //}
         }
 
         [ClientRpc]
@@ -678,10 +680,10 @@ namespace Cirrus.Circuit.World
         public ReturnType GetMoveResults(
             Move move,
             out IEnumerable<MoveResult> results,
-            bool isRecursiveCall = false,
+            bool isRecursiveCall = false)
             // We do not lock the results if we simply query the level
             // without intent to change it
-            bool lockResults = true)
+            //bool lockResults = true)
         {
             results = new List<MoveResult>();
             ReturnType ret = ReturnType.Succeeded_Next;
@@ -696,20 +698,10 @@ namespace Cirrus.Circuit.World
             if (!isRecursiveCall)
             {
                 _moveMutex.WaitOne();
-
-                if (lockResults)
-                {
-                    _resultLockMutex.WaitOne();
-                    _isResultLocked = true;
-                }
             }
 
             do
             {                
-                // GEM Quicksand teleoport leads here:
-                // / /TODO dix
-                // GEM TELEPORT LEADS HERE/
-                /// Check if move is stale
                 if (IsMoveStale(move))
                 {
                     ret = ReturnType.Failed;
@@ -759,7 +751,10 @@ namespace Cirrus.Circuit.World
                 }
                 else
                 {
-                    if (move.Type == MoveType.Falling) result.Direction = move.User._direction;                        
+                    if (move.Type == MoveType.Falling)
+                    {
+                        result.Direction = move.User._direction;
+                    }
 
                     if (Get(
                         // Object pushed into
@@ -956,14 +951,14 @@ namespace Cirrus.Circuit.World
 
             if (!isRecursiveCall)
             {
-                if (lockResults)
-                {
-                    if (ret < 0)
-                    {
-                        _isResultLocked = false;
-                        _resultLockMutex.ReleaseMutex();
-                    }
-                }
+                //if (lockResults)
+                //{
+                //    if (ret < 0)
+                //    {
+                //        _isResultLocked = false;
+                //        _resultLockMutex.ReleaseMutex();
+                //    }
+                //}
 
                 _moveMutex.ReleaseMutex();
             }
@@ -1032,7 +1027,7 @@ namespace Cirrus.Circuit.World
                 {
                     obj.Cmd_FSM_SetState(ObjectState.Idle);
                 }
-                else obj.Server_Fall();
+                else obj.Fall();
             }
         }
 

@@ -16,3 +16,6 @@
    
 - Character Turns in place (Character Spins in place)
     - Character spin and arrow appears
+
+
+ - TODO gate that only allow a cerain color

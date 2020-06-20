@@ -246,7 +246,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
             {
                 switch (_state)
                 {
-                    case ObjectState.Disabled:
+                    case ObjectState.Locked:
                     case ObjectState.Falling:
                         move.Type = MoveType.Direction;
                         break;
@@ -270,7 +270,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 case ObjectState.Moving:
                 case ObjectState.Falling:
                 case ObjectState.Idle:
-                case ObjectState.Disabled:
+                case ObjectState.Locked:
                 case ObjectState.Climbing:
                     
                     if (_moveCoroutine == null) _moveCoroutine = StartCoroutine(Coroutine_Cmd_Move(axis));
@@ -306,13 +306,13 @@ namespace Cirrus.Circuit.World.Objects.Characters
             return ReturnType.Failed;
         }
 
-        public override void PerformAction(ObjectAction action)
+        public override void ApplyAction(Action action)
         {
-            base.PerformAction(action);
+            base.ApplyAction(action);
 
-            switch (action)
+            switch (action.Type)
             {
-                case ObjectAction.Land:
+                case ActionType.Land:
                     Play(CharacterAnimation.Character_Falling);
                     break;
             }

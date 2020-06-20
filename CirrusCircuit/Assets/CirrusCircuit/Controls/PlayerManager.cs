@@ -36,30 +36,6 @@ namespace Cirrus.Circuit.Controls
 
         public string GetName(int id)
         {
-            int num = 1;
-            if (
-                ErrorCodes
-                .TryGetValue(
-                    num,
-                    out string value))
-            {
-
-            }
-            else
-            {
-                Debug.Log("not found");
-            }
-
-            if (ErrorCodes.ContainsKey(1))
-            {
-                string value = ErrorCodes[1];
-            }
-            else
-            {
-                Debug.Log("not found");
-            }
-
-
             string name = DefaultName;
             if (id < PlayerMax) name = Names[id];
             return name;
