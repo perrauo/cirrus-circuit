@@ -158,12 +158,12 @@ namespace Cirrus.Circuit.World.Objects
 
         public int ColorId
         {
-            set => _colorId = (Number)value;
+            set => _colorId = value;
             get => (int)_colorId;
         }
 
         [SerializeField]
-        private Number _colorId;
+        private int _colorId;
 
         [SerializeField]
         protected Color _color;
