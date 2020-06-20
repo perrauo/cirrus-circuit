@@ -48,8 +48,8 @@ namespace Cirrus.Circuit.World.Objects
         public override ReturnType GetMoveResults(
             Move move,
             out IEnumerable<MoveResult> result,
-            bool isRecursiveCall = false)
-            //bool lockResults = true)
+            bool isRecursiveCall = false,
+            bool lockResults = true)
         {            
             result = null;
             return ReturnType.Failed;
@@ -155,7 +155,7 @@ namespace Cirrus.Circuit.World.Objects
         {
             if (_visitor == null) return;
 
-            _visitor.Move(new Move
+            _visitor.Server_Move(new Move
             {
                 Entered = this,
                 Destination = LevelSession.Instance.GetFallPosition(true),

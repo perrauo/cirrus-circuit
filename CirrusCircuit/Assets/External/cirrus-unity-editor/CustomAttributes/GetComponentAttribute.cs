@@ -71,8 +71,6 @@ namespace Cirrus.UnityEditorExt
                             break;
                     }
 
-                    EditorUtility.SetDirty(behaviour.gameObject);
-
                 }
             }
 

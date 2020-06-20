@@ -10,15 +10,9 @@ namespace Cirrus.Circuit.Controls
     {
         [SerializeField]
         private InputActionAsset _inputActionAsset;
-       
-        public static readonly string[] Names = { "Red", "Blue", "Yellow", "Green" };
 
-        private static readonly Dictionary<int, string> ErrorCodes
-            = new Dictionary<int, string>
-            {
-                { 1, "Error One" },
-                { 2, "Error Two" }
-            };
+        [SerializeField]
+        public string[] Names = { "Red", "Blue", "Yellow", "Green" };
 
         public const string DefaultName = "Unknown";
 
@@ -42,7 +36,7 @@ namespace Cirrus.Circuit.Controls
         }
 
         public bool GetPlayer(int localId, out Player player)
-        {            
+        {
             player = null;
             if (localId < 0 || localId >= PlayerMax) return false;
             player = LocalPlayers[localId];

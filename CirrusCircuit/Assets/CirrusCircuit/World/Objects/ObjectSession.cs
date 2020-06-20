@@ -115,17 +115,17 @@ namespace Cirrus.Circuit.World.Objects
             _object.FSM_SetState(state);
         }
 
-        public void Cmd_Perform(Action action)
+        public void Cmd_PerformAction(ObjectAction action)
         {
             CommandClient
                 .Instance
-                .Cmd_ObjectSession_Perform(gameObject, action);
+                .Cmd_ObjectSession_PerformAction(gameObject, action);
         }
 
         [ClientRpc]
-        public void Rpc_Perform(Action action)
+        public void Rpc_PerformAction(ObjectAction action)
         {
-            _object.ApplyAction(action);
+            _object.PerformAction(action);
         }
 
         #region Interact

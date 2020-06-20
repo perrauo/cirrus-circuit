@@ -21,16 +21,24 @@ namespace Cirrus.Circuit.World.Objects
     public enum ObjectState
     {
         Unknown,
-        Locked,
+        Disabled,
         LevelSelect,
         CharacterSelect,
         Falling,
         Idle,
         Moving,
         Sliding,
-        Climbing,
+        Climbing
+    }
 
-        Disabled,
+    [Serializable]
+    public enum ObjectAction
+    {
+        Unknown,
+        Land,
+        Emote0,
+        Emote1,
+        Emote2
     }
 
     [Serializable]
@@ -104,14 +112,12 @@ namespace Cirrus.Circuit.World.Objects
         {
             get
             {
-                if (
-                    _below != null && 
-                    _below._visitor != null)
+                if (_below != null && _below._visitor != null)
                 {
                     if (_below == this) return _offset;
                     else return _offset + _below._visitor.Offset * 2;
                 }
-
+                
                 return _offset;
             }
 
@@ -150,7 +156,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public float _targetScale = 1;
 
-        public int ColorID
+        public int ColorId
         {
             set => _colorId = value;
             get => (int)_colorId;
@@ -201,7 +207,7 @@ namespace Cirrus.Circuit.World.Objects
         private Timer _exitPortalTimer;
 
         [SerializeField]
-        protected ObjectState _state = ObjectState.Locked;
+        protected ObjectState _state = ObjectState.Disabled;
 
         protected bool _preserveInputDirection = false;
 
@@ -216,7 +222,7 @@ namespace Cirrus.Circuit.World.Objects
             {
                 Color = PlayerManager
                     .Instance
-                    .GetColor(ColorID);
+                    .GetColor(ColorId);
 
                 _nextColor = Color;
             }
@@ -225,9 +231,9 @@ namespace Cirrus.Circuit.World.Objects
         // TODO: will not be called on disabled level
         public virtual void Awake()
         {
-            if (PlayerManager.IsValidPlayerId(ColorID))
+            if (PlayerManager.IsValidPlayerId(ColorId))
             {
-                _nextColorIndex = ColorID;
+                _nextColorIndex = ColorId;
                 _nextColorTimer = new Timer(NextColorTime, start: false, repeat: true);
                 _nextColorTimer.OnTimeLimitHandler += OnNextColorTimeOut;
             }
@@ -237,7 +243,7 @@ namespace Cirrus.Circuit.World.Objects
 
                 Color = PlayerManager
                     .Instance
-                    .GetColor(ColorID);
+                    .GetColor(ColorId);
             }
 
             _exitPortalTimer = new Timer(ExitScaleTime, start: false, repeat: false);
@@ -323,8 +329,8 @@ namespace Cirrus.Circuit.World.Objects
 
         }
 
-        public virtual void ApplyPhysics()
-        {
+        public virtual void Server_ReactToEnvironment()
+        {            
             if (_entered == null)
             {
                 if (LevelSession.Get(
@@ -333,47 +339,52 @@ namespace Cirrus.Circuit.World.Objects
                 {
                     if (obj.IsSolid)
                     {
-                        if (_state == ObjectState.Falling)
-                        {
-                            Cmd_Perform(new Action
-                            {
-                                Type = ActionType.Land
-                            });
-                        }
+                        if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
 
-                        Cmd_FSM_SetState(ObjectState.Idle);
-                        return;
+                        else Cmd_FSM_SetState(ObjectState.Idle);
+                    }
+                    else if (!Server_Fall())
+                    {
+                        if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
+
+                        else Cmd_FSM_SetState(ObjectState.Idle);
                     }
                 }
+                else Server_Fall();
             }
             // If arrived inside a slope
             else if (_entered is Slope)
             {
                 Slope slope = (Slope)_entered;
 
+                //!((Slope)_entered).IsStaircase)
                 if (!IsSlidable || slope.IsStaircase) Cmd_FSM_SetState(ObjectState.Idle);
-                else Slide();
-                return;
+                else Server_Slide();
             }
             // If arrived inside a quicksand
             else if (_entered is Quicksand)
             {
                 Cmd_FSM_SetState(ObjectState.Idle);
-                return;
             }
 
-            Fall();
+            //else if (LevelSession.Get(
+            //    _gridPosition + Vector3Int.down,
+            //    out BaseObject _))
+            //{
+            //    if (_state == ObjectState.Falling) Cmd_PerformAction(ObjectAction.Land);
+            //    else Cmd_FSM_SetState(ObjectState.Idle);
+            //}
         }
 
 
-        public virtual void Lock()
+        public virtual void Disable()
         {
-            FSM_SetState(ObjectState.Locked, null);
+            FSM_SetState(ObjectState.Disabled, null);
         }
 
         public virtual void WaitLevelSelect()
         {
-            if (PlayerManager.IsValidPlayerId(ColorID))
+            if (PlayerManager.IsValidPlayerId(ColorId))
             {
                 OnNextColorTimeOut();
                 _nextColorTimer.Start();
@@ -403,9 +414,9 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void Interact(BaseObject source)
         {
-            if (!PlayerManager.IsValidPlayerId(ColorID))
+            if (!PlayerManager.IsValidPlayerId(ColorId))
             {
-                ColorID = source.ColorID;
+                ColorId = source.ColorId;
                 Color = source.Color;
             }
         }
@@ -418,35 +429,21 @@ namespace Cirrus.Circuit.World.Objects
 
         #endregion
 
-        #region Action
+        #region Perform Action
 
-        public void Cmd_Perform(Action action)
+        public void Cmd_PerformAction(ObjectAction action)
         {
-            _session.Cmd_Perform(action);
+            _session.Cmd_PerformAction(action);
         }
 
-        public virtual void ApplyAction(Action action)
+        public virtual void PerformAction(ObjectAction action)
         {
-            switch (action.Type)
+            switch (action)
             {
-                case ActionType.Land:
+                case ObjectAction.Land:
                     FSM_SetState(ObjectState.Idle);
                     break;
-
-                case ActionType.Emote0:
-                    break;
-
-                case ActionType.Emote1:
-                    break;
-
-                case ActionType.Color:
-                    break;
             }
-
-            LevelSession
-                .Instance
-                .OnActionPerformedHandler?
-                .Invoke(this, action);
         }
 
         #endregion
@@ -457,15 +454,16 @@ namespace Cirrus.Circuit.World.Objects
             _session.Cmd_Move(move);
         }
 
-        public virtual bool Move(Move move)
+        public virtual bool Server_Move(Move move)
         {
             if (LevelSession.GetMoveResults(
                 move,
                 out IEnumerable<MoveResult> results,
-                false)
-                > 0)
+                false,
+                move.Type.IsLocking())
+                > 0)                
             {
-                LevelSession.Instance.ApplyMoveResults(results);
+                LevelSession.Instance.ApplyMoveResults(results);                    
                 return true;
             }
 
@@ -481,23 +479,17 @@ namespace Cirrus.Circuit.World.Objects
             _below = null;
 
             do
-            {
+            {                
                 if (result.MoveType == MoveType.Direction)
                 {
                     _direction = result.Direction;
                     break;
                 }
-                else if (
-                    result.MoveType == MoveType.Disappear ||
-                    result.MoveType == MoveType.Reappear)
-                {
-
-                }
                 else if (result.MoveType == MoveType.Moving)
                 {
                     // Clear move position
                     int idx = VectorUtils.ToIndex(result.Move.Position, 20, 20);
-                    _levelPosition = result.Destination;
+                     _levelPosition = result.Destination;
                     _targetPosition = Level.GridToWorld(result.Destination);
                     _targetPosition += result.Offset;
                     _direction = result.Direction;
@@ -561,9 +553,9 @@ namespace Cirrus.Circuit.World.Objects
 
                 if (
                     _entered != null &&
-                    result.Entered != result.PreviousEntered)
+                    result.Entered != result.PreviousEntered)                    
                 {
-                    result.User.Exit();
+                    result.User.Exit();                    
                 }
 
                 if (result.Entered != null)
@@ -575,8 +567,8 @@ namespace Cirrus.Circuit.World.Objects
 
                 LevelSession.Get(
                     _levelPosition + Vector3Int.down,
-                    out _below);
-
+                    out _below);               
+                
                 FSM_SetState(
                     state,
                     this);
@@ -589,10 +581,10 @@ namespace Cirrus.Circuit.World.Objects
         public virtual ReturnType GetMoveResults(
             Move move,
             out IEnumerable<MoveResult> results,
-            bool isRecursiveCall = false)
-        //bool lockResults = true)
+            bool isRecursiveCall=false,
+            bool lockResults = true)
         {
-            results = null;
+             results = null;
 
             if (move.Source != null &&
                 move.Type == MoveType.Sliding)
@@ -610,8 +602,8 @@ namespace Cirrus.Circuit.World.Objects
                     return LevelSession.GetMoveResults(
                         move,
                         out results,
-                        isRecursiveCall);
-                //lockResults);
+                        isRecursiveCall,
+                        lockResults);
 
                 case MoveType.Direction:
                     results = new List<MoveResult>();
@@ -653,11 +645,11 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void ReenterVisitor()
         {
-
+            
         }
 
         public virtual void Reenter()
-        {
+        {            
             if (_entered != null)
             {
                 _entered.ReenterVisitor();
@@ -748,7 +740,7 @@ namespace Cirrus.Circuit.World.Objects
         public virtual void Exit()
         {
             if (_entered != null)
-            {
+            {                
                 _entered.ExitVisitor(this);
                 _entered = null;
             }
@@ -759,7 +751,7 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Land
 
-        public virtual bool Slide()
+        public virtual bool Server_Slide()
         {
             if (!CustomNetworkManager.IsServer) return false;
 
@@ -775,7 +767,7 @@ namespace Cirrus.Circuit.World.Objects
                     Entered = _entered,
                 };
 
-            return Move(move);
+            return Server_Move(move);
 
         }
 
@@ -784,11 +776,11 @@ namespace Cirrus.Circuit.World.Objects
 
         #region Fall
 
-        public virtual bool Fall()
+        public virtual bool Server_Fall()
         {
             if (!CustomNetworkManager.IsServer) return false;
 
-            return Move(new Move
+            return Server_Move(new Move
             {
                 Type = MoveType.Falling,
                 User = this,
@@ -802,7 +794,7 @@ namespace Cirrus.Circuit.World.Objects
         {
             if (!CustomNetworkManager.IsServer) return;
 
-            ApplyPhysics();
+            Server_ReactToEnvironment();
         }
 
         #endregion
@@ -834,7 +826,7 @@ namespace Cirrus.Circuit.World.Objects
             {
                 case ObjectState.Falling:
                 case ObjectState.Moving:
-                case ObjectState.Sliding:
+                case ObjectState.Sliding:                    
                     _hasArrived = false;
                     break;
                 default:
@@ -858,7 +850,7 @@ namespace Cirrus.Circuit.World.Objects
                             _previousGridPosition + Vector3Int.up,
                             out above))
                         {
-                            above.Fall();
+                            above.Server_Fall();
                         }
 
                         _state = target;
@@ -882,7 +874,7 @@ namespace Cirrus.Circuit.World.Objects
                 case ObjectState.Moving:
                 case ObjectState.Falling:
                 case ObjectState.Idle:
-                case ObjectState.Locked:
+                case ObjectState.Disabled:
                 case ObjectState.Sliding:
                 case ObjectState.Climbing:
 
@@ -901,12 +893,12 @@ namespace Cirrus.Circuit.World.Objects
 
             switch (_state)
             {
-                case ObjectState.Locked:
+                case ObjectState.Disabled:
                     break;
 
                 case ObjectState.LevelSelect:
 
-                    if (ColorID < PlayerManager.PlayerMax)
+                    if (ColorId < PlayerManager.PlayerMax)
                     {
                         Color = Color.Lerp(_color, _nextColor, NextColorSpeed);
                     }
@@ -945,7 +937,7 @@ namespace Cirrus.Circuit.World.Objects
             switch (_state)
             {
 
-                case ObjectState.Locked:
+                case ObjectState.Disabled:
                     return;
 
                 case ObjectState.CharacterSelect:
@@ -989,7 +981,7 @@ namespace Cirrus.Circuit.World.Objects
                     {
                         _hasArrived = true;
 
-                        ApplyPhysics();
+                        Server_ReactToEnvironment();
                     }
 
                     break;

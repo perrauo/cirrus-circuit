@@ -9,7 +9,6 @@ using System.Threading;
 using Cirrus;
 using Cirrus.Circuit.World;
 using System.Collections.Generic;
-using Action = Cirrus.Circuit.World.Objects.Action;
 
 namespace Cirrus.Circuit.Networking
 {
@@ -351,7 +350,7 @@ namespace Cirrus.Circuit.Networking
         private Mutex Cmd_ObjectSession_Interact_mutex = new Mutex();
 
         [Command]
-        public void Cmd_ObjectSession_Perform(GameObject gameObject, Action action)
+        public void Cmd_ObjectSession_PerformAction(GameObject gameObject, ObjectAction action)
         {
             //AssertGameObjectNull(obj);
             if (gameObject == null) return;
@@ -364,7 +363,7 @@ namespace Cirrus.Circuit.Networking
                 // Server holds the truth
                 //if (session.IsFallAllowed())
                 {
-                    session.Rpc_Perform(action);
+                    session.Rpc_PerformAction(action);
                 }
 
                 Cmd_ObjectSession_Interact_mutex.ReleaseMutex();
@@ -407,12 +406,13 @@ namespace Cirrus.Circuit.Networking
             {
                 Cmd_ObjectSession_Move_mutex.WaitOne();
 
+
                 // Server holds the truth
                 if (session._object.GetMoveResults(
                     netMove.ToMove(), 
                     out IEnumerable<MoveResult> results,
-                    isRecursiveCall:false
-                    ) > 0)
+                    isRecursiveCall:false,
+                    netMove.Type.IsLocking()) > 0)
                 {
                     LevelSession.Instance.ApplyMoveResults(results);
                 }
