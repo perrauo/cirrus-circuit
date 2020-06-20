@@ -18,7 +18,7 @@ namespace Cirrus.Circuit.World.Objects
         [Header("Portal", order = 1)]
         [Header("----------------------------", order = 2)]
         [SerializeField]
-        private ID _link;
+        private int _link;
         public int Link => (int)_link;
 
 
