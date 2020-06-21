@@ -21,7 +21,9 @@ using Cirrus.Circuit.Networking;
 namespace Cirrus.Circuit.Controls
 {
     [System.Serializable]
-    public class Player : ActionMap.IPlayerActions
+    public class Player : 
+        ActionMap.IPlayerActions, 
+        ActionMap.IPlayerCharacterActions
     {
         [SerializeField]
         public PlayerSession _session;
@@ -81,16 +83,28 @@ namespace Cirrus.Circuit.Controls
         {
             if (enabled)
             {
-                _actionMap.Player.Enable();
+                // TODO deactivate non player character during gameplay
+
+                _actionMap.Player.Enable();               
                 _actionMap.Player.SetCallbacks(this);
+
+                _actionMap.PlayerCharacter.Enable();
+                _actionMap.PlayerCharacter.SetCallbacks(this);
             }
             else
-            {
-                _actionMap.Player.SetCallbacks(null);
-                _actionMap.Player.Disable();
-                _actionMap.Disable();
+            {                
+                _actionMap.Player.SetCallbacks(null);            
                 _actionMap.Player.AxesLeft.Disable();
                 _actionMap.Player.AxesLeft.Dispose();
+                _actionMap.Player.Disable();
+
+                _actionMap.PlayerCharacter.SetCallbacks(null);                
+                _actionMap.PlayerCharacter.AxesLeft.Disable();
+                _actionMap.PlayerCharacter.AxesLeft.Dispose();
+                _actionMap.PlayerCharacter.Disable();
+
+                _actionMap.Disable();
+
             }
         }
 
@@ -126,9 +140,16 @@ namespace Cirrus.Circuit.Controls
             //context.
             if (context.performed) return;
 
-            if (context.canceled) return;            
+            if (context.canceled) return;
 
-            Game.Instance.HandleAction1(this);            
+            //if(context.)
+
+            Game.Instance.HandleAction1(this);
+        }
+
+        public void OnHold(InputAction.CallbackContext context)
+        {
+            Game.Instance.HandleHold(this, context);
         }
     }
 }

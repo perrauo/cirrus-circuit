@@ -19,12 +19,12 @@ namespace Cirrus.Circuit.World
 {
     public class LevelSession : CustomNetworkBehaviour
     {
-        public class MoveInfo
-        {
-            public Vector3Int Position;
-            public Vector3Int Direction;
-            public Vector3 Offset;
-        }
+        //public class MoveInfo
+        //{
+        //    public Vector3Int Position;
+        //    public Vector3Int Direction;
+        //    public Vector3 Offset;
+        //}
 
         [Serializable]
         public class PlaceholderInfo
@@ -321,7 +321,7 @@ namespace Cirrus.Circuit.World
 
                 }
 
-                res.Color = PlayerManager.Instance.GetColor(res.ColorId);
+                res.Color = PlayerManager.Instance.GetColor(res.ColorID);
 
                 res.gameObject.SetActive(true);
                 (res.Transform.position, res._levelPosition) = RegisterObject(res);
@@ -343,7 +343,7 @@ namespace Cirrus.Circuit.World
                             info.Rotation);
                     _characters.Add((Character)info.Session._object);
                     info.Session._object._session = info.Session;
-                    info.Session._object.ColorId = info.PlayerId;
+                    info.Session._object.ColorID = info.PlayerId;
                     info.Session._object.Color = player.Color;
                     info.Session._object._levelPosition = info.Position;
                     (info.Session._object.Transform.position, info.Session._object._levelPosition) = RegisterObject(info.Session._object);
@@ -675,6 +675,68 @@ namespace Cirrus.Circuit.World
             return false;
         }
 
+        private ReturnType RecurseGetPullResults(
+            Hold src,
+            List<MoveResult> results)
+        {
+            if (src.Target.GetMoveResults(
+                new Move
+                {
+                    Source = src.Source,
+                    Destination = src.Source._levelPosition,
+                    Step = -src.Direction,
+                    Entered = src.Target._entered,
+                    Position = src.Target._levelPosition,
+                    Type = MoveType.Moving
+                },
+                out IEnumerable<MoveResult> moveResults,
+                isRecursiveCall: true) > 0)
+            {
+                results.AddRange(moveResults);
+
+                foreach (var hld in src.Target._holding)
+                {
+                    if (hld._held.Direction == -src.Direction)
+                    {                       
+                        results.AddRange(moveResults);
+                        RecurseGetPullResults(
+                            hld._held,
+                            results);                      
+                        break;
+                    }
+                }
+
+                return ReturnType.Succeeded_Next;
+            }
+
+            return ReturnType.Failed;            
+        }
+
+        public ReturnType GetPullResults(
+            Hold src,
+            out IEnumerable<MoveResult> results,
+            bool isRecursiveCall = false)
+        {
+            results = new MoveResult[0];
+
+            List<MoveResult> pulled = new List<MoveResult>();
+
+            if(src != null)
+            {
+                RecurseGetPullResults(
+                    src,
+                    pulled
+                    );
+
+                return pulled.Count != 0 ?
+                    ReturnType.Succeeded_Next :
+                    ReturnType.Failed;
+            }
+
+            return ReturnType.Failed;
+        }
+
+        // TODO move should even be type, typing is deduced here and sent back
         public ReturnType GetMoveResults(
             Move move,
             out IEnumerable<MoveResult> results,
@@ -684,7 +746,9 @@ namespace Cirrus.Circuit.World
             bool lockResults = true)
         {
             results = new List<MoveResult>();
+            IEnumerable<MoveResult> pullResults;
             ReturnType ret = ReturnType.Succeeded_Next;
+            
 
             var result = new MoveResult
             {
@@ -733,6 +797,16 @@ namespace Cirrus.Circuit.World
                 result.Offset = exitResult.Offset;
                 result.MoveType = exitResult.MoveType;
                 result.Direction = exitResult.Step.SetY(0);
+
+                result.MoveType =
+                    move.User._held != null ?
+                    MoveType.Pulling :
+                    result.MoveType;
+
+                result.Direction =
+                    move.User._held != null ?
+                    result.Direction :
+                    move.User._held.Direction;
 
                 if (result.MoveType == MoveType.Struggle)
                 {
@@ -789,6 +863,17 @@ namespace Cirrus.Circuit.World
                             isRecursiveCall: true)) > 0)
                         {                            
                             ((List<MoveResult>)results).AddRange(movedResults);
+
+                            //var pullResults = new List<MoveResult>();
+                            if ((GetPullResults(
+                                move.User._held,
+                                out pullResults, 
+                                false)                                
+                                ) > 0)
+                            {
+                                ((List<MoveResult>)results).AddRange(pullResults);
+                            }
+
                             if (ret < ReturnType.Succeeded_Next) result = null;
                             
                             break;
@@ -826,6 +911,16 @@ namespace Cirrus.Circuit.World
                             result.MoveType = enterResult.MoveType;
                             //result.MoveType = enterResult.MoveType;
 
+                            //var pullResults = new List<MoveResult>();
+                            if ((GetPullResults(
+                                move.User._held,
+                                out pullResults,
+                                false)
+                                ) > 0)
+                            {
+                                ((List<MoveResult>)results).AddRange(pullResults);
+                            }
+
                             ((List<MoveResult>)results).AddRange(moveResults);
                             if (ret < ReturnType.Succeeded_Next) result = null;
                             break;
@@ -849,7 +944,6 @@ namespace Cirrus.Circuit.World
                             result.Destination = fallthrough ? GetFallPosition(true) : result.Destination;
                             result.MoveType = fallthrough ? MoveType.Teleport : MoveType.Falling;
                             break;
-
                         }
                         else if (
                             Level.IsInsideBounds(
@@ -891,6 +985,16 @@ namespace Cirrus.Circuit.World
                                             result.Scale = enterResult.Scale;
                                         }
 
+                                        //var pullResults = new List<MoveResult>();
+                                        if ((GetPullResults(
+                                            move.User._held,
+                                            out pullResults,
+                                            false)
+                                            ) > 0)
+                                        {
+                                            ((List<MoveResult>)results).AddRange(pullResults);
+                                        }
+
                                         ((List<MoveResult>)results).AddRange(downhillMoveResults);
                                         break;
                                     }
@@ -923,7 +1027,17 @@ namespace Cirrus.Circuit.World
                                             result.MoveType = enterResult.MoveType;
                                             result.Position = enterResult.Position;
                                             result.Scale = enterResult.Scale;
-                                        }                                        
+                                        }
+
+                                        //var pullResults = new List<MoveResult>();
+                                        if ((GetPullResults(
+                                            move.User._held,
+                                            out pullResults,
+                                            false)
+                                            ) > 0)
+                                        {
+                                            ((List<MoveResult>)results).AddRange(pullResults);
+                                        }
 
                                         ((List<MoveResult>)results).AddRange(downResults);                                        
 
@@ -936,6 +1050,17 @@ namespace Cirrus.Circuit.World
                                         break;
                                     }
                                 }
+
+                                //var pullResults = new List<MoveResult>();
+                                if ((GetPullResults(
+                                    move.User._held,
+                                    out pullResults,
+                                    false)
+                                    ) > 0)
+                                {
+                                    ((List<MoveResult>)results).AddRange(pullResults);
+                                }
+
                                 //else
                                 //{
                                 //    if (below._visitor != null)

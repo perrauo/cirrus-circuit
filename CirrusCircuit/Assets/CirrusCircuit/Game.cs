@@ -12,6 +12,7 @@ using StartMenu = Cirrus.Circuit.UI.StartMenu;
 using System.Threading;
 using Cirrus.Circuit.UI;
 using Random = UnityEngine.Random;
+using static UnityEngine.InputSystem.InputAction;
 
 namespace Cirrus.Circuit
 {
@@ -254,6 +255,12 @@ namespace Cirrus.Circuit
         public void HandleAction1(Player player)
         {
             FSM_HandleAction1(player);
+        }
+
+
+        public void HandleHold(Player player, CallbackContext ctx)
+        {
+            FSM_HandleHold(player, ctx);
         }
 
         public void Cmd_ScrollLevel(int delta)
@@ -806,6 +813,26 @@ namespace Cirrus.Circuit
             }
         }
 
+        public void FSM_HandleHold(Player player, CallbackContext ctx = default(CallbackContext))
+        {
+            switch (_state)
+            {
+                case State.Round:
+                    if (player._character != null)
+                    {
+                        if (ctx.performed)
+                        {
+                            player._character?.BeginHold();        
+                        }
+                        else if(ctx.canceled)
+                        {
+                            Debug.Log("release");
+                        }
+                    }
+                    break;
+            }
+        }
+
         public void FSM_HandleAction1(Player player)
         {
             switch (_state)
@@ -835,9 +862,9 @@ namespace Cirrus.Circuit
 
                     break;
 
-                case State.Round:
-                    if (player._character) player._character?.DoAction1();
-                    break;
+                //case State.Round:
+                //    if (player._character) player._character?.DoAction1();
+                //    break;
 
                 case State.Score:
                     break;

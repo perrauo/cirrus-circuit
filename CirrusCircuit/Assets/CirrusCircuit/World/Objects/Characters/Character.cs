@@ -60,8 +60,6 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
         private Coroutine _moveCoroutine = null;
 
-        private bool _wasMovingVertical = false;
-
         public override Color Color {
 
             get => _color;            
@@ -172,11 +170,16 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
             else
             {
-                Debug.Assert(false, "Unknown direction");
+                Debug.Assert(
+                    false, 
+                    "Unknown direction");
                 return false;
             }
 
-            move.Type = move.Step == _direction ? MoveType.Moving : MoveType.Direction;
+            move.Type = 
+                move.Step == _direction ? 
+                    MoveType.Moving : 
+                    MoveType.Direction;
             return true;
         }
 
@@ -306,13 +309,13 @@ namespace Cirrus.Circuit.World.Objects.Characters
             return ReturnType.Failed;
         }
 
-        public override void PerformAction(ObjectAction action)
+        public override void ApplyAction(Action action)
         {
-            base.PerformAction(action);
+            base.ApplyAction(action);
 
-            switch (action)
+            switch (action.Type)
             {
-                case ObjectAction.Land:
+                case ActionType.Land:
                     Play(CharacterAnimation.Character_Falling);
                     break;
             }
@@ -328,14 +331,35 @@ namespace Cirrus.Circuit.World.Objects.Characters
             //throw new NotImplementedException();
         }
 
-        public void DoAction1()
+        public void ReleaseHold()
         {
-            //throw new NotImplementedException();
+            if(_held != null)
+            {
+                _held.Target._holding.Remove(this);
+                _held = null;
+            }
+        }
+
+        public void BeginHold()
+        {
+            if (LevelSession.Instance.Get(
+                _levelPosition + _direction,
+                out BaseObject obj))
+            {
+                _held = new Hold
+                {
+                    Target = obj,
+                    Direction = _direction
+                };
+
+                _held.Target._holding.Add(this);
+            }
         }
 
         public float GetStateSpeed(CharacterAnimation state)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            return -1;
         }
 
         public void Play(CharacterAnimation animation, float normalizedTime, bool reset = true)

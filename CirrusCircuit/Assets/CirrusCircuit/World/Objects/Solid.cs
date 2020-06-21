@@ -15,8 +15,8 @@ namespace Cirrus.Circuit.World.Objects
         public override ReturnType GetMoveResults(
             Move move, 
             out IEnumerable<MoveResult> res,
-            bool isRecursiveCall = false,
-            bool lockResults = true)
+            bool isRecursiveCall = false)
+            //bool lockResults = true)
         {
             res = null;
             return ReturnType.Failed;

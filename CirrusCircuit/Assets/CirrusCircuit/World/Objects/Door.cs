@@ -101,8 +101,8 @@ namespace Cirrus.Circuit.World.Objects
         public override ReturnType GetMoveResults(
             Move move, 
             out IEnumerable<MoveResult> res,
-            bool isRecursiveCall=false,
-            bool lockResults = false)
+            bool isRecursiveCall=false)
+            //bool lockResults = false)
         {
             res = null;
             return ReturnType.Failed;
@@ -197,7 +197,7 @@ namespace Cirrus.Circuit.World.Objects
         public void OnGemEntered(Gem gem)
         {
             if (_previousGem != null &&
-                gem.ColorId == ColorId &&
+                gem.ColorID == ColorID &&
                 gem.Type == _previousGem.Type)
             {
                 _multiplierTimer.Start();
@@ -214,13 +214,13 @@ namespace Cirrus.Circuit.World.Objects
             iTween.Stop(_textValue.gameObject);
             _textValue.gameObject.transform.localScale = new Vector3(1, 1, 1);
 
-            Value = gem.ColorId == ColorId ? gem._value * _multiplier : -gem._value;
+            Value = gem.ColorID == ColorID ? gem._value * _multiplier : -gem._value;
 
             _valueTimer.Start();
 
             StartCoroutine(PunchValueCoroutine());
 
-            OnScoreValueAddedHandler?.Invoke(gem, ColorId, Value);
+            OnScoreValueAddedHandler?.Invoke(gem, ColorID, Value);
 
             _previousGem = gem;
 

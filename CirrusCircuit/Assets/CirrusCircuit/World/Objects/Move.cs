@@ -22,7 +22,40 @@ namespace Cirrus.Circuit.World
         Moving,
         Direction,
         Climbing,
+        Struggle,
+        Pulling,
+
+        Disappear,
+        Reappear,
+    }
+
+    //TODO
+    public enum MoveResultType
+    {
+        Unknown,
+        Sliding,
+        Teleport,
+        UsingPortal,
+        Falling,
+        Moving,
+        Direction,
+        Climbing,
         Struggle
+    }
+
+    public class Hold
+    {
+        public BaseObject Source;
+        public BaseObject Target;
+        public Vector3Int Direction;
+    }
+
+
+
+    public class Action
+    {
+        public ActionType Type;
+        public int ColorID;
     }
 
     public class Move

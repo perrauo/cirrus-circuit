@@ -278,6 +278,228 @@ namespace Cirrus.Circuit.Controls
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Player.Character"",
+            ""id"": ""b6b25de7-bac6-48ad-b10f-5cc4bbf44049"",
+            ""actions"": [
+                {
+                    ""name"": ""Axes.Left"",
+                    ""type"": ""Value"",
+                    ""id"": ""454143bc-a647-4115-92e3-4064739d25e6"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": ""Hold""
+                },
+                {
+                    ""name"": ""Hold"",
+                    ""type"": ""Button"",
+                    ""id"": ""323b3b5e-6cbe-4a98-b6c2-d1d2ba1ea6d8"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press""
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""0ad687e3-7699-4c0c-bda4-abaf10166f64"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad;Gamepad.Joystick;Gamepad.Dpad"",
+                    ""action"": ""Hold"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ea2c651f-011a-4959-baa8-e0de5fccd3ca"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": ""Hold"",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard.Arrows"",
+                    ""action"": ""Hold"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dc89c2ea-d72b-4620-a79c-8ee621487502"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard.WASD"",
+                    ""action"": ""Hold"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Gamepad.Dpad "",
+                    ""id"": ""b09fa029-1841-4f5b-a8b0-58516cdb5eb3"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Axes.Left"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Up"",
+                    ""id"": ""9875ebe0-b0cd-49ff-99de-84c7f98c998e"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad;Gamepad.Joystick.Left;Gamepad.Joystick;Gamepad.Dpad"",
+                    ""action"": ""Axes.Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Down"",
+                    ""id"": ""abafaace-4fc4-410e-ba27-4689002eb906"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad;Gamepad.Joystick.Left;Gamepad.Joystick;Gamepad.Dpad"",
+                    ""action"": ""Axes.Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Left"",
+                    ""id"": ""95e3fa4a-c538-4450-8b5b-d570963b8a17"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad;Gamepad.Joystick.Left;Gamepad.Joystick;Gamepad.Dpad"",
+                    ""action"": ""Axes.Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Right"",
+                    ""id"": ""99b9ade4-1159-4aa3-858b-21754a4d6374"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad;Gamepad.Joystick.Left;Gamepad.Joystick;Gamepad.Dpad"",
+                    ""action"": ""Axes.Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Keyboard.Arrows"",
+                    ""id"": ""d9268f19-5791-4480-a478-75ab7cdc770e"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Axes.Left"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""8cb2a844-7d72-4aa9-a401-c2b0545f5c89"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard.Arrow;Keyboard.Arrows"",
+                    ""action"": ""Axes.Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""4d038f0a-3862-4d4a-a5a7-e857294de80a"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard.Arrow;Keyboard.Arrows"",
+                    ""action"": ""Axes.Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""b09e0146-dcfb-4b86-9089-1a772a201931"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard.Arrow;Keyboard.Arrows"",
+                    ""action"": ""Axes.Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""f93bd18c-f5cd-4a3d-b1ee-cbd8e434c66f"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard.Arrow;Keyboard.Arrows"",
+                    ""action"": ""Axes.Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Keyboard.WASD"",
+                    ""id"": ""3d13913e-bde6-4c11-83bb-caa873b5cba4"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Axes.Left"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""b4aafbba-2ab7-4c1b-a52f-f3525555b1c1"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard.WASD"",
+                    ""action"": ""Axes.Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""56038c75-d39a-4749-8247-4117bab86866"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard.WASD"",
+                    ""action"": ""Axes.Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""4684fc30-8483-430f-be69-3eca0c4ec3dd"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard.WASD"",
+                    ""action"": ""Axes.Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""c836b648-54d7-49df-a926-1a62efcf0633"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard.WASD"",
+                    ""action"": ""Axes.Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -321,6 +543,10 @@ namespace Cirrus.Circuit.Controls
             m_Player_AxesLeft = m_Player.FindAction("Axes.Left", throwIfNotFound: true);
             m_Player_Action0 = m_Player.FindAction("Action.0", throwIfNotFound: true);
             m_Player_Action1 = m_Player.FindAction("Action.1", throwIfNotFound: true);
+            // Player.Character
+            m_PlayerCharacter = asset.FindActionMap("Player.Character", throwIfNotFound: true);
+            m_PlayerCharacter_AxesLeft = m_PlayerCharacter.FindAction("Axes.Left", throwIfNotFound: true);
+            m_PlayerCharacter_Hold = m_PlayerCharacter.FindAction("Hold", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -415,6 +641,47 @@ namespace Cirrus.Circuit.Controls
             }
         }
         public PlayerActions @Player => new PlayerActions(this);
+
+        // Player.Character
+        private readonly InputActionMap m_PlayerCharacter;
+        private IPlayerCharacterActions m_PlayerCharacterActionsCallbackInterface;
+        private readonly InputAction m_PlayerCharacter_AxesLeft;
+        private readonly InputAction m_PlayerCharacter_Hold;
+        public struct PlayerCharacterActions
+        {
+            private @ActionMap m_Wrapper;
+            public PlayerCharacterActions(@ActionMap wrapper) { m_Wrapper = wrapper; }
+            public InputAction @AxesLeft => m_Wrapper.m_PlayerCharacter_AxesLeft;
+            public InputAction @Hold => m_Wrapper.m_PlayerCharacter_Hold;
+            public InputActionMap Get() { return m_Wrapper.m_PlayerCharacter; }
+            public void Enable() { Get().Enable(); }
+            public void Disable() { Get().Disable(); }
+            public bool enabled => Get().enabled;
+            public static implicit operator InputActionMap(PlayerCharacterActions set) { return set.Get(); }
+            public void SetCallbacks(IPlayerCharacterActions instance)
+            {
+                if (m_Wrapper.m_PlayerCharacterActionsCallbackInterface != null)
+                {
+                    @AxesLeft.started -= m_Wrapper.m_PlayerCharacterActionsCallbackInterface.OnAxesLeft;
+                    @AxesLeft.performed -= m_Wrapper.m_PlayerCharacterActionsCallbackInterface.OnAxesLeft;
+                    @AxesLeft.canceled -= m_Wrapper.m_PlayerCharacterActionsCallbackInterface.OnAxesLeft;
+                    @Hold.started -= m_Wrapper.m_PlayerCharacterActionsCallbackInterface.OnHold;
+                    @Hold.performed -= m_Wrapper.m_PlayerCharacterActionsCallbackInterface.OnHold;
+                    @Hold.canceled -= m_Wrapper.m_PlayerCharacterActionsCallbackInterface.OnHold;
+                }
+                m_Wrapper.m_PlayerCharacterActionsCallbackInterface = instance;
+                if (instance != null)
+                {
+                    @AxesLeft.started += instance.OnAxesLeft;
+                    @AxesLeft.performed += instance.OnAxesLeft;
+                    @AxesLeft.canceled += instance.OnAxesLeft;
+                    @Hold.started += instance.OnHold;
+                    @Hold.performed += instance.OnHold;
+                    @Hold.canceled += instance.OnHold;
+                }
+            }
+        }
+        public PlayerCharacterActions @PlayerCharacter => new PlayerCharacterActions(this);
         private int m_KeyboardArrowsSchemeIndex = -1;
         public InputControlScheme KeyboardArrowsScheme
         {
@@ -447,6 +714,11 @@ namespace Cirrus.Circuit.Controls
             void OnAxesLeft(InputAction.CallbackContext context);
             void OnAction0(InputAction.CallbackContext context);
             void OnAction1(InputAction.CallbackContext context);
+        }
+        public interface IPlayerCharacterActions
+        {
+            void OnAxesLeft(InputAction.CallbackContext context);
+            void OnHold(InputAction.CallbackContext context);
         }
     }
 }
