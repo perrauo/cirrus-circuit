@@ -18,7 +18,7 @@
     * `./subm-push.sh`
 
 
-![alt text](https://github.com/OliPerraul/gem-jam/blob/master/Capture7.PNG)
-![alt text](https://github.com/OliPerraul/gem-jam/blob/master/Capture8.PNG)
-![alt text](https://github.com/OliPerraul/gem-jam/blob/master/Capture9.PNG)
-![alt text](https://github.com/OliPerraul/gem-jam/blob/master/Capture10.PNG)
+![alt text](https://github.com/OliPerraul/cirrus-circuit/blob/master/Capture7.PNG)
+![alt text](https://github.com/OliPerraul/cirrus-circuit/blob/master/Capture8.PNG)
+![alt text](https://github.com/OliPerraul/cirrus-circuit/master/Capture9.PNG)
+![alt text](https://github.com/OliPerraul/cirrus-circuit/blob/master/Capture10.PNG)
