@@ -46,6 +46,9 @@ namespace Cirrus.Circuit.World.Objects.Characters
         private const float MoveIdleTransitionTime = 0.6f;
         public override bool IsSlidable => false;
 
+        public Delegate OnHeldReleasedHandler;
+        //public Delegate<BaseObject> OnForceReleaseHoldHandler;
+
         public Vector3Int _inputDirection;
 
         [SerializeField]
@@ -336,8 +339,12 @@ namespace Cirrus.Circuit.World.Objects.Characters
             if(_held != null)
             {
                 _held.Target._holding.Remove(this);
+                _held.Target.ApplyPhysics();
                 _held = null;
-            }
+
+                //OnHeldReleasedHandler?.Invoke();
+                //OnHeldReleasedHandler -= 
+            }            
         }
 
         public void BeginHold()
@@ -348,10 +355,12 @@ namespace Cirrus.Circuit.World.Objects.Characters
             {
                 _held = new Hold
                 {
+                    Source = this,
                     Target = obj,
                     Direction = _direction
                 };
 
+                //OnHeldReleasedHandler += _held.Target.ApplyPhysics;                
                 _held.Target._holding.Add(this);
             }
         }

@@ -51,6 +51,19 @@ namespace Cirrus.Circuit.World
     }
 
 
+    [Serializable]
+    public enum ActionType
+    {
+        Unknown,
+        Land,
+        Emote0,
+        Emote1,
+        Emote2,
+        Landing,
+
+        Color,
+        Idle,
+    }
 
     public class Action
     {

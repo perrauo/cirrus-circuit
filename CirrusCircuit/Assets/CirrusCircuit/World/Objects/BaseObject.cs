@@ -13,6 +13,7 @@ using UnityEditor;
 using MathUtils = Cirrus.MathUtils;
 using System.Linq;
 using System.Threading;
+using Cirrus.Circuit.World.Objects.Characters;
 //using System.Numerics;
 
 namespace Cirrus.Circuit.World.Objects
@@ -29,19 +30,6 @@ namespace Cirrus.Circuit.World.Objects
         Moving,
         Sliding,
         Climbing
-    }
-
-    [Serializable]
-    public enum ActionType
-    {
-        Unknown,
-        Land,
-        Emote0,
-        Emote1,
-        Emote2,
-        Landing,
-
-            Color,
     }
 
     [Serializable]
@@ -74,6 +62,8 @@ namespace Cirrus.Circuit.World.Objects
     {
         public virtual ObjectType Type => ObjectType.Default;
 
+        public Delegate OnForceReleaseHoldHandler;
+
         [SerializeField]
         public ObjectSession _session;
 
@@ -99,7 +89,7 @@ namespace Cirrus.Circuit.World.Objects
         public Timer _climbFallTimer;
 
         public BaseObject _entered = null;
-       
+
         public BaseObject _visitor = null;
 
         [SerializeField]
@@ -107,7 +97,7 @@ namespace Cirrus.Circuit.World.Objects
 
         public Hold _held;
 
-        public List<BaseObject> _holding = new List<BaseObject>();
+        public List<Character> _holding = new List<Character>();
 
         public Vector3Int _direction;
 
@@ -127,7 +117,7 @@ namespace Cirrus.Circuit.World.Objects
                     if (_below == this) return _offset;
                     else return _offset + _below._visitor.Offset * 2;
                 }
-                
+
                 return _offset;
             }
 
@@ -138,7 +128,7 @@ namespace Cirrus.Circuit.World.Objects
         public virtual bool IsSlidable => false;
 
         public virtual bool IsSolid => true;
-        
+
         public Vector3Int _levelPosition;
 
         public Vector3Int Forward => Transform.forward.normalized.ToVector3Int();
@@ -155,7 +145,7 @@ namespace Cirrus.Circuit.World.Objects
                 _rotationIndex = value;
                 _rotationIndex = MathUtils.Wrap(_rotationIndex, 0, 4);
                 Transform.rotation = Quaternion.AngleAxis(
-                    _rotationIndex.IndexToAngle(), 
+                    _rotationIndex.IndexToAngle(),
                     Vector3.up);
             }
         }
@@ -339,28 +329,23 @@ namespace Cirrus.Circuit.World.Objects
         {
             do
             {
-
-                if (_entered == null)
-                {
-                    if (LevelSession.Get(
+                if (
+                    _entered == null &&
+                    LevelSession.Get(
                         _levelPosition + Vector3Int.down,
-                        out BaseObject obj))
+                        out BaseObject ground))
+                {
+                    if (ground.IsSolid)
                     {
-                        if (obj.IsSolid)
-                        {
-                            if (_state == ObjectState.Falling) Cmd_Perform(new Action { Type = ActionType.Land });
+                        if (_state == ObjectState.Falling) Cmd_Perform(new Action { Type = ActionType.Land });
 
-                            Cmd_FSM_SetState(ObjectState.Idle);
-                            break;
-                        }
-                        else if (!Server_Fall())
-                        {
-                            if (_state == ObjectState.Falling) Cmd_Perform(new Action { Type = ActionType.Land });
-
-                            Cmd_FSM_SetState(ObjectState.Idle);
-                            break;
-                        }
+                        Cmd_FSM_SetState(ObjectState.Idle);
+                        break;
                     }
+                }
+                else if (_holding.Count != 0)
+                {
+                    break;
                 }
                 // If arrived inside a slope
                 else if (_entered is Slope)
@@ -369,7 +354,10 @@ namespace Cirrus.Circuit.World.Objects
 
                     //!((Slope)_entered).IsStaircase)
                     if (!IsSlidable || slope.IsStaircase) Cmd_FSM_SetState(ObjectState.Idle);
-                    else Server_Slide();
+
+                    Server_Slide();
+
+                    break;
                 }
                 // If arrived inside a quicksand
                 else if (_entered is Quicksand)
@@ -377,7 +365,6 @@ namespace Cirrus.Circuit.World.Objects
                     Cmd_FSM_SetState(ObjectState.Idle);
                     break;
                 }
-
 
                 Server_Fall();
             }
@@ -477,9 +464,9 @@ namespace Cirrus.Circuit.World.Objects
                 out IEnumerable<MoveResult> results,
                 false,
                 move.Type.IsLocking())
-                > 0)                
+                > 0)
             {
-                LevelSession.Instance.ApplyMoveResults(results);                    
+                LevelSession.Instance.ApplyMoveResults(results);
                 return true;
             }
 
@@ -495,7 +482,7 @@ namespace Cirrus.Circuit.World.Objects
             _below = null;
 
             do
-            {                
+            {
                 if (result.MoveType == MoveType.Direction)
                 {
                     _direction = result.Direction;
@@ -505,7 +492,7 @@ namespace Cirrus.Circuit.World.Objects
                 {
                     // Clear move position
                     int idx = VectorUtils.ToIndex(result.Move.Position, 20, 20);
-                     _levelPosition = result.Destination;
+                    _levelPosition = result.Destination;
                     _targetPosition = Level.GridToWorld(result.Destination);
                     _targetPosition += result.Offset;
                     _direction = result.Direction;
@@ -569,9 +556,9 @@ namespace Cirrus.Circuit.World.Objects
 
                 if (
                     _entered != null &&
-                    result.Entered != result.PreviousEntered)                    
+                    result.Entered != result.PreviousEntered)
                 {
-                    result.User.Exit();                    
+                    result.User.Exit();
                 }
 
                 if (result.Entered != null)
@@ -583,8 +570,8 @@ namespace Cirrus.Circuit.World.Objects
 
                 LevelSession.Get(
                     _levelPosition + Vector3Int.down,
-                    out _below);               
-                
+                    out _below);
+
                 FSM_SetState(
                     state,
                     this);
@@ -597,10 +584,10 @@ namespace Cirrus.Circuit.World.Objects
         public virtual ReturnType GetMoveResults(
             Move move,
             out IEnumerable<MoveResult> results,
-            bool isRecursiveCall=false)
-            //bool lockResults = true)
+            bool isRecursiveCall = false)
+        //bool lockResults = true)
         {
-             results = null;
+            results = null;
 
             if (move.Source != null &&
                 move.Type == MoveType.Sliding)
@@ -619,7 +606,7 @@ namespace Cirrus.Circuit.World.Objects
                         move,
                         out results,
                         isRecursiveCall);
-                        //lockResults);
+                //lockResults);
 
                 case MoveType.Direction:
                     results = new List<MoveResult>();
@@ -661,11 +648,11 @@ namespace Cirrus.Circuit.World.Objects
 
         public virtual void ReenterVisitor()
         {
-            
+
         }
 
         public virtual void Reenter()
-        {            
+        {
             if (_entered != null)
             {
                 _entered.ReenterVisitor();
@@ -756,7 +743,7 @@ namespace Cirrus.Circuit.World.Objects
         public virtual void Exit()
         {
             if (_entered != null)
-            {                
+            {
                 _entered.ExitVisitor(this);
                 _entered = null;
             }
@@ -842,7 +829,7 @@ namespace Cirrus.Circuit.World.Objects
             {
                 case ObjectState.Falling:
                 case ObjectState.Moving:
-                case ObjectState.Sliding:                    
+                case ObjectState.Sliding:
                     _hasArrived = false;
                     break;
                 default:

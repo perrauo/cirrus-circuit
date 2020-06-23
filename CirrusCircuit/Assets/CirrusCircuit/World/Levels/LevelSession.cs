@@ -682,6 +682,7 @@ namespace Cirrus.Circuit.World
             if (src.Target.GetMoveResults(
                 new Move
                 {
+                    User = src.Target,
                     Source = src.Source,
                     Destination = src.Source._levelPosition,
                     Step = -src.Direction,
@@ -696,13 +697,18 @@ namespace Cirrus.Circuit.World
 
                 foreach (var hld in src.Target._holding)
                 {
+                    if (hld == null) continue;
+
                     if (hld._held.Direction == -src.Direction)
-                    {                       
+                    {
                         results.AddRange(moveResults);
                         RecurseGetPullResults(
                             hld._held,
-                            results);                      
-                        break;
+                            results);
+                    }
+                    else
+                    {
+                        hld.ReleaseHold();
                     }
                 }
 
@@ -804,7 +810,7 @@ namespace Cirrus.Circuit.World
                     result.MoveType;
 
                 result.Direction =
-                    move.User._held != null ?
+                    move.User._held == null ?
                     result.Direction :
                     move.User._held.Direction;
 
@@ -840,11 +846,16 @@ namespace Cirrus.Circuit.World
                         result.Destination,
                         out result.Moved))
                     {
-                        if (result.Moved == move.User ||
-                            result.Moved == move.Source)
+                        if (result.Moved == move.User)                           
                         {
                             ret = ReturnType.Failed;
                             result = null;
+                            break;
+                        }
+                        else if (result.Moved == move.Source)
+                        {
+                            // If pulled, then necessarily the moving slot is the src
+                            ret = ReturnType.Succeeded_Next;
                             break;
                         }
                         else if ((
