@@ -99,8 +99,8 @@ namespace Cirrus.Circuit.Controls
                 _actionMap.Player.Disable();
 
                 _actionMap.PlayerCharacter.SetCallbacks(null);                
-                _actionMap.PlayerCharacter.AxesLeft.Disable();
-                _actionMap.PlayerCharacter.AxesLeft.Dispose();
+                //_actionMap.PlayerCharacter.AxesLeft.Disable();
+                //_actionMap.PlayerCharacter.AxesLeft.Dispose();
                 _actionMap.PlayerCharacter.Disable();
 
                 _actionMap.Disable();
