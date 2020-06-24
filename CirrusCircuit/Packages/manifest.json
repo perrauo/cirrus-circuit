@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "com.badawe.pathfinder": "https://github.com/OliPerraul/Simple-optimized-A-Pathfinder.git#master",
     "com.cirrus.core": "https://github.com/OliPerraul/cirrus-unity.git#master",
     "com.cirrus.unityeditorext": "https://github.com/OliPerraul/cirrus-unity-editor.git#master",
     "com.unity.2d.sprite": "1.0.0",
@@ -26,7 +25,6 @@
     "com.unity.timeline": "1.2.10",
     "com.unity.ugui": "1.0.0",
     "com.unity.xr.legacyinputhelpers": "2.1.4",
-    "com.vis2k.mirror": "https://github.com/OliPerraul/Mirror.git#master",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
@@ -62,19 +60,11 @@
   "lock": {
     "com.cirrus.core": {
       "revision": "master",
-      "hash": "e501cde76c32b6189a84161c114c497cf55eeecb"
+      "hash": "605ddb5e138e8a0e67fe6a9522ec27f52e1c137c"
     },
     "com.cirrus.unityeditorext": {
       "revision": "master",
-      "hash": "fcb09f02a8d95d847a5ba73f779f67656eba107f"
-    },
-    "com.badawe.pathfinder": {
-      "revision": "master",
-      "hash": "8cb70fd4e9a3bbc23a60ac971527fb0183aedad0"
-    },
-    "com.vis2k.mirror": {
-      "revision": "master",
-      "hash": "d1199ca5298106cf004510d34748f88242136ae5"
+      "hash": "78e10cef31260b0a0eb79ce861cdf145899703b9"
     }
   }
 }
