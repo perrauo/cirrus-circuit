@@ -1,0 +1,6 @@
+[submodule "CirrusCircuit/Packages/cirrus-unity"]
+	path = CirrusCircuit/Packages/cirrus-unity
+	url = https://github.com/OliPerraul/cirrus-unity.git
+[submodule "CirrusCircuit/Packages/cirrus-unity-editor"]
+	path = CirrusCircuit/Packages/cirrus-unity-editor
+	url = https://github.com/OliPerraul/cirrus-unity-editor.git
