@@ -29,7 +29,7 @@ namespace Cirrus.Circuit.UI
             return
                 _characterPlayerPreviews
                     .TryGetValue(
-                        Utils.MakePair(playerId, characterId), 
+                        Cirrus.Utils.MakePair(playerId, characterId), 
                         out preview); 
         }
         
@@ -47,9 +47,9 @@ namespace Cirrus.Circuit.UI
                     _previewTemplate.Create(
                         transform,
                         (slotIndex * CharacterLibrary.Instance.Characters.Length) + i);
-                
+
                 _characterPlayerPreviews.Add(
-                    Utils.MakePair(slotIndex, res.Id),
+                    Cirrus.Utils.MakePair(slotIndex, res.Id),
                     preview);
 
                 i++;

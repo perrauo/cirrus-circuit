@@ -34,7 +34,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
         [Header("----------------------------", order = 2)]
         [SerializeField]
         private Guide _guide;
-
+        
         public override ObjectType Type => ObjectType.Character;
 
         public Player _controller;
@@ -46,10 +46,12 @@ namespace Cirrus.Circuit.World.Objects.Characters
         private const float MoveIdleTransitionTime = 0.6f;
         public override bool IsSlidable => false;
 
-        public Delegate OnHeldReleasedHandler;
+        //public Delegate OnHeldReleasedHandler;
         //public Delegate<BaseObject> OnForceReleaseHoldHandler;
 
         public Vector3Int _inputDirection;
+
+        public Vector3Int _previousStep;
 
         [SerializeField]
         public Axes Axes;
@@ -62,6 +64,10 @@ namespace Cirrus.Circuit.World.Objects.Characters
         private CharacterAnimatorWrapper _animatorWrapper;
 
         private Coroutine _moveCoroutine = null;
+
+        private const float HoldTimerTime = 1f;
+
+        private Timer _holdTimerRefresh;
 
         public override Color Color {
 
@@ -88,6 +94,9 @@ namespace Cirrus.Circuit.World.Objects.Characters
             _animatorWrapper = new CharacterAnimatorWrapper(Animator);
 
             _inputDirection = Transform.forward.ToVector3Int();
+
+            _holdTimerRefresh = new Timer(HoldTimerTime, start: false, repeat: false);
+            _holdTimerRefresh.OnTimeLimitHandler += () => BeginHold();
         }
 
         public override void Start()
@@ -163,8 +172,6 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
             else if (axis == Vector2Int.right) move.Step = (sign * Vector2Int.down).ToVector3IntAlt();
 
-            else if (axis == Vector2Int.right) move.Step = (sign * Vector2Int.down).ToVector3IntAlt();
-
             else if (axis == Vector2Int.up) move.Step = (sign * Vector2Int.right).ToVector3IntAlt();
 
             else if (axis == Vector2Int.left) move.Step = (sign * Vector2Int.up).ToVector3IntAlt();
@@ -192,7 +199,12 @@ namespace Cirrus.Circuit.World.Objects.Characters
             ref Move move)
         {
             move.Step = vertical ? new Vector3Int(0, 0, sign) : new Vector3Int(sign, 0, 0);
-            move.Type = MoveType.Moving;
+            move.Type = 
+                (move.Step == _previousStep || _heldAction != null) ?                 
+                    MoveType.Moving : 
+                    MoveType.Direction;
+            
+            _previousStep = move.Step;
 
             if (
                 _preserveInputDirection && 
@@ -320,7 +332,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
             {
                 case ActionType.Land:
                     Play(CharacterAnimation.Character_Falling);
-                    break;
+                    break;                    
             }
         }
 
@@ -336,32 +348,55 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
         public void ReleaseHold()
         {
-            if(_held != null)
-            {
-                _held.Target._holding.Remove(this);
-                _held.Target.ApplyPhysics();
-                _held = null;
+            _holdTimerRefresh.Stop();
 
-                //OnHeldReleasedHandler?.Invoke();
-                //OnHeldReleasedHandler -= 
+            if (_heldAction != null)
+            {
+                _heldAction.Target._holding.Remove(this);
+                _heldAction.Target.ApplyPhysics();
+                _heldAction = null;
+
+                Cmd_Perform(new Action { Type = ActionType.ReleaseHold });
             }            
         }
 
         public void BeginHold()
         {
-            if (LevelSession.Instance.Get(
-                _levelPosition + _direction,
-                out BaseObject obj))
-            {
-                _held = new Hold
-                {
-                    Source = this,
-                    Target = obj,
-                    Direction = _direction
-                };
+            _holdTimerRefresh.Start();
 
-                //OnHeldReleasedHandler += _held.Target.ApplyPhysics;                
-                _held.Target._holding.Add(this);
+            if (_heldAction == null)
+            {
+                /*onst Vector3Int[] directions = { new Vector3Int() }*/
+                // TODO use server levelsession
+                //
+
+                int idx = Utils.DirectionToIndex(_direction);
+                if (idx < 0) return;
+
+                for (int i = idx; i < idx + 4; i++)
+                {
+                    int j = i % 4;
+
+                    if (LevelSession.Instance.Get(
+                        _levelPosition + Utils.Directions[j],
+                        out BaseObject obj))
+                    {
+                        _heldAction = new Action
+                        {
+                            Type = ActionType.BeginHold,
+                            Source = this,
+                            Target = obj,
+                            Direction = Utils.Directions[j]
+                        };
+
+                        _heldAction.Target._holding.Add(this);
+                        _holdTimerRefresh.Stop();
+
+                        Cmd_Perform(_heldAction);
+
+                        return;
+                    }
+                }
             }
         }
 

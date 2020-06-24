@@ -38,17 +38,17 @@ namespace Cirrus.Circuit.World
         UsingPortal,
         Falling,
         Moving,
-        Direction,
+        Direction, // to make an action
         Climbing,
-        Struggle
+        Struggle, // todo make an action
     }
 
-    public class Hold
-    {
-        public BaseObject Source;
-        public BaseObject Target;
-        public Vector3Int Direction;
-    }
+    //public class Hold
+    //{
+    //    public BaseObject Source;
+    //    public BaseObject Target;
+    //    public Vector3Int Direction;
+    //}
 
 
     [Serializable]
@@ -63,13 +63,33 @@ namespace Cirrus.Circuit.World
 
         Color,
         Idle,
+
+        Direction,
+
+        BeginHold,
+        ReleaseHold,
     }
 
     public class Action
     {
         public ActionType Type;
         public int ColorID;
+        public BaseObject Source;
+        public BaseObject Target;
+        public Vector3Int Direction;
     }
+
+    public class NetworkAction
+    {
+        public ActionType Type;
+        public int ColorID;
+        public GameObject Source;
+        public GameObject Target;
+        public Vector3Int Direction;
+    }
+
+
+
 
     public class Move
     {
@@ -113,6 +133,7 @@ namespace Cirrus.Circuit.World
         public float PitchAngle = 0;
         public Vector3Int Position;
         public Vector3Int Destination;
+        public Vector3Int Step;
         public Vector3Int Direction;
         public MoveType MoveType;
         public BaseObject Moved;
@@ -146,6 +167,7 @@ namespace Cirrus.Circuit.World
         public Vector3Int Position;
         public Vector3Int Destination;
         public Vector3Int Direction;
+        public Vector3Int Step;
         public MoveType MoveType;
         public GameObject Moved;
         public GameObject Entered;
@@ -154,7 +176,7 @@ namespace Cirrus.Circuit.World
     }
  
 
-    public static class MoveUtils
+    public static class ActionUtils
     {
         public static bool IsLocking(this MoveType type)
         {
@@ -166,6 +188,40 @@ namespace Cirrus.Circuit.World
                 default: return true;
             }
         }
+
+        public static Action ToAction(this NetworkAction act)
+        {
+            ObjectSession sess;
+            return new Action
+            {
+                Source = act.Source == null ?
+                    null :
+                    act.Source.TryGetComponent(out sess) ?
+                        sess._object :
+                        null,
+                Target = act.Target == null ?
+                    null :
+                    act.Target.TryGetComponent(out sess) ?
+                        sess._object :
+                        null,
+                ColorID = act.ColorID,
+                Direction = act.Direction,
+                Type = act.Type
+            };
+        }
+
+        public static NetworkAction ToNetworkAction(this Action act)
+        {
+            return new NetworkAction
+            {
+                Source = act.Source == null ? null : act.Source._session.gameObject,
+                Target = act.Target == null ? null : act.Target._session.gameObject,
+                ColorID = act.ColorID,
+                Direction = act.Direction,
+                Type = act.Type
+            };
+        }
+
 
         public static MoveResult ToMoveResult(this NetworkMoveResult net)
         {
@@ -197,6 +253,7 @@ namespace Cirrus.Circuit.World
                 Offset = net.Offset,
                 PitchAngle = net.Angle,
                 Direction = net.Direction,
+                Step = net.Step,
 
                 //State = net.State,
                 MoveType = net.MoveType,
@@ -225,6 +282,8 @@ namespace Cirrus.Circuit.World
                 Offset = result.Offset,
                 Angle = result.PitchAngle,
                 Direction = result.Direction,
+                Step = result.Step,
+
                 MoveType = result.MoveType,
                 Position = result.Position,
                 Scale = result.Scale

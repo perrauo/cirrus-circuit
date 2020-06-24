@@ -1,0 +1,6 @@
+[submodule "CirrusCircuit/Assets/External/cirrus-unity-editor"]
+	path = CirrusCircuit/Assets/External/cirrus-unity-editor
+	url = https://github.com/OliPerraul/cirrus-unity-editor.git
+[submodule "CirrusCircuit/Assets/External/cirrus-unity"]
+	path = CirrusCircuit/Assets/External/cirrus-unity
+	url = https://github.com/OliPerraul/cirrus-unity.git

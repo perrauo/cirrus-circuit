@@ -95,7 +95,7 @@ namespace Cirrus.Circuit.World.Objects
         [SerializeField]
         private BaseObject _below;
 
-        public Hold _held;
+        public Action _heldAction;
 
         public List<Character> _holding = new List<Character>();
 
@@ -355,7 +355,7 @@ namespace Cirrus.Circuit.World.Objects
                     //!((Slope)_entered).IsStaircase)
                     if (!IsSlidable || slope.IsStaircase) Cmd_FSM_SetState(ObjectState.Idle);
 
-                    Server_Slide();
+                    else Server_Slide();
 
                     break;
                 }
@@ -446,6 +446,17 @@ namespace Cirrus.Circuit.World.Objects
                 case ActionType.Land:
                     FSM_SetState(ObjectState.Idle);
                     break;
+
+                case ActionType.Direction:
+                    _direction = action.Direction;
+                    break;
+
+                case ActionType.BeginHold:
+                    _direction = action.Direction;
+                    break;
+
+                case ActionType.ReleaseHold:
+                    break;
             }
         }
 
@@ -498,7 +509,17 @@ namespace Cirrus.Circuit.World.Objects
                     _direction = result.Direction;
                     _pitchAngle = result.PitchAngle;
                     _offset = result.Offset;
+
+                    if (_heldAction != null)
+                    {
+                        _heldAction.Direction = _direction;
+                    }                    
+
                     state = ObjectState.Moving;
+
+
+
+
                 }
                 else if (result.MoveType == MoveType.Climbing)
                 {

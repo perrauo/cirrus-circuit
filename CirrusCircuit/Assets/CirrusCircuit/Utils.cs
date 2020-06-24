@@ -11,8 +11,14 @@ namespace Cirrus.Circuit
         Down
     }
 
-    public static class CircuitUtils
+    public static class Utils
     {
+        public static readonly Vector3Int[] Directions = { 
+            new Vector3Int(0, 0, 1), 
+            new Vector3Int(-1, 0, 0), 
+            new Vector3Int(0, 0, 1), 
+            new Vector3Int(1, 0, 0) };
+
         public static float IndexToAngle(this int idx)
         {
 
@@ -29,22 +35,14 @@ namespace Cirrus.Circuit
 
         public static int DirectionToIndex(this Vector3Int direction)
         {
-            if (direction == new Vector3Int(0, 0, 1))
-            {
-                return 0;
-            }
-            else if (direction == new Vector3Int(-1, 0, 0))
-            {
-                return 1;
-            }
-            else if (direction == new Vector3Int(0, 0, 1))
-            {
-                return 2;
-            }
-            else if (direction == new Vector3Int(1, 0, 0))
-            {
-                return 3;
-            }
+            if (direction == Directions[0]) return 0;
+
+            else if (direction == Directions[1]) return 1;
+
+            else if (direction == Directions[2]) return 2;
+ 
+            else if (direction == Directions[3]) return 3;
+
             else return -1;
         }
     }

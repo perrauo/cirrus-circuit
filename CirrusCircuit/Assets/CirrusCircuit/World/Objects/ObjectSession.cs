@@ -119,13 +119,13 @@ namespace Cirrus.Circuit.World.Objects
         {
             CommandClient
                 .Instance
-                .Cmd_ObjectSession_Perform(gameObject, action);
+                .Cmd_ObjectSession_Perform(gameObject, action.ToNetworkAction());
         }
 
         [ClientRpc]
-        public void Rpc_Perform(Action action)
+        public void Rpc_Perform(NetworkAction action)
         {
-            _object.ApplyAction(action);
+            _object.ApplyAction(action.ToAction());
         }
 
         #region Interact

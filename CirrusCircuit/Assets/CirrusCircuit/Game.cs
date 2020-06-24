@@ -172,8 +172,19 @@ namespace Cirrus.Circuit
         {
             base.Start();
 
-            _initialVectorBottomLeft = CameraController.Instance.Camera.ScreenToWorldPoint(new Vector3(0, 0, 30));
-            _initialVectorTopRight = CameraController.Instance.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 30)); // I used 30 as my camera z is -30
+            _initialVectorBottomLeft = CameraController
+                .Instance
+                .Camera
+                .ScreenToWorldPoint(new Vector3(0, 0, 30));
+
+            _initialVectorTopRight = CameraController
+                .Instance
+                .Camera
+                .ScreenToWorldPoint(
+                new Vector3(
+                    Screen.width, 
+                    Screen.height, 
+                    30)); // I used 30 as my camera z is -30
 
             Screen.fullScreen = IsFullScreen; 
 
@@ -825,8 +836,8 @@ namespace Cirrus.Circuit
                             player._character?.BeginHold();        
                         }
                         else if(ctx.canceled)
-                        {
-                            Debug.Log("release");
+                        {                            
+                            player._character?.ReleaseHold();
                         }
                     }
                     break;

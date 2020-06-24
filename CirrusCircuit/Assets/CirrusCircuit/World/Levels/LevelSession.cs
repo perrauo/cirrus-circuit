@@ -69,8 +69,8 @@ namespace Cirrus.Circuit.World
         public Delegate<MoveResult> OnMovedHandler;
 
         public Mutex _moveMutex = new Mutex();
-        public Mutex _resultLockMutex = new Mutex();
-        public bool _isResultLocked = false;
+        //public Mutex _resultLockMutex = new Mutex();
+        //public bool _isResultLocked = false;
 
         public static LevelSession Instance
         {
@@ -315,9 +315,9 @@ namespace Cirrus.Circuit.World
                         portal.Link,
                         out Tuple<Portal, Portal> tuple))
                     {
-                        _portals[portal.Link] = Utils.MakePair(tuple.Item1, portal);
+                        _portals[portal.Link] = Cirrus.Utils.MakePair(tuple.Item1, portal);
                     }
-                    else _portals.Add(portal.Link, Utils.MakePair(portal, portal));
+                    else _portals.Add(portal.Link, Cirrus.Utils.MakePair(portal, portal));
 
                 }
 
@@ -632,12 +632,6 @@ namespace Cirrus.Circuit.World
            Rpc_ApplyMoveResults(results
                 .Select(x => x.ToNetworkMoveResult())
                 .ToArray());
-
-            if (CustomNetworkManager.IsServer && _isResultLocked)
-            {
-                _isResultLocked = false;
-                _resultLockMutex.ReleaseMutex();
-            }
         }
 
         [ClientRpc]
@@ -676,7 +670,7 @@ namespace Cirrus.Circuit.World
         }
 
         private ReturnType RecurseGetPullResults(
-            Hold src,
+            Action src,
             List<MoveResult> results)
         {
             if (src.Target.GetMoveResults(
@@ -699,11 +693,13 @@ namespace Cirrus.Circuit.World
                 {
                     if (hld == null) continue;
 
-                    if (hld._held.Direction == -src.Direction)
+                    if (hld == src.Source) continue;
+
+                    if (hld._heldAction.Direction == -src.Direction)
                     {
                         results.AddRange(moveResults);
                         RecurseGetPullResults(
-                            hld._held,
+                            hld._heldAction,
                             results);
                     }
                     else
@@ -719,27 +715,27 @@ namespace Cirrus.Circuit.World
         }
 
         public ReturnType GetPullResults(
-            Hold src,
+            Action src,
+            MoveResult result,
             out IEnumerable<MoveResult> results,
             bool isRecursiveCall = false)
         {
-            results = new MoveResult[0];
+            results = new List<MoveResult>();
 
-            List<MoveResult> pulled = new List<MoveResult>();
+            if(src == null) return ReturnType.Failed;
 
-            if(src != null)
-            {
-                RecurseGetPullResults(
-                    src,
-                    pulled
-                    );
+            // If moving forward do not pull
+            if (src.Direction == result.Move.Step.SetY(0)) return ReturnType.Failed;
 
-                return pulled.Count != 0 ?
-                    ReturnType.Succeeded_Next :
-                    ReturnType.Failed;
-            }
+            RecurseGetPullResults(
+                src,
+                (List<MoveResult>)results
+                );
 
-            return ReturnType.Failed;
+            return ((List<MoveResult>)results).Count != 0 ?
+                ReturnType.Succeeded_Next :
+                ReturnType.Failed;
+
         }
 
         // TODO move should even be type, typing is deduced here and sent back
@@ -753,8 +749,7 @@ namespace Cirrus.Circuit.World
         {
             results = new List<MoveResult>();
             IEnumerable<MoveResult> pullResults;
-            ReturnType ret = ReturnType.Succeeded_Next;
-            
+            ReturnType ret = ReturnType.Succeeded_Next;            
 
             var result = new MoveResult
             {
@@ -766,12 +761,6 @@ namespace Cirrus.Circuit.World
             if (!isRecursiveCall)
             {
                 _moveMutex.WaitOne();
-
-                if (lockResults)
-                {
-                    _resultLockMutex.WaitOne();
-                    _isResultLocked = true;
-                }
             }
 
             do
@@ -804,15 +793,19 @@ namespace Cirrus.Circuit.World
                 result.MoveType = exitResult.MoveType;
                 result.Direction = exitResult.Step.SetY(0);
 
-                result.MoveType =
-                    move.User._held != null ?
-                    MoveType.Pulling :
-                    result.MoveType;
+                //result.MoveType =
+                //    move.User._held != null ?
+                //    MoveType.Pulling :
+                //    result.MoveType;
 
-                result.Direction =
-                    move.User._held == null ?
-                    result.Direction :
-                    move.User._held.Direction;
+                if (move.User._heldAction != null)
+                {
+                    // If pulling backward
+                    if (move.User._heldAction.Direction != result.Move.Step.SetY(0))
+                    {
+                        result.Direction = -result.Direction;
+                    }
+                }
 
                 if (result.MoveType == MoveType.Struggle)
                 {
@@ -875,16 +868,6 @@ namespace Cirrus.Circuit.World
                         {                            
                             ((List<MoveResult>)results).AddRange(movedResults);
 
-                            //var pullResults = new List<MoveResult>();
-                            if ((GetPullResults(
-                                move.User._held,
-                                out pullResults, 
-                                false)                                
-                                ) > 0)
-                            {
-                                ((List<MoveResult>)results).AddRange(pullResults);
-                            }
-
                             if (ret < ReturnType.Succeeded_Next) result = null;
                             
                             break;
@@ -921,16 +904,6 @@ namespace Cirrus.Circuit.World
                             result.PitchAngle = enterResult.PitchAngle;
                             result.MoveType = enterResult.MoveType;
                             //result.MoveType = enterResult.MoveType;
-
-                            //var pullResults = new List<MoveResult>();
-                            if ((GetPullResults(
-                                move.User._held,
-                                out pullResults,
-                                false)
-                                ) > 0)
-                            {
-                                ((List<MoveResult>)results).AddRange(pullResults);
-                            }
 
                             ((List<MoveResult>)results).AddRange(moveResults);
                             if (ret < ReturnType.Succeeded_Next) result = null;
@@ -994,17 +967,7 @@ namespace Cirrus.Circuit.World
                                             result.MoveType = enterResult.MoveType;
                                             result.Position = enterResult.Position;
                                             result.Scale = enterResult.Scale;
-                                        }
-
-                                        //var pullResults = new List<MoveResult>();
-                                        if ((GetPullResults(
-                                            move.User._held,
-                                            out pullResults,
-                                            false)
-                                            ) > 0)
-                                        {
-                                            ((List<MoveResult>)results).AddRange(pullResults);
-                                        }
+                                        }       
 
                                         ((List<MoveResult>)results).AddRange(downhillMoveResults);
                                         break;
@@ -1039,19 +1002,8 @@ namespace Cirrus.Circuit.World
                                             result.Position = enterResult.Position;
                                             result.Scale = enterResult.Scale;
                                         }
-
-                                        //var pullResults = new List<MoveResult>();
-                                        if ((GetPullResults(
-                                            move.User._held,
-                                            out pullResults,
-                                            false)
-                                            ) > 0)
-                                        {
-                                            ((List<MoveResult>)results).AddRange(pullResults);
-                                        }
-
-                                        ((List<MoveResult>)results).AddRange(downResults);                                        
-
+      
+                                        ((List<MoveResult>)results).AddRange(downResults);
                                         break;
                                     }
                                     else
@@ -1061,24 +1013,6 @@ namespace Cirrus.Circuit.World
                                         break;
                                     }
                                 }
-
-                                //var pullResults = new List<MoveResult>();
-                                if ((GetPullResults(
-                                    move.User._held,
-                                    out pullResults,
-                                    false)
-                                    ) > 0)
-                                {
-                                    ((List<MoveResult>)results).AddRange(pullResults);
-                                }
-
-                                //else
-                                //{
-                                //    if (below._visitor != null)
-                                //    {
-                                //        result.Offset = below._visitor._offset;
-                                //    }
-                                //}
                             }
 
                             // not slope, do nothing, result is good
@@ -1092,21 +1026,28 @@ namespace Cirrus.Circuit.World
 
             if (!isRecursiveCall)
             {
-                if (lockResults)
-                {
-                    if (ret < 0)
-                    {
-                        _isResultLocked = false;
-                        _resultLockMutex.ReleaseMutex();
-                    }
-                }
-
                 _moveMutex.ReleaseMutex();
             }
 
             if (result != null)
             {
                 ((List<MoveResult>)results).Add(result);
+
+                if (
+                    result.MoveType == MoveType.Moving ||
+                    result.MoveType == MoveType.UsingPortal)
+                    //result.MoveType == MoveType
+                {
+                    //var pullResults = new List<MoveResult>();
+                    if (GetPullResults(
+                        move.User._heldAction,
+                        result,
+                        out pullResults,
+                        false) > 0)
+                    {
+                        ((List<MoveResult>)results).AddRange(pullResults);
+                    }
+                }
             }
 
             return ret;

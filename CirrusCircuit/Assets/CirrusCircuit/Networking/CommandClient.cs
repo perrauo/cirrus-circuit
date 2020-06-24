@@ -351,7 +351,7 @@ namespace Cirrus.Circuit.Networking
         private Mutex Cmd_ObjectSession_Interact_mutex = new Mutex();
 
         [Command]
-        public void Cmd_ObjectSession_Perform(GameObject gameObject, Action action)
+        public void Cmd_ObjectSession_Perform(GameObject gameObject, NetworkAction action)
         {
             //AssertGameObjectNull(obj);
             if (gameObject == null) return;

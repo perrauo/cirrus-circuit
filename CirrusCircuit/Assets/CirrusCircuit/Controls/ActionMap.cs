@@ -289,7 +289,7 @@ namespace Cirrus.Circuit.Controls
                     ""id"": ""323b3b5e-6cbe-4a98-b6c2-d1d2ba1ea6d8"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Press""
+                    ""interactions"": ""Press(pressPoint=0.25)""
                 }
             ],
             ""bindings"": [
