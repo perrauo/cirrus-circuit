@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "com.cirrus.core": "https://github.com/OliPerraul/cirrus-unity.git#master",
+    "com.cirrus.unityeditorext": "https://github.com/OliPerraul/cirrus-unity-editor.git#master",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.2d.tilemap": "1.0.0",
     "com.unity.ads": "3.4.5",
@@ -54,5 +56,15 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
+  },
+  "lock": {
+    "com.cirrus.core": {
+      "revision": "master",
+      "hash": "605ddb5e138e8a0e67fe6a9522ec27f52e1c137c"
+    },
+    "com.cirrus.unityeditorext": {
+      "revision": "master",
+      "hash": "78e10cef31260b0a0eb79ce861cdf145899703b9"
+    }
   }
 }
