@@ -16,7 +16,7 @@ namespace Cirrus.Circuit
         public static readonly Vector3Int[] Directions = { 
             new Vector3Int(0, 0, 1), 
             new Vector3Int(-1, 0, 0), 
-            new Vector3Int(0, 0, 1), 
+            new Vector3Int(0, 0, -1), 
             new Vector3Int(1, 0, 0) };
 
         public static float IndexToAngle(this int idx)

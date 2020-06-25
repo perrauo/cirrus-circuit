@@ -597,9 +597,7 @@ namespace Cirrus.Circuit.World
 #if UNITY_EDITOR
                 Debug.Assert(previous == result.User);
 #endif
-                Set(
-                        result.Move.Position,
-                        null);                
+                Set(result.Move.Position, null);                
             }
 
             if (result.Entered == null)
@@ -669,19 +667,22 @@ namespace Cirrus.Circuit.World
             return false;
         }
 
-        private ReturnType RecurseGetPullResults(
-            Action src,
+        private ReturnType DoGetPullResults(
+            Action holdAction,
             List<MoveResult> results)
         {
-            if (src.Target.GetMoveResults(
+            // Cannot pull more than one target
+            if(holdAction.Target._holding.Count > 1) return ReturnType.Failed;
+
+            if (holdAction.Target.GetMoveResults(
                 new Move
                 {
-                    User = src.Target,
-                    Source = src.Source,
-                    Destination = src.Source._levelPosition,
-                    Step = -src.Direction,
-                    Entered = src.Target._entered,
-                    Position = src.Target._levelPosition,
+                    User = holdAction.Target,
+                    Source = holdAction.User,
+                    Destination = holdAction.User._levelPosition,
+                    Step = -holdAction.Direction,
+                    Entered = holdAction.Target._entered,
+                    Position = holdAction.Target._levelPosition,
                     Type = MoveType.Moving
                 },
                 out IEnumerable<MoveResult> moveResults,
@@ -689,24 +690,32 @@ namespace Cirrus.Circuit.World
             {
                 results.AddRange(moveResults);
 
-                foreach (var hld in src.Target._holding)
+                do
                 {
-                    if (hld == null) continue;
+                    var hld = holdAction.Target._holding.FirstOrDefault();
 
-                    if (hld == src.Source) continue;
+                    if (hld == null) break;
 
-                    if (hld._heldAction.Direction == -src.Direction)
+                    if (hld == holdAction.User) break;
+
+                    if (hld.GetMoveResults(
+                        new Move
+                        {
+                            User = hld,
+                            Source = holdAction.Target,
+                            Destination = holdAction.Target._levelPosition,
+                            Step = -holdAction.Direction,
+                            Entered = hld._entered,
+                            Position = hld._levelPosition,
+                            Type = MoveType.Moving
+                        },
+                        out IEnumerable<MoveResult> heldResults,
+                        isRecursiveCall: true) > 0)
                     {
-                        results.AddRange(moveResults);
-                        RecurseGetPullResults(
-                            hld._heldAction,
-                            results);
+                        results.AddRange(heldResults);
                     }
-                    else
-                    {
-                        hld.ReleaseHold();
-                    }
-                }
+
+                } while (false);
 
                 return ReturnType.Succeeded_Next;
             }
@@ -715,27 +724,35 @@ namespace Cirrus.Circuit.World
         }
 
         public ReturnType GetPullResults(
-            Action src,
+            Action holdAction,
             MoveResult result,
             out IEnumerable<MoveResult> results,
             bool isRecursiveCall = false)
         {
             results = new List<MoveResult>();
 
-            if(src == null) return ReturnType.Failed;
-
             // If moving forward do not pull
-            if (src.Direction == result.Move.Step.SetY(0)) return ReturnType.Failed;
+            if (holdAction.Direction == result.Move.Step.SetY(0)) return ReturnType.Failed;
 
-            RecurseGetPullResults(
-                src,
+            // If holding same object as the source
+            // prioritize the source
+            if (result.Move.Source != null &&
+                result.Move.Source._heldAction != null &&
+                result.Move.Source._heldAction.Target == holdAction.Target)
+            {
+                return ReturnType.Failed;
+            }
+
+            /////////////////////////
+            DoGetPullResults(
+                holdAction,
                 (List<MoveResult>)results
                 );
+            /////////////////////////
 
             return ((List<MoveResult>)results).Count != 0 ?
                 ReturnType.Succeeded_Next :
                 ReturnType.Failed;
-
         }
 
         // TODO move should even be type, typing is deduced here and sent back
@@ -1031,24 +1048,28 @@ namespace Cirrus.Circuit.World
 
             if (result != null)
             {
-                ((List<MoveResult>)results).Add(result);
-
-                if (
+                if (move.User._heldAction == null)
+                {
+                    ((List<MoveResult>)results).Add(result);
+                }
+                else if (
                     result.MoveType == MoveType.Moving ||
-                    result.MoveType == MoveType.UsingPortal)
-                    //result.MoveType == MoveType
+                    result.MoveType == MoveType.UsingPortal
+                    )
                 {
                     //var pullResults = new List<MoveResult>();
-                    if (GetPullResults(
+                    if ((ret = GetPullResults(
                         move.User._heldAction,
                         result,
                         out pullResults,
-                        false) > 0)
+                        false)) > 0)
                     {
+                        ((List<MoveResult>)results).Add(result);
                         ((List<MoveResult>)results).AddRange(pullResults);
                     }
                 }
             }
+        
 
             return ret;
         }

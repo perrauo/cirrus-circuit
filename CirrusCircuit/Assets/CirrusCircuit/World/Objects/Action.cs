@@ -74,7 +74,7 @@ namespace Cirrus.Circuit.World
     {
         public ActionType Type;
         public int ColorID;
-        public BaseObject Source;
+        public BaseObject User;
         public BaseObject Target;
         public Vector3Int Direction;
     }
@@ -87,9 +87,6 @@ namespace Cirrus.Circuit.World
         public GameObject Target;
         public Vector3Int Direction;
     }
-
-
-
 
     public class Move
     {
@@ -194,7 +191,7 @@ namespace Cirrus.Circuit.World
             ObjectSession sess;
             return new Action
             {
-                Source = act.Source == null ?
+                User = act.Source == null ?
                     null :
                     act.Source.TryGetComponent(out sess) ?
                         sess._object :
@@ -214,7 +211,7 @@ namespace Cirrus.Circuit.World
         {
             return new NetworkAction
             {
-                Source = act.Source == null ? null : act.Source._session.gameObject,
+                Source = act.User == null ? null : act.User._session.gameObject,
                 Target = act.Target == null ? null : act.Target._session.gameObject,
                 ColorID = act.ColorID,
                 Direction = act.Direction,

@@ -346,7 +346,7 @@ namespace Cirrus.Circuit
 
                         if (player._character == null) continue;
 
-                        if (player.IsAxesLeft) player._character.Cmd_Move(player.AxisLeft);
+                        if (player.IsAxesLeft) player._character.Cmd_HandleLeftAxis(player.AxisLeft);
                         
                         
                     }
@@ -777,7 +777,7 @@ namespace Cirrus.Circuit
                     break;
 
                 case State.Round:
-                    if (player._character != null) player._character?.Cmd_Move(axis);
+                    if (player._character != null) player._character?.Cmd_HandleLeftAxis(axis);
 
                     break;
 

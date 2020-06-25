@@ -157,26 +157,32 @@ namespace Cirrus.Circuit.World.Objects.Characters
             //Game.Instance.HandleAction1(this);
         }
 
-        public bool GetMoveAlt(
+        public class LeftAxisResult
+        {
+            public bool IsMove = false;
+            public Vector3Int Step = Vector3Int.zero;
+        }
+
+        public bool GetAltLeftAxisResult(
             int sign, 
             bool vertical, 
-            ref Move move)
+            out LeftAxisResult result)
         {
-            move.Type = MoveType.Moving;
+            result = new LeftAxisResult();                    
 
             var axis = new Vector2Int(_direction.x, _direction.z);
 
-            if (vertical && sign > 0) move.Step = _direction;
+            if (vertical && sign > 0) result.Step = _direction;
 
-            else if (vertical) move.Step = -_direction;
+            else if (vertical) result.Step = -_direction;
 
-            else if (axis == Vector2Int.right) move.Step = (sign * Vector2Int.down).ToVector3IntAlt();
+            else if (axis == Vector2Int.right) result.Step = (sign * Vector2Int.down).ToVector3IntAlt();
 
-            else if (axis == Vector2Int.up) move.Step = (sign * Vector2Int.right).ToVector3IntAlt();
+            else if (axis == Vector2Int.up) result.Step = (sign * Vector2Int.right).ToVector3IntAlt();
 
-            else if (axis == Vector2Int.left) move.Step = (sign * Vector2Int.up).ToVector3IntAlt();
+            else if (axis == Vector2Int.left) result.Step = (sign * Vector2Int.up).ToVector3IntAlt();
 
-            else if (axis == Vector2Int.down) move.Step = (sign * Vector2Int.left).ToVector3IntAlt();
+            else if (axis == Vector2Int.down) result.Step = (sign * Vector2Int.left).ToVector3IntAlt();
 
             else
             {
@@ -186,21 +192,15 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 return false;
             }
 
-            move.Type = 
-                move.Step == _direction ? 
-                    MoveType.Moving : 
-                    MoveType.Direction;
+            result.IsMove = result.Step == _direction;
+
             return true;
         }
 
-        public bool GetMove(
-            int sign,
-            bool vertical,
-            ref Move move)
-        {
-            move.Step = vertical ? new Vector3Int(0, 0, sign) : new Vector3Int(sign, 0, 0);
+        /*
+                     move.Step = vertical ? new Vector3Int(0, 0, sign) : new Vector3Int(sign, 0, 0);
             move.Type = 
-                (move.Step == _previousStep || _heldAction != null) ?                 
+                (move.Step == _previousStep || _held != null) ?                 
                     MoveType.Moving : 
                     MoveType.Direction;
             
@@ -219,10 +219,38 @@ namespace Cirrus.Circuit.World.Objects.Characters
             }
 
             return true;
+
+             */
+
+        public bool GetLeftAxisResult(
+            int sign,
+            bool vertical,
+            out LeftAxisResult result)
+        {
+            result = new LeftAxisResult();
+
+            result.Step = vertical ? new Vector3Int(0, 0, sign) : new Vector3Int(sign, 0, 0);
+            result.IsMove = result.Step == _previousStep || _heldAction != null;          
+            
+            _previousStep = result.Step;
+
+            if (
+                _preserveInputDirection && 
+                _inputDirection == result.Step)
+            {
+                result.Step = _direction;
+            }
+            else
+            {
+                _inputDirection = result.Step;
+                _preserveInputDirection = false;
+            }
+
+            return true;
         }
 
 
-        public IEnumerator Coroutine_Cmd_Move(Vector2 axis)
+        public IEnumerator Coroutine_Cmd_HandleLeftAxis(Vector2 axis)
         {          
             bool isAxisHorizontal = Mathf.Abs(axis.x) > 0.5f;
             bool isAxisVertical = Mathf.Abs(axis.y) > 0.5f;
@@ -244,33 +272,44 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
             int sign = isMovingVertical ? signAxis.y : signAxis.x;
 
-            var move = new Move()
-            {
-                User = this,
-                Position = _levelPosition,
-                Type = MoveType.Direction,
-                Entered = _entered,                
-            };
-
+            LeftAxisResult result;
             if (Settings.IsUsingAlternateControlScheme.Boolean ?
-                GetMoveAlt(
+                GetAltLeftAxisResult(
                     sign,
                     isMovingVertical,
-                    ref move) :
-                GetMove(
+                    out result) :
+                GetLeftAxisResult(
                     sign,
                     isMovingVertical,
-                    ref move))
+                    out result))
             {
-                switch (_state)
-                {
-                    case ObjectState.Disabled:
-                    case ObjectState.Falling:
-                        move.Type = MoveType.Direction;
-                        break;
-                }
+                result.IsMove = 
+                    _state == ObjectState.Disabled ||
+                    _state == ObjectState.Falling ?
+                        false :
+                        result.IsMove;
 
-                Cmd_Move(move);
+                if(result.IsMove)
+                {
+                    Cmd_Move(new Move
+                    {
+                        User = this,
+                        Position = _levelPosition,
+                        Type = MoveType.Moving,
+                        Entered = _entered,
+                        Step = result.Step
+                    });
+                }
+                else
+                {
+                    Cmd_Perform(new Action
+                    {
+                        User = this,
+                        Type = ActionType.Direction,
+                        Direction = result.Step.SetY(0)
+                    });
+                }            
+                
                 yield return new WaitForSeconds(MoveDelay);
             }
 
@@ -281,7 +320,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
         }
 
         // Use the same raycast to show guide
-        public void Cmd_Move(Vector2 axis)
+        public void Cmd_HandleLeftAxis(Vector2 axis)
         {
             switch (_state)
             {               
@@ -291,7 +330,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 case ObjectState.Disabled:
                 case ObjectState.Climbing:
                     
-                    if (_moveCoroutine == null) _moveCoroutine = StartCoroutine(Coroutine_Cmd_Move(axis));
+                    if (_moveCoroutine == null) _moveCoroutine = StartCoroutine(Coroutine_Cmd_HandleLeftAxis(axis));
 
                     break;
 
@@ -365,11 +404,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
             _holdTimerRefresh.Start();
 
             if (_heldAction == null)
-            {
-                /*onst Vector3Int[] directions = { new Vector3Int() }*/
-                // TODO use server levelsession
-                //
-
+            { 
                 int idx = Utils.DirectionToIndex(_direction);
                 if (idx < 0) return;
 
@@ -384,7 +419,7 @@ namespace Cirrus.Circuit.World.Objects.Characters
                         _heldAction = new Action
                         {
                             Type = ActionType.BeginHold,
-                            Source = this,
+                            User = this,
                             Target = obj,
                             Direction = Utils.Directions[j]
                         };

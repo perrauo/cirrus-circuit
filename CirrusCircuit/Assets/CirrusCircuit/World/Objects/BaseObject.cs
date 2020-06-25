@@ -516,10 +516,6 @@ namespace Cirrus.Circuit.World.Objects
                     }                    
 
                     state = ObjectState.Moving;
-
-
-
-
                 }
                 else if (result.MoveType == MoveType.Climbing)
                 {
@@ -606,7 +602,6 @@ namespace Cirrus.Circuit.World.Objects
             Move move,
             out IEnumerable<MoveResult> results,
             bool isRecursiveCall = false)
-        //bool lockResults = true)
         {
             results = null;
 
@@ -627,26 +622,9 @@ namespace Cirrus.Circuit.World.Objects
                         move,
                         out results,
                         isRecursiveCall);
-                //lockResults);
-
-                case MoveType.Direction:
-                    results = new List<MoveResult>();
-                    ((List<MoveResult>)results).Add(new MoveResult
-                    {
-                        MoveType = MoveType.Direction,
-                        Move = move,
-                        Destination = move.Position,
-                        Offset = Vector3.zero,
-                        Entered = null,
-                        //Exited = null,
-                        Moved = null,
-                        Direction = move.Step.SetY(0)
-                    });
-                    return ReturnType.Succeeded_Next;
                 default: return ReturnType.Failed;
             }
         }
-
 
         #endregion
 
@@ -666,7 +644,6 @@ namespace Cirrus.Circuit.World.Objects
             }
         }
 
-
         public virtual void ReenterVisitor()
         {
 
@@ -679,7 +656,6 @@ namespace Cirrus.Circuit.World.Objects
                 _entered.ReenterVisitor();
             }
         }
-
 
         public virtual ReturnType GetEnterResults(
             Move move,
@@ -804,14 +780,15 @@ namespace Cirrus.Circuit.World.Objects
         {
             if (!CustomNetworkManager.IsServer) return false;
 
-            return Server_Move(new Move
-            {
-                Type = MoveType.Falling,
-                User = this,
-                Position = _levelPosition,
-                Step = Vector3Int.down,
-                Entered = _entered
-            });
+            return Server_Move(
+                new Move
+                {
+                    Type = MoveType.Falling,
+                    User = this,
+                    Position = _levelPosition,
+                    Step = Vector3Int.down,
+                    Entered = _entered
+                });
         }
 
         public virtual void OnClimbFallTimeout()
