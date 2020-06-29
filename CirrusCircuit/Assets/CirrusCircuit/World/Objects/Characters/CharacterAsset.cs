@@ -25,8 +25,8 @@ namespace Cirrus.Circuit.World.Objects.Characters
 
         public int _id = -1;
 
-        public int Id {
-
+        public int Id 
+        {
             get
             {
                 if(_id < 0) _id = Array.IndexOf(CharacterLibrary.Instance.Characters, this);
@@ -52,7 +52,6 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 .GetComponent<Character>();
         }
 
-
         public Character Create(Transform parent, Quaternion rotation)
         {
             return Instantiate(
@@ -62,7 +61,6 @@ namespace Cirrus.Circuit.World.Objects.Characters
                 parent)
                 .GetComponent<Character>();
         }
-
 
         public Character Create(Vector3 position, Transform parent, Quaternion rotation)
         {

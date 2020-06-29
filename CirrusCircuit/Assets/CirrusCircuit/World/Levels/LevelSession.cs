@@ -672,7 +672,7 @@ namespace Cirrus.Circuit.World
             List<MoveResult> results)
         {
             // Cannot pull more than one target
-            if(holdAction.Target._holding.Count > 1) return ReturnType.Failed;
+            if(holdAction.Target._holding.Count > 2) return ReturnType.Failed;
 
             if (holdAction.Target.GetMoveResults(
                 new Move
@@ -1048,7 +1048,9 @@ namespace Cirrus.Circuit.World
 
             if (result != null)
             {
-                if (move.User._heldAction == null)
+                // if pulling frontward or not pulling
+                if (move.User._heldAction == null ||
+                    move.User._heldAction.Direction == result.Move.Step.SetY(0))
                 {
                     ((List<MoveResult>)results).Add(result);
                 }
