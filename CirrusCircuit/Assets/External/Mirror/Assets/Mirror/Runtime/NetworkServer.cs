@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Mirror.RemoteCalls;
 using UnityEngine;
 
 namespace Mirror
@@ -237,7 +238,7 @@ namespace Mirror
             RemoveConnection(0);
         }
 
-        internal static void ActivateHostScene()
+        public static void ActivateHostScene()
         {
             foreach (NetworkIdentity identity in NetworkIdentity.spawned.Values)
             {
@@ -471,7 +472,7 @@ namespace Mirror
         }
 
         // The user should never need to pump the update loop manually
-        internal static void Update()
+        public static void Update()
         {
             if (!active)
                 return;
@@ -993,7 +994,7 @@ namespace Mirror
                 return;
             }
 
-            NetworkBehaviour.CommandInfo commandInfo = identity.GetCommandInfo(msg.componentIndex, msg.functionHash);
+            CommandInfo commandInfo = identity.GetCommandInfo(msg.componentIndex, msg.functionHash);
 
             // Commands can be for player objects, OR other objects with client-authority
             // -> so if this connection's controller has a different netId then
@@ -1008,7 +1009,7 @@ namespace Mirror
             if (logger.LogEnabled()) logger.Log("OnCommandMessage for netId=" + msg.netId + " conn=" + conn);
 
             using (PooledNetworkReader networkReader = NetworkReaderPool.GetReader(msg.payload))
-                identity.HandleCommand(msg.componentIndex, msg.functionHash, networkReader);
+                identity.HandleCommand(msg.componentIndex, msg.functionHash, networkReader, conn as NetworkConnectionToClient);
         }
 
         internal static void SpawnObject(GameObject obj, NetworkConnection ownerConnection)
@@ -1132,32 +1133,6 @@ namespace Mirror
             }
         }
 
-        static bool CheckForPrefab(GameObject obj)
-        {
-#if UNITY_EDITOR
-#if UNITY_2018_3_OR_NEWER
-            return UnityEditor.PrefabUtility.IsPartOfPrefabAsset(obj);
-#elif UNITY_2018_2_OR_NEWER
-            return (UnityEditor.PrefabUtility.GetCorrespondingObjectFromSource(obj) == null) && (UnityEditor.PrefabUtility.GetPrefabObject(obj) != null);
-#else
-            return (UnityEditor.PrefabUtility.GetPrefabParent(obj) == null) && (UnityEditor.PrefabUtility.GetPrefabObject(obj) != null);
-#endif
-#else
-            return false;
-#endif
-        }
-
-        static bool VerifyCanSpawn(GameObject obj)
-        {
-            if (CheckForPrefab(obj))
-            {
-                logger.LogFormat(LogType.Error, "GameObject {0} is a prefab, it can't be spawned. This will cause errors in builds.", obj.name);
-                return false;
-            }
-
-            return true;
-        }
-
         /// <summary>
         /// This spawns an object like NetworkServer.Spawn() but also assigns Client Authority to the specified client.
         /// <para>This is the same as calling NetworkIdentity.AssignClientAuthority on the spawned object.</para>
@@ -1199,6 +1174,32 @@ namespace Mirror
                 }
                 SpawnObject(obj, ownerConnection);
             }
+        }
+
+        static bool CheckForPrefab(GameObject obj)
+        {
+#if UNITY_EDITOR
+#if UNITY_2018_3_OR_NEWER
+            return UnityEditor.PrefabUtility.IsPartOfPrefabAsset(obj);
+#elif UNITY_2018_2_OR_NEWER
+            return (UnityEditor.PrefabUtility.GetCorrespondingObjectFromSource(obj) == null) && (UnityEditor.PrefabUtility.GetPrefabObject(obj) != null);
+#else
+            return (UnityEditor.PrefabUtility.GetPrefabParent(obj) == null) && (UnityEditor.PrefabUtility.GetPrefabObject(obj) != null);
+#endif
+#else
+            return false;
+#endif
+        }
+
+        static bool VerifyCanSpawn(GameObject obj)
+        {
+            if (CheckForPrefab(obj))
+            {
+                logger.LogFormat(LogType.Error, "GameObject {0} is a prefab, it can't be spawned. This will cause errors in builds.", obj.name);
+                return false;
+            }
+
+            return true;
         }
 
         static void DestroyObject(NetworkIdentity identity, bool destroyServerObject)

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Mirror.RemoteCalls;
 using NSubstitute;
 using NUnit.Framework;
 using UnityEngine;
@@ -11,11 +12,13 @@ namespace Mirror.Tests
     {
         // counter to make sure that it's called exactly once
         public int called;
+        public NetworkConnection senderConnectionInCall;
         // weaver generates this from [Command]
         // but for tests we need to add it manually
-        public static void CommandGenerated(NetworkBehaviour comp, NetworkReader reader)
+        public static void CommandGenerated(NetworkBehaviour comp, NetworkReader reader, NetworkConnection senderConnection)
         {
             ++((CommandTestNetworkBehaviour)comp).called;
+            ((CommandTestNetworkBehaviour)comp).senderConnectionInCall = senderConnection;
         }
     }
 
@@ -25,7 +28,7 @@ namespace Mirror.Tests
         public int called;
         // weaver generates this from [Rpc]
         // but for tests we need to add it manually
-        public static void RpcGenerated(NetworkBehaviour comp, NetworkReader reader)
+        public static void RpcGenerated(NetworkBehaviour comp, NetworkReader reader, NetworkConnection senderConnection)
         {
             ++((RpcTestNetworkBehaviour)comp).called;
         }
@@ -37,7 +40,7 @@ namespace Mirror.Tests
         public int called;
         // weaver generates this from [SyncEvent]
         // but for tests we need to add it manually
-        public static void SyncEventGenerated(NetworkBehaviour comp, NetworkReader reader)
+        public static void SyncEventGenerated(NetworkBehaviour comp, NetworkReader reader, NetworkConnection senderConnection)
         {
             ++((SyncEventTestNetworkBehaviour)comp).called;
         }
@@ -580,7 +583,11 @@ namespace Mirror.Tests
             connection.identity = identity;
 
             // register the command delegate, otherwise it's not found
-            NetworkBehaviour.RegisterCommandDelegate(typeof(CommandTestNetworkBehaviour), nameof(CommandTestNetworkBehaviour.CommandGenerated), CommandTestNetworkBehaviour.CommandGenerated, false);
+            int registeredHash = RemoteCallHelper.RegisterDelegate(typeof(CommandTestNetworkBehaviour),
+                nameof(CommandTestNetworkBehaviour.CommandGenerated),
+                MirrorInvokeType.Command,
+                CommandTestNetworkBehaviour.CommandGenerated,
+                false);
 
             // identity needs to be in spawned dict, otherwise command handler
             // won't find it
@@ -590,7 +597,7 @@ namespace Mirror.Tests
             CommandMessage message = new CommandMessage
             {
                 componentIndex = 0,
-                functionHash = NetworkBehaviour.GetMethodHash(typeof(CommandTestNetworkBehaviour), nameof(CommandTestNetworkBehaviour.CommandGenerated)),
+                functionHash = RemoteCallHelper.GetMethodHash(typeof(CommandTestNetworkBehaviour), nameof(CommandTestNetworkBehaviour.CommandGenerated)),
                 netId = identity.netId,
                 payload = new ArraySegment<byte>(new byte[0])
             };
@@ -645,9 +652,8 @@ namespace Mirror.Tests
             Assert.That(comp1.called, Is.EqualTo(0));
 
             // clean up
-            NetworkBehaviour.ClearDelegates();
             NetworkIdentity.spawned.Clear();
-            NetworkBehaviour.ClearDelegates();
+            RemoteCallHelper.RemoveDelegate(registeredHash);
             NetworkServer.Shutdown();
             // destroy the test gameobject AFTER server was stopped.
             // otherwise isServer is true in OnDestroy, which means it would try

@@ -8,6 +8,11 @@ namespace Mirror.Weaver
     {
         public static bool IsDerivedFrom(this TypeDefinition td, TypeReference baseClass)
         {
+            return IsDerivedFrom(td, baseClass.FullName);
+        }
+
+        public static bool IsDerivedFrom(this TypeDefinition td, string baseClassFullName)
+        {
             if (!td.IsClass)
                 return false;
 
@@ -24,7 +29,7 @@ namespace Mirror.Weaver
                     parentName = parentName.Substring(0, index);
                 }
 
-                if (parentName == baseClass.FullName)
+                if (parentName == baseClassFullName)
                 {
                     return true;
                 }
@@ -213,6 +218,32 @@ namespace Mirror.Weaver
             return methods;
         }
 
+        public static MethodDefinition GetMethodInBaseType(this TypeDefinition td, string methodName)
+        {
+            TypeDefinition typedef = td;
+            while (typedef != null)
+            {
+                foreach (MethodDefinition md in typedef.Methods)
+                {
+                    if (md.Name == methodName)
+                        return md;
+                }
+
+                try
+                {
+                    TypeReference parent = typedef.BaseType;
+                    typedef = parent?.Resolve();
+                }
+                catch (AssemblyResolutionException)
+                {
+                    // this can happen for pluins.
+                    break;
+                }
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -247,6 +278,47 @@ namespace Mirror.Weaver
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Finds public fields in type and base type
+        /// </summary>
+        /// <param name="variable"></param>
+        /// <returns></returns>
+        public static IEnumerable<FieldDefinition> FindAllPublicFields(this TypeReference variable)
+        {
+            return FindAllPublicFields(variable.Resolve());
+        }
+
+        /// <summary>
+        /// Finds public fields in type and base type
+        /// </summary>
+        /// <param name="variable"></param>
+        /// <returns></returns>
+        public static IEnumerable<FieldDefinition> FindAllPublicFields(this TypeDefinition typeDefinition)
+        {
+            while (typeDefinition != null)
+            {
+                foreach (FieldDefinition field in typeDefinition.Fields)
+                {
+                    if (field.IsStatic || field.IsPrivate)
+                        continue;
+
+                    if (field.IsNotSerialized)
+                        continue;
+
+                    yield return field;
+                }
+
+                try
+                {
+                    typeDefinition = typeDefinition.BaseType.Resolve();
+                }
+                catch
+                {
+                    break;
+                }
+            }
         }
     }
 }
