@@ -1,20 +1,10 @@
-﻿//using Cirrus.DH.Actions;
-//using Cirrus.DH.Objects.Characters;
-//using Cirrus.DH.Objects.Characters.Controls;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using Cirrus.Resources;
-using Cirrus;
 using System;
 using Cirrus.Circuit.Controls;
 using Cirrus.Circuit.Networking;
-using Cirrus.Circuit.Cameras;
-using UnityEditor;
-using MathUtils = Cirrus.MathUtils;
-using System.Linq;
 using System.Threading;
 using Cirrus.Circuit.World.Objects.Characters;
-//using System.Numerics;
 
 namespace Cirrus.Circuit.World.Objects
 {

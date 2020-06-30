@@ -72,14 +72,10 @@ namespace Cirrus.Circuit.World
         //public Mutex _resultLockMutex = new Mutex();
         //public bool _isResultLocked = false;
 
-        public static LevelSession Instance
-        {
-            get
-            {
-                if (_instance == null) _instance = FindObjectOfType<LevelSession>();
-                return _instance;
-            }
-        }
+        public static LevelSession Instance =>
+        _instance == null ?
+            _instance = FindObjectOfType<LevelSession>() :
+            _instance;
 
         Mutex _mutex;
 
@@ -666,13 +662,31 @@ namespace Cirrus.Circuit.World
 
             return false;
         }
+        
 
-        private ReturnType DoGetPullResults(
+        public ReturnType GetPullResults(
             Action holdAction,
-            List<MoveResult> results)
+            MoveResult result,
+            out IEnumerable<MoveResult> results,
+            bool isRecursiveCall = false)
         {
+            results = new List<MoveResult>();
+
+            // If moving forward do not pull
+            if (holdAction.Direction == result.Move.Step.SetY(0)) return ReturnType.Failed;
+
+            // If holding same object as the source
+            // prioritize the source
+            if (result.Move.Source != null &&
+                result.Move.Source._heldAction != null &&
+                result.Move.Source._heldAction.Target == holdAction.Target)
+            {
+                return ReturnType.Failed;
+            }
+
+            /////////////////////////
             // Cannot pull more than one target
-            if(holdAction.Target._holding.Count > 2) return ReturnType.Failed;
+            if (holdAction.Target._holding.Count > 2) return ReturnType.Failed;
 
             if (holdAction.Target.GetMoveResults(
                 new Move
@@ -688,7 +702,7 @@ namespace Cirrus.Circuit.World
                 out IEnumerable<MoveResult> moveResults,
                 isRecursiveCall: true) > 0)
             {
-                results.AddRange(moveResults);
+                ((List<MoveResult>)results).AddRange(moveResults);
 
                 do
                 {
@@ -712,42 +726,13 @@ namespace Cirrus.Circuit.World
                         out IEnumerable<MoveResult> heldResults,
                         isRecursiveCall: true) > 0)
                     {
-                        results.AddRange(heldResults);
+                        ((List<MoveResult>)results).AddRange(heldResults);
                     }
 
                 } while (false);
 
                 return ReturnType.Succeeded_Next;
             }
-
-            return ReturnType.Failed;            
-        }
-
-        public ReturnType GetPullResults(
-            Action holdAction,
-            MoveResult result,
-            out IEnumerable<MoveResult> results,
-            bool isRecursiveCall = false)
-        {
-            results = new List<MoveResult>();
-
-            // If moving forward do not pull
-            if (holdAction.Direction == result.Move.Step.SetY(0)) return ReturnType.Failed;
-
-            // If holding same object as the source
-            // prioritize the source
-            if (result.Move.Source != null &&
-                result.Move.Source._heldAction != null &&
-                result.Move.Source._heldAction.Target == holdAction.Target)
-            {
-                return ReturnType.Failed;
-            }
-
-            /////////////////////////
-            DoGetPullResults(
-                holdAction,
-                (List<MoveResult>)results
-                );
             /////////////////////////
 
             return ((List<MoveResult>)results).Count != 0 ?
