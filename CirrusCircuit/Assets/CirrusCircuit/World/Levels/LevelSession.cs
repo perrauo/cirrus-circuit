@@ -666,26 +666,14 @@ namespace Cirrus.Circuit.World
 
         public ReturnType GetPullResults(
             Action holdAction,
-            MoveResult result,
             out IEnumerable<MoveResult> results,
             bool isRecursiveCall = false)
         {
             results = new List<MoveResult>();
-
-            // If moving forward do not pull
-            if (holdAction.Direction == result.Move.Step.SetY(0)) return ReturnType.Failed;
-
-            // If holding same object as the source
-            // prioritize the source
-            if (result.Move.Source != null &&
-                result.Move.Source._heldAction != null &&
-                result.Move.Source._heldAction.Target == holdAction.Target)
-            {
-                return ReturnType.Failed;
-            }
+            ReturnType ret;            
 
             /////////////////////////
-            // Cannot pull more than one target
+            // Cannot pull objects if more than one other character is holding it
             if (holdAction.Target._holding.Count > 2) return ReturnType.Failed;
 
             if (holdAction.Target.GetMoveResults(
@@ -694,7 +682,7 @@ namespace Cirrus.Circuit.World
                     User = holdAction.Target,
                     Source = holdAction.User,
                     Destination = holdAction.User._levelPosition,
-                    Step = -holdAction.Direction,
+                    Step = holdAction.User._levelPosition - holdAction.Target._levelPosition,
                     Entered = holdAction.Target._entered,
                     Position = holdAction.Target._levelPosition,
                     Type = MoveType.Moving
@@ -704,32 +692,27 @@ namespace Cirrus.Circuit.World
             {
                 ((List<MoveResult>)results).AddRange(moveResults);
 
-                do
+                // Pull single character that is holding the target
+                // Pull first non-user character
+                var hld = holdAction.Target._holding.Where(x => x != holdAction.User).FirstOrDefault();
+
+                if (hld != null)
                 {
-                    var hld = holdAction.Target._holding.FirstOrDefault();
-
-                    if (hld == null) break;
-
-                    if (hld == holdAction.User) break;
-
-                    if (hld.GetMoveResults(
-                        new Move
+                    // Pull character that are holding
+                    if ((ret = GetPullResults(
+                        new Action
                         {
-                            User = hld,
-                            Source = holdAction.Target,
-                            Destination = holdAction.Target._levelPosition,
-                            Step = -holdAction.Direction,
-                            Entered = hld._entered,
-                            Position = hld._levelPosition,
-                            Type = MoveType.Moving
+                            Target = hld,
+                            Direction = holdAction.Direction,
+                            User = holdAction.Target
                         },
-                        out IEnumerable<MoveResult> heldResults,
-                        isRecursiveCall: true) > 0)
+                        out IEnumerable<MoveResult> pullResults,
+                        isRecursiveCall)) > 0)
                     {
-                        ((List<MoveResult>)results).AddRange(heldResults);
+                        ((List<MoveResult>)results).AddRange(pullResults);
                     }
+                }
 
-                } while (false);
 
                 return ReturnType.Succeeded_Next;
             }
@@ -1033,21 +1016,30 @@ namespace Cirrus.Circuit.World
 
             if (result != null)
             {
-                // if pulling frontward or not pulling
-                if (move.User._heldAction == null ||
+                // if not pulling
+                // if pulling frontward ||
+                // if pulling the source                
+                if (
+                    move.User._heldAction == null ||
+                    move.User._heldAction.Target == move.Source ||
                     move.User._heldAction.Direction == result.Move.Step.SetY(0))
                 {
                     ((List<MoveResult>)results).Add(result);
                 }
                 else if (
                     result.MoveType == MoveType.Moving ||
-                    result.MoveType == MoveType.UsingPortal
-                    )
-                {
-                    //var pullResults = new List<MoveResult>();
+                    result.MoveType == MoveType.UsingPortal)                    
+                {                    
+                    if (result.Move.Source != null &&
+                        result.Move.Source._heldAction != null &&
+                        // If holding same object as the source, prioritize the source which comes before
+                        result.Move.Source._heldAction.Target == move.User._heldAction.Target)
+                    {
+                        return ReturnType.Failed;
+                    }
+
                     if ((ret = GetPullResults(
-                        move.User._heldAction,
-                        result,
+                        move.User._heldAction,                        
                         out pullResults,
                         false)) > 0)
                     {
